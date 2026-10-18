@@ -16,6 +16,11 @@
   ],
   "Plugins": [
     {
+      "Name": "AndroidPermission",
+      "Enabled": true,
+      "PlatformAllowList": ["Android"]
+    },
+    {
       "Name": "SimurghRTC",
       "Enabled": true
     }

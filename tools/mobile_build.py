@@ -17,6 +17,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import tarfile
 import urllib.request
 import zipfile
 
@@ -284,7 +285,7 @@ def tree_digest(inventory):
 
 def stage_headers(work, lock, engine, target):
     root = owned_path(work, 'src/simurgh_external')
-    selected = {'openssl': 'openssl-' + target.lower(), 'opus': 'opus', 'vpx': 'vpx'}
+    selected = {'openssl': 'openssl-android' if target == 'Android' else 'openssl-ios', 'opus': 'opus', 'vpx': 'vpx'}
     records = {}
     for name, key in selected.items():
         spec = lock['engine_headers'][key]
@@ -313,10 +314,10 @@ def preflight(lock, target, python):
         require(packages.is_file() and artifacts.digest(packages) == expected['container']['packages_sha256'],
                 'Use the pinned Android container; its package manifest differs or is missing.')
         record['container_packages_sha256'] = artifacts.digest(packages)
-    if target == 'IOS':
+    if target != 'Android':
         for command, field in [(['xcodebuild', '-version'], 'xcode'),
-                               (['xcrun', '--sdk', 'iphoneos', '--show-sdk-version'], 'sdk'),
-                               (['xcrun', '--sdk', 'iphoneos', '--show-sdk-build-version'], 'sdk_build')]:
+                               (['xcrun', '--sdk', 'iphonesimulator' if target == 'IOSSimulator' else 'iphoneos', '--show-sdk-version'], 'sdk'),
+                               (['xcrun', '--sdk', 'iphonesimulator' if target == 'IOSSimulator' else 'iphoneos', '--show-sdk-build-version'], 'sdk_build')]:
             actual = run(command)
             require(actual == expected[field], f'iOS {field} differs from the lock: {actual}')
             record[field] = actual
@@ -329,10 +330,10 @@ def preflight(lock, target, python):
 
 def gn_arguments(lock, target, compiler_root, ndk=None):
     result = dict(lock['common_gn_args'])
-    result.update(target_os='ios' if target == 'IOS' else 'android',
+    result.update(target_os='ios' if target != 'Android' else 'android',
                   clang_base_path=str(compiler_root), rtc_ssl_root='//simurgh_external/openssl')
-    if target == 'IOS':
-        result.update(target_environment='device', ios_enable_code_signing=False,
+    if target != 'Android':
+        result.update(target_environment='simulator' if target == 'IOSSimulator' else 'device', ios_enable_code_signing=False,
                       ios_deployment_target=lock['platforms'][target]['minimum_os'], use_lld=False,
                       enable_dsyms=False, enable_stripping=False)
     else:
@@ -355,7 +356,7 @@ def prepare(work, lock, target, python, engine, build_name=None):
     record['engine_headers'] = stage_headers(work, lock, engine, target)
     owned_path(work, 'host').mkdir(exist_ok=True)
     owned_path(work, 'downloads').mkdir(exist_ok=True)
-    host = 'mac-arm64' if target == 'IOS' else 'linux-amd64'
+    host = 'mac-arm64' if target != 'Android' else 'linux-amd64'
     gn = tool(work, lock, 'gn', host)
     ninja = tool(work, lock, 'ninja', host)
     bindir = Path(tempfile.mkdtemp(prefix='python-', dir=work / 'host'))
@@ -401,7 +402,7 @@ def prepare(work, lock, target, python, engine, build_name=None):
     src = work / 'src'
     (src / 'build/config/gclient_args.gni').write_text('generate_location_tags = true\n')
     # Upstream's license generator resolves GN through this path.
-    upstream_gn = src / ('buildtools/mac/gn' if target == 'IOS' else 'buildtools/linux64/gn')
+    upstream_gn = src / ('buildtools/mac/gn' if target != 'Android' else 'buildtools/linux64/gn')
     upstream_gn.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(gn, upstream_gn)
     name = build_name or target
@@ -417,6 +418,60 @@ def prepare(work, lock, target, python, engine, build_name=None):
     return src, build, gn, ninja, env, record
 
 
+def validate_android_vtable(symbols):
+    # The pinned rtc::Thread has 16 slots. Standard ARM64 vtables use 8-byte
+    # entries; Chromium's relative ABI uses 4-byte entries and crashes Unreal.
+    matches = [line.split() for line in symbols.splitlines() if line.endswith(' _ZTVN3rtc6ThreadE')]
+    require(len(matches) == 1 and len(matches[0]) == 4 and int(matches[0][1], 16) == 128,
+            'Android rtc::Thread must use the standard Itanium C++ ABI (128-byte vtable).')
+
+
+def build_simulator_vpx(lock, build, engine, env, jobs):
+    spec = lock['platforms']['IOSSimulator']['vpx_source']
+    archive = engine / spec['path']
+    require(artifacts.digest(archive) == spec['sha256'], 'Simulator VPX source archive drift.')
+    root = build / 'simulator-vpx'
+    root.mkdir(exist_ok=True)
+    source = root / 'source'
+    if not source.exists():
+        source.mkdir()
+        with tarfile.open(archive) as tar:
+            for member in tar.getmembers():
+                parts = PurePosixPath(member.name).parts
+                require(parts and not member.name.startswith('/') and '..' not in parts
+                        and (member.isfile() or member.isdir()), 'Unsafe VPX source archive entry.')
+                destination = source.joinpath(*parts[1:])
+                if member.isdir():
+                    destination.mkdir(parents=True, exist_ok=True)
+                else:
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    with tar.extractfile(member) as incoming, destination.open('wb') as output:
+                        shutil.copyfileobj(incoming, output)
+                    destination.chmod(member.mode & 0o777)
+    expected = {}
+    with tarfile.open(archive) as tar:
+        for member in tar.getmembers():
+            if member.isfile():
+                name = str(PurePosixPath(*PurePosixPath(member.name).parts[1:]))
+                expected[name] = hashlib.sha256(tar.extractfile(member).read()).hexdigest()
+    require(tree_inventory(source) == expected, 'Cached simulator VPX source drift.')
+    target = 'arm64-apple-ios' + lock['platforms']['IOSSimulator']['minimum_os'] + '-simulator'
+    sdk = run(['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-path'])
+    flags = f'-target {target} -isysroot {sdk} -O2 -fPIC -fvisibility=hidden'
+    build_env = dict(env, CC=run(['xcrun', '-f', 'clang']), CXX=run(['xcrun', '-f', 'clang++']),
+                     AR=run(['xcrun', '-f', 'ar']), RANLIB=run(['xcrun', '-f', 'ranlib']),
+                     CFLAGS=flags, CXXFLAGS=flags, LDFLAGS=flags)
+    # Portable C avoids the upstream Darwin ARM assembly's device-only SDK selection.
+    options = ['--target=generic-gnu', '--disable-examples', '--disable-tools', '--disable-docs',
+               '--disable-unit-tests', '--disable-shared', '--enable-static', '--enable-pic',
+               '--disable-runtime-cpu-detect']
+    run([source / 'configure', *options], cwd=root, env=build_env, log=root / 'build.log')
+    run(['/usr/bin/make', '-j', jobs, 'libvpx.a'], cwd=root, env=build_env, log=root / 'build.log')
+    artifacts.validate_archive(root / 'libvpx.a', 'IOSSimulator')
+    write_json(root / 'build.json', {'source': spec, 'target': target, 'sdk': sdk, 'flags': flags,
+                                   'configure': options, 'archive_sha256': artifacts.digest(root / 'libvpx.a')})
+
+
 def link_probe(work, lock, target, build, env, record, engine):
     libraries = []
     for spec in lock['platforms'][target]['link_libraries']:
@@ -424,12 +479,15 @@ def link_probe(work, lock, target, build, env, record, engine):
         require(path.is_file() and artifacts.digest(path) == spec['sha256'],
                 f'Engine link dependency drift: {path}')
         libraries.append(path)
+    if target == 'IOSSimulator':
+        libraries.append(build / 'simulator-vpx/libvpx.a')
     source = ROOT / 'Config/MobileWebRTC/link_probe.cc'
     library = build / 'obj/libwebrtc.a'
-    if target == 'IOS':
+    if target != 'Android':
         symbols = run(['xcrun', 'nm', '-gUj', library]).splitlines()
         symbols = [symbol[1:] if symbol.startswith('_') else symbol for symbol in symbols]
     else:
+        validate_android_vtable(run([Path(record['compiler_root']) / 'bin/llvm-nm', '--print-size', library]))
         symbols = run([Path(record['compiler_root']) / 'bin/llvm-nm',
                        '--defined-only', '--extern-only', '--format=just-symbols', library]).splitlines()
     prefixes = ('opus_', 'vpx_', 'SSL_', 'OPENSSL_', 'BORINGSSL_', 'CRYPTO_', 'EVP_', 'BIO_',
@@ -440,10 +498,10 @@ def link_probe(work, lock, target, build, env, record, engine):
     command = [compiler, '-std=c++20', '-fno-rtti', '-fno-exceptions', '-fPIC',
                '-DWEBRTC_POSIX=1', '-DABSL_ALLOCATOR_NOTHROW=1',
                '-I' + str(work / 'src'), '-I' + str(work / 'src/third_party/abseil-cpp'), source]
-    if target == 'IOS':
+    if target != 'Android':
         binary = build / 'link-probe.dylib'
-        command += ['-target', 'arm64-apple-ios' + lock['platforms'][target]['minimum_os'],
-                    '-isysroot', run(['xcrun', '--sdk', 'iphoneos', '--show-sdk-path']),
+        command += ['-target', 'arm64-apple-ios' + lock['platforms'][target]['minimum_os'] + ('-simulator' if target == 'IOSSimulator' else ''),
+                    '-isysroot', run(['xcrun', '--sdk', 'iphonesimulator' if target == 'IOSSimulator' else 'iphoneos', '--show-sdk-path']),
                     '-DWEBRTC_MAC=1', '-DWEBRTC_IOS=1', '-dynamiclib',
                     '-Wl,-undefined,error', '-Wl,-force_load,' + str(library), *libraries]
         for framework in ['Foundation', 'CoreFoundation', 'Security', 'AudioToolbox', 'CoreAudio',
@@ -470,6 +528,8 @@ def link_probe(work, lock, target, build, env, record, engine):
         loads = [line.split() for line in segments.splitlines() if line.strip().startswith('LOAD ')]
         require(loads and all(int(row[-1], 16) >= 16384 for row in loads), 'Probe lacks 16 KiB LOAD alignment.')
         result['load_alignment_bytes'] = [int(row[-1], 16) for row in loads]
+    elif target == 'IOSSimulator':
+        result['simulator_vpx_sha256'] = artifacts.digest(build / 'simulator-vpx/libvpx.a')
     write_json(build / 'link-probe.json', result)
     return result
 
@@ -486,10 +546,13 @@ def export_artifact(work, lock, target, build, gn, env, record, output):
         (payload / 'Lib').mkdir(parents=True)
         delivered = payload / 'Lib/libwebrtc.a'
         shutil.copy2(library, delivered)
-        if target == 'IOS':
+        if target != 'Android':
             run(['xcrun', 'strip', '-S', delivered], env=env)
         else:
             run([Path(record['compiler_root']) / 'bin/llvm-strip', '--strip-debug', delivered], env=env)
+        if target == 'IOSSimulator':
+            shutil.copy2(build / 'simulator-vpx/libvpx.a', payload / 'Lib/libvpx.a')
+            run(['xcrun', 'strip', '-S', payload / 'Lib/libvpx.a'], env=env)
         # Export WebRTC headers plus the exact dependent public header trees.
         src = work / 'src'
         headers = []
@@ -513,6 +576,8 @@ def export_artifact(work, lock, target, build, gn, env, record, output):
             shutil.copy2(source, destination)
         records = payload / 'Build'
         records.mkdir()
+        if target == 'IOSSimulator':
+            shutil.copy2(build / 'simulator-vpx/build.json', records / 'vpx-build.json')
         shutil.copy2(build / 'args.gn', records / 'args.gn')
         shutil.copy2(build / 'toolchain.json', records / 'toolchain.json')
         shutil.copy2(build / 'link-probe.json', records / 'link-probe.json')
@@ -523,6 +588,8 @@ def export_artifact(work, lock, target, build, gn, env, record, output):
         dependencies['build-lock'] = artifacts.digest(LOCK)
         dependencies['build-runner'] = record['recipe_sha256']
         dependencies['link-probe'] = artifacts.digest(ROOT / 'Config/MobileWebRTC/link_probe.cc')
+        if target == 'IOSSimulator':
+            dependencies['simulator-vpx-source'] = lock['platforms'][target]['vpx_source']['sha256']
         if target == 'Android':
             dependencies['ndk-archive'] = lock['platforms'][target]['ndk_archive']['sha256']
             dependencies['ndk-gn-overlay'] = lock['platforms'][target]['ndk_gn_sha256']
@@ -556,16 +623,19 @@ def export_artifact(work, lock, target, build, gn, env, record, output):
             shutil.copy2(notice, licenses / (name + '-LICENSE.txt'))
             notices += '\n# ' + name + ' exported headers\n' + notice.read_text()
         (licenses / 'THIRD_PARTY_NOTICES.txt').write_text(notices)
+        if target == 'IOSSimulator':
+            shutil.copy2(build / 'simulator-vpx/source/LICENSE', licenses / 'VPX-LICENSE.txt')
         shutil.copy2(src / 'PATENTS', licenses / 'WEBRTC-PATENTS.txt')
         shutil.copy2(src / 'third_party/libyuv/PATENTS', licenses / 'LIBYUV-PATENTS.txt')
         metadata = Path(temporary) / 'metadata.json'
         write_json(metadata, {'schema': 1, 'artifact_id': f'{target.lower()}-arm64-{lock["repositories"]["src"]["revision"][:12]}-{record["lock_sha256"][:12]}',
                               'platform': target, 'architecture': 'arm64', 'engine_version': lock['engine_version'],
                               'adapter': lock['adapter'], 'configuration': 'Release',
-                              'dependencies': 'unreal-openssl-opus-vpx', 'source_revision': lock['repositories']['src']['revision'],
-                              'toolchain': {'host': 'Mac' if target == 'IOS' else 'Linux',
+                              'dependencies': 'unreal-openssl-opus-simulator-vpx' if target == 'IOSSimulator' else 'unreal-openssl-opus-vpx', 'source_revision': lock['repositories']['src']['revision'],
+                              'toolchain': {'host': 'Mac' if target != 'Android' else 'Linux',
                                             'compiler': record['compiler'], 'sdk': record['sdk'],
-                                            'minimum_os': lock['platforms'][target]['minimum_os'], 'cpp_runtime': 'libc++'},
+                                            'minimum_os': lock['platforms'][target]['minimum_os'], 'cpp_runtime': 'libc++',
+                                            'cpp_abi': 'itanium'},
                               'codecs': {'audio': ['opus', 'ISAC', 'G722', 'PCMU', 'PCMA', 'multiopus', 'L16'],
                                          'video': ['VP8', 'VP9']}})
         result = artifacts.package(payload, metadata, output)
@@ -597,7 +667,7 @@ def compare_artifacts(first, second):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('command', choices=['plan', 'fetch', 'configure', 'build', 'compare'])
-    parser.add_argument('--platform', choices=['Android', 'IOS'], default='IOS')
+    parser.add_argument('--platform', choices=['Android', 'IOS', 'IOSSimulator'], default='IOS')
     parser.add_argument('--work', type=Path)
     parser.add_argument('--build-name', help='Fresh output directory under src/out, for repeat-build checks.')
     parser.add_argument('--first', type=Path)
@@ -636,6 +706,8 @@ def main():
             if args.command == 'configure':
                 return
             run([ninja, '-C', build, '-j', args.jobs, 'webrtc'], cwd=src, env=env, log=build / 'compile.log')
+            if args.platform == 'IOSSimulator':
+                build_simulator_vpx(lock, build, args.engine.resolve(), env, args.jobs)
             link_probe(work, lock, args.platform, build, env, record, args.engine.resolve())
             print(json.dumps(export_artifact(work, lock, args.platform, build, gn, env, record, args.output.resolve()), indent=2))
     except (ValueError, OSError, subprocess.CalledProcessError) as error:

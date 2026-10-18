@@ -2,6 +2,8 @@
 
 Use this workflow to build the M0 native dependency for **Android ARM64** or **iOS device ARM64**. Each platform gets its own library and matching headers. The engine is read only; no engine patch is needed.
 
+For local iOS testing, `--platform IOSSimulator` produces a separate ARM64 simulator artifact using the same pinned Xcode. It also builds portable-C VPX from Unreal's checked source archive, because the engine's VPX binary is device-only. See the [simulator probe steps](MOBILE_PROBE.md#test-with-the-ios-simulator). Simulator results do not establish physical-device behavior or delivery size.
+
 The build includes the native PeerConnection factory, data channels, audio processing, builtin audio codecs and software VP8/VP9. It excludes Java/Objective-C SDK wrappers, hardware capture, H.264 and AV1. Device permissions, hardware codecs and lifecycle integration come later.
 
 See [validation results](M0_VALIDATION.md) for what has actually passed. A linked library does not establish packaged Unreal or physical-device support.
@@ -67,6 +69,8 @@ Each output contains a stripped `Lib/libwebrtc.a`, headers, notices, source/patc
 
 Before export, the build links **every archive object** against the pinned Unreal OpenSSL, Opus and VPX libraries. The Android check uses Unreal's static C++ runtime and local symbol binding, and requires 16 KiB load-segment alignment in its test shared library. The final Unreal app still needs its own link-map, dependency, page-alignment and device checks.
 
+Android uses the standard Itanium C++ ABI, matching Unreal. A recorded patch disables Chromium's relative vtables, and the export check verifies the pinned `rtc::Thread` vtable layout. Earlier Android exports without this fix must be rebuilt.
+
 Stage an artifact into a fresh sample project:
 
 ```sh
@@ -103,7 +107,7 @@ The native Unreal adapter supplies its own headless audio device and will connec
 
 Recorded patches select this target, exclude unused Java/test dependencies, preserve native Android stack traces, route SRTP to external OpenSSL, and fix compiler compatibility for CRC32C and legacy stats conversions. License generation uses the verified GN executable directly. A checked GN overlay points CPU-feature detection at NDK r27c.
 
-The builtin audio factory includes Opus, iSAC, G.722 and G.711. It also supports L16 and multichannel Opus without advertising them by default. The manifest lists these compiled codec families; negotiated formats and RTP auxiliary formats still need device capability checks. Debug information stays in the diagnostic archive; release archives are stripped. LTO and simulator/universal outputs are disabled in artifact format v1.
+The builtin audio factory includes Opus, iSAC, G.722 and G.711. It also supports L16 and multichannel Opus without advertising them by default. The manifest lists these compiled codec families; negotiated formats and RTP auxiliary formats still need device capability checks. Debug information stays in the diagnostic archive; release archives are stripped. LTO and universal outputs are disabled. The explicit `IOSSimulator` artifact is kept separate from device artifacts.
 
 Source: [WebRTC repository](https://webrtc.googlesource.com/src), [Android NDK r27c release](https://github.com/android/ndk/releases/tag/r27c). Exact fetched inputs and patch hashes are in the lock, rather than floating branch names.
 

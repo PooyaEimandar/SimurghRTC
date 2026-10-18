@@ -2,7 +2,7 @@
 
 Use **Unreal Engine 5.8.3**, its supported platform toolchain and **Python 3.10+**. The commands below target Mac ARM64, the platform tested so far.
 
-A regular engine installation is enough for Editor/Game tests. Dedicated Server builds need a source-built engine with Server support; follow the [Server guide](NATIVE_PROBE.md). For Android/iOS, [build the pinned ARM64 dependency](MOBILE_BUILDS.md), then [stage the checked artifact](MOBILE_ARTIFACTS.md). Mobile device qualification remains open.
+A regular engine installation is enough for Editor/Game tests. Dedicated Server builds need a source-built engine with Server support; follow the [Server guide](NATIVE_PROBE.md). For Android/iOS, [build the pinned ARM64 dependency](MOBILE_BUILDS.md), then follow the [packaged device probe](MOBILE_PROBE.md). Mobile device qualification remains open.
 
 ## 1. Check the source and fixtures
 

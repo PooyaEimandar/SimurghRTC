@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "version": "1.64.0",
+  "url": "https://github.com/nghttp2/nghttp2/releases/download/v1.64.0/nghttp2-1.64.0.tar.gz",
+  "sha256": "20e73f3cf9db3f05988996ac8b3a99ed529f4565ca91a49eb0550498e10621e8",
+  "engine_headers": {
+    "nghttp2.h": "9a538b11cfb918105551e8427815b966edfb83724d6a0d09c422593d572e807e",
+    "nghttp2ver.h": "49b0c950148846ba506065bb6705ae9261545a61cd0e89c2d0b711fe14e825ce"
+  }
+}

@@ -30,12 +30,17 @@ public class SimurghRTCNative : SimurghRTCModuleRules
         }
         if (UseMobileWebRTC)
         {
-            if (Target.Type == TargetType.Server || Target.Architecture != UnrealArch.Arm64)
-                throw new BuildException("SimurghRTC mobile artifacts support ARM64 device clients only.");
-            string Root = Path.Combine(PluginDirectory, "ThirdParty", "WebRTC", Target.Platform.ToString(), "arm64");
+            bool IsSimulator = Target.Platform == UnrealTargetPlatform.IOS && Target.Architecture == UnrealArch.IOSSimulator;
+            if (Target.Type == TargetType.Server || (Target.Architecture != UnrealArch.Arm64 && !IsSimulator))
+                throw new BuildException("SimurghRTC mobile artifacts require ARM64 device clients or the explicit iOS ARM64 simulator target.");
+            string ArtifactPlatform = IsSimulator ? "IOSSimulator" : Target.Platform.ToString();
+            string Root = Path.Combine(PluginDirectory, "ThirdParty", "WebRTC", ArtifactPlatform, "arm64");
             try
             {
-                ExternalDependencies.AddRange(SimurghRTCMobileArtifact.Validate(Root, Target.Platform.ToString()));
+                ExternalDependencies.AddRange(SimurghRTCMobileArtifact.Validate(Root, ArtifactPlatform));
+                using FileStream ManifestStream = File.OpenRead(Path.Combine(Root, "artifact.json"));
+                string ManifestHash = Convert.ToHexString(SHA256.HashData(ManifestStream)).ToLowerInvariant();
+                PrivateDefinitions.Add("SIMURGHRTC_MOBILE_ARTIFACT_SHA256=\"" + ManifestHash + "\"");
             }
             catch (Exception Error)
             {
@@ -48,7 +53,11 @@ public class SimurghRTCNative : SimurghRTCModuleRules
             PrivateIncludePaths.Add(Path.Combine(Root, "Include", "third_party", "libyuv", "include"));
             PublicAdditionalLibraries.Add(Path.Combine(Root, "Lib", "libwebrtc.a"));
             PrivateDefinitions.AddRange(new string[] { "WEBRTC_5414=1", "WEBRTC_POSIX=1", "ABSL_ALLOCATOR_NOTHROW=1" });
-            AddEngineThirdPartyPrivateStaticDependencies(Target, "OpenSSL", "libOpus", "LibVpx");
+            AddEngineThirdPartyPrivateStaticDependencies(Target, "OpenSSL", "libOpus");
+            if (IsSimulator)
+                PublicAdditionalLibraries.Add(Path.Combine(Root, "Lib", "libvpx.a"));
+            else
+                AddEngineThirdPartyPrivateStaticDependencies(Target, "LibVpx");
             if (Target.Platform == UnrealTargetPlatform.Android)
             {
                 PrivateDefinitions.Add("WEBRTC_ANDROID=1");
@@ -118,7 +127,7 @@ public static class SimurghRTCMobileArtifact
 
     public static List<string> Validate(string Root, string Platform)
     {
-        Require(Platform == "Android" || Platform == "IOS", "Unsupported mobile platform.");
+        Require(Platform == "Android" || Platform == "IOS" || Platform == "IOSSimulator", "Unsupported mobile platform.");
         string Manifest = Path.Combine(Root, "artifact.json");
         Require(File.Exists(Manifest), "Missing " + Manifest);
         Dictionary<string, string> Files = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -133,11 +142,17 @@ public static class SimurghRTCMobileArtifact
         foreach (var Pair in new Dictionary<string, string> {
             { "platform", Platform }, { "architecture", "arm64" }, { "engine_version", "5.8.3" },
             { "adapter", "webrtc-5414-ue5.8.3-v1" }, { "configuration", "Release" },
-            { "dependencies", "unreal-openssl-opus-vpx" }
+            { "dependencies", Platform == "IOSSimulator" ? "unreal-openssl-opus-simulator-vpx" : "unreal-openssl-opus-vpx" }
         }) Require(Meta.GetProperty(Pair.Key).GetString() == Pair.Value, "Incompatible artifact " + Pair.Key);
         Require(Meta.GetProperty("toolchain").GetProperty("cpp_runtime").GetString() == "libc++", "Incompatible C++ runtime.");
+        if (Platform == "Android")
+            Require(Meta.GetProperty("toolchain").TryGetProperty("cpp_abi", out JsonElement ABI)
+                && ABI.GetString() == "itanium", "Rebuild Android WebRTC with the standard Itanium C++ ABI; relative vtables are incompatible.");
         foreach (string Required in RequiredFiles)
             Require(Files.ContainsKey(Required) && new FileInfo(Files[Required]).Length > 0, "Missing or empty " + Required);
+        if (Platform == "IOSSimulator")
+            foreach (string Required in new[] { "Lib/libvpx.a", "Build/vpx-build.json", "Licenses/VPX-LICENSE.txt" })
+                Require(Files.ContainsKey(Required) && new FileInfo(Files[Required]).Length > 0, "Missing or empty " + Required);
         JsonElement Inventory = Top.GetProperty("files");
         int Count = 0;
         List<string> Dependencies = new List<string> { Manifest };
@@ -148,7 +163,7 @@ public static class SimurghRTCMobileArtifact
             string FilePath = Files[Entry.Name];
             string Extension = Path.GetExtension(FilePath).ToLowerInvariant();
             Require(!new HashSet<string> { ".a", ".so", ".dylib", ".dll", ".lib", ".jar", ".aar" }.Contains(Extension)
-                || Entry.Name == "Lib/libwebrtc.a", "Unexpected binary payload: " + Entry.Name);
+                || Entry.Name == "Lib/libwebrtc.a" || (Platform == "IOSSimulator" && Entry.Name == "Lib/libvpx.a"), "Unexpected binary payload: " + Entry.Name);
             using FileStream Stream = File.OpenRead(FilePath);
             string Actual = Convert.ToHexString(SHA256.HashData(Stream)).ToLowerInvariant();
             Require(Actual == Entry.Value.GetString(), "SHA256 mismatch: " + Entry.Name);

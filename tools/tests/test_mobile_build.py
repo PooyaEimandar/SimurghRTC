@@ -34,6 +34,18 @@ class MobileBuildTests(unittest.TestCase):
         for spec in lock['tools'].values():
             self.assertEqual(len(spec['sha256']), 64)
 
+    def test_android_vtable_rejects_relative_or_missing_symbols(self):
+        build.validate_android_vtable('0000000000000000 0000000000000080 D _ZTVN3rtc6ThreadE')
+        for symbols in ('', '0000000000000000 0000000000000040 R _ZTVN3rtc6ThreadE'):
+            with self.assertRaisesRegex(ValueError, 'Itanium'):
+                build.validate_android_vtable(symbols)
+
+    def test_simulator_selects_its_own_gn_target(self):
+        args = build.gn_arguments(build.load_lock(), 'IOSSimulator', Path('/clang'))
+        self.assertIn('target_os = "ios"', args)
+        self.assertIn('target_environment = "simulator"', args)
+        self.assertNotIn('target_environment = "device"', args)
+
     def test_workspace_never_adopts_existing_files(self):
         (self.root / 'keep.txt').write_text('user data')
         with self.assertRaisesRegex(ValueError, 'never adopted'):

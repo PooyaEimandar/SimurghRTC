@@ -4,7 +4,7 @@
 
 - **Done on the available Mac:** SR-004 local media tests and SR-005 repeatable fixtures/service tests.
 - **In progress:** SR-001 API design, SR-002 build profiles, SR-003 dependency review and SR-006/SR-007 mobile artifact integration.
-- **Still to build:** real connections, network media and packaged Android/iOS device validation. Pinned ARM64 dependency builds now compile and link; see the validation record for repeat-build evidence.
+- **Still to prove:** real connections, network media and packaged Android/iOS device acceptance. The [mobile lifecycle probe](docs/MOBILE_PROBE.md) is implemented; see the validation record for build and device results.
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
 
@@ -144,7 +144,7 @@ Create a sample project and test harness with generated audio/video and versione
 
 ##### SR-006 — Build and integrate Android ARM64 libwebrtc (P0)
 
-**In progress:** the [pinned Linux build](docs/MOBILE_BUILDS.md) produces a native ARM64 archive using NDK r27c. Whole-archive linkage, repeat builds in separate output directories and 16 KiB alignment of the probe shared library pass. Artifact staging and the compiled UBT validator accept the real export. Fresh-host reproduction, packaged Unreal linkage, required platform helpers, physical-device tests and initial app-size measurements remain open.
+**In progress:** the [pinned Linux build](docs/MOBILE_BUILDS.md) now uses Unreal-compatible vtables, fixing the first Samsung crash. Packaged Direct-only and Full probes pass on a Galaxy S25 Ultra: nine peers per run, repeated stop/restart and destructor cleanup. Each app links one libwebrtc archive, preserves 16 KiB ELF alignment and records its dependency identity. Development APKs are about 98.4 MiB. Repeat builds of the corrected revision and independent-host reproduction remain open; Shipping RTC size deltas are separate work. See [results](docs/M0_VALIDATION.md#packaged-mobile-probe-work).
 
 Create a reproducible Linux-hosted build of pinned upstream libwebrtc for `arm64-v8a`, with UE-compatible NDK/compiler settings and required Java/JNI helpers. Record flags, codecs, patches, checksums, symbols and notices; validate native-library page-size requirements.
 
@@ -154,7 +154,7 @@ Create a reproducible Linux-hosted build of pinned upstream libwebrtc for `arm64
 
 ##### SR-007 — Build and integrate iOS ARM64 libwebrtc (P0)
 
-**In progress:** the [pinned Xcode build](docs/MOBILE_BUILDS.md) produces a device ARM64 archive. Whole-archive linkage against Unreal's dependencies and repeat builds in separate output directories pass. Artifact staging and the compiled UBT validator accept the real export; simulator objects are rejected. Fresh-host reproduction, packaged Unreal linkage, required platform helpers, signing, device tests and initial app-size measurements remain open.
+**In progress:** the [pinned Xcode build](docs/MOBILE_BUILDS.md) produces a device ARM64 archive; whole-archive linkage and repeat device builds pass. Separately built ARM64 simulator libraries now run in packaged UE 5.8.3 Direct-only and Full probes: nine peers per run, repeated teardown and verified app shutdown. Both use the installed Xcode and iOS 27 simulator, with graphics/hardware audio disabled. Simulator bundles are about 270.5 MiB; these are not iPhone delivery sizes. See the [probe guide](docs/MOBILE_PROBE.md) and [results](docs/M0_VALIDATION.md#packaged-mobile-probe-work). Fresh-host reproduction and signed physical-device acceptance remain open. Physical iPhone testing is deferred at the user's request.
 
 Create a reproducible macOS/Xcode build of pinned upstream libwebrtc for device `arm64`, with matching headers and required Objective-C++ helpers. Select static library/framework packaging and XCFramework distribution where useful; keep simulator outputs and dSYMs separate.
 
@@ -780,7 +780,7 @@ See [Architecture](docs/ARCHITECTURE.md) for the API and build boundaries.
 | UE 5.9 | Future compatibility port | Separate adapter audit and regression pass when the target engine is available |
 | Other mobile architectures and consoles | Future evaluation | Separate SDK, capture/codec, hardware and platform-policy work; no inherited support claim |
 
-The available test machine is a Mac. Android dependency builds use the pinned Linux container; iOS uses the pinned local Xcode SDK. Independent build hosts, physical Android/iOS devices and iOS signing are still needed for acceptance. Record the exact standard UE installation and revision for each result; Server targets may need a source build. Android/iOS runtime support remains Unverified until its gates pass. A Mac or simulator run does not prove mobile support; Windows/Linux runtime coverage also requires its own hosts. See [Mobile clients](docs/MOBILE_CLIENTS.md) for dependency manifests, codec optimization and size measurement.
+The available test machine is a Mac. Android dependency builds use the pinned Linux container; iOS dependencies use the pinned Xcode SDK. Samsung and ARM64 iOS simulator lifecycle tests pass with Janus on/off. Physical iPhone testing is deferred, and independent build hosts are still needed. Record the engine revision and toolchains for each result; Server targets may need a source build. Broader Android/iOS runtime support remains Unverified until its gates pass. Simulator results do not establish physical iPhone behavior; Windows/Linux runtime coverage also requires its own hosts. See [Mobile clients](docs/MOBILE_CLIENTS.md) for dependency manifests, codec optimization and size measurement.
 
 ## 7. Release gates
 

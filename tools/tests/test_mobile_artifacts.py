@@ -18,11 +18,11 @@ SPEC.loader.exec_module(profiles)
 def metadata(platform='Android'):
     return {'schema': 1, 'artifact_id': f'test-only-{platform.lower()}', 'platform': platform,
             'architecture': 'arm64', 'engine_version': '5.8.3', 'adapter': artifacts.ADAPTER,
-            'configuration': 'Release', 'dependencies': 'unreal-openssl-opus-vpx',
+            'configuration': 'Release', 'dependencies': 'unreal-openssl-opus-simulator-vpx' if platform == 'IOSSimulator' else 'unreal-openssl-opus-vpx',
             'source_revision': '0123456789abcdef0123456789abcdef01234567',
             'toolchain': {'host': 'Linux' if platform == 'Android' else 'Mac', 'compiler': 'test-only',
                           'sdk': 'test-only', 'minimum_os': '26' if platform == 'Android' else '15.0',
-                          'cpp_runtime': 'libc++'},
+                          'cpp_runtime': 'libc++', 'cpp_abi': 'itanium'},
             'codecs': {'audio': ['opus'], 'video': ['VP8']}}
 
 
@@ -50,7 +50,11 @@ def make_payload(root, platform='Android'):
         path = root / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text('Synthetic test fixture; not a WebRTC artifact.\n')
-    (root / 'Lib/libwebrtc.a').write_bytes(archive(('probe.o/', elf() if platform == 'Android' else macho())))
+    (root / 'Lib/libwebrtc.a').write_bytes(archive(('probe.o/', elf() if platform == 'Android' else macho(platform=7 if platform == 'IOSSimulator' else 2))))
+    if platform == 'IOSSimulator':
+        (root / 'Lib/libvpx.a').write_bytes(archive(('vpx.o/', macho(platform=7))))
+        (root / 'Build/vpx-build.json').write_text('{"synthetic": true}')
+        (root / 'Licenses/VPX-LICENSE.txt').write_text('Synthetic fixture')
     (root / 'Build/source-lock.json').write_text(json.dumps({
         'webrtc_revision': metadata(platform)['source_revision'],
         'dependencies': {'test-only': 'abcdef01' * 5}, 'patches': []}))
@@ -71,7 +75,7 @@ class ArtifactTests(unittest.TestCase):
         seal(self.root)
 
     def test_valid_platforms_and_honest_validation_scope(self):
-        for platform in ['Android', 'IOS']:
+        for platform in ['Android', 'IOS', 'IOSSimulator']:
             with self.subTest(platform=platform):
                 make_payload(self.root, platform)
                 seal(self.root, platform)
@@ -79,6 +83,31 @@ class ArtifactTests(unittest.TestCase):
                 self.assertEqual(platform, report['platform'])
                 self.assertEqual(1, report['objects'])
                 self.assertEqual('unverified', report['runtime_validation'])
+
+    def test_simulator_archive_cannot_substitute_for_device(self):
+        for platform, object_platform in [('IOS', 7), ('IOSSimulator', 2)]:
+            with self.assertRaisesRegex(ValueError, 'platform mismatch'):
+                artifacts.validate_object(macho(platform=object_platform), platform)
+        with self.assertRaisesRegex(ValueError, 'arm64'):
+            artifacts.validate_object(macho(platform=7, cpu=0x1000007), 'IOSSimulator')
+
+    def test_simulator_vpx_must_also_target_simulator(self):
+        make_payload(self.root, 'IOSSimulator')
+        (self.root / 'Lib/libvpx.a').write_bytes(archive(('vpx.o/', macho(platform=2))))
+        seal(self.root, 'IOSSimulator')
+        with self.assertRaisesRegex(ValueError, 'platform mismatch'):
+            artifacts.validate(self.root)
+
+    def test_android_rejects_missing_or_relative_vtable_abi(self):
+        for abi in (None, 'relative'):
+            meta = metadata()
+            if abi is None:
+                del meta['toolchain']['cpp_abi']
+            else:
+                meta['toolchain']['cpp_abi'] = abi
+            seal(self.root, meta=meta)
+            with self.assertRaisesRegex(ValueError, 'Itanium'):
+                artifacts.validate(self.root)
 
     def test_package_inventory_and_no_overwrite(self):
         (self.root / artifacts.MANIFEST).unlink()
@@ -158,7 +187,7 @@ class ArtifactTests(unittest.TestCase):
             path = self.root / name
             path.write_text('unwanted binary')
             seal(self.root)
-            with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'exactly one'):
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'Unexpected native'):
                 artifacts.validate(self.root)
             path.unlink()
 

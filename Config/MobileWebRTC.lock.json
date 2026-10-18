@@ -208,6 +208,34 @@
       },
       "ndk_gn_sha256": "3f7bba8a4d17640704b71c58d2e5b7295f7bfaa5a752c97f0b8a65086c31deab",
       "ndk_notice_sha256": "4d5224d1c0b54ffa88b0dc0088191638fdbb7227835095dfb98f7f66b416a323"
+    },
+    "IOSSimulator": {
+      "host": "Darwin",
+      "machine": "arm64",
+      "python": "3.10.21",
+      "xcode": "Xcode 27.0\nBuild version 27A266a",
+      "sdk": "27.0",
+      "sdk_build": "24A430",
+      "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
+      "minimum_os": "15.0",
+      "link_libraries": [
+        {
+          "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libssl.sim.a",
+          "sha256": "35fc534696e491a87395787ce5c083694a042a72d1135271e85dd57d8b4df443"
+        },
+        {
+          "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libcrypto.sim.a",
+          "sha256": "bd2d77b6004679bb53bdd4b3209e65f9e87662c9a1797a1b13ee57c1e576ad16"
+        },
+        {
+          "path": "Engine/Source/ThirdParty/libOpus/opus-1.1/IOS/libOpus.sim.a",
+          "sha256": "9e578499c3c96b35b56bcb971d6794599bea3b341f62ea1775d5d98eadd3d47b"
+        }
+      ],
+      "vpx_source": {
+        "path": "Engine/Source/ThirdParty/libvpx/build/libvpx-1.14.1.tar.gz",
+        "sha256": "901747254d80a7937c933d03bd7c5d41e8e6c883e0665fadcb172542167c7977"
+      }
     }
   },
   "common_gn_args": {
@@ -391,6 +419,17 @@
         "tools_webrtc/libs/generate_licenses.py": {
           "before": "dc9060d6032b23e9e2598259f0e101fcc36996cb00e363ed27adef1a2babe3b5",
           "after": "0af6676f3702ae746438f49b0a619fcd55ef7e3754910d51374908fa905b6541"
+        }
+      }
+    },
+    {
+      "repository": "src/build",
+      "path": "Config/MobileWebRTC/patches/0013-android-itanium-abi.patch",
+      "sha256": "bb3571d3e6841400d6b067250d651d2951610fefdac536254b7dd6cb2ca009be",
+      "files": {
+        "config/android/BUILD.gn": {
+          "before": "23e53faaed6bead73a2a187296537536edcf01ec30aad6569f88811431bbc321",
+          "after": "b4038476159408fee8c07bfd3a3f7290365e20080e2e040d94c53424e01dff11"
         }
       }
     }

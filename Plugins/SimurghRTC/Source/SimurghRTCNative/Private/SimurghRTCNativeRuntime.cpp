@@ -3,6 +3,10 @@
 
 #if SIMURGHRTC_WITH_WEBRTC
 THIRD_PARTY_INCLUDES_START
+#if PLATFORM_IOS && defined(__clang__)
+// Pinned Abseil uses the old relocatability builtin; keep this warning scoped to its headers.
+#pragma clang diagnostic ignored "-Wdeprecated-builtins"
+#endif
 #include "api/create_peerconnection_factory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
@@ -91,6 +95,15 @@ FNativeRuntime::FNativeRuntime() = default;
 FNativeRuntime::~FNativeRuntime() { Stop(); }
 
 bool FNativeRuntime::IsSupported() { return SIMURGHRTC_WITH_WEBRTC != 0; }
+
+FString FNativeRuntime::GetMobileArtifactSHA256()
+{
+#ifdef SIMURGHRTC_MOBILE_ARTIFACT_SHA256
+    return TEXT(SIMURGHRTC_MOBILE_ARTIFACT_SHA256);
+#else
+    return {};
+#endif
+}
 
 bool FNativeRuntime::Start(ENativeFactoryMode Mode, FString& OutError)
 {

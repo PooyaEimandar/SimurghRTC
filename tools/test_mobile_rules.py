@@ -29,14 +29,17 @@ def main():
         parser.error('Build ContractHostEditor with UE 5.8.3 first and supply its rules DLL.')
     output.mkdir(parents=True)
     cases = []
-    for target in ['Android', 'IOS']:
+    for target in ['Android', 'IOS', 'IOSSimulator']:
         good = output / target
         make_payload(good, target)
         seal(good, target)
         cases.append({'name': f'{target}: valid', 'root': str(good), 'platform': target, 'accept': True})
         cases.append({'name': f'{target}: wrong platform', 'root': str(good),
                       'platform': 'IOS' if target == 'Android' else 'Android', 'accept': False})
-        for name in ['header', 'library', 'extra', 'missing', 'abi', 'symlink', 'duplicate']:
+        invalid = ['header', 'library', 'extra', 'missing', 'abi', 'symlink', 'duplicate']
+        if target == 'Android':
+            invalid += ['relative-vtables', 'unknown-vtables']
+        for name in invalid:
             bad = output / f'{target}-{name}'
             shutil.copytree(good, bad)
             if name in ('header', 'library'):
@@ -48,6 +51,14 @@ def main():
             elif name == 'abi':
                 manifest = json.loads((bad / 'artifact.json').read_text())
                 manifest['metadata']['adapter'] = 'unsupported'
+                (bad / 'artifact.json').write_text(json.dumps(manifest))
+            elif name in ('relative-vtables', 'unknown-vtables'):
+                manifest = json.loads((bad / 'artifact.json').read_text())
+                toolchain = manifest['metadata']['toolchain']
+                if name == 'unknown-vtables':
+                    del toolchain['cpp_abi']
+                else:
+                    toolchain['cpp_abi'] = 'relative'
                 (bad / 'artifact.json').write_text(json.dumps(manifest))
             elif name == 'symlink':
                 (bad / 'outside').symlink_to(good, target_is_directory=True)

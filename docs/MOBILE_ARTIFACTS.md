@@ -19,6 +19,8 @@ Use an iOS artifact the same way. Repeat `--mobile-artifact` to include one arti
 
 The staged plugin stores each dependency under `ThirdParty/WebRTC/<Android-or-IOS>/arm64`. Unreal selects the target's artifact and checks its identity and file hashes when evaluating build rules. Missing or incompatible artifacts stop the build with an explanation. Desktop targets continue using the engine library.
 
+Simulator testing uses `ThirdParty/WebRTC/IOSSimulator/arm64` and `-architecture=iossimulator`. Its manifest identifies platform `IOSSimulator` and dependencies `unreal-openssl-opus-simulator-vpx`; it additionally contains `Lib/libvpx.a`, `Build/vpx-build.json` and the VPX license. Both archives must contain simulator objects. An iOS device build cannot select this artifact.
+
 An artifact passing these checks has **not** passed ABI, link, codec, security or device acceptance. Android ELF objects identify the CPU, not the Android API level. Those checks need the actual build records and packaged probe. Other enabled plugins may introduce another WebRTC copy; inspect the final application's link map before accepting it.
 
 ## Package a dependency build
@@ -49,6 +51,8 @@ The output must be new. The tool copies the input, adds `artifact.json` with a S
 
 The initial adapter uses the same 5414-era C++ API as the desktop probe. Its archive must use Unreal's **OpenSSL, Opus and VPX** dependencies and the target's libc++. A stock upstream archive with bundled BoringSSL/codec copies is incompatible. The exact source revision, necessary patches and toolchain compatibility still need qualification; the adapter name is not a source pin or a supported security baseline.
 
+Android also requires the standard Itanium C++ ABI. Rebuild earlier artifacts that lack `toolchain.cpp_abi: "itanium"`; Chromium's relative vtables crash when called from Unreal. The pinned build now disables them and checks the resulting thread vtable before export.
+
 Version 1 is limited to the factory and software-media probes: dummy audio device, network monitor disabled, no Java/AAR payload or hardware codec helpers. Camera, microphone, JNI/Objective-C integrations and platform lifecycle support remain separate mobile work. Both media and data-only profiles currently use the same media-capable dependency; no size saving is claimed.
 
 <details>
@@ -72,7 +76,8 @@ Replace the descriptive values in this metadata template with real build facts. 
     "compiler": "REPLACE_WITH_COMPILER_VERSION",
     "sdk": "REPLACE_WITH_NDK_VERSION",
     "minimum_os": "REPLACE_WITH_ANDROID_API_LEVEL",
-    "cpp_runtime": "libc++"
+    "cpp_runtime": "libc++",
+    "cpp_abi": "itanium"
   },
   "codecs": {
     "audio": ["opus"],
@@ -87,7 +92,7 @@ For iOS, use `platform: "IOS"`, `host: "Mac"`, an iOS SDK version and the deploy
 
 The input must include the full matching headers, including `api/create_peerconnection_factory.h`, `rtc_base/thread.h`, `third_party/abseil-cpp/absl/base/config.h` and `third_party/libyuv/include/libyuv.h`. Record generated headers and compile definitions in the recipe too.
 
-The Python tool rejects missing, changed or extra files; unsafe paths, symlinks and case collisions; other binary payloads; empty/thin archives; non-ARM64 objects; and iOS simulator/macOS objects. Ordinary GNU and BSD archives are supported. LLVM bitcode/LTO and universal archives are intentionally unsupported in this first format. The optimization work can extend it after actual linker/device validation.
+The Python tool rejects missing, changed or extra files; unsafe paths, symlinks and case collisions; unexpected binary payloads; empty/thin archives; non-ARM64 objects; and objects built for the wrong platform. Device and simulator archives cannot be interchanged. Ordinary GNU and BSD archives are supported. LLVM bitcode/LTO and universal archives are intentionally unsupported in this first format. The optimization work can extend it after actual linker/device validation.
 
 UBT rechecks platform, architecture, adapter, engine, dependency selection, required files and the complete SHA-256 inventory. File inputs are registered as external build dependencies. The archive object inspection runs in the packaging/staging tool. Neither check proves compatibility with another plugin's crypto symbols or validates Android's final shared-library page alignment.
 

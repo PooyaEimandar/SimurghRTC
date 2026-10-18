@@ -79,23 +79,27 @@ def validate_metadata(meta: dict) -> None:
     require(type(meta['schema']) is int and meta['schema'] == 1, 'Unsupported artifact schema.')
     require(isinstance(meta['artifact_id'], str) and re.fullmatch(r'[a-z0-9][a-z0-9.-]{0,95}', meta['artifact_id']),
             'Invalid artifact_id.')
-    require(meta['platform'] in ('Android', 'IOS'), 'Only Android and IOS device artifacts are supported.')
+    require(meta['platform'] in ('Android', 'IOS', 'IOSSimulator'), 'Unsupported mobile artifact platform.')
     require(meta['architecture'] == 'arm64', 'Only ARM64 artifacts are supported.')
     require(meta['engine_version'] == '5.8.3' and meta['adapter'] == ADAPTER,
             'Artifact requires a different engine or private adapter.')
     require(meta['configuration'] == 'Release', 'Only Release dependencies are supported.')
-    require(meta['dependencies'] == 'unreal-openssl-opus-vpx',
+    expected_dependencies = 'unreal-openssl-opus-simulator-vpx' if meta['platform'] == 'IOSSimulator' else 'unreal-openssl-opus-vpx'
+    require(meta['dependencies'] == expected_dependencies,
             'This adapter requires Unreal OpenSSL, Opus and VPX; embedded copies are incompatible.')
     require(isinstance(meta['source_revision'], str) and re.fullmatch(r'[0-9a-f]{40}', meta['source_revision'])
             and len(set(meta['source_revision'])) > 1, 'Record the exact WebRTC Git commit.')
     toolchain = meta['toolchain']
-    require(isinstance(toolchain, dict) and set(toolchain) == {'host', 'compiler', 'sdk', 'minimum_os', 'cpp_runtime'},
-            'Record host, compiler, SDK, minimum OS and C++ runtime.')
+    fields = {'host', 'compiler', 'sdk', 'minimum_os', 'cpp_runtime'}
+    require(isinstance(toolchain, dict) and fields <= set(toolchain) <= fields | {'cpp_abi'},
+            'Record host, compiler, SDK, minimum OS, C++ runtime and ABI.')
     for value in toolchain.values():
         require(isinstance(value, str) and value.strip() == value and 0 < len(value) <= 256
                 and not any(ord(c) < 32 for c in value), 'Toolchain values must be nonempty single-line strings.')
     require(toolchain['host'] == ('Linux' if meta['platform'] == 'Android' else 'Mac'), 'Wrong dependency build host.')
     require(toolchain['cpp_runtime'] == 'libc++', 'The adapter requires the platform libc++.')
+    if meta['platform'] == 'Android' or 'cpp_abi' in toolchain:
+        require(toolchain.get('cpp_abi') == 'itanium', 'Rebuild with the standard Itanium C++ ABI; relative vtables are incompatible.')
     codecs = meta['codecs']
     require(isinstance(codecs, dict) and set(codecs) == {'audio', 'video'}, 'Record audio and video codecs.')
     for kind, required in [('audio', 'opus'), ('video', 'VP8')]:
@@ -113,7 +117,7 @@ def validate_object(data: bytes, platform: str) -> None:
         return
     require(len(data) >= 32 and data[:4] == b'\xcf\xfa\xed\xfe', 'Expected a thin 64-bit Mach-O object.')
     cpu, subtype, kind, commands, command_bytes = struct.unpack_from('<IIIII', data, 4)
-    require(cpu == 0x100000C and subtype == 0 and kind == 1, 'iOS archives must contain only device arm64 objects.')
+    require(cpu == 0x100000C and subtype == 0 and kind == 1, 'iOS archives must contain only arm64 objects.')
     require(32 + command_bytes <= len(data), 'Truncated Mach-O load commands.')
     offset = 32
     device = False
@@ -122,16 +126,16 @@ def validate_object(data: bytes, platform: str) -> None:
         command, size = struct.unpack_from('<II', data, offset)
         require(size >= 8 and offset + size <= 32 + command_bytes, 'Invalid Mach-O load command size.')
         if command == 0x32:  # LC_BUILD_VERSION: iOS=2, iOS simulator=7.
-            require(size >= 24 and struct.unpack_from('<I', data, offset + 8)[0] == 2,
-                    'iOS simulator or non-iOS object found in device artifact.')
+            require(size >= 24 and struct.unpack_from('<I', data, offset + 8)[0] == (7 if platform == 'IOSSimulator' else 2),
+                    'iOS device/simulator platform mismatch in artifact.')
             device = True
         elif command == 0x25:  # LC_VERSION_MIN_IPHONEOS, older device builds.
-            require(size >= 16, 'Truncated iOS deployment command.')
+            require(size >= 16 and platform == 'IOS', 'Legacy device deployment command in simulator artifact.')
             device = True
         elif command in (0x24, 0x2F, 0x30):
             raise ValueError('Non-iOS deployment command in device artifact.')
         offset += size
-    require(offset == 32 + command_bytes and device, 'Missing iOS device platform metadata.')
+    require(offset == 32 + command_bytes and device, 'Missing iOS target platform metadata.')
 
 
 def validate_archive(path: Path, platform: str) -> int:
@@ -174,12 +178,16 @@ def validate(root: Path) -> dict:
     files = payload_files(root)
     require(set(files) == set(inventory), 'Artifact file inventory differs from disk.')
     require(set(REQUIRED) <= set(files), 'Artifact is missing headers, archive, build records or notices.')
+    if meta['platform'] == 'IOSSimulator':
+        require({'Lib/libvpx.a', 'Build/vpx-build.json', 'Licenses/VPX-LICENSE.txt'} <= set(files),
+                'Simulator artifact requires its separate VPX library and build/license records.')
     for name, path in files.items():
         expected = inventory[name]
         require(isinstance(expected, str) and re.fullmatch(r'[0-9a-f]{64}', expected), f'Invalid SHA256: {name}')
         require(digest(path) == expected, f'SHA256 mismatch: {name}')
         if path.suffix.lower() in ('.a', '.so', '.dylib', '.dll', '.lib', '.jar', '.aar'):
-            require(name == 'Lib/libwebrtc.a', 'v1 accepts exactly one native archive and no Java/helper binaries.')
+            require(name == 'Lib/libwebrtc.a' or (meta['platform'] == 'IOSSimulator' and name == 'Lib/libvpx.a'),
+                    'Unexpected native or Java/helper binary.')
     for name in REQUIRED:
         require(files[name].stat().st_size > 0, f'Empty required file: {name}')
     lock = read_json(files['Build/source-lock.json'])
@@ -193,6 +201,8 @@ def validate(root: Path) -> dict:
         require(isinstance(patch, str) and relative_path(patch).startswith('Build/patches/')
                 and patch in files, 'Source-lock patches must be included and checksummed.')
     objects = validate_archive(files['Lib/libwebrtc.a'], meta['platform'])
+    if meta['platform'] == 'IOSSimulator':
+        validate_archive(files['Lib/libvpx.a'], 'IOSSimulator')
     return {'artifact_id': meta['artifact_id'], 'platform': meta['platform'], 'architecture': meta['architecture'],
             'files': len(files), 'objects': objects, 'archive_bytes': files['Lib/libwebrtc.a'].stat().st_size,
             'manifest_sha256': digest(root / MANIFEST), 'runtime_validation': 'unverified'}
