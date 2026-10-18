@@ -9,6 +9,7 @@ SimurghRTC is a C++ plugin for **Unreal Engine 5.8.3**. Its goal is to let an Un
 | Step | Read |
 |---|---|
 | Build the plugin and run Unreal tests | [Building](docs/BUILDING.md) |
+| Build the Android/iOS ARM64 dependency | [Mobile builds](docs/MOBILE_BUILDS.md) |
 | Run the test data and local Janus/TURN setup | [Test fixtures](docs/FIXTURES.md) |
 | See what is finished and what comes next | [Roadmap](ROADMAP.md) |
 | Use or review the C++ and Blueprint API | [API contract](docs/API_CONTRACT.md) |

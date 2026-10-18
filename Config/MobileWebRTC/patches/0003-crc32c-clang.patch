@@ -1,0 +1,13 @@
+diff --git a/crc32c/BUILD.gn b/crc32c/BUILD.gn
+index c745a5f86..e86fc10ff 100644
+--- a/crc32c/BUILD.gn
++++ b/crc32c/BUILD.gn
+@@ -121,7 +121,7 @@ source_set("crc32c_arm64") {
+         "-Xclang",
+         "-target-feature",
+         "-Xclang",
+-        "+crypto",
++        "+aes",  # Modern Clang names the vmull_p64 feature explicitly.
+       ]
+     } else {
+       cflags = [ "-march=armv8-a+crc+crypto" ]

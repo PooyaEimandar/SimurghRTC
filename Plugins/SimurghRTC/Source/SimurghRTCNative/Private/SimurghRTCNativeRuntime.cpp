@@ -1,7 +1,7 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "SimurghRTCNativeRuntime.h"
 
-#if SIMURGHRTC_WITH_ENGINE_WEBRTC
+#if SIMURGHRTC_WITH_WEBRTC
 THIRD_PARTY_INCLUDES_START
 #include "api/create_peerconnection_factory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
@@ -17,13 +17,13 @@ THIRD_PARTY_INCLUDES_START
 THIRD_PARTY_INCLUDES_END
 
 #if !WEBRTC_5414
-#error SimurghRTC UE 5.8.3 adapter requires the engine's WebRTC 5414 headers and library.
+#error SimurghRTC UE 5.8.3 adapter requires matching WebRTC 5414 headers and library.
 #endif
 #endif
 
 namespace SimurghRTC
 {
-#if SIMURGHRTC_WITH_ENGINE_WEBRTC
+#if SIMURGHRTC_WITH_WEBRTC
 namespace
 {
 // Game-thread leases pair our SSL initialization with the final runtime's shutdown.
@@ -44,7 +44,7 @@ class FNativeRuntime::FImpl
 {
 public:
     FNativeFactoryDiagnostics Diagnostics;
-#if SIMURGHRTC_WITH_ENGINE_WEBRTC
+#if SIMURGHRTC_WITH_WEBRTC
     bool bSSLAcquired = false;
     bool bNetworkStarted = false;
     bool bWorkerStarted = false;
@@ -90,7 +90,7 @@ public:
 FNativeRuntime::FNativeRuntime() = default;
 FNativeRuntime::~FNativeRuntime() { Stop(); }
 
-bool FNativeRuntime::IsSupported() { return SIMURGHRTC_WITH_ENGINE_WEBRTC != 0; }
+bool FNativeRuntime::IsSupported() { return SIMURGHRTC_WITH_WEBRTC != 0; }
 
 bool FNativeRuntime::Start(ENativeFactoryMode Mode, FString& OutError)
 {
@@ -99,7 +99,7 @@ bool FNativeRuntime::Start(ENativeFactoryMode Mode, FString& OutError)
     if (Impl) { OutError = TEXT("Factory is already started; stop it before restarting."); return false; }
     if (Mode != ENativeFactoryMode::DataOnly && Mode != ENativeFactoryMode::BuiltinMedia)
     { OutError = TEXT("Invalid native factory mode."); return false; }
-#if SIMURGHRTC_WITH_ENGINE_WEBRTC
+#if SIMURGHRTC_WITH_WEBRTC
     auto Candidate = MakeUnique<FImpl>();
     if (SSLUsers == 0 && !rtc::InitializeSSL())
     { OutError = TEXT("WebRTC SSL initialization failed."); return false; }
@@ -181,7 +181,7 @@ bool FNativeRuntime::CreateProbePeerConnection(FString& OutError)
     { OutError = TEXT("Start the factory before creating a probe peer."); return false; }
     if (Impl->Diagnostics.bPeerConnectionReady)
     { OutError = TEXT("This probe already owns a peer connection."); return false; }
-#if SIMURGHRTC_WITH_ENGINE_WEBRTC
+#if SIMURGHRTC_WITH_WEBRTC
     Impl->Signaling->BlockingCall([&]
     {
         webrtc::PeerConnectionInterface::RTCConfiguration Config;

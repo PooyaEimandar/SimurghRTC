@@ -5,6 +5,10 @@ import argparse
 import json
 from pathlib import Path
 import shutil
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import mobile_artifacts
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / 'Plugins' / 'SimurghRTC'
@@ -42,7 +46,7 @@ def documents(profile: str) -> tuple[dict, dict]:
                 'with_media': 'SimurghRTCMedia' in names,
                 'with_server': 'SimurghRTCServer' in names,
                 'native_transport': 'unimplemented', 'desktop_native_factory': 'engine-webrtc-5414',
-                'mobile_native_factory': 'unimplemented', 'modules': names}
+                'mobile_native_factory': 'external-artifact-required', 'modules': names}
     if profile == 'server':
         descriptor['SupportedTargetPlatforms'] = ['Win64','Mac','Linux']
     return descriptor, manifest
@@ -52,7 +56,7 @@ def write_documents(destination: Path, profile: str) -> None:
     (destination/'SimurghRTC.uplugin').write_text(json.dumps(descriptor, indent=2)+'\n')
     (destination/'SimurghRTC.profile.json').write_text(json.dumps(manifest, indent=2)+'\n')
 
-def stage(profile: str, destination: Path) -> None:
+def stage(profile: str, destination: Path, artifacts: list[Path] | None = None) -> None:
     destination = destination.resolve()
     # Never overwrite the source tree or an existing build/package.
     host = ROOT/'Samples'/'ContractHost'
@@ -63,11 +67,26 @@ def stage(profile: str, destination: Path) -> None:
     if destination.exists() and any(destination.iterdir()):
         raise ValueError('Output must be new or empty; existing files are never removed.')
     _, manifest = documents(profile)
+    selected = {}
+    for artifact in artifacts or []:
+        if profile == 'server':
+            raise ValueError('The Server profile does not accept mobile artifacts.')
+        report = mobile_artifacts.validate(artifact)
+        platform = report['platform']
+        if platform in selected:
+            raise ValueError(f'Only one {platform} artifact can be selected.')
+        if artifact.resolve() == destination or artifact.resolve() in destination.parents:
+            raise ValueError('Output must be outside the artifact input tree.')
+        selected[platform] = artifact
     target = destination/'Plugins'/'SimurghRTC'
     target.mkdir(parents=True, exist_ok=True)
     for module in manifest['modules']:
         shutil.copytree(PLUGIN/'Source'/module, target/'Source'/module)
     write_documents(target, profile)
+    for platform, artifact in selected.items():
+        installed = target/'ThirdParty'/'WebRTC'/platform/'arm64'
+        shutil.copytree(artifact, installed)
+        mobile_artifacts.validate(installed)
     shutil.copy2(ROOT/'LICENSE', target/'LICENSE')
     for name in ['Source','Config']:
         shutil.copytree(host/name, destination/name)
@@ -79,6 +98,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--profile', choices=list(json.loads(POLICY.read_text())['profiles']), default='full')
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--mobile-artifact', type=Path, action='append', default=[],
+                        help='Stage a checked ARM64 artifact. Repeat once per mobile platform.')
     parser.add_argument('--refresh-default', action='store_true', help='Regenerate the checked-in full descriptor/manifest only.')
     parser.add_argument('--check-default', action='store_true')
     args = parser.parse_args()
@@ -86,6 +107,8 @@ def main() -> None:
         parser.error('Choose exactly one of --output, --refresh-default, --check-default.')
     if (args.refresh_default or args.check_default) and args.profile != 'full':
         parser.error('The source checkout always uses the full profile; stage other profiles with --output.')
+    if args.mobile_artifact and args.output is None:
+        parser.error('--mobile-artifact requires --output.')
     if args.refresh_default:
         write_documents(PLUGIN, 'full')
     elif args.check_default:
@@ -95,7 +118,7 @@ def main() -> None:
             parser.error('Default profile drift: run --refresh-default.')
     else:
         try:
-            stage(args.profile, args.output)
+            stage(args.profile, args.output, args.mobile_artifact)
         except (ValueError, OSError) as error:
             parser.error(str(error))
 

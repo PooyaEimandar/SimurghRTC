@@ -1,0 +1,102 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index ca60bdc..c7566d0 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -110,7 +110,7 @@ if (!build_with_chromium) {
+         deps += [ "modules/desktop_capture:shared_screencast_stream_test" ]
+       }
+     }
+-    if (target_os == "android") {
++    if (target_os == "android" && rtc_build_tools) {
+       deps += [ "tools_webrtc:binary_version_check" ]
+     }
+   }
+@@ -260,7 +260,16 @@ config("rtc_prod_config") {
+   }
+ }
+ 
++config("simurgh_external") {
++  include_dirs = [
++    "//simurgh_external/openssl",
++    "//simurgh_external/opus",
++    "//simurgh_external/vpx",
++  ]
++}
++
+ config("common_config") {
++  configs = [ ":simurgh_external" ]
+   cflags = []
+   cflags_c = []
+   cflags_cc = []
+@@ -475,64 +484,17 @@ if (!build_with_chromium) {
+     suppressed_configs += [ "//build/config/compiler:thin_archive" ]
+     defines = []
+ 
++    # SimurghRTC M0: native factory, software codecs and APM. No platform SDK wrappers.
+     deps = [
+       "api:create_peerconnection_factory",
+-      "api:libjingle_peerconnection_api",
+-      "api:rtc_error",
+-      "api:transport_api",
+-      "api/crypto",
+-      "api/rtc_event_log:rtc_event_log_factory",
+-      "api/task_queue",
+-      "api/task_queue:default_task_queue_factory",
+-      "api/test/metrics",
+-      "audio",
+-      "call",
+-      "common_audio",
+-      "common_video",
+-      "logging:rtc_event_log_api",
+-      "media",
+-      "modules",
+-      "modules/video_capture:video_capture_internal_impl",
+-      "p2p:rtc_p2p",
+-      "pc:libjingle_peerconnection",
+-      "pc:rtc_pc",
++      "api/audio_codecs:builtin_audio_decoder_factory",
++      "api/audio_codecs:builtin_audio_encoder_factory",
++      "api/video_codecs:builtin_video_decoder_factory",
++      "api/video_codecs:builtin_video_encoder_factory",
++      "modules/audio_processing",
+       "rtc_base",
+-      "sdk",
+-      "video",
++      "//third_party/libyuv",
+     ]
+-
+-    if (rtc_include_builtin_audio_codecs) {
+-      deps += [
+-        "api/audio_codecs:builtin_audio_decoder_factory",
+-        "api/audio_codecs:builtin_audio_encoder_factory",
+-      ]
+-    }
+-
+-    if (rtc_include_builtin_video_codecs) {
+-      deps += [
+-        "api/video_codecs:builtin_video_decoder_factory",
+-        "api/video_codecs:builtin_video_encoder_factory",
+-      ]
+-    }
+-
+-    if (build_with_mozilla) {
+-      deps += [
+-        "api/video:video_frame",
+-        "api/video:video_rtp_headers",
+-      ]
+-    } else {
+-      deps += [
+-        "api",
+-        "logging",
+-        "p2p",
+-        "pc",
+-        "stats",
+-      ]
+-    }
+-
+-    if (rtc_enable_protobuf) {
+-      deps += [ "logging:rtc_event_log_proto" ]
+-    }
+   }
+ 
+   if (rtc_include_tests && !is_asan) {

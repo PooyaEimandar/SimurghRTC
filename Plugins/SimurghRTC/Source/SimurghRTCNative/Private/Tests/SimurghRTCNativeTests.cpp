@@ -3,7 +3,7 @@
 #include "SimurghRTCNativeMediaProbe.h"
 #include "Misc/AutomationTest.h"
 
-#if WITH_DEV_AUTOMATION_TESTS && SIMURGHRTC_WITH_ENGINE_WEBRTC
+#if WITH_DEV_AUTOMATION_TESTS && SIMURGHRTC_WITH_WEBRTC
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSimurghRTCNativeMediaTest, "SimurghRTC.Native.MediaCodecs",
     EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::EngineFilter)
 

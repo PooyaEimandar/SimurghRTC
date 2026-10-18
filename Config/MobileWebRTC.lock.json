@@ -1,0 +1,398 @@
+{
+  "schema": 1,
+  "adapter": "webrtc-5414-ue5.8.3-v1",
+  "engine_version": "5.8.3",
+  "source_epoch": 1671526983,
+  "repositories": {
+    "src": {
+      "url": "https://webrtc.googlesource.com/src",
+      "revision": "4e8a5ac68e8a4ae0588f54f2fdb8cbd1eb5fa50d"
+    },
+    "src/base": {
+      "url": "https://chromium.googlesource.com/chromium/src/base",
+      "revision": "7ee725c53f7e5a822cf4c571ce4e8ff787bfc0c7"
+    },
+    "src/build": {
+      "url": "https://chromium.googlesource.com/chromium/src/build",
+      "revision": "18e9d3c3adadf2489507e4e62afffafa46717d26"
+    },
+    "src/buildtools": {
+      "url": "https://chromium.googlesource.com/chromium/src/buildtools",
+      "revision": "33b52eafd539278600d34cd9ba23550d28c933d2"
+    },
+    "src/testing": {
+      "url": "https://chromium.googlesource.com/chromium/src/testing",
+      "revision": "e3bca95dbc08d3879eadc39a66141210e85ee76f"
+    },
+    "src/third_party": {
+      "url": "https://chromium.googlesource.com/chromium/src/third_party",
+      "revision": "38080027ded6b80f8f121e748ae8ecc60d9314b4"
+    },
+    "src/tools": {
+      "url": "https://chromium.googlesource.com/chromium/src/tools",
+      "revision": "a398922738180b9301ebb4f2bf0896763ee921ed"
+    },
+    "src/ios": {
+      "url": "https://chromium.googlesource.com/chromium/src/ios",
+      "revision": "dc273d7b2d91ad6c39d99604682a4e82c0278383"
+    },
+    "src/third_party/libsrtp": {
+      "url": "https://chromium.googlesource.com/chromium/deps/libsrtp.git",
+      "revision": "5b7c744eb8310250ccc534f3f86a2015b3887a0a"
+    },
+    "src/third_party/libyuv": {
+      "url": "https://chromium.googlesource.com/libyuv/libyuv.git",
+      "revision": "fe9ced6e3c8ae6c69bcc3ebb8505a650d2df30e0"
+    },
+    "src/third_party/jsoncpp/source": {
+      "url": "https://chromium.googlesource.com/external/github.com/open-source-parsers/jsoncpp.git",
+      "revision": "42e892d96e47b1f6e29844cc705e148ec4856448"
+    },
+    "src/third_party/libjpeg_turbo": {
+      "url": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+      "revision": "ed683925e4897a84b3bffc5c1414c85b97a129a3"
+    },
+    "src/third_party/lss": {
+      "url": "https://chromium.googlesource.com/linux-syscall-support.git",
+      "revision": "ce877209e11aa69dcfffbd53ef90ea1d07136521"
+    },
+    "src/third_party/depot_tools": {
+      "url": "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
+      "revision": "b52683fa2e74087464d32a1a9c76bf1b5275e4fe"
+    },
+    "src/third_party/nasm": {
+      "url": "https://chromium.googlesource.com/chromium/deps/nasm.git",
+      "revision": "0873b2bae6a5388a1c55deac8456e3c60a47ca08"
+    },
+    "src/third_party/dav1d/libdav1d": {
+      "url": "https://chromium.googlesource.com/external/github.com/videolan/dav1d.git",
+      "revision": "87f9a81cd770e49394a45deca7a3df41243de00b"
+    },
+    "src/third_party/catapult": {
+      "url": "https://chromium.googlesource.com/catapult.git",
+      "revision": "3ffa6b222803f54188a7b249383b2f092a24d19a"
+    },
+    "src/third_party/google_benchmark/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/benchmark.git",
+      "revision": "f730846b0a3c0dc0699978846fb14ffb2fad0bdc"
+    },
+    "src/third_party/googletest/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/googletest.git",
+      "revision": "af29db7ec28d6df1c7f0f745186884091e602e07"
+    },
+    "src/third_party/libaom/source/libaom": {
+      "url": "https://aomedia.googlesource.com/aom.git",
+      "revision": "7f32eb35ff2589369f095388701e3dfc4d6a9381"
+    },
+    "src/third_party/libvpx/source/libvpx": {
+      "url": "https://chromium.googlesource.com/webm/libvpx.git",
+      "revision": "5245f6e9cb7e6bb68ab45fe4d8b00bc9b16857e1"
+    },
+    "src/third_party/crc32c/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/crc32c.git",
+      "revision": "fa5ade41ee480003d9c5af6f43567ba22e4e17e6"
+    },
+    "src/third_party/icu": {
+      "url": "https://chromium.googlesource.com/chromium/deps/icu.git",
+      "revision": "da07448619763d1cde255b361324242646f5b268"
+    }
+  },
+  "tools": {
+    "gn-mac-arm64": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/gn/gn/mac-arm64/+/git_revision:a4d67be044b42963de801001e7146f9657c7fad4",
+      "sha256": "6ee55c0d888539a88aee49854ad9a58b8cab9c7cff2fac72a5bdb1837fba47ff",
+      "bytes": 804216
+    },
+    "ninja-mac-arm64": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/infra/3pp/tools/ninja/mac-arm64/+/version:2@1.8.2.chromium.3",
+      "sha256": "9d53be2b3ca4cbd9df1b8a516f7428eca771ca81178ddc2e3a1570cbe874adb3",
+      "bytes": 93491
+    },
+    "gn-linux-amd64": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/git_revision:a4d67be044b42963de801001e7146f9657c7fad4",
+      "sha256": "971fdc1572daedd2919646bbfb9b73c445563ab4fe867f0df75dceeba2a9d733",
+      "bytes": 2371189
+    },
+    "ninja-linux-amd64": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/infra/3pp/tools/ninja/linux-amd64/+/version:2@1.8.2.chromium.3",
+      "sha256": "3d4bdd8b12b114efca564f5de961695cb54330cd0c1eff3a8f2cb2493310eca2",
+      "bytes": 1838101
+    }
+  },
+  "engine_headers": {
+    "openssl-ios": {
+      "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/include/IOS",
+      "tree_sha256": "84d3bfd6f9080695fa21e58ac2ea617d4161ff60d0658835d1a78384bc7078c5",
+      "files": 104
+    },
+    "openssl-android": {
+      "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/include/Android",
+      "tree_sha256": "f124da377a9adee96b8251d2a05e88f0c0bc026f83930122ee6bb89012f0c17e",
+      "files": 104
+    },
+    "opus": {
+      "path": "Engine/Source/ThirdParty/libOpus/opus-1.1/include",
+      "tree_sha256": "483666b5af0fd409a015cdef077eaf18729d940b0244eda79f01e72b6f40605d",
+      "files": 6
+    },
+    "vpx": {
+      "path": "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/include",
+      "tree_sha256": "6fa452d87399f91829a9f41fefb7e58636fe0264d8c6aa4eee215d8d78a20262",
+      "files": 22
+    }
+  },
+  "platforms": {
+    "IOS": {
+      "host": "Darwin",
+      "machine": "arm64",
+      "python": "3.10.21",
+      "xcode": "Xcode 27.0\nBuild version 27A266a",
+      "sdk": "27.0",
+      "sdk_build": "24A430",
+      "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
+      "minimum_os": "15.0",
+      "link_libraries": [
+        {
+          "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libssl.a",
+          "sha256": "f047bceb81f9c9c08c7327fcc12d0bf729926f388bb6607d7bfb727aa789ecc6"
+        },
+        {
+          "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libcrypto.a",
+          "sha256": "541e25ec080f165c97c0a2d036432c99d5570a599311486f6a8521d61ea46a52"
+        },
+        {
+          "path": "Engine/Source/ThirdParty/libOpus/opus-1.1/IOS/libOpus.a",
+          "sha256": "42da022bce3a50acb3c7c09d043bcc5924fdc64d7461a817212bc287b7e3c12b"
+        },
+        {
+          "path": "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/lib/IOS/libvpx.a",
+          "sha256": "23b777490086f2e2ed52d76e88f145d85d387c1fc9eee9f668fdc2fcf62ee25d"
+        }
+      ]
+    },
+    "Android": {
+      "host": "Linux",
+      "machine": "x86_64",
+      "python": "3.13.5",
+      "ndk": "27.2.12479018",
+      "minimum_os": "26",
+      "ndk_archive": {
+        "url": "https://dl.google.com/android/repository/android-ndk-r27c-linux.zip",
+        "sha1": "090e8083a715fdb1a3e402d0763c388abb03fb4e",
+        "sha256": "59c2f6dc96743b5daf5d1626684640b20a6bd2b1d85b13156b90333741bad5cc",
+        "bytes": 663987688
+      },
+      "compiler_version": "18.0.3",
+      "llvm_revision": "r522817c",
+      "link_libraries": [
+        {
+          "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/Android/ARM64/libssl.a",
+          "sha256": "16b7b3efd15ed338908dc360944e2c6d3d155973840c15fe3bcf85f5053632be"
+        },
+        {
+          "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/Android/ARM64/libcrypto.a",
+          "sha256": "8aae283dd80a38e39660ed8f54b5a53b754d5d4b455ed6b39afbb9ec0c416513"
+        },
+        {
+          "path": "Engine/Source/ThirdParty/libOpus/opus-1.1/Android/ARM64/libopus.a",
+          "sha256": "dfaf746e503c5e6dda6fffc08973f6c9165b9eb071c00c360b5c838d65cab566"
+        },
+        {
+          "path": "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/lib/Android/arm64-v8a/Release/libvpx.a",
+          "sha256": "c51efe494328678659456e4c22daa6f6469af289e0fc5f99e38eb5e955545796"
+        }
+      ],
+      "container": {
+        "dockerfile_sha256": "819fc3f4123f88dac242d5f502b909a650ce5137d0d1402af7f11e7eb4894567",
+        "packages_sha256": "dc65e3660f4c8bcfe7544ba66c03b0e846e0e6ed0649aa2f09324808ce7997c7"
+      },
+      "ndk_gn_sha256": "3f7bba8a4d17640704b71c58d2e5b7295f7bfaa5a752c97f0b8a65086c31deab",
+      "ndk_notice_sha256": "4d5224d1c0b54ffa88b0dc0088191638fdbb7227835095dfb98f7f66b416a323"
+    }
+  },
+  "common_gn_args": {
+    "target_cpu": "arm64",
+    "is_debug": false,
+    "is_component_build": false,
+    "is_clang": true,
+    "symbol_level": 1,
+    "use_rtti": false,
+    "use_custom_libcxx": false,
+    "use_custom_libcxx_for_host": false,
+    "clang_use_chrome_plugins": false,
+    "treat_warnings_as_errors": false,
+    "rtc_include_tests": false,
+    "rtc_build_examples": false,
+    "rtc_build_tools": false,
+    "rtc_enable_protobuf": false,
+    "rtc_build_ssl": false,
+    "rtc_build_opus": false,
+    "rtc_build_libvpx": false,
+    "rtc_opus_support_120ms_ptime": false,
+    "rtc_include_internal_audio_device": false,
+    "rtc_use_h264": false,
+    "rtc_libvpx_build_vp9": true,
+    "rtc_include_dav1d_in_internal_decoder_factory": false,
+    "enable_libaom": false,
+    "rtc_use_x11": false,
+    "rtc_use_pipewire": false,
+    "use_goma": false,
+    "use_remoteexec": false,
+    "use_thin_lto": false,
+    "rtc_include_ilbc": false,
+    "rtc_enable_libevent": false,
+    "optimize_for_size": true,
+    "libyuv_disable_jpeg": true,
+    "libyuv_include_tests": false
+  },
+  "patches": [
+    {
+      "repository": "src",
+      "path": "Config/MobileWebRTC/patches/0001-native-probe-scope.patch",
+      "sha256": "12d795133ec4d6a694866296c8424e934ebe762bf22ec26773a4c20ebb9b3c3b",
+      "files": {
+        "BUILD.gn": {
+          "before": "a1995c9b67c3e7088b1cacf7450b0b0fa4688e8bd5a925bdc23dcc3a3180eb07",
+          "after": "bb95b35270e4c3bddb6f5230552b63565ce41ee9192e5f366f314524638315b4"
+        }
+      }
+    },
+    {
+      "repository": "src/third_party/libsrtp",
+      "path": "Config/MobileWebRTC/patches/0002-external-openssl.patch",
+      "sha256": "7fb119636f7501c0210f832e311bad9c09996992c75d57a28ff81eb83e755797",
+      "files": {
+        "BUILD.gn": {
+          "before": "8dd46cf8eecc8e421fa95029ae99a43c79e3f6248a9dcdc6fcfa50404dc1b429",
+          "after": "836703289f0e312d1e1959c57d58c41f8ae62d806557d0f24af27aaeb62af60b"
+        }
+      }
+    },
+    {
+      "repository": "src/third_party",
+      "path": "Config/MobileWebRTC/patches/0003-crc32c-clang.patch",
+      "sha256": "022ee4d04b6551587fb8942b2912749966dcc13f31218df99250ea4e81a9d373",
+      "files": {
+        "crc32c/BUILD.gn": {
+          "before": "dd71cec2a4168490578c3678f9fa03e7a1a5e0f2fc9692589a3d917e0d9a902e",
+          "after": "b822f80fab067b047897f31aa459d04671665cf66e18588646a30769381ee5f2"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/MobileWebRTC/patches/0004-legacy-stats-clang.patch",
+      "sha256": "3f082e2b99777044fc50f54d44bb83207ad00aed7cba47d19e4fc24eec2b2e84",
+      "files": {
+        "pc/legacy_stats_collector.cc": {
+          "before": "8ecdb88b0c2ff83e17454706b22c439c92679635326ef672b997af0ad30597d6",
+          "after": "809869da69880800febf297d94fb281ddab9ef990cd5b6bdccce13ff391d2709"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/MobileWebRTC/patches/0005-native-android-target.patch",
+      "sha256": "ff8bed54ef7b8e5a56e6610387d5722f5cdc61360304a1663f5e8b245194a42d",
+      "files": {
+        "rtc_base/BUILD.gn": {
+          "before": "dcad69865102e043e80e737dcbb36148567ca0bb3bfb1bddeebe74d96a50dddc",
+          "after": "78c819cd86a62dc8e9b8e23e6b4a0b74e395b8740890f7ae1dc7838a4f358a29"
+        }
+      }
+    },
+    {
+      "repository": "src/third_party",
+      "path": "Config/MobileWebRTC/patches/0006-external-ndk-target.patch",
+      "sha256": "cf9fb2cc68b18310ec6cdc0da5d815ca0e2fbd1adb21eb3ec3689dc155603db8",
+      "files": {
+        "android_sdk/BUILD.gn": {
+          "before": "80a21bfc929bc17d199bf718b3e568c9555ac41f54d69b2c64b93dbbb3a3adcf",
+          "after": "294bf2e3760fd1633ad2e45f9a7dbdd53809048148f447cfc0cebd204bc94693"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/MobileWebRTC/patches/0007-native-audio-target.patch",
+      "sha256": "8c63fbb8d8cd9781f0bbb99f01db31641dbb099bbff861b92101986f0f6d23f6",
+      "files": {
+        "modules/audio_device/BUILD.gn": {
+          "before": "a8334cc5813cd020caa950b90945fcee505775e4424dc1b2bea2fbde1a977aad",
+          "after": "e63de4f50933f24c7e06a872f40690aaf91c3abcc5ea341c63e7a70a266fd58a"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/MobileWebRTC/patches/0008-native-stacktrace-target.patch",
+      "sha256": "91db3b59f91a98d28377546187a2893cd73ad00009efcfbbeee45b1da87f7e1f",
+      "files": {
+        "rtc_base/system/BUILD.gn": {
+          "before": "1fb37f8e2b32dded19270a56dc21e285e9bf2c655d03b5d9f568f8a8c4aebd2a",
+          "after": "cd3ac0b747b6d10c84ad84501c3c251c2dad074a3704c1bb6e547c6164df089d"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/MobileWebRTC/patches/0009-native-only-test-graph.patch",
+      "sha256": "487baa47795bf13d6a5e1fc4362869916998a047195be3053c16abedbb713a7a",
+      "files": {
+        "sdk/BUILD.gn": {
+          "before": "0648f2f2ee8495640095c4122b4f73ea8a48143e9862fd26f3757bf653733d92",
+          "after": "268d355119a0e126e974caecb745797132ff8b9fe0db939737c4379dde94c2d7"
+        },
+        "test/BUILD.gn": {
+          "before": "a48d2652c7081ea1937f4dbc2ec176b3ce209280a2de5c643505fcdbe20cef7a",
+          "after": "5201c776d5c0c665102e9a91fc3e795877a0e1bba234cc276e4879c9cec86670"
+        },
+        "webrtc.gni": {
+          "before": "aa9c5fc7359fe03b900f7be71b2a36dcbbf0c6d7fd03848dec692ffaa62da2cb",
+          "after": "b6d498d2ada1da4ac2585d30a01f96e3721a7b57b5ea124a747671308aa7904d"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/MobileWebRTC/patches/0010-native-java-templates.patch",
+      "sha256": "c25d2a72cd634b1fc4134fc46c34ec45c69f16ad8978bb631c6cac97ba03ad6c",
+      "files": {
+        "build_overrides/build.gni": {
+          "before": "fd8e890e4984a95ef63dd779be34b9c87d7cd5d2eda01349a7bccb24aa2b806e",
+          "after": "72b1af3fac3934e88abe58d5561c1ac244c63a0a5506fdab78efd7f3c6642f75"
+        },
+        "api/BUILD.gn": {
+          "before": "39547ca29db593470b6f4fd7927afc3d5828ad86d953da1879fa8903ce534d25",
+          "after": "dcaa2cf0ef445fc1948b3590830ab465282025d55214136c3ef9aa24a5c0f53f"
+        },
+        "api/video/BUILD.gn": {
+          "before": "08107cd3bab613f965ae85e56a1022c3486a38f33ca366d67ecf6f0b3c9c9689",
+          "after": "3621dd7e1a083a5b6242bd86742e56cb4e695e5c28d596187c6de99ef997c326"
+        }
+      }
+    },
+    {
+      "repository": "src/testing",
+      "path": "Config/MobileWebRTC/patches/0011-native-test-runners.patch",
+      "sha256": "c6d7f56c93681467f7d1910e941f9ef9a84a91d363e0a947a7974dfdda75ba0c",
+      "files": {
+        "test.gni": {
+          "before": "17002510d20dea99cb3014dc293538b6b3a7bb934c029eaed9a73ac368e94df8",
+          "after": "c94ee4b3c31f077e0e0b8a9b09302ab115c0d61b39dc854b95aa217a0c76040b"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/MobileWebRTC/patches/0012-pinned-license-gn.patch",
+      "sha256": "013494b54c9ed8be26bb9181323383b13ae44219175929c917d988b1c7971f09",
+      "files": {
+        "tools_webrtc/libs/generate_licenses.py": {
+          "before": "dc9060d6032b23e9e2598259f0e101fcc36996cb00e363ed27adef1a2babe3b5",
+          "after": "0af6676f3702ae746438f49b0a619fcd55ef7e3754910d51374908fa905b6541"
+        }
+      }
+    }
+  ]
+}

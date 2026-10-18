@@ -1,0 +1,14 @@
+diff --git a/rtc_base/BUILD.gn b/rtc_base/BUILD.gn
+index c5b9024..35455bd 100644
+--- a/rtc_base/BUILD.gn
++++ b/rtc_base/BUILD.gn
+@@ -1805,7 +1805,8 @@ if (rtc_include_tests) {
+   }
+ }
+ 
+-if (is_android) {
++# The M0 native target does not ship a Java SDK.
++if (is_android && rtc_include_tests) {
+   rtc_android_library("base_java") {
+     visibility = [ "*" ]
+     sources = [

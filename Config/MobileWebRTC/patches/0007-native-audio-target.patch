@@ -1,0 +1,13 @@
+diff --git a/modules/audio_device/BUILD.gn b/modules/audio_device/BUILD.gn
+index 6c7292a..ab63aac 100644
+--- a/modules/audio_device/BUILD.gn
++++ b/modules/audio_device/BUILD.gn
+@@ -476,7 +476,7 @@ if (rtc_include_tests && !build_with_chromium) {
+   }
+ }
+ 
+-if (!build_with_chromium && is_android) {
++if (!build_with_chromium && is_android && rtc_include_internal_audio_device) {
+   rtc_android_library("audio_device_java") {
+     sources = [
+       "android/java/src/org/webrtc/voiceengine/BuildInfo.java",

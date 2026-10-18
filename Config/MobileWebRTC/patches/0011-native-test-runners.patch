@@ -1,0 +1,130 @@
+diff --git a/test.gni b/test.gni
+index cf98451..de1a306 100644
+--- a/test.gni
++++ b/test.gni
+@@ -377,64 +377,76 @@ template("test") {
+       }
+     }
+ 
+-    test_runner_script(_test_runner_target) {
+-      forward_variables_from(invoker, _wrapper_script_vars)
++    if (!enable_java_templates) {
++      # Native-only builds retain the C++ test target without a Java runner.
++      assert(_use_raw_android_executable)
++      not_needed([ "_test_runner_target" ])
++      not_needed(invoker, "*")
++      group(target_name) {
++        testonly = true
++        forward_variables_from(invoker, [ "visibility" ])
++        deps = [ ":$_exec_target" ]
++      }
++    } else {
++      test_runner_script(_test_runner_target) {
++        forward_variables_from(invoker, _wrapper_script_vars)
+ 
+-      if (_use_raw_android_executable) {
+-        executable_dist_dir = "$root_out_dir/$_dist_target"
+-        data_deps = [ ":$_exec_target" ]
+-      } else {
+-        apk_target = ":$_apk_target_name"
+-        incremental_apk = incremental_install
++        if (_use_raw_android_executable) {
++          executable_dist_dir = "$root_out_dir/$_dist_target"
++          data_deps = [ ":$_exec_target" ]
++        } else {
++          apk_target = ":$_apk_target_name"
++          incremental_apk = incremental_install
+ 
+-        # Dep needed for the test runner .runtime_deps file to pick up data
+-        # deps from the forward_variables_from(invoker, "*") on the library.
+-        data_deps = [ ":$_library_target_name" ]
+-      }
+-      test_name = _output_name
+-      test_suite = _output_name
+-      test_type = "gtest"
++          # Dep needed for the test runner .runtime_deps file to pick up data
++          # deps from the forward_variables_from(invoker, "*") on the library.
++          data_deps = [ ":$_library_target_name" ]
++        }
++        test_name = _output_name
++        test_suite = _output_name
++        test_type = "gtest"
+ 
+-      if (use_rts) {
+-        data_deps += [ ":${invoker.target_name}__rts_filters" ]
++        if (use_rts) {
++          data_deps += [ ":${invoker.target_name}__rts_filters" ]
++        }
+       }
+-    }
+ 
+-    # Create a wrapper script rather than using a group() in order to ensure
+-    # "ninja $target_name" always works. If this was a group(), then GN would
+-    # not create a top-level alias for it if a target exists in another
+-    # directory with the same $target_name.
+-    # Also - bots run this script directly for "components_perftests".
+-    generate_wrapper(target_name) {
+-      forward_variables_from(invoker, [ "visibility" ])
+-      executable = "$root_build_dir/bin/run_$_output_name"
+-      wrapper_script = "$root_build_dir/$_output_name"
+-      deps = [ ":$_test_runner_target" ]
+-      if (_use_raw_android_executable) {
+-        deps += [ ":$_dist_target" ]
+-      } else {
+-        # Dep needed for the swarming .isolate file to pick up data
+-        # deps from the forward_variables_from(invoker, "*") on the library.
+-        deps += [
+-          ":$_apk_target_name",
+-          ":$_library_target_name",
+-        ]
+-      }
++      # Create a wrapper script rather than using a group() in order to ensure
++      # "ninja $target_name" always works. If this was a group(), then GN would
++      # not create a top-level alias for it if a target exists in another
++      # directory with the same $target_name.
++      # Also - bots run this script directly for "components_perftests".
++      generate_wrapper(target_name) {
++        forward_variables_from(invoker, [ "visibility" ])
++        executable = "$root_build_dir/bin/run_$_output_name"
++        wrapper_script = "$root_build_dir/$_output_name"
++        deps = [ ":$_test_runner_target" ]
++        if (_use_raw_android_executable) {
++          deps += [ ":$_dist_target" ]
++        } else {
++          # Dep needed for the swarming .isolate file to pick up data
++          # deps from the forward_variables_from(invoker, "*") on the library.
++          deps += [
++            ":$_apk_target_name",
++            ":$_library_target_name",
++          ]
++        }
+ 
+-      if (defined(invoker.data_deps)) {
+-        data_deps = invoker.data_deps
+-      } else {
+-        data_deps = []
+-      }
++        if (defined(invoker.data_deps)) {
++          data_deps = invoker.data_deps
++        } else {
++          data_deps = []
++        }
+ 
+-      data_deps += [ "//testing:test_scripts_shared" ]
++        data_deps += [ "//testing:test_scripts_shared" ]
+ 
+-      if (tests_have_location_tags) {
+-        data = [ "//testing/location_tags.json" ]
+-      }
++        if (tests_have_location_tags) {
++          data = [ "//testing/location_tags.json" ]
++        }
+ 
+-      if (use_rts) {
+-        data_deps += [ ":${invoker.target_name}__rts_filters" ]
++        if (use_rts) {
++          data_deps += [ ":${invoker.target_name}__rts_filters" ]
++        }
+       }
+     }
+   } else if (is_fuchsia) {

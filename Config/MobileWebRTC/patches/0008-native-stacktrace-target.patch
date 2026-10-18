@@ -1,0 +1,30 @@
+diff --git a/rtc_base/system/BUILD.gn b/rtc_base/system/BUILD.gn
+index 77f5139..2d066a5 100644
+--- a/rtc_base/system/BUILD.gn
++++ b/rtc_base/system/BUILD.gn
+@@ -105,7 +105,24 @@ rtc_source_set("warn_current_thread_is_deadlocked") {
+     sources += [ "warn_current_thread_is_deadlocked.cc" ]
+     deps += [
+       "..:logging",
+-      "../../sdk/android:native_api_stacktrace",
++      ":native_stacktrace",
+     ]
+   }
+ }
++
++# Keep native deadlock stack traces without loading the Java SDK build graph.
++if (is_android && !build_with_chromium) {
++  rtc_library("native_stacktrace") {
++    sources = [
++      "../../sdk/android/native_api/stacktrace/stacktrace.cc",
++      "../../sdk/android/native_api/stacktrace/stacktrace.h",
++    ]
++    deps = [
++      "..:criticalsection",
++      "..:logging",
++      "..:stringutils",
++      "../synchronization:mutex",
++    ]
++    absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
++  }
++}

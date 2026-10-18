@@ -1,0 +1,13 @@
+diff --git a/android_sdk/BUILD.gn b/android_sdk/BUILD.gn
+index 3af8a6e5f..e326c2060 100644
+--- a/android_sdk/BUILD.gn
++++ b/android_sdk/BUILD.gn
+@@ -5,7 +5,7 @@
+ import("//build/config/android/rules.gni")
+ 
+ group("cpu_features") {
+-  public_deps = [ "$android_ndk_root:cpu_features" ]
++  public_deps = [ "//third_party/android_ndk:cpu_features" ]
+ }
+ 
+ if (enable_java_templates) {

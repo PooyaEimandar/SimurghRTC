@@ -1,0 +1,15 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index 0f0f9e5..2c14d99 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -133,9 +133,7 @@ static_library("libsrtp") {
+     # "crypto/cipher/aes_icm_nss.c",
+   ]
+ 
+-  public_deps = [
+-    "//third_party/boringssl:boringssl",
+-  ]
++  configs += [ "//:simurgh_external" ]
+ }
+ 
+ if (build_libsrtp_tests) {

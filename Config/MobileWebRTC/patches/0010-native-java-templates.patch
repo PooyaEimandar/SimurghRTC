@@ -1,0 +1,39 @@
+diff --git a/api/BUILD.gn b/api/BUILD.gn
+index 56e9237..04c7063 100644
+--- a/api/BUILD.gn
++++ b/api/BUILD.gn
+@@ -467,7 +467,7 @@ rtc_library("rtp_parameters") {
+   ]
+ }
+ 
+-if (is_android) {
++if (is_android && enable_java_templates) {
+   java_cpp_enum("priority_enums") {
+     sources = [ "priority.h" ]
+   }
+diff --git a/api/video/BUILD.gn b/api/video/BUILD.gn
+index d1f7878..a0ca226 100644
+--- a/api/video/BUILD.gn
++++ b/api/video/BUILD.gn
+@@ -79,7 +79,7 @@ rtc_library("video_frame") {
+   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+ }
+ 
+-if (is_android) {
++if (is_android && enable_java_templates) {
+   java_cpp_enum("video_frame_enums") {
+     sources = [ "video_frame_buffer.h" ]
+   }
+diff --git a/build_overrides/build.gni b/build_overrides/build.gni
+index 137b6a4..cf12534 100644
+--- a/build_overrides/build.gni
++++ b/build_overrides/build.gni
+@@ -7,7 +7,7 @@
+ # be found in the AUTHORS file in the root of the source tree.
+ 
+ # Some non-Chromium builds don't support building java targets.
+-enable_java_templates = true
++enable_java_templates = false
+ 
+ # Don't set this variable to true when building stadalone WebRTC, it is
+ # only needed to support both WebRTC standalone and Chromium builds.

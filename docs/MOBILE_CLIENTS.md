@@ -1,6 +1,6 @@
 # SimurghRTC mobile clients
 
-**Status: planned.** Android and iOS clients are in scope, but no mobile build, device run or app-size result has been verified. The roadmap issues below will deliver the build scripts and setup instructions.
+**Status: ARM64 dependency builds pass; client integration is in progress.** Use the [pinned build workflow](MOBILE_BUILDS.md) and [artifact setup](MOBILE_ARTIFACTS.md). The [validation record](M0_VALIDATION.md) covers library builds, links and repeat comparisons. Packaged Unreal apps, device runs and app-size results remain unverified.
 
 ## Targets and dependency artifacts
 

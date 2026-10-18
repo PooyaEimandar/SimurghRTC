@@ -1,0 +1,17 @@
+--- a/tools_webrtc/libs/generate_licenses.py
++++ b/tools_webrtc/libs/generate_licenses.py
+@@ -170,9 +170,13 @@
+ 
+   @staticmethod
+   def _RunGN(buildfile_dir, target):
+-    cmd = [
++    # Use the verified GN directly when supplied by the pinned build workflow.
++    # The legacy depot_tools wrapper imports modules removed in Python 3.13.
++    gn = os.environ.get('SIMURGHRTC_GN')
++    cmd = ([gn] if gn else [
+         sys.executable,
+         os.path.join(find_depot_tools.DEPOT_TOOLS_PATH, 'gn.py'),
++    ]) + [
+         'desc',
+         '--all',
+         '--format=json',

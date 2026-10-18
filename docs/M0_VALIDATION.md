@@ -10,7 +10,9 @@ Tests ran on a Mac with Apple M2 Max and UE 5.8.3. Janus/TURN ran in Linux ARM64
 
 | Check | Result | What it establishes |
 |---|---|---|
-| Python checks | 47 passed | Build-profile tools, report validation, media files, message rules and packet parsing |
+| Python checks | 80 passed | Earlier checks plus pinned build inputs, source/toolchain drift, archive extraction and repeat-build comparisons |
+| Compiled UBT artifact validator | 19 fixture cases and 2 real exports passed | Valid Android/iOS metadata and rejection of missing, changed, extra or incompatible inputs |
+| Android/iOS ARM64 dependencies | Built, linked and repeat comparisons passed | Pinned source/toolchain builds; matching exported library, headers, notices and source records |
 | Full Unreal automation | 7 passed; no test warnings or failures | API lifecycle, native factory/peer setup and repeated local codec tests |
 | Packaged Server probe | Passed, including data-only and occupied-port cases | Native factory and HTTPServer work without graphics or hardware audio |
 | Packaged Direct-only Game media probe | Passed, including missing-graphics/audio cases | Local codecs, texture upload, render-target capture and audio-mixer consumption |
@@ -25,9 +27,9 @@ These results do not establish Windows, native Linux Unreal, Android or iOS supp
 | Issue | Remaining work |
 |---|---|
 | SR-001 | Review and freeze the API; finish device/headless contracts and working C++/Blueprint flows |
-| SR-002 | Finish mobile library selection and executable Blueprint/package checks with Janus enabled and disabled |
+| SR-002 | Validate packaged Unreal linkage with the new mobile dependencies; finish executable Blueprint/package checks with Janus enabled and disabled |
 | SR-003 | Complete dependency, license, security and mobile ABI review |
-| SR-006 / SR-007 | Build separate Android/iOS ARM64 libraries; test signed/packaged apps on physical devices; measure initial app size |
+| SR-006 / SR-007 | Repeat dependency builds on independent hosts, run packaged Unreal physical-device probes and measure initial app size |
 
 SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its message contracts against real Unreal providers; SR-305 covers provider parity. A Python model passing does not mean those providers are implemented.
 
@@ -37,8 +39,16 @@ SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its mess
 - [Server probe](NATIVE_PROBE.md): packaged headless Server.
 - [Media probe](MEDIA_PROBE.md): codecs, textures and audio integration.
 - [Fixtures](FIXTURES.md): fixed input files and local Janus/TURN.
+- [Mobile artifacts](MOBILE_ARTIFACTS.md): dependency packaging and build-rule checks.
+- [Mobile builds](MOBILE_BUILDS.md): pinned sources/toolchains, separate ARM64 libraries and repeat-build checks.
 
-Generated logs and reports are local files under `Intermediate/` and are not committed. For the latest SR-005 run, start with:
+The earlier mobile-artifact integration check rebuilt the Full Mac Editor and reran all seven Unreal tests successfully, with no test warnings or failures. The 19 validator cases executed the class in the actual UBT-generated rules DLL, using explicitly synthetic dependency inputs. The source-build work below changes build tooling and dependency patches; it does not add a new Unreal runtime result.
+
+Small C archives compiled with NDK `27.2.12479018` and Xcode were also inspected: Android AArch64 and iOS device ARM64 objects passed; an ARM64 iOS simulator object was rejected. These are archive-parser tests, **not libwebrtc builds**. The installed engine lacks its optional iOS build components. A source-engine iOS check was cancelled while waiting behind another active build; its platform build path remains unverified.
+
+Earlier artifact-format evidence is under `Intermediate/MobileArtifacts/`: `python-tests.log`, `unreal-build.log`, `Rules/result.json` and `ObjectProbes/result.json`. The Unreal report is `Intermediate/Reports/MobileArtifactDesktop/index.json`. Source-build evidence is recorded separately below. Packaged Unreal linkage, device behavior and app size remain open.
+
+Generated logs and reports are local files under `Intermediate/` and are not committed. For the earlier SR-005 run, start with:
 
 | Local file | Contents |
 |---|---|
@@ -48,6 +58,27 @@ Generated logs and reports are local files under `Intermediate/` and are not com
 | `Intermediate/Reports/SR005ServicesRestart/result.json` | Fresh-restart service pass |
 
 Check structured results and cleanup evidence as well as exit codes. Known build workarounds, earlier failures, exact versions, hashes and log paths are preserved below.
+
+## Mobile source-build checks
+
+The [build workflow](MOBILE_BUILDS.md) pins WebRTC `4e8a5ac68e8a4ae0588f54f2fdb8cbd1eb5fa50d`, its source dependencies, GN/Ninja downloads, platform toolchains and matching Unreal dependency inputs. All 12 patches were checked against the original pinned files. No engine source was changed.
+
+| Target | Build and link result | Stripped archive | Separate diagnostic archive |
+|---|---|---|---|
+| Android ARM64 | 1,250 objects; whole-archive link and repeat comparison passed; all four probe load segments aligned to 16 KiB | 42,533,454 bytes (40.6 MiB) | 118,581,830 bytes (113.1 MiB) |
+| iOS device ARM64 | 1,246 objects; whole-archive link passed; two output directories matched byte for byte | 25,297,696 bytes (24.1 MiB) | 60,121,120 bytes (57.3 MiB) |
+
+Android used the pinned Linux x86-64 container under Docker on Apple Silicon, NDK r27c (`27.2.12479018`), Clang 18.0.3 and API 26. Its archive SHA-256 is `3bbd8758351921218180be185388b623037884bb28e408d42539c91e7636ae66`. The link probe uses Unreal's static C++ runtime and local symbol-binding flags; these resolved the initial VPX shared-library relocation errors.
+
+The iOS run used Xcode 27.0 (`27A266a`), iPhoneOS SDK 27.0 (`24A430`), Apple Clang 21.0.0 and deployment target 15.0. Its archive SHA-256 is `6865dd8162410a4a680f538fb1ebc9767c4f5821a6ce980678af43235cb245ad`. Neither WebRTC archive defines the checked Opus, VPX or OpenSSL symbol prefixes; those implementations remain external engine dependencies.
+
+Final artifacts are under `LocalBuilds/Artifacts/`: `Android-arm64-release`, `IOS-arm64-release` and their `-repeat` counterparts. Both platforms match across 2,938 compared files. Each artifact contains its build lock, toolchain observations, source lock, notices and `Build/link-probe.json`.
+
+Both exports also compiled and linked without source-checkout include paths. They were staged together into the Direct-only project `LocalBuilds/MobileBuiltDirect`, and the compiled Unreal artifact validator accepted both. This exercises artifact selection and integrity, not an Unreal app build.
+
+Evidence is under `Intermediate/MobileBuilds/`: `android-repeat.json`, `ios-repeat.json`, `rules-result.json`, `android-consumer.log`, `ios-consumer.log`, `python-tests.log` and `patch-validation.json`. `result.json` collects the final artifact identities and checks. Full compiler logs remain in each workspace's `src/out` directory: the Android Docker volume `simurghrtc-mobile-android-5414`, and `LocalBuilds/MobileSources/Checkout` for iOS.
+
+These are dependency build/link checks on one host, with separate Ninja output directories and a shared verified source checkout. Fresh-host reproduction, packaged Unreal linkage, physical-device factory/media behavior and app-size deltas remain unverified. The link probe is not executed on a device. Static archive bytes are not app download or installed size. SR-006/SR-007 stay in progress.
 
 ## Detailed validation record
 
@@ -67,7 +98,7 @@ Check structured results and cleanup evidence as well as exit codes. Known build
 | Minimum macOS target | 14.0, as selected by the installed UE toolchain |
 | Native RTC library linked by this plugin | Engine WebRTC **5414 / M109**, Release; explicit OpenSSL/Opus/VPX links |
 
-The [native probe audit](NATIVE_PROBE.md#build-selection-and-provenance) records the archive hash, local dependency versions, symbols and observed codecs. The Mac archives in the source and installed engines are identical. `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` still describes the unavailable shared session service, not factory linkage. Android/iOS engine branches are deliberately not selected; separately built, pinned ARM64 artifacts remain SR-006/SR-007 work. No engine source changes were introduced.
+The [native probe audit](NATIVE_PROBE.md#build-selection-and-provenance) records the archive hash, local dependency versions, symbols and observed codecs. The Mac archives in the source and installed engines are identical. `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` still describes the unavailable shared session service, not factory linkage. Android/iOS engine WebRTC branches are deliberately not selected; their separate dependency builds are recorded above, while device acceptance remains SR-006/SR-007 work. No engine source changes were introduced.
 
 ## Evidence
 
@@ -89,7 +120,7 @@ The [native probe audit](NATIVE_PROBE.md#build-selection-and-provenance) records
 | Packaged Game local media probe | **Passed: positive, NullRHI and no-audio cases** | `editor_build=false`; codec/capture/mixer feasibility only, no RTC call or executable Blueprint demo acceptance |
 | Canonical media v1 / Full Editor automation | **Passed: 7 tests, no test warnings/failures** | Generated adapter compiled; raw-input hashes verified; native VP8/Opus fixture exercised twice under NullRHI/nosound |
 | Pinned Janus / coturn fixtures | **Passed on Docker Linux ARM64** | Janus authentication, VideoRoom control/correlation/cleanup; TURN auth negatives, allocation, permission, exact 29-byte relay round trip and release |
-| Windows/Linux and Android/iOS | **Unverified** | No compile, package, physical-device, media or app-size claim |
+| Windows/Linux Unreal and Android/iOS Unreal apps | **Unverified** | Mobile dependency builds are separate evidence; no packaged mobile, physical-device, media or app-size claim |
 
 Commands are in [Building](BUILDING.md), [Native Server probe](NATIVE_PROBE.md) and [Native media probe](MEDIA_PROBE.md). Local generated evidence lives under `Intermediate/` and is intentionally not source-controlled. Engine output and test reports must be checked for actual test counts/failures; a process exit code alone is insufficient.
 

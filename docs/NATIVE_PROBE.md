@@ -19,7 +19,7 @@ The engine archive does not export `AudioDeviceModule::Create`. The private UE58
 
 The desktop adapter selects the engine's matching headers/archive through UBT's `WebRTC` module, with explicit `OpenSSL`, `libOpus` and `LibVpx` dependencies. Precompiled external modules did not propagate all private static links in the installed-engine build. Mac also links AudioToolbox, CoreAudio, CoreVideo and VideoToolbox; linking frameworks does not open a device.
 
-UBT rejects desktop engine versions other than 5.8.3 and the adapter checks `WEBRTC_5414`. Mac, Win64 and Linux x64 select this adapter; **only Mac ARM64 has been validated**. Android/iOS select no engine fallback and report native factory unavailable until SR-006/SR-007 provide separately built ARM64 artifacts. Provider/module profiles are independent of library selection. `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` remains correct because the shared session service is not implemented.
+UBT requires engine version 5.8.3 and the adapter checks `WEBRTC_5414`. Mac, Win64 and Linux x64 select the engine library; **only Mac ARM64 has been validated**. Android/iOS require a [separate ARM64 artifact](MOBILE_ARTIFACTS.md) and fail the build when it is absent or incompatible. They have no engine fallback. Mobile factory/device behavior remains unverified. Provider/module profiles are independent of library selection. `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` remains correct because the shared session service is not implemented.
 
 Local audit on 2026-10-17:
 

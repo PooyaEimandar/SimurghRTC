@@ -3,7 +3,7 @@
 #include "Misc/ScopeExit.h"
 #include "Fixtures/SimurghRTCMediaFixtureV1.h"
 
-#if SIMURGHRTC_WITH_ENGINE_WEBRTC
+#if SIMURGHRTC_WITH_WEBRTC
 THIRD_PARTY_INCLUDES_START
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
@@ -21,7 +21,7 @@ THIRD_PARTY_INCLUDES_END
 
 namespace SimurghRTC
 {
-#if SIMURGHRTC_WITH_ENGINE_WEBRTC
+#if SIMURGHRTC_WITH_WEBRTC
 namespace
 {
 using FResult = FNativeMediaProbeResult;
@@ -203,7 +203,7 @@ bool RunNativeMediaProbe(FNativeMediaProbeResult& Out, FString& OutError)
     check(IsInGameThread());
     Out = FNativeMediaProbeResult{};
     OutError.Reset();
-#if SIMURGHRTC_WITH_ENGINE_WEBRTC
+#if SIMURGHRTC_WITH_WEBRTC
     auto Worker = rtc::Thread::Create();
     Worker->SetName("SimurghRTC Codec Probe", nullptr);
     if (!Worker->Start()) { OutError = TEXT("Cannot start codec worker."); return false; }

@@ -1,0 +1,17 @@
+diff --git a/pc/legacy_stats_collector.cc b/pc/legacy_stats_collector.cc
+index b710bc1..cb92d99 100644
+--- a/pc/legacy_stats_collector.cc
++++ b/pc/legacy_stats_collector.cc
+@@ -84,7 +84,11 @@ const char* STATSREPORT_ADAPTER_TYPE_WILDCARD = "wildcard";
+ template <typename ValueType>
+ struct TypeForAdd {
+   const StatsReport::StatsValueName name;
+-  const ValueType& value;
++  // Preserve the legacy numeric conversions explicitly for modern Clang.
++  template <typename Input>
++  TypeForAdd(StatsReport::StatsValueName field, Input input)
++      : name(field), value(static_cast<ValueType>(input)) {}
++  const ValueType value;
+ };
+ 
+ typedef TypeForAdd<bool> BoolForAdd;

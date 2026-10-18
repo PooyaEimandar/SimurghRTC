@@ -3,8 +3,8 @@
 **M0 is in progress**, targeting Unreal Engine **5.8.3**. Updated 2026-10-18.
 
 - **Done on the available Mac:** SR-004 local media tests and SR-005 repeatable fixtures/service tests.
-- **In progress:** SR-001 API design, SR-002 build profiles and SR-003 dependency review.
-- **Still to build:** real connections, network media and separate Android/iOS libraries.
+- **In progress:** SR-001 API design, SR-002 build profiles, SR-003 dependency review and SR-006/SR-007 mobile artifact integration.
+- **Still to build:** real connections, network media and packaged Android/iOS device validation. Pinned ARM64 dependency builds now compile and link; see the validation record for repeat-build evidence.
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
 
@@ -80,7 +80,7 @@ A preview describes what is included; it does not mean production-ready. Set dat
 
 ## 4. Milestones, epics, issues
 
-SR-001, SR-002 and SR-003 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
+SR-001, SR-002, SR-003, SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
 
 ### M0 Foundation and feasibility
 
@@ -144,6 +144,8 @@ Create a sample project and test harness with generated audio/video and versione
 
 ##### SR-006 — Build and integrate Android ARM64 libwebrtc (P0)
 
+**In progress:** the [pinned Linux build](docs/MOBILE_BUILDS.md) produces a native ARM64 archive using NDK r27c. Whole-archive linkage, repeat builds in separate output directories and 16 KiB alignment of the probe shared library pass. Artifact staging and the compiled UBT validator accept the real export. Fresh-host reproduction, packaged Unreal linkage, required platform helpers, physical-device tests and initial app-size measurements remain open.
+
 Create a reproducible Linux-hosted build of pinned upstream libwebrtc for `arm64-v8a`, with UE-compatible NDK/compiler settings and required Java/JNI helpers. Record flags, codecs, patches, checksums, symbols and notices; validate native-library page-size requirements.
 
 **Done when:** a clean host reproduces the artifact and a packaged standard UE probe runs on a physical Android device with Janus on/off, creates/closes a PeerConnection and links one libwebrtc implementation without engine patches. Record initial package/size baselines and exact device/toolchain versions.
@@ -151,6 +153,8 @@ Create a reproducible Linux-hosted build of pinned upstream libwebrtc for `arm64
 **Depends on:** [SR-002](#e01-api-and-build-contract), [SR-003](#e02-native-feasibility-and-test-fixtures)
 
 ##### SR-007 — Build and integrate iOS ARM64 libwebrtc (P0)
+
+**In progress:** the [pinned Xcode build](docs/MOBILE_BUILDS.md) produces a device ARM64 archive. Whole-archive linkage against Unreal's dependencies and repeat builds in separate output directories pass. Artifact staging and the compiled UBT validator accept the real export; simulator objects are rejected. Fresh-host reproduction, packaged Unreal linkage, required platform helpers, signing, device tests and initial app-size measurements remain open.
 
 Create a reproducible macOS/Xcode build of pinned upstream libwebrtc for device `arm64`, with matching headers and required Objective-C++ helpers. Select static library/framework packaging and XCFramework distribution where useful; keep simulator outputs and dSYMs separate.
 
@@ -776,7 +780,7 @@ See [Architecture](docs/ARCHITECTURE.md) for the API and build boundaries.
 | UE 5.9 | Future compatibility port | Separate adapter audit and regression pass when the target engine is available |
 | Other mobile architectures and consoles | Future evaluation | Separate SDK, capture/codec, hardware and platform-policy work; no inherited support claim |
 
-The available test machine is a Mac. Provision a Linux build host for Android libwebrtc and physical Android/iOS devices; iOS requires the selected Xcode SDK and signing setup. Record the exact standard UE installation and revision for each result; Server targets may need a source build. Android/iOS are planned client scope and remain Unverified until their gates pass. A Mac or simulator run does not prove mobile support; Windows/Linux runtime coverage also requires its own hosts. See [Mobile clients](docs/MOBILE_CLIENTS.md) for dependency manifests, codec optimization and size measurement.
+The available test machine is a Mac. Android dependency builds use the pinned Linux container; iOS uses the pinned local Xcode SDK. Independent build hosts, physical Android/iOS devices and iOS signing are still needed for acceptance. Record the exact standard UE installation and revision for each result; Server targets may need a source build. Android/iOS runtime support remains Unverified until its gates pass. A Mac or simulator run does not prove mobile support; Windows/Linux runtime coverage also requires its own hosts. See [Mobile clients](docs/MOBILE_CLIENTS.md) for dependency manifests, codec optimization and size measurement.
 
 ## 7. Release gates
 

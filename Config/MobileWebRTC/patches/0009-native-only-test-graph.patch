@@ -1,0 +1,50 @@
+diff --git a/sdk/BUILD.gn b/sdk/BUILD.gn
+index 759682f..12c5aa1 100644
+--- a/sdk/BUILD.gn
++++ b/sdk/BUILD.gn
+@@ -18,7 +18,7 @@ if (is_mac) {
+ 
+ group("sdk") {
+   public_deps = []
+-  if (!build_with_chromium) {
++  if (!build_with_chromium && (rtc_include_tests || rtc_build_examples)) {
+     if (is_android) {
+       public_deps += [ "android" ]
+     }
+diff --git a/test/BUILD.gn b/test/BUILD.gn
+index f2e574a..9d3c428 100644
+--- a/test/BUILD.gn
++++ b/test/BUILD.gn
+@@ -1187,7 +1187,7 @@ rtc_library("copy_to_file_audio_capturer_unittest") {
+   ]
+ }
+ 
+-if (!build_with_chromium && is_android) {
++if (!build_with_chromium && is_android && rtc_include_tests) {
+   rtc_android_library("native_test_java") {
+     testonly = true
+     sources = [
+diff --git a/webrtc.gni b/webrtc.gni
+index 8dfcc9d..794f217 100644
+--- a/webrtc.gni
++++ b/webrtc.gni
+@@ -496,7 +496,7 @@ template("rtc_test") {
+     if (defined(invoker.public_configs)) {
+       public_configs += invoker.public_configs
+     }
+-    if (!build_with_chromium && is_android) {
++    if (!build_with_chromium && is_android && rtc_include_tests) {
+       android_manifest = webrtc_root + "test/android/AndroidManifest.xml"
+       use_raw_android_executable = false
+       min_sdk_version = 21
+@@ -507,6 +507,10 @@ template("rtc_test") {
+       ]
+     }
+ 
++    if (is_android && !rtc_include_tests) {
++      use_raw_android_executable = true
++    }
++
+     # Build //test:google_test_runner_objc when the test is not a real XCTest.
+     if (is_ios && rtc_include_tests) {
+       if (!defined(invoker.is_xctest) || !invoker.is_xctest) {

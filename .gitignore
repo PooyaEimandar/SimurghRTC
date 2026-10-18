@@ -84,3 +84,6 @@ __pycache__/
 
 # Standalone profile hosts must not be nested under an Intermediate directory.
 /LocalBuilds/
+
+# Separately distributed mobile WebRTC inputs (headers, libraries and build records).
+/Plugins/SimurghRTC/ThirdParty/WebRTC/
