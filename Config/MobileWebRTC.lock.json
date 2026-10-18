@@ -213,9 +213,9 @@
       "host": "Darwin",
       "machine": "arm64",
       "python": "3.10.21",
-      "xcode": "Xcode 27.0\nBuild version 27A266a",
-      "sdk": "27.0",
-      "sdk_build": "24A430",
+      "xcode": "Xcode 27.1\nBuild version 27A9275",
+      "sdk": "27.1",
+      "sdk_build": "24A94232",
       "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
       "minimum_os": "15.0",
       "link_libraries": [

@@ -344,9 +344,21 @@ def gn_arguments(lock, target, compiler_root, ndk=None):
     return '\n'.join(f'{key} = {json.dumps(value)}' for key, value in sorted(result.items())) + '\n'
 
 
-def prepare(work, lock, target, python, engine, build_name=None):
+def build_directory(work, target, build_name=None, fresh=False):
+    name = build_name or target
+    require(name.isascii() and name.replace('-', '').replace('_', '').isalnum(), 'Invalid build directory name.')
+    build = owned_path(work, 'src/out/' + name)
+    empty = not build.exists() or (build.is_dir() and not any(build.iterdir()))
+    require(not fresh or empty, '--fresh requires an empty build directory; choose a new --build-name.')
+    build.mkdir(parents=True, exist_ok=True)
+    return build, empty
+
+
+def prepare(work, lock, target, python, engine, build_name=None, fresh=False):
     free_space(work, 12)
+    build, empty = build_directory(work, target, build_name, fresh)
     record = preflight(lock, target, python)
+    record.update(build_directory=str(build), fresh_output=empty)
     if target == 'Android':
         with tempfile.TemporaryDirectory(prefix='case-check-', dir=work) as directory:
             (Path(directory) / 'lowercase').touch()
@@ -405,10 +417,6 @@ def prepare(work, lock, target, python, engine, build_name=None):
     upstream_gn = src / ('buildtools/mac/gn' if target != 'Android' else 'buildtools/linux64/gn')
     upstream_gn.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(gn, upstream_gn)
-    name = build_name or target
-    require(name.isascii() and name.replace('-', '').replace('_', '').isalnum(), 'Invalid build directory name.')
-    build = owned_path(work, 'src/out/' + name)
-    build.mkdir(parents=True, exist_ok=True)
     (build / 'args.gn').write_text(gn_arguments(lock, target, compiler_root, ndk))
     record['lock_sha256'] = artifacts.digest(LOCK)
     record['recipe_sha256'] = RECIPE_SHA256
@@ -536,6 +544,7 @@ def link_probe(work, lock, target, build, env, record, engine):
 
 def export_artifact(work, lock, target, build, gn, env, record, output):
     require(artifacts.digest(LOCK) == record['lock_sha256'], 'Build lock changed during compilation; rerun build.')
+    require(artifacts.digest(Path(__file__)) == record['recipe_sha256'], 'Build runner changed during compilation; rerun build.')
     library = build / 'obj/libwebrtc.a'
     require(library.is_file(), 'GN did not produce libwebrtc.a.')
     artifacts.validate_archive(library, target)
@@ -647,7 +656,26 @@ def export_artifact(work, lock, target, build, gn, env, record, output):
     return result
 
 
-def compare_artifacts(first, second):
+def comparison_inputs(directory):
+    # Installation paths and host descriptions are evidence, not compiler inputs.
+    toolchain = artifacts.read_json(directory / 'Build/toolchain.json')
+    observed = {key: value for key, value in toolchain.items()
+                if key not in ('host', 'compiler_root', 'build_directory', 'fresh_output')}
+    arguments = {}
+    for line in (directory / 'Build/args.gn').read_text().splitlines():
+        key, separator, value = line.partition(' = ')
+        require(separator and key not in arguments, 'Malformed or duplicate exported GN argument.')
+        value = json.loads(value)
+        arguments[key] = '<toolchain-path>' if key in ('clang_base_path', 'android_ndk_root') else value
+    link = artifacts.read_json(directory / 'Build/link-probe.json')
+    require(link.get('status') == 'linked' and link.get('whole_archive') is True,
+            'Repeat checks require a successful whole-archive link probe.')
+    # Mach-O UUIDs and paths can change the linked test binary, which is not delivered.
+    link.pop('binary_sha256', None)
+    return {'toolchain': observed, 'gn_arguments': arguments, 'link_inputs': link}, toolchain
+
+
+def compare_artifacts(first, second, require_fresh=False):
     require(first.resolve() != second.resolve(), 'Compare two different artifact directories.')
     for directory in (first, second):
         artifacts.validate(directory)
@@ -660,8 +688,16 @@ def compare_artifacts(first, second):
     a, b = map(selected, documents)
     differences = sorted(name for name in a.keys() | b.keys() if a.get(name) != b.get(name))
     require(not differences, f'Build outputs differ: {differences}')
+    inputs = [comparison_inputs(directory) for directory in (first, second)]
+    require(inputs[0][0] == inputs[1][0], 'Observed build inputs differ (toolchain, GN arguments or link inputs).')
+    fresh = all(record.get('fresh_output') is True for _, record in inputs)
+    require(not require_fresh or fresh, 'Both artifacts must record a fresh output directory.')
     return {'status': 'identical', 'compared_files': len(a),
-            'archive_sha256': a['Lib/libwebrtc.a'], 'runtime_validation': 'unverified'}
+            'archive_sha256': a['Lib/libwebrtc.a'],
+            'libraries': {name: sha for name, sha in a.items() if name.startswith('Lib/')},
+            'manifest_sha256': [artifacts.digest(directory / artifacts.MANIFEST) for directory in (first, second)],
+            'build_inputs': 'identical', 'fresh_outputs': fresh,
+            'runtime_validation': 'unverified'}
 
 
 def main():
@@ -670,6 +706,8 @@ def main():
     parser.add_argument('--platform', choices=['Android', 'IOS', 'IOSSimulator'], default='IOS')
     parser.add_argument('--work', type=Path)
     parser.add_argument('--build-name', help='Fresh output directory under src/out, for repeat-build checks.')
+    parser.add_argument('--fresh', action='store_true', help='Refuse to reuse a nonempty Ninja output directory.')
+    parser.add_argument('--require-fresh', action='store_true', help='Require fresh-output records when comparing artifacts.')
     parser.add_argument('--first', type=Path)
     parser.add_argument('--second', type=Path)
     parser.add_argument('--engine', type=Path)
@@ -681,7 +719,7 @@ def main():
         lock = load_lock()
         if args.command == 'compare':
             require(args.first is not None and args.second is not None, '--first and --second are required.')
-            print(json.dumps(compare_artifacts(args.first, args.second), indent=2))
+            print(json.dumps(compare_artifacts(args.first, args.second, args.require_fresh), indent=2))
             return
         require(args.work is not None, '--work is required.')
         if args.command == 'plan':
@@ -700,7 +738,7 @@ def main():
                 fetch(work, lock)
                 return
             src, build, gn, ninja, env, record = prepare(work, lock, args.platform, args.python,
-                                                       args.engine.resolve(), args.build_name)
+                                                       args.engine.resolve(), args.build_name, args.fresh)
             run([gn, 'gen', build, '--fail-on-unused-args'], cwd=src, env=env, log=build / 'configure.log')
             print(f'Configured {args.platform}: {build}', flush=True)
             if args.command == 'configure':

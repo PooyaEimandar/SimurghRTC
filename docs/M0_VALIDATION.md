@@ -10,9 +10,9 @@ Tests ran on a Mac with Apple M2 Max and UE 5.8.3. Janus/TURN ran in Linux ARM64
 
 | Check | Result | What it establishes |
 |---|---|---|
-| Python checks | 104 passed | Pinned inputs, artifacts, fixtures and mobile report validation, including stale results, wrong profiles, missing cleanup and non-ARM64 packages |
+| Python checks | 108 passed | Pinned inputs, fresh-build evidence, artifacts, fixtures and mobile report validation |
 | Compiled UBT artifact validator | 30 current fixture cases passed; 2 earlier device exports passed | Valid Android/iOS metadata and rejection of missing, changed, extra or incompatible inputs |
-| Android/iOS ARM64 dependencies | Built and linked; original repeat comparisons passed | Corrected Android ABI and separate iOS simulator exports are recorded below |
+| Android/iOS ARM64 dependencies | Corrected Android and simulator repeat builds passed | Two fresh builds per target match; earlier device iOS evidence is retained |
 | Packaged Android lifecycle | Direct-only and Full passed on Samsung S25 Ultra | Each run created and closed nine peers; dependency identity and app cleanup verified |
 | Packaged iOS simulator lifecycle | Direct-only and Full passed on ARM64, iOS 27.0 | Same nine-peer checks, matching launch PID and dependency identity, verified app shutdown |
 | Full Unreal automation | 7 passed; no test warnings or failures | API lifecycle, native factory/peer setup and repeated local codec tests |
@@ -31,7 +31,7 @@ These results do not establish Windows, native Linux Unreal or full Android/iOS 
 | SR-001 | Review and freeze the API; finish device/headless contracts and working C++/Blueprint flows |
 | SR-002 | Finish executable Blueprint flows and remaining profile/package coverage |
 | SR-003 | Complete dependency, license, security and mobile ABI review |
-| SR-006 / SR-007 | Repeat current dependencies on independent hosts. Physical iPhone validation is deferred |
+| SR-006 / SR-007 | Reproduce dependencies on independent hosts and package the new simulator export. Physical iPhone validation is deferred |
 
 SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its message contracts against real Unreal providers; SR-305 covers provider parity. A Python model passing does not mean those providers are implemented.
 
@@ -45,7 +45,7 @@ SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its mess
 - [Mobile builds](MOBILE_BUILDS.md): pinned sources/toolchains, separate ARM64 libraries and repeat-build checks.
 - [Mobile probe](MOBILE_PROBE.md): package and run on Android or the iOS simulator.
 
-Generated logs and reports stay under `Intermediate/` and are not committed. Start with `Intermediate/MobileProbes/current-results.json` for the current mobile runs.
+Generated logs and reports stay under `Intermediate/` and are not committed. Start with `Intermediate/MobileProbes/current-results.json` for packaged mobile runs and `Intermediate/MobileBuilds/Repeat20261018/result.json` for the latest dependency repeat checks.
 
 The final simulator rebuild uses the supplied source engine at revision `2cafb2d9194e503358a1fbeced79e621f2620abc`. Its tracked files were clean when recorded. This shared checkout advanced during other work; `engine-provenance.json` records the revision, and this task introduced no engine source edits.
 
@@ -53,19 +53,51 @@ The final simulator rebuild uses the supplied source engine at revision `2cafb2d
 
 All three targets build from pinned WebRTC 5414 sources and checked toolchains. Device and simulator libraries are separate. See [Mobile builds](MOBILE_BUILDS.md) for commands and the expanded record below for hashes and earlier repeat builds.
 
-| Current artifact under `LocalBuilds/Artifacts/` | Stripped WebRTC archive | Status |
+| Earlier artifact under `LocalBuilds/Artifacts/` | Stripped WebRTC archive | Status |
 |---|---:|---|
 | `Android-arm64-itanium` | 42,103,278 bytes | Standard C++ ABI; packaged Samsung probes pass |
 | `IOS-arm64-release` | 25,297,696 bytes | Device build/link and repeat comparison pass; physical run deferred |
 | `IOSSimulator-arm64-current` | 25,273,184 bytes | Packaged Direct-only and Full simulator lifecycle probes pass |
 
-These archive sizes are not app sizes. Repeat builds of the corrected Android and new simulator revisions, plus independent-host reproduction, remain open.
+These archive sizes are not app sizes. The packaged runtime results below remain bound to these earlier artifacts. New repeat-build results are recorded separately.
+
+## Mobile repeat-build validation
+
+**Passed on 2026-10-18:** two fresh builds each of corrected Android ARM64 and iOS simulator ARM64. All four exports passed archive validation and whole-archive linking.
+
+| Target | Compared files | Stripped libraries | Result |
+|---|---:|---|---|
+| Android | 2,939 | WebRTC: 42,103,278 bytes | Identical bytes and build inputs; standard C++ ABI and 16 KiB link-probe alignment checked |
+| iOS simulator | 2,941 | WebRTC: 25,273,184 bytes; VPX: 1,784,592 bytes | Identical bytes and build inputs; ARM64 simulator objects checked |
+
+Each run starts with an empty Ninja output directory and reuses its platform's verified source checkout. The comparison checks exported libraries, headers, notices, patches, source/build locks, GN flags, tool versions and whole-archive link inputs. This is same-host repeatability; independent-host reproduction remains open.
+
+Exports are under `LocalBuilds/Artifacts/`, named `Android-repeat-20261018-a` / `-b` and `IOSSimulator-repeat-20261018-a` / `-b`. Their matching `.symbols` directories retain diagnostic WebRTC archives. Android keeps NDK r27c, Clang 18.0.3 and API 26. Its library, headers and notices also match the earlier corrected Samsung-tested artifact; only build provenance changed.
+
+Simulator builds now pin the installed Xcode 27.1 (`27A9275`) and SDK 27.1 (`24A94232`), with Apple Clang 21.0.0. Headers and notices match the earlier simulator export. All 1,246 WebRTC and 160 VPX objects differ from the originals only in their recorded SDK version (27.0 to 27.1); `simulator-sdk-delta.json` records that audit. These new manifests have not been tested in packaged Unreal apps. The earlier runtime evidence and the iOS device build's Xcode/SDK 27.0 pins are preserved.
+
+Evidence is under `Intermediate/MobileBuilds/Repeat20261018/`: `result.json`, `Android-comparison.json`, `IOSSimulator-comparison.json`, per-build command records/logs and `python-tests.log` (108 passed). The new checks reject reused output directories, changed tools/flags and missing fresh-build evidence. Full compiler logs remain in each workspace's `src/out/<build-name>/` directory.
+
+<details>
+<summary>Repeat-build library checksums</summary>
+
+| Library | SHA-256 |
+|---|---|
+| Android `libwebrtc.a` | `950bae6ef80ee71d0509d235f7eb0e5dfa1aa03d964cb8f3004df572e781b5d3` |
+| Simulator `libwebrtc.a` | `53216b093aeaf0127c874ac16f31ca8846a3eb0dd0fdab47057ca1e1b1e4f354` |
+| Simulator `libvpx.a` | `919f7d108a8b78fca36475f3d9077661d8060b00ef1f147a1685dd52ec6c2c20` |
+
+Build lock SHA-256: `5089c53c0ea5463f6e2e8320f40a7b5a7b010d894c57981eb410a76c642adbf1`.
+Build runner SHA-256: `63b261a6ebb829c7a285e370f39d57ce42dcd92c12c874a32f3a82bf79454fd5`.
+The comparison reports record both manifest hashes. Manifests can differ because they also record output paths and diagnostic link results.
+
+</details>
 
 ## Packaged mobile probe work
 
 The [mobile probe guide](MOBILE_PROBE.md) stages Direct-only and Full projects with checked ARM64 artifacts. The opt-in native probe exercises three lifecycle cycles: nine factories and peers, explicit stop, overlapping owners, restart, duplicate-call rejection and destructor cleanup. Every report identifies the dependency manifest compiled into the app.
 
-The Mac Editor dry run passed all lifecycle checks. Its evidence is `Intermediate/MobileProbes/DesktopClient/result.json`; it uses the engine's desktop WebRTC and is not mobile acceptance. The 104 Python tests include rejection of stale reports, mismatched dependencies/profiles, incomplete cleanup, simulator evidence and APKs containing another architecture.
+The Mac Editor dry run passed all lifecycle checks. Its evidence is `Intermediate/MobileProbes/DesktopClient/result.json`; it uses the engine's desktop WebRTC and is not mobile acceptance. That run's 104 Python tests include rejection of stale reports, mismatched dependencies/profiles, incomplete cleanup, simulator evidence and APKs containing another architecture.
 
 The sample Editor target has explicit `-SimurghRTCAndroidCook` and `-SimurghRTCIOSCook` options to build the required mobile cooking modules. Android and iOS simulator cooking and packaging passed. Build each project's Editor before cooking it, and avoid overlapping UBT builds; the [guide](MOBILE_PROBE.md) explains the shared-build constraints.
 
@@ -78,7 +110,7 @@ Both Android profiles passed on Samsung SM-S938B (Galaxy S25 Ultra), Android 16,
 
 These are ARM64-only, cooked Development APKs (about 98.4 MiB each), not Shipping delivery or RTC-only size deltas. Each evidence directory contains `result.json`, the correlated device log and command log. Build/package logs and `android-*-itanium-link-audit.json` are alongside them.
 
-The corrected Android archive is 42,103,278 bytes, SHA-256 `950bae6ef80ee71d0509d235f7eb0e5dfa1aa03d964cb8f3004df572e781b5d3`. Both apps report artifact manifest `f35b32bafa9a0c14bd1ab9a4121d09de9fbff2483fbd093270db8b55cde026cc`. Fresh-output repeat comparisons for this corrected revision and independent-host reproduction remain open.
+The corrected Android archive is 42,103,278 bytes, SHA-256 `950bae6ef80ee71d0509d235f7eb0e5dfa1aa03d964cb8f3004df572e781b5d3`. Both apps report artifact manifest `f35b32bafa9a0c14bd1ab9a4121d09de9fbff2483fbd093270db8b55cde026cc`. The later repeat builds reproduce these library bytes; independent-host reproduction remains open.
 
 The Direct-only iOS native executable compiled and linked successfully after scoping a Clang warning suppression to the pinned Abseil headers. Its link response/map select one iOS WebRTC archive, with iOS 15.0 minimum and SDK 27.0. Evidence is `ios-direct-build-fixed.log` and `ios-direct-link-audit.json`. Physical iPhone testing is deferred at the user’s request. Current iOS work targets the installed simulator; no older Xcode setup is planned. An unsigned device executable is not a simulator or device runtime pass.
 
@@ -95,7 +127,7 @@ The simulator uses separately built libwebrtc and portable-C VPX, plus pinned `n
 
 Network media, provider interoperability, suspend/resume and Shipping RTC-off/on size comparisons remain separate work.
 
-The host updated from Xcode 27.0 to 27.1 during this run. Dependency artifacts retain their pinned 27.0 provenance. Both final simulator executables and packages use 27.1 (`27A9275`), SDK 27.1 (`24A94232`). Dependency pins remain unchanged; runtime evidence records the host and bundle toolchains separately.
+The host updated from Xcode 27.0 to 27.1 during the packaged-probe run. Its dependency artifacts retain their pinned 27.0 provenance. Both final simulator executables and packages use 27.1 (`27A9275`), SDK 27.1 (`24A94232`). The later repeat-build work updates the simulator dependency pin to 27.1; it does not change these earlier runtime records.
 
 ## Detailed validation record
 

@@ -144,7 +144,7 @@ Create a sample project and test harness with generated audio/video and versione
 
 ##### SR-006 — Build and integrate Android ARM64 libwebrtc (P0)
 
-**In progress:** the [pinned Linux build](docs/MOBILE_BUILDS.md) now uses Unreal-compatible vtables, fixing the first Samsung crash. Packaged Direct-only and Full probes pass on a Galaxy S25 Ultra: nine peers per run, repeated stop/restart and destructor cleanup. Each app links one libwebrtc archive, preserves 16 KiB ELF alignment and records its dependency identity. Development APKs are about 98.4 MiB. Repeat builds of the corrected revision and independent-host reproduction remain open; Shipping RTC size deltas are separate work. See [results](docs/M0_VALIDATION.md#packaged-mobile-probe-work).
+**In progress:** two fresh [pinned Linux builds](docs/MOBILE_BUILDS.md) reproduce the corrected ARM64 archive and its headers/notices byte for byte. They retain Unreal-compatible vtables and 16 KiB link-probe alignment. Packaged Direct-only and Full lifecycle probes already pass on a Galaxy S25 Ultra using these same library bytes. See [repeat-build results](docs/M0_VALIDATION.md#mobile-repeat-build-validation) and [packaged results](docs/M0_VALIDATION.md#packaged-mobile-probe-work). Independent-host reproduction remains open; Shipping RTC size deltas are separate work.
 
 Create a reproducible Linux-hosted build of pinned upstream libwebrtc for `arm64-v8a`, with UE-compatible NDK/compiler settings and required Java/JNI helpers. Record flags, codecs, patches, checksums, symbols and notices; validate native-library page-size requirements.
 
@@ -154,7 +154,7 @@ Create a reproducible Linux-hosted build of pinned upstream libwebrtc for `arm64
 
 ##### SR-007 — Build and integrate iOS ARM64 libwebrtc (P0)
 
-**In progress:** the [pinned Xcode build](docs/MOBILE_BUILDS.md) produces a device ARM64 archive; whole-archive linkage and repeat device builds pass. Separately built ARM64 simulator libraries now run in packaged UE 5.8.3 Direct-only and Full probes: nine peers per run, repeated teardown and verified app shutdown. Both use the installed Xcode and iOS 27 simulator, with graphics/hardware audio disabled. Simulator bundles are about 270.5 MiB; these are not iPhone delivery sizes. See the [probe guide](docs/MOBILE_PROBE.md) and [results](docs/M0_VALIDATION.md#packaged-mobile-probe-work). Fresh-host reproduction and signed physical-device acceptance remain open. Physical iPhone testing is deferred at the user's request.
+**In progress:** the [pinned build](docs/MOBILE_BUILDS.md) produces separate device and simulator ARM64 archives. Two fresh simulator builds now match with Xcode/SDK 27.1, including portable-C VPX. Earlier simulator artifacts passed packaged UE 5.8.3 Direct-only and Full lifecycle probes; those results remain tied to their original manifests. See [repeat-build results](docs/M0_VALIDATION.md#mobile-repeat-build-validation) and [packaged results](docs/M0_VALIDATION.md#packaged-mobile-probe-work). Independent-host reproduction and signed physical-device acceptance remain open. Physical iPhone testing is deferred at the user's request.
 
 Create a reproducible macOS/Xcode build of pinned upstream libwebrtc for device `arm64`, with matching headers and required Objective-C++ helpers. Select static library/framework packaging and XCFramework distribution where useful; keep simulator outputs and dSYMs separate.
 

@@ -101,7 +101,7 @@ env UE_SKIP_UBT=1 "$UE_ROOT/Engine/Build/BatchFiles/RunUAT.sh" BuildCookRun -Wai
 
 The first two commands compile; the last stages cooked content and creates an ad-hoc signed simulator app. `SDKROOT=iphonesimulator` is required because this engine's generated Xcode project otherwise selects the device SDK. Check Xcode's `BUILD SUCCEEDED` messages as well as UAT's exit code: this engine can report UAT success after a signing failure. The harness also verifies the bundle platform and signature.
 
-Dependency builds still require the pinned Xcode 27.0. The host updated to 27.1 during validation; packaging uses 27.1 with the already verified 27.0 dependency artifacts. A different toolchain needs an explicit pin update and new dependency evidence.
+New simulator dependency builds pin Xcode 27.1 and SDK 27.1. The earlier packaged lifecycle runs used 27.0 dependency artifacts with 27.1 packaging; their reports remain bound to those original manifests. See [repeat-build results](M0_VALIDATION.md#mobile-repeat-build-validation) for the newer dependencies. The iOS device build keeps its 27.0 pin.
 
 Run the resulting simulator `.app` with its UDID from `xcrun simctl list devices available`:
 

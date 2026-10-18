@@ -1,5 +1,6 @@
 """Build-input and toolchain integrity checks; no network or SDK is required."""
 from pathlib import Path
+import json
 import stat
 import sys
 import tempfile
@@ -58,6 +59,16 @@ class MobileBuildTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'Another operation'):
                 with build.workspace(self.root):
                     pass
+
+    def test_fresh_build_refuses_to_reuse_outputs(self):
+        directory, empty = build.build_directory(self.root, 'Android', 'repeat-a', fresh=True)
+        self.assertTrue(empty)
+        (directory / 'keep.o').write_bytes(b'prior compiler output')
+        with self.assertRaisesRegex(ValueError, '--fresh requires an empty'):
+            build.build_directory(self.root, 'Android', 'repeat-a', fresh=True)
+        self.assertEqual((directory / 'keep.o').read_bytes(), b'prior compiler output')
+        _, empty = build.build_directory(self.root, 'Android', 'repeat-a')
+        self.assertFalse(empty)
 
     def test_generated_paths_reject_symlinked_parents(self):
         outside = self.root / 'outside'
@@ -171,31 +182,82 @@ class MobileBuildTests(unittest.TestCase):
                 build.fetch(self.root, lock)
         self.assertEqual((repo / 'input.h').read_text(), 'original')
 
-    def test_repeat_comparison_accepts_different_logs_but_rejects_different_headers(self):
+    def repeat_pair(self):
         first, second = self.root / 'first', self.root / 'second'
         for directory in (first, second):
             make_payload(directory)
             (directory / 'Build/build-lock.json').write_text('{"test": true}')
-            (directory / 'Build/toolchain.json').write_text(str(directory))
+            build.write_json(directory / 'Build/toolchain.json', {
+                'compiler': 'test-only', 'python': 'test-only', 'sdk': 'test-only',
+                'compiler_root': str(directory / 'clang'), 'host': str(directory),
+                'build_directory': str(directory / 'out'), 'fresh_output': True})
+            (directory / 'Build/args.gn').write_text(
+                f'clang_base_path = {json.dumps(str(directory / "clang"))}\nis_debug = false\n')
+            build.write_json(directory / 'Build/link-probe.json', {
+                'status': 'linked', 'whole_archive': True, 'engine_libraries': [],
+                'binary_sha256': str(directory)})
             seal(directory)
-        self.assertEqual(build.compare_artifacts(first, second)['status'], 'identical')
+        return first, second
+
+    def test_repeat_comparison_accepts_host_paths_but_rejects_different_headers(self):
+        first, second = self.repeat_pair()
+        report = build.compare_artifacts(first, second, require_fresh=True)
+        self.assertEqual(report['status'], 'identical')
+        self.assertTrue(report['fresh_outputs'])
+        self.assertEqual(len(report['manifest_sha256']), 2)
         (second / 'Include/rtc_base/thread.h').write_text('a different header')
         seal(second)
         with self.assertRaisesRegex(ValueError, 'Build outputs differ'):
             build.compare_artifacts(first, second)
 
     def test_repeat_comparison_rejects_changed_archive_even_with_valid_manifest(self):
-        first, second = self.root / 'first', self.root / 'second'
-        for directory in (first, second):
-            make_payload(directory)
-            (directory / 'Build/build-lock.json').write_text('{"test": true}')
-            seal(directory)
+        first, second = self.repeat_pair()
         archive = second / 'Lib/libwebrtc.a'
         data = bytearray(archive.read_bytes())
         data[-1] = 1  # Change a non-identity byte in the synthetic object.
         archive.write_bytes(data)
         seal(second)
         with self.assertRaisesRegex(ValueError, 'Build outputs differ'):
+            build.compare_artifacts(first, second)
+
+    def test_repeat_comparison_rejects_observed_tool_or_flag_drift(self):
+        for field in ('compiler', 'python', 'sdk', 'xcode', 'sdk_build', 'gn', 'ninja', 'recipe_sha256'):
+            with self.subTest(field=field):
+                first, second = self.repeat_pair()
+                path = second / 'Build/toolchain.json'
+                record = json.loads(path.read_text())
+                record[field] = 'different'
+                build.write_json(path, record)
+                seal(second)
+                with self.assertRaisesRegex(ValueError, 'Observed build inputs differ'):
+                    build.compare_artifacts(first, second)
+        first, second = self.repeat_pair()
+        path = second / 'Build/args.gn'
+        path.write_text(path.read_text().replace('is_debug = false', 'is_debug = true'))
+        seal(second)
+        with self.assertRaisesRegex(ValueError, 'Observed build inputs differ'):
+            build.compare_artifacts(first, second)
+
+    def test_repeat_comparison_requires_fresh_evidence_when_requested(self):
+        for value in (False, None):
+            first, second = self.repeat_pair()
+            path = second / 'Build/toolchain.json'
+            record = json.loads(path.read_text())
+            if value is None:
+                del record['fresh_output']
+            else:
+                record['fresh_output'] = value
+            build.write_json(path, record)
+            seal(second)
+            self.assertFalse(build.compare_artifacts(first, second)['fresh_outputs'])
+            with self.assertRaisesRegex(ValueError, 'fresh output directory'):
+                build.compare_artifacts(first, second, require_fresh=True)
+
+    def test_repeat_comparison_rejects_failed_link_probe(self):
+        first, second = self.repeat_pair()
+        build.write_json(second / 'Build/link-probe.json', {'status': 'failed', 'whole_archive': True})
+        seal(second)
+        with self.assertRaisesRegex(ValueError, 'successful whole-archive'):
             build.compare_artifacts(first, second)
 
 

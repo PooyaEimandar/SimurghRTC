@@ -2,7 +2,7 @@
 
 Use this workflow to build the M0 native dependency for **Android ARM64** or **iOS device ARM64**. Each platform gets its own library and matching headers. The engine is read only; no engine patch is needed.
 
-For local iOS testing, `--platform IOSSimulator` produces a separate ARM64 simulator artifact using the same pinned Xcode. It also builds portable-C VPX from Unreal's checked source archive, because the engine's VPX binary is device-only. See the [simulator probe steps](MOBILE_PROBE.md#test-with-the-ios-simulator). Simulator results do not establish physical-device behavior or delivery size.
+For local iOS testing, `--platform IOSSimulator` produces a separate ARM64 simulator artifact with its own Xcode pin. It also builds portable-C VPX from Unreal's checked source archive, because the engine's VPX binary is device-only. See the [simulator probe steps](MOBILE_PROBE.md#test-with-the-ios-simulator). Simulator results do not establish physical-device behavior or delivery size.
 
 The build includes the native PeerConnection factory, data channels, audio processing, builtin audio codecs and software VP8/VP9. It excludes Java/Objective-C SDK wrappers, hardware capture, H.264 and AV1. Device permissions, hardware codecs and lifecycle integration come later.
 
@@ -16,6 +16,7 @@ Run commands from the repository root. Keep at least **30 GiB free per build wor
 |---|---|---|
 | Android | Linux x86-64 container, Python 3.13.5, NDK r27c (`27.2.12479018`), Clang 18.0.3 | Android API 26 |
 | iOS | Apple Silicon Mac, Python 3.10.21, Xcode 27.0 (`27A266a`), SDK 27.0 (`24A430`), Apple Clang 21.0.0 | iOS 15.0, device ARM64 |
+| iOS simulator | Apple Silicon Mac, Python 3.10.21, Xcode 27.1 (`27A9275`), SDK 27.1 (`24A94232`), Apple Clang 21.0.0 | iOS 15.0, simulator ARM64 |
 
 The script checks these versions and the engine dependency hashes. Install the matching tools instead of bypassing a mismatch. It does not download Xcode or change your active Xcode installation.
 
@@ -35,6 +36,8 @@ PYTHON=/absolute/path/to/python3.10
 ```
 
 Use `configure` instead of `build` to stop after generating Ninja files. `plan` prints the inputs without fetching or compiling anything.
+
+For the simulator, use `--platform IOSSimulator` in both commands and a separate output such as `LocalBuilds/Artifacts/IOSSimulator-arm64`. The simulator pin follows the installed Xcode 27.1; the earlier device build keeps its 27.0 pin and evidence.
 
 ## Build Android
 
@@ -84,21 +87,35 @@ See [artifact setup](MOBILE_ARTIFACTS.md) for format checks and [mobile clients]
 
 ## Check a repeat build
 
-Build again with a new output directory, adding `--build-name IOS-repeat` or `--build-name Android-repeat`. This recompiles into a separate, empty Ninja output directory. Use a new workspace and `fetch` as well when checking another host or source checkout.
+Build twice with `--fresh`, distinct `--build-name` values and new artifact paths. The tool refuses a nonempty Ninja directory and records whether compilation started from empty output. Keep the lock and build script unchanged between runs.
+
+For example, after fetching simulator sources and setting `UE_ROOT` and `PYTHON`:
 
 ```sh
-python3 tools/mobile_build.py compare \
-  --first LocalBuilds/Artifacts/IOS-arm64 \
-  --second LocalBuilds/Artifacts/IOS-arm64-repeat
+for run in a b; do
+  "$PYTHON" tools/mobile_build.py build --platform IOSSimulator \
+    --work LocalBuilds/MobileIOS --engine "$UE_ROOT" --python "$PYTHON" \
+    --fresh --build-name "IOSSimulator-repeat-$run" \
+    --output "LocalBuilds/Artifacts/IOSSimulator-repeat-$run" || exit 1
+done
+python3 tools/mobile_build.py compare --require-fresh \
+  --first LocalBuilds/Artifacts/IOSSimulator-repeat-a \
+  --second LocalBuilds/Artifacts/IOSSimulator-repeat-b
 ```
 
-The comparison validates both manifests, then compares library bytes, headers, notices, patches, source locks and build locks. Host paths, logs and linked test-binary UUIDs can differ and are not part of this comparison. Keep the comparison result with the build evidence; pinned inputs alone do not prove byte-for-byte reproducibility.
+For Android, run the same two builds through `mobile_android`, using `--platform Android --work /build --engine /engine` and Android output names. The comparison runs on the host.
+
+The comparison validates both manifests, then checks library bytes (including simulator VPX), headers, notices, patches, source/build locks, GN flags, observed tools and link inputs. Installation paths, host descriptions and the linked test binary's UUID can differ. The report records both manifest hashes; whole manifests can differ because they contain paths and diagnostic records.
+
+Use `--require-fresh` for repeat-build acceptance. Without it, older artifacts can still be compared, but missing fresh-output records remain unverified. A resumed build is incremental and cannot pass this gate. Use a new output name after fixing a failed build when collecting repeat evidence.
+
+These checks establish repeatability on the tested host. To check independent reproduction, fetch and build in a new workspace on another host with the same pinned tools. Save the comparison JSON with the build records; pinned inputs alone do not prove matching output.
 
 ## When a build stops
 
 Use a new or script-created workspace. The tool never adopts a nonempty directory, changes a checkout to another revision, or overwrites an artifact. It rejects modified sources, unexpected files, patch drift, mismatched engine inputs and corrupted tool downloads.
 
-Compiler details are in `<work>/src/out/<target>/compile.log`; configuration and link checks have their own logs beside it. A failed compile can be resumed with the same command. If the lock changes, fetch into a new workspace. Do not edit downloaded sources without recording and reviewing a patch in the lock.
+Compiler details are in `<work>/src/out/<build-name>/compile.log`; configuration and link checks have their own logs beside it. A failed compile can be resumed without `--fresh`. If only toolchain pins change, a verified source checkout can be reused with a new output name; source revision changes need a new workspace and `fetch`. Do not edit downloaded sources without recording and reviewing a patch in the lock.
 
 <details>
 <summary>Why this build differs from the upstream SDK bundle</summary>
