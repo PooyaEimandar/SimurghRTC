@@ -1,0 +1,142 @@
+{
+  "fixture_version": 1,
+  "upstream_version": "1.4.2",
+  "transport": "http",
+  "authentication": "Inject apisecret from external file at runtime; omitted from examples.",
+  "session_id": 1001,
+  "handle_id": 1003,
+  "plugin": "janus.plugin.videoroom",
+  "messages": [
+    {
+      "direction": "request",
+      "path": "/janus",
+      "body": {
+        "janus": "create",
+        "transaction": "create-v1"
+      }
+    },
+    {
+      "direction": "response",
+      "body": {
+        "janus": "success",
+        "transaction": "create-v1",
+        "data": {
+          "id": 1001
+        }
+      }
+    },
+    {
+      "direction": "request",
+      "path": "/janus/1001",
+      "body": {
+        "janus": "attach",
+        "plugin": "janus.plugin.videoroom",
+        "transaction": "attach-v1"
+      }
+    },
+    {
+      "direction": "response",
+      "body": {
+        "janus": "success",
+        "session_id": 1001,
+        "transaction": "attach-v1",
+        "data": {
+          "id": 1003
+        }
+      }
+    },
+    {
+      "direction": "request",
+      "path": "/janus/1001/1003",
+      "body": {
+        "janus": "message",
+        "transaction": "join-v1",
+        "body": {
+          "request": "join",
+          "room": 9001,
+          "ptype": "publisher",
+          "id": 42001,
+          "display": "fixture"
+        }
+      }
+    },
+    {
+      "direction": "response",
+      "body": {
+        "janus": "ack",
+        "session_id": 1001,
+        "transaction": "join-v1"
+      }
+    },
+    {
+      "direction": "event",
+      "body": {
+        "janus": "event",
+        "session_id": 1001,
+        "sender": 1003,
+        "transaction": "join-v1",
+        "plugindata": {
+          "plugin": "janus.plugin.videoroom",
+          "data": {
+            "videoroom": "joined",
+            "room": 9001,
+            "id": 42001,
+            "private_id": 10001,
+            "publishers": []
+          }
+        }
+      }
+    },
+    {
+      "direction": "request",
+      "path": "/janus/1001/1003",
+      "body": {
+        "janus": "trickle",
+        "transaction": "end-v1",
+        "candidate": {
+          "completed": true
+        }
+      }
+    },
+    {
+      "direction": "response",
+      "body": {
+        "janus": "ack",
+        "session_id": 1001,
+        "transaction": "end-v1"
+      }
+    },
+    {
+      "direction": "request",
+      "path": "/janus/1001/1003",
+      "body": {
+        "janus": "detach",
+        "transaction": "detach-v1"
+      }
+    },
+    {
+      "direction": "response",
+      "body": {
+        "janus": "success",
+        "session_id": 1001,
+        "transaction": "detach-v1"
+      }
+    },
+    {
+      "direction": "request",
+      "path": "/janus/1001",
+      "body": {
+        "janus": "destroy",
+        "transaction": "destroy-v1"
+      }
+    },
+    {
+      "direction": "response",
+      "body": {
+        "janus": "success",
+        "session_id": 1001,
+        "transaction": "destroy-v1"
+      }
+    }
+  ]
+}

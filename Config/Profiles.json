@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "engine_version": "5.8.3",
+  "descriptor_engine_version": "5.8.0",
+  "modules": {
+    "SimurghRTCCore": {
+      "dependencies": [
+        "Core",
+        "CoreUObject",
+        "Engine"
+      ]
+    },
+    "SimurghRTCNative": {
+      "dependencies": [
+        "Core",
+        "SimurghRTCCore"
+      ],
+      "desktop_third_party_dependencies": [
+        "WebRTC",
+        "OpenSSL",
+        "libOpus",
+        "LibVpx"
+      ]
+    },
+    "SimurghRTCDirect": {
+      "dependencies": [
+        "Core",
+        "SimurghRTCCore",
+        "SimurghRTCNative"
+      ]
+    },
+    "SimurghRTCMedia": {
+      "dependencies": [
+        "Core",
+        "CoreUObject",
+        "Engine",
+        "SimurghRTCCore"
+      ],
+      "deny_targets": [
+        "Server"
+      ],
+      "private_dependencies": [
+        "SimurghRTCNative",
+        "RHI",
+        "RenderCore",
+        "AudioExtensions",
+        "Json"
+      ]
+    },
+    "SimurghRTCServer": {
+      "dependencies": [
+        "Core",
+        "SimurghRTCCore",
+        "SimurghRTCNative",
+        "SimurghRTCDirect"
+      ],
+      "private_dependencies": [
+        "HTTPServer",
+        "Json"
+      ],
+      "platforms": [
+        "Win64",
+        "Mac",
+        "Linux"
+      ],
+      "targets": [
+        "Editor",
+        "Server"
+      ]
+    },
+    "SimurghRTCJanus": {
+      "dependencies": [
+        "Core",
+        "SimurghRTCCore",
+        "SimurghRTCNative"
+      ],
+      "deny_targets": [
+        "Server"
+      ]
+    },
+    "SimurghRTCJanusExtensions": {
+      "dependencies": [
+        "Core",
+        "CoreUObject",
+        "Engine",
+        "SimurghRTCCore",
+        "SimurghRTCJanus"
+      ],
+      "deny_targets": [
+        "Server"
+      ]
+    }
+  },
+  "profiles": {
+    "full": [
+      "SimurghRTCCore",
+      "SimurghRTCNative",
+      "SimurghRTCDirect",
+      "SimurghRTCMedia",
+      "SimurghRTCServer",
+      "SimurghRTCJanus",
+      "SimurghRTCJanusExtensions"
+    ],
+    "direct-only": [
+      "SimurghRTCCore",
+      "SimurghRTCNative",
+      "SimurghRTCDirect",
+      "SimurghRTCMedia",
+      "SimurghRTCServer"
+    ],
+    "janus-only": [
+      "SimurghRTCCore",
+      "SimurghRTCNative",
+      "SimurghRTCMedia",
+      "SimurghRTCJanus",
+      "SimurghRTCJanusExtensions"
+    ],
+    "data-only": [
+      "SimurghRTCCore",
+      "SimurghRTCNative",
+      "SimurghRTCDirect",
+      "SimurghRTCJanus"
+    ],
+    "server": [
+      "SimurghRTCCore",
+      "SimurghRTCNative",
+      "SimurghRTCDirect",
+      "SimurghRTCServer"
+    ]
+  }
+}

@@ -1,0 +1,2 @@
+general: { }
+room-9001: { description = "SR005 audio fixture v1" is_private = false sampling_rate = 48000 record = false }

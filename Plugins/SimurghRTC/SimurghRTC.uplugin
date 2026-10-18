@@ -1,0 +1,75 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.0-m0",
+  "FriendlyName": "SimurghRTC",
+  "Description": "Shared RTC contract, desktop native factory and headless Server probe. RTC signaling is not implemented.",
+  "Category": "Networking",
+  "CreatedBy": "SimurghRTC contributors",
+  "EngineVersion": "5.8.0",
+  "CanContainContent": false,
+  "IsBetaVersion": true,
+  "Installed": false,
+  "SupportedTargetPlatforms": [
+    "Win64",
+    "Mac",
+    "Linux",
+    "Android",
+    "IOS"
+  ],
+  "Modules": [
+    {
+      "Name": "SimurghRTCCore",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "SimurghRTCNative",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "SimurghRTCDirect",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "SimurghRTCMedia",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "TargetDenyList": [
+        "Server"
+      ]
+    },
+    {
+      "Name": "SimurghRTCServer",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64",
+        "Mac",
+        "Linux"
+      ],
+      "TargetAllowList": [
+        "Editor",
+        "Server"
+      ]
+    },
+    {
+      "Name": "SimurghRTCJanus",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "TargetDenyList": [
+        "Server"
+      ]
+    },
+    {
+      "Name": "SimurghRTCJanusExtensions",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "TargetDenyList": [
+        "Server"
+      ]
+    }
+  ]
+}

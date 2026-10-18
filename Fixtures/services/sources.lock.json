@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "fixture_version": "sr005-v1",
+  "base_image": "debian:trixie-slim@sha256:a29215f6a35e51e22adffa17f89e9d2ef06214e64a2bad10d765c46aea49f11f",
+  "debian_snapshot": "20261016T000000Z",
+  "janus": {
+    "repository": "meetecho/janus-gateway",
+    "tag": "v1.4.2",
+    "commit": "0a24110ae55a172c4293749b763dbb66a138f9ec",
+    "archive_url": "https://codeload.github.com/meetecho/janus-gateway/tar.gz/0a24110ae55a172c4293749b763dbb66a138f9ec",
+    "archive_sha256": "8fd4f957d2764a36d5849b8ef968671c6ff58b25063b1889466a0317afcafad7"
+  },
+  "coturn": {
+    "repository": "coturn/coturn",
+    "tag": "4.18.0",
+    "commit": "23c6c1d32a3d2b21a56cee65d3203bcc4ea82d2b",
+    "archive_url": "https://codeload.github.com/coturn/coturn/tar.gz/23c6c1d32a3d2b21a56cee65d3203bcc4ea82d2b",
+    "archive_sha256": "d7e2ee337b5298c30cc5cd365c3173d05b97c749d28e9416afa4ca907925ce15"
+  },
+  "plugins": [
+    "audiobridge",
+    "echotest",
+    "streaming",
+    "textroom",
+    "videocall",
+    "videoroom"
+  ],
+  "transports": [
+    "http",
+    "websockets"
+  ],
+  "room_id": 9001
+}

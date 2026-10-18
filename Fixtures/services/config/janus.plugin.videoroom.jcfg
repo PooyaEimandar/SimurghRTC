@@ -1,0 +1,2 @@
+general: { string_ids = false }
+room-9001: { description = "SR005 video fixture v1" is_private = false publishers = 4 audiocodec = "opus" videocodec = "vp8" record = false }

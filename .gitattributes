@@ -1,0 +1,4 @@
+# Hash-locked fixture inputs must retain their canonical bytes across checkouts.
+Fixtures/** text eol=lf
+Fixtures/signaling/**/*.sdp -text
+Plugins/SimurghRTC/Source/SimurghRTCNative/Private/Fixtures/*.h text eol=lf

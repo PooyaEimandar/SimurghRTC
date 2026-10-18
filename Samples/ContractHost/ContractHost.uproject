@@ -1,0 +1,23 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "5.8",
+  "Category": "Tests",
+  "Description": "SimurghRTC M0 contract host; no RTC transport yet.",
+  "DisableEnginePluginsByDefault": true,
+  "AdditionalPluginDirectories": [
+    "../../Plugins"
+  ],
+  "Modules": [
+    {
+      "Name": "ContractHost",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "SimurghRTC",
+      "Enabled": true
+    }
+  ]
+}

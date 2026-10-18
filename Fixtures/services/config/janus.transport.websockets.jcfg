@@ -1,0 +1,2 @@
+general: { json = "compact" ws = true ws_port = 8188 ws_ip = "@LOCAL_IP@" wss = false }
+admin: { admin_ws = false admin_wss = false }

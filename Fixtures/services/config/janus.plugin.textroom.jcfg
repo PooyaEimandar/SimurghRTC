@@ -1,0 +1,2 @@
+general: { }
+room-9001: { description = "SR005 text fixture v1" is_private = false }

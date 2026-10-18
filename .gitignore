@@ -73,3 +73,14 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Nested sample projects and local tools
+**/Binaries/
+**/Intermediate/
+**/Saved/
+**/DerivedDataCache/
+__pycache__/
+.DS_Store
+
+# Standalone profile hosts must not be nested under an Intermediate directory.
+/LocalBuilds/

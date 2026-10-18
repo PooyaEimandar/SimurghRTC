@@ -1,0 +1,48 @@
+{
+  "fixture_version": 1,
+  "direct": [
+    {
+      "case": "unsupported-version",
+      "code": "UnsupportedVersion"
+    },
+    {
+      "case": "duplicate-id-changed-body",
+      "code": "RequestConflict"
+    },
+    {
+      "case": "sequence-gap",
+      "code": "OutOfOrder"
+    },
+    {
+      "case": "candidate-after-end",
+      "code": "IceComplete"
+    },
+    {
+      "case": "closed-session",
+      "code": "SessionClosed"
+    },
+    {
+      "case": "queue-capacity",
+      "code": "ResourceLimit"
+    }
+  ],
+  "janus": [
+    {
+      "janus": "error",
+      "transaction": "unauthorized-v1",
+      "error": {
+        "code": 403,
+        "reason": "Unauthorized request (wrong or missing secret/token)"
+      }
+    },
+    {
+      "janus": "error",
+      "session_id": 1001,
+      "transaction": "stale-v1",
+      "error": {
+        "code": 458,
+        "reason": "Session not found"
+      }
+    }
+  ]
+}

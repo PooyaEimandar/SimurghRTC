@@ -1,0 +1,13 @@
+general: {
+    configs_folder = "/tmp/janus"
+    plugins_folder = "/opt/janus/lib/janus/plugins"
+    transports_folder = "/opt/janus/lib/janus/transports"
+    api_secret = "@JANUS_SECRET@"
+    server_name = "SimurghRTC SR005 v1"
+    interface = "eth0"
+    debug_level = 4
+    debug_colors = false
+    session_timeout = 30
+}
+media: { rtp_port_range = "20000-20031" }
+nat: { ice_enforce_list = "eth0" }

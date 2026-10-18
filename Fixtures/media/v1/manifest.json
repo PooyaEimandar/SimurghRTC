@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "fixture_id": "simurghrtc-media-v1",
+  "video": {
+    "format": "BGRA8",
+    "width": 64,
+    "height": 64,
+    "frames": 12,
+    "fps": 30,
+    "first_rtp_timestamp": 90000,
+    "rtp_timestamp_step": 3000
+  },
+  "audio": {
+    "format": "PCM_S16LE",
+    "sample_rate": 48000,
+    "channels": 2,
+    "frames": 48000,
+    "frequency_hz": 440,
+    "amplitude": 8000,
+    "period_frames": 1200
+  },
+  "files": {
+    "tone.s16le": {
+      "bytes": 192000,
+      "sha256": "6f92f03b0329b02ef956f21433d0fea595c5af73400fab7978c4b239734b3e78"
+    },
+    "tone.wav": {
+      "bytes": 192044,
+      "sha256": "5d1e34822c34a2f56b98ee52d7b9d3dbcca9b3717f338cfaef3e1b6f444f3d3c"
+    },
+    "quadrants.bgra": {
+      "bytes": 196608,
+      "sha256": "f7371d0b9cfd2aa6d9044e0532da4349724ee1c9f8b2eb5836b617fb10e447d0"
+    }
+  },
+  "ue_header_sha256": "23118d0cc3de4cbf1d66160dcbb561f3a7d758173f73395e73c9acde260704e0"
+}

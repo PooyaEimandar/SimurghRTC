@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "profile": "full",
+  "engine_version": "5.8.3",
+  "with_direct": true,
+  "with_janus": true,
+  "with_media": true,
+  "with_server": true,
+  "native_transport": "unimplemented",
+  "desktop_native_factory": "engine-webrtc-5414",
+  "mobile_native_factory": "unimplemented",
+  "modules": [
+    "SimurghRTCCore",
+    "SimurghRTCNative",
+    "SimurghRTCDirect",
+    "SimurghRTCMedia",
+    "SimurghRTCServer",
+    "SimurghRTCJanus",
+    "SimurghRTCJanusExtensions"
+  ]
+}

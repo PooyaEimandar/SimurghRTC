@@ -1,0 +1,39 @@
+{
+  "fixture_version": 1,
+  "upstream_version": "1.4.2",
+  "illustrative_only": true,
+  "request": {
+    "janus": "message",
+    "transaction": "echo-offer-v1",
+    "body": {
+      "audio": false,
+      "video": false,
+      "data": true
+    },
+    "jsep": {
+      "type": "offer",
+      "sdp": "v=0\r\no=- 1000 1 IN IP4 127.0.0.1\r\ns=SimurghRTC fixture v1\r\nt=0 0\r\na=group:BUNDLE 0\r\nm=application 9 UDP/DTLS/SCTP webrtc-datachannel\r\nc=IN IP4 0.0.0.0\r\na=mid:0\r\na=ice-ufrag:fixtureClient\r\na=ice-pwd:EXAMPLEonlyNotLiveIcePassword01\r\na=ice-options:trickle\r\na=fingerprint:sha-256 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00\r\na=setup:actpass\r\na=sctp-port:5000\r\na=max-message-size:65536\r\n"
+    }
+  },
+  "response_ack": {
+    "janus": "ack",
+    "session_id": 1001,
+    "transaction": "echo-offer-v1"
+  },
+  "candidate": {
+    "janus": "trickle",
+    "transaction": "ice-v1",
+    "candidate": {
+      "candidate": "candidate:1 1 UDP 2122260223 192.0.2.10 50000 typ host",
+      "sdpMid": "0",
+      "sdpMLineIndex": 0
+    }
+  },
+  "completion": {
+    "janus": "trickle",
+    "transaction": "ice-end-v1",
+    "candidate": {
+      "completed": true
+    }
+  }
+}
