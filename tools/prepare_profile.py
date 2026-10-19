@@ -46,7 +46,7 @@ def documents(profile: str) -> tuple[dict, dict]:
                 'with_janus_extensions': 'SimurghRTCJanusExtensions' in names,
                 'with_media': 'SimurghRTCMedia' in names,
                 'with_server': 'SimurghRTCServer' in names,
-                'native_transport': 'unimplemented', 'desktop_native_factory': 'engine-webrtc-5414',
+                'native_transport': 'unimplemented', 'desktop_native_factory': 'isolated-artifact-required',
                 'mobile_native_factory': 'external-artifact-required', 'modules': names}
     if profile == 'server':
         descriptor['SupportedTargetPlatforms'] = ['Win64','Mac','Linux']
@@ -70,10 +70,10 @@ def stage(profile: str, destination: Path, artifacts: list[Path] | None = None) 
     _, manifest = documents(profile)
     selected = {}
     for artifact in artifacts or []:
-        if profile == 'server':
-            raise ValueError('The Server profile does not accept mobile artifacts.')
         report = mobile_artifacts.validate(artifact)
         platform = report['platform']
+        if profile == 'server' and platform != 'Mac':
+            raise ValueError('The Server profile only accepts a desktop native artifact.')
         if platform in selected:
             raise ValueError(f'Only one {platform} artifact can be selected.')
         if artifact.resolve() == destination or artifact.resolve() in destination.parents:
@@ -107,7 +107,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--profile', choices=list(json.loads(POLICY.read_text())['profiles']), default='full')
     parser.add_argument('--output', type=Path)
-    parser.add_argument('--mobile-artifact', type=Path, action='append', default=[],
+    parser.add_argument('--mobile-artifact', '--native-artifact', type=Path, action='append', default=[],
                         help='Stage a checked ARM64 artifact. Repeat once per mobile platform.')
     parser.add_argument('--refresh-default', action='store_true', help='Regenerate the checked-in full descriptor/manifest only.')
     parser.add_argument('--check-default', action='store_true')

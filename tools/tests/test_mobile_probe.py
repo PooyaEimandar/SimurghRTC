@@ -10,7 +10,7 @@ import zipfile
 sys.path.insert(0, str(Path(__file__).parents[1]))
 import prepare_mobile_probe
 import ios_simulator_support
-from run_mobile_probe import android_main_pid, android_package_sizes, ios_simulator, ios_simulator_runtime, legacy_ios_device, physical_ios_device, read_report, read_simulator_report, simulator_launch_pid, validate_report
+from run_mobile_probe import android_main_pid, android_package_sizes, ios_simulator, ios_simulator_runtime, legacy_ios_device, physical_ios_device, read_report, read_android_media_chunks, read_simulator_report, simulator_launch_pid, validate_report
 from test_mobile_artifacts import archive, macho, make_payload, seal
 
 
@@ -26,6 +26,17 @@ class MobileEvidenceTests(unittest.TestCase):
 
     def validate(self, report):
         validate_report(report, 'test-run', 'Android', 'a' * 64, False)
+
+    def test_isolated_backend_requires_codec_evidence(self):
+        report = dict(self.report, schema=2, media_codecs_passed=True, decoded_video_frames=12,
+                      decoded_pcm_samples=96000, audio_packets=50, render_capture_tested=False,
+                      native_backend='M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d',
+                      video_color_error=4, audio_tone_correlation=0.999)
+        validate_report(report, 'test-run', 'Android', 'a' * 64, False, media=True)
+        for key,value in [('media_codecs_passed',False),('decoded_video_frames',0),('decoded_pcm_samples',0),
+                          ('audio_tone_correlation',float('nan')),('video_color_error',13),('native_backend','M109')]:
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                validate_report(dict(report, **{key:value}), 'test-run', 'Android', 'a' * 64, False, media=True)
 
     def test_complete_device_evidence(self):
         self.validate(self.report)
@@ -64,6 +75,20 @@ class MobileEvidenceTests(unittest.TestCase):
         self.assertIsNone(read_report(prefix + '[]', 'test-run'))
         with self.assertRaisesRegex(ValueError, 'Duplicate'):
             read_report(valid + '\n' + valid, 'test-run')
+
+    def test_android_media_chunks_require_one_complete_correlated_report(self):
+        text = json.dumps(self.report)
+        cut = len(text) // 2
+        prefix = 'D/UE: SIMURGHRTC_MEDIA_CHUNK test-run '
+        first, second = prefix + '1/2 ' + text[:cut], prefix + '2/2 ' + text[cut:]
+        self.assertEqual(self.report, read_android_media_chunks(second + '\n' + first, 'test-run'))
+        self.assertIsNone(read_android_media_chunks(first, 'test-run'))
+        self.assertIsNone(read_android_media_chunks(first.replace('test-run', 'old'), 'test-run'))
+        for log in (first + '\n' + first, first + '\n' + second.replace('2/2', '2/3'),
+                    prefix + '1/1 ' + text[:100], prefix + '1/17 {}', prefix + '1/1 ' + 'x' * 641,
+                    prefix + '1/1 {}', prefix + 'bad'):
+            with self.subTest(log=log[:60]), self.assertRaises(ValueError):
+                read_android_media_chunks(log, 'test-run')
 
     def test_coredevice_requires_physical_ios(self):
         device = {'identifier': 'phone', 'hardwareProperties': {'reality': 'physical', 'platform': 'iOS'}}

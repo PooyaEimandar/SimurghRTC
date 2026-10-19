@@ -1,5 +1,7 @@
 # Native factory and headless Server probe
 
+**Backend update:** current builds require the [isolated M155 artifact](NATIVE_BACKEND.md). Add `--native-artifact LocalBuilds/Artifacts/M155-Mac` when staging a Server host. The M109 identities and results below document the earlier feasibility baseline; replacement Server acceptance must be recorded separately.
+
 This M0 probe links Unreal Engine **5.8.3**'s WebRTC **5414 / M109**, creates a PeerConnection factory and an idle Unified Plan PeerConnection, and exposes diagnostics through standard UE **HTTPServer**. It does not exchange SDP, gather ICE, connect to a remote peer, send DataChannels or process media. The shared session API still reports `NotImplemented` for Connect.
 
 ## Integration boundary

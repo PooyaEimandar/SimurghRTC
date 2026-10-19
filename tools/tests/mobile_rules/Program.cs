@@ -24,6 +24,10 @@ foreach (var item in document.RootElement.EnumerateArray())
             rules.GetType("ContractHostSimulatorSupport", throwOnError: true)
                 .GetMethod("Library", BindingFlags.Public | BindingFlags.Static)
                 .Invoke(null, new object[] { item.GetProperty("root").GetString() });
+        else if (item.TryGetProperty("validator", out validator) && validator.GetString() == "isolated")
+            rules.GetType("SimurghRTCMobileArtifact", throwOnError: true)
+                .GetMethod("ValidateIsolated", BindingFlags.Public | BindingFlags.Static)
+                .Invoke(null, new object[] { item.GetProperty("root").GetString(), item.GetProperty("platform").GetString(), item.GetProperty("pins").GetString() });
         else
             method.Invoke(null, new object[] { item.GetProperty("root").GetString(), item.GetProperty("platform").GetString() });
         accepted = true;

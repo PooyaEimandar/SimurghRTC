@@ -126,7 +126,7 @@ def validate_object(data: bytes, platform: str) -> None:
         command, size = struct.unpack_from('<II', data, offset)
         require(size >= 8 and offset + size <= 32 + command_bytes, 'Invalid Mach-O load command size.')
         if command == 0x32:  # LC_BUILD_VERSION: iOS=2, iOS simulator=7.
-            require(size >= 24 and struct.unpack_from('<I', data, offset + 8)[0] == (7 if platform == 'IOSSimulator' else 2),
+            require(size >= 24 and struct.unpack_from('<I', data, offset + 8)[0] == (7 if platform == 'IOSSimulator' else 1 if platform == 'Mac' else 2),
                     'iOS device/simulator platform mismatch in artifact.')
             device = True
         elif command == 0x25:  # LC_VERSION_MIN_IPHONEOS, older device builds.
@@ -173,6 +173,9 @@ def validate(root: Path) -> dict:
     document = read_json(root / MANIFEST)
     require(isinstance(document, dict) and set(document) == {'metadata', 'files'}, 'Expected metadata and files.')
     meta, inventory = document['metadata'], document['files']
+    if meta.get('schema') == 2:
+        import native_artifacts
+        return native_artifacts.validate(root)
     validate_metadata(meta)
     require(isinstance(inventory, dict), 'Expected a file-to-SHA256 inventory.')
     files = payload_files(root)

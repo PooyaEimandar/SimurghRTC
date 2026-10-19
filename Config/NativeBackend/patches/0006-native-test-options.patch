@@ -1,0 +1,14 @@
+--- a/test.gni
++++ b/test.gni
+@@ -1138,9 +1138,10 @@
+ 
+     mixed_test(target_name) {
+       target_type = "executable"
++      not_needed(invoker, [ "use_raw_android_executable", "use_default_launcher" ])
+       forward_variables_from(invoker,
+                              "*",
+-                             TESTONLY_AND_VISIBILITY + [ "use_xvfb" ])
++                             TESTONLY_AND_VISIBILITY + [ "use_xvfb", "use_raw_android_executable", "use_default_launcher" ])
+       forward_variables_from(invoker, [ "visibility" ])
+       if (!defined(deps)) {
+         deps = []

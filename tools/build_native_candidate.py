@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import tempfile
 import zipfile
 
 import mobile_artifacts as artifacts
@@ -74,15 +75,28 @@ def build_tools(work, lock):
         archive = host / (name + '.zip')
         mobile_build.download(lock['tools'][name], archive)
         with zipfile.ZipFile(archive) as source:
-            (host / name).write_bytes(source.read(name))
-        (host / name).chmod(0o755)
+            with tempfile.NamedTemporaryFile(dir=host, prefix=name + '-', delete=False) as staged:
+                staged.write(source.read(name))
+        Path(staged.name).chmod(0o755)
+        os.replace(staged.name, host / name)
     archive = work / 'downloads/clang.tar.xz'
     mobile_build.download(lock['tools']['clang'], archive)
     compiler = work / 'src/third_party/llvm-build/Release+Asserts'
     compiler.mkdir(parents=True, exist_ok=True)
-    # Python's data filter rejects path escapes and unsafe links. Only pinned bytes are extracted.
-    with tarfile.open(archive) as source:
-        source.extractall(compiler, filter='data')
+    # Never truncate a previously executed Mach-O file in place: macOS can keep
+    # stale code-signing pages and kill the next invocation with SIGKILL even
+    # when the replacement bytes are identical. Install fresh inodes instead.
+    # The data filter rejects path escapes and unsafe links before installation.
+    with tempfile.TemporaryDirectory(dir=host, prefix='clang-install-') as temporary:
+        staged = Path(temporary)
+        with tarfile.open(archive) as source:
+            source.extractall(staged, filter='data')
+        for path in sorted(staged.rglob('*'), key=lambda p: len(p.parts)):
+            destination = compiler / path.relative_to(staged)
+            if path.is_dir() and not path.is_symlink():
+                destination.mkdir(parents=True, exist_ok=True)
+            else:
+                os.replace(path, destination)
     return host
 
 

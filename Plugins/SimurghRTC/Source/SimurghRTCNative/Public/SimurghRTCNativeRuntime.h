@@ -28,7 +28,8 @@ public:
     FNativeRuntime& operator=(const FNativeRuntime&) = delete;
 
     static bool IsSupported();
-    // SHA-256 of the manifest selected by UBT; empty for engine-bundled desktop builds.
+    static FString GetBackendVersion();
+    // SHA-256 of the isolated backend manifest selected by UBT, including desktop builds.
     static FString GetMobileArtifactSHA256();
     bool Start(ENativeFactoryMode Mode, FString& OutError);
     // Creates an idle, encrypted-by-default Unified Plan peer. No offer, ICE gathering or remote connection.

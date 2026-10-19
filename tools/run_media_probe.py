@@ -24,12 +24,15 @@ def read_media_report(output: Path, log: str) -> tuple[dict, str]:
     return reports[0], 'runtime_log'
 
 
-def validate_report(report: dict, run_id: str, pid: int, editor: bool, negative: str | None = None) -> None:
+def validate_report(report: dict, run_id: str, pid: int, editor: bool, negative: str | None = None, artifact_sha256: str | None = None) -> None:
     expected = {'run_id': run_id, 'pid': pid, 'editor_build': editor,
                 'network_transport_tested': False, 'resources_released': True, 'passed': negative is None}
     for key, value in expected.items():
         if report.get(key) != value:
             raise ValueError(f'Unexpected {key}: {report.get(key)!r}; expected {value!r}')
+    if artifact_sha256 is not None:
+        if report.get('artifact_manifest_sha256') != artifact_sha256 or report.get('native_backend') != 'M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d':
+            raise ValueError('Media report does not identify the selected isolated backend.')
     if not report.get('engine_version', '').startswith('5.8.3-'):
         raise ValueError('Probe requires Unreal Engine 5.8.3')
     if negative:
@@ -66,6 +69,7 @@ def main() -> int:
     parser.add_argument('--kind', required=True, choices=['editor-game', 'game'])
     parser.add_argument('--project', type=Path)
     parser.add_argument('--output', required=True, type=Path, help='New or empty evidence directory.')
+    parser.add_argument('--native-artifact', type=Path, help='Require this isolated backend identity in the report.')
     parser.add_argument('--negative', choices=['null-rhi', 'no-audio'])
     parser.add_argument('--timeout', type=float, default=180)
     args = parser.parse_args()
@@ -93,6 +97,11 @@ def main() -> int:
         command.append('-NullRHI' if args.negative == 'null-rhi' else '-nosound')
     record = {'schema': 1, 'command': command, 'kind': args.kind, 'scenario': args.negative or 'media',
               'run_id': run_id, 'passed': False}
+    artifact_sha256 = None
+    if args.native_artifact:
+        import native_artifacts
+        artifact_sha256 = native_artifacts.validate(args.native_artifact.resolve())['manifest_sha256']
+        record['artifact_manifest_sha256'] = artifact_sha256
     started, process = time.monotonic(), None
     try:
         with (output / 'process.log').open('w') as console:
@@ -101,7 +110,7 @@ def main() -> int:
         record['runtime_log'], log = read_runtime_log(output)
         report, record['report_source'] = read_media_report(output, log)
         record['media'] = report
-        validate_report(report, run_id, process.pid, args.kind == 'editor-game', args.negative)
+        validate_report(report, run_id, process.pid, args.kind == 'editor-game', args.negative, artifact_sha256)
         if record['report_source'] == 'runtime_log':
             (output / 'media.json').write_text(json.dumps(report, indent=2) + '\n')
         marker = 'FAILED' if args.negative else 'PASSED'

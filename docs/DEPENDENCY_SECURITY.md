@@ -12,19 +12,27 @@ A local C regression covers a valid exchange and two session-termination cases. 
 
 Two fresh ARM64 simulator builds produce identical library bytes. Staging and Unreal build rules reject retired support exports, including an old export whose own checksums are internally consistent. Historical exports remain readable by the inventory tool and keep their original identities.
 
-Packaged UE 5.8.3 Direct-only and Full probes also pass on the ARM64 iOS simulator. Each creates and closes nine PeerConnections and verifies app shutdown. Their link maps select the updated HTTP/2 library. These runs still use the earlier WebRTC artifact.
+Packaged UE 5.8.3 Direct-only and Full probes also pass on the ARM64 iOS simulator. Each creates and closes nine PeerConnections and verifies app shutdown. Their link maps select the updated HTTP/2 library. These earlier HTTP/2 acceptance runs use the original WebRTC artifact; the later M155 runs are recorded separately below.
 
 The inventory now also checks engine archives against Epic's `Commit.gitdeps.xml`. This establishes which distributed bytes are present. It does **not** establish the upstream source revision, patch history or security status of those binaries.
 
-## New libwebrtc candidate
+## Packaged M155 integration
 
-The [candidate lock](../Config/NativeWebRTC.candidate.lock.json) pins WebRTC M155 to the revision referenced by Chromium 155.0.8059.85. It also pins the required source repositories, Clang, GN, Ninja and the Mac SDK. This is a build candidate, not the dependency selected by the plugin yet.
+The plugin now uses a private C interface to separately built M155, BoringSSL, Opus and VPX. Mac, Android, iOS device and iOS simulator ARM64 exports are built from pinned inputs. Only six C entry points remain externally visible.
+
+Packaged Mac Direct-only and Android Direct-only/Full pass lifecycle, local codecs, render-target capture and silent audio-mixer checks. Both iOS simulator profiles pass lifecycle and local codecs without graphics/audio devices. Link audits select one isolated WebRTC archive per package. The iOS device library is built but not device-tested.
+
+See the [build guide](NATIVE_BACKEND.md), [results](M0_VALIDATION.md#sr-008-packaged-m155-integration) and [snapshot](reviews/SR008-M155-validation.json). These tests establish local integration. Two fresh builds per target now reproduce the accepted Mac, Android and simulator library bytes, and all six native consumers pass. See the [repeat snapshot](reviews/SR008-M155-repeat-validation.json). Independent-host reproduction, the iOS device repeat build, source/advisory qualification and final notices remain open. Unreal's other crypto, HTTP and audio dependencies remain engine-owned.
+
+## Original isolation candidate
+
+The [candidate lock](../Config/NativeWebRTC.candidate.lock.json) pins WebRTC M155 to the revision referenced by Chromium 155.0.8059.85. It also pins the required source repositories, Clang, GN, Ninja and the Mac SDK. This records the original standalone experiment. The plugin now selects the [M155 C ABI backend](NATIVE_BACKEND.md); its packaged acceptance is recorded separately.
 
 The Mac ARM64 test builds WebRTC with its own BoringSSL, Opus and VPX. It combines the native objects behind two private C entry points, then links them beside Unreal's crypto and codec archives. The symbol check and six factory/PeerConnection lifecycles pass. Both library sets report their own versions. Opus reports `libopus unknown`; its source identity comes from the pinned Chromium `third_party` tree, not that string.
 
 Two separate Ninja build directories on the same Mac produce identical archives and isolated objects. The linker normalizes build-directory paths in its debug records. Both outputs pass the lifecycle test; independent-host reproduction is still open.
 
-This proves the proposed isolation approach in a small Mac executable. It does not yet prove the replacement in a packaged Unreal app, on mobile, or with media passing through the shared plugin API. Existing plugin probes continue to use their previously recorded WebRTC artifacts.
+This original experiment proved isolation in a small Mac executable. It did not establish packaged Unreal or mobile behavior. See [M0 validation](M0_VALIDATION.md) for the later integration runs; earlier results retain their recorded WebRTC artifacts.
 
 To repeat the candidate check, use Mac ARM64, Xcode 27.1 and Python 3.12 or newer:
 
@@ -58,9 +66,9 @@ A newer version number alone is not approval. This work qualifies the plugin's R
 |---|---|
 | Simulator nghttp2 update | Regression, repeated archive builds and packaged Direct-only/Full simulator probes pass |
 | Epic archive distribution identity | Verified against the engine manifest |
-| Maintained WebRTC/crypto/codec replacement | Pinned M155 candidate passes Mac symbol isolation and local lifecycle checks; plugin integration remains open |
+| Maintained WebRTC/crypto/codec replacement | Mac/Android/simulator integration and same-host fresh repeat builds passed; independent-host and iOS device repeat checks remain open |
 | Known upstream issues in RTC dependencies | Open until the replacement sources and enabled features are checked |
-| Replacement ABI, one-copy linkage and runtime acceptance | Open; previous tests apply only to their recorded binaries |
+| Replacement ABI, one-copy linkage and runtime acceptance | Local checks passed on Mac, Samsung and simulator; dedicated Server, physical iOS and Windows/Linux still need replacement-package validation |
 | Final artifact/app notices and patent grants | Separate publication gate under SR-902 |
 
 The [SR-003 review](DEPENDENCY_REVIEW.md) remains the historical baseline. It must not be relabeled as approval of replacement libraries. [M0 validation](M0_VALIDATION.md) records accepted runs and their limits.

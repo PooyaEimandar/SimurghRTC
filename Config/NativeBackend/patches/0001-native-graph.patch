@@ -1,0 +1,121 @@
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -126,7 +126,7 @@
+         deps += [ "modules/desktop_capture:shared_screencast_stream_test" ]
+       }
+     }
+-    if (target_os == "android") {
++    if (target_os == "android" && rtc_build_tools) {
+       deps += [ "tools_webrtc:binary_version_check" ]
+     }
+   }
+@@ -549,66 +549,7 @@
+     suppressed_configs += [ "//build/config/compiler:thin_archive" ]
+     defines = []
+ 
+-    deps = [
+-      "api:create_modular_peer_connection_factory",
+-      "api:create_peerconnection_factory",
+-      "api:enable_media",
+-      "api:rtc_error",
+-      "api:transport_api",
+-      "api/audio_codecs:opus_audio_decoder_factory",
+-      "api/crypto",
+-      "api/rtc_event_log:rtc_event_log_factory",
+-      "api/task_queue",
+-      "api/task_queue:default_task_queue_factory",
+-      "api/video_codecs:video_decoder_factory_template",
+-      "api/video_codecs:video_decoder_factory_template_dav1d_adapter",
+-      "api/video_codecs:video_decoder_factory_template_libvpx_vp8_adapter",
+-      "api/video_codecs:video_decoder_factory_template_libvpx_vp9_adapter",
+-      "api/video_codecs:video_decoder_factory_template_open_h264_adapter",
+-      "api/video_codecs:video_encoder_factory_template",
+-      "api/video_codecs:video_encoder_factory_template_libaom_av1_adapter",
+-      "api/video_codecs:video_encoder_factory_template_libvpx_vp8_adapter",
+-      "api/video_codecs:video_encoder_factory_template_libvpx_vp9_adapter",
+-      "api/video_codecs:video_encoder_factory_template_open_h264_adapter",
+-      "audio",
+-      "call",
+-      "common_audio",
+-      "common_video",
+-      "logging:rtc_event_log_api",
+-      "media",
+-      "modules",
+-      "modules/video_capture:video_capture_internal_impl",
+-      "pc:peer_connection_factory",
+-      "pc:rtc_pc",
+-      "pc:webrtc_sdp",
+-      "video",
+-    ]
+-
+-    if (rtc_include_builtin_audio_codecs) {
+-      deps += [
+-        "api/audio_codecs:builtin_audio_decoder_factory",
+-        "api/audio_codecs:builtin_audio_encoder_factory",
+-      ]
+-    }
+-
+-    if (build_with_mozilla) {
+-      deps += [
+-        "api/video:video_frame",
+-        "api/video:video_rtp_headers",
+-      ]
+-    }
+-
+-    if (rtc_include_internal_audio_device) {
+-      deps += [ "api/audio:create_audio_device_module" ]
+-    }
+-    if (!build_with_chromium) {
+-      if (is_android) {
+-        deps += [ "sdk/android" ]
+-      }
+-      if (is_ios) {
+-        deps += [ "sdk:framework_objc" ]
+-      }
+-    }
++    deps = [ "api:create_peerconnection_factory" ]
+   }
+ 
+   # TODO(bugs.webrtc.org/430260876): Compile webrtc lib with rust once toolchain
+--- a/build_overrides/build.gni
++++ b/build_overrides/build.gni
+@@ -7,7 +7,7 @@
+ # be found in the AUTHORS file in the root of the source tree.
+ 
+ # Some non-Chromium builds don't support building java targets.
+-enable_java_templates = true
++enable_java_templates = false
+ 
+ # Enables assertions on safety checks in libc++.
+ enable_safe_libcxx = true
+--- a/rtc_base/BUILD.gn
++++ b/rtc_base/BUILD.gn
+@@ -2489,7 +2489,7 @@
+   }
+ }
+ 
+-if (is_android) {
++if (is_android && enable_java_templates) {
+   import("//third_party/jni_zero/jni_zero.gni")
+ 
+   generate_jni("base_java_jni") {
+--- a/test/BUILD.gn
++++ b/test/BUILD.gn
+@@ -8,7 +8,7 @@
+ 
+ import("//build/config/ui.gni")
+ import("../webrtc.gni")
+-if (is_android) {
++if (is_android && enable_java_templates) {
+   import("//build/config/android/rules.gni")
+   import("//third_party/jni_zero/jni_zero.gni")
+ }
+@@ -1878,7 +1878,7 @@
+   }
+ }
+ 
+-if (!build_with_chromium && is_android) {
++if (!build_with_chromium && is_android && enable_java_templates) {
+   rtc_android_library("native_test_java") {
+     testonly = true
+     sources = [

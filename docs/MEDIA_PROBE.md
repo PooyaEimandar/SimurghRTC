@@ -4,7 +4,7 @@ This test checks local video/audio codecs, texture updates, render-target captur
 
 Codec tests work without graphics or audio devices. Texture and mixer tests need a real graphics backend and an initialized audio mixer. The probe does not make a network call or capture a camera/microphone.
 
-SR-005 added fixed input files (`simurghrtc-media-v1`) and a generated C++ adapter. Run `python3 tools/media_fixtures.py --check` to check their hashes. See [Fixtures](FIXTURES.md) for formats and [validation results](M0_VALIDATION.md) for the distinction between the earlier packaged test and the newer Editor test.
+SR-005 added fixed input files (`simurghrtc-media-v1`) and a generated C++ adapter. Run `python3 tools/media_fixtures.py --check` to check their hashes. See [Fixtures](FIXTURES.md) for formats and [validation results](M0_VALIDATION.md) for the accepted M155 Mac/Android packages and earlier results.
 
 ## What is exercised
 
@@ -37,7 +37,8 @@ Run the full integration probe with a real RHI, not `-NullRHI` or `-nosound`:
 ```bash
 python3 tools/run_media_probe.py \
   --executable "$UE_ROOT/Engine/Binaries/Mac/UnrealEditor-Cmd" \
-  --kind editor-game --project "$PWD/Samples/ContractHost/ContractHost.uproject" \
+  --kind editor-game --project "$PWD/LocalBuilds/Full/ContractHost.uproject" \
+  --native-artifact LocalBuilds/Artifacts/M155-Mac \
   --output "$PWD/Intermediate/Reports/MediaEditor"
 ```
 
@@ -46,7 +47,8 @@ The harness adds `-game -RenderOffscreen`, starts a unique process/run ID, requi
 For a packaged Direct-only run, stage a fresh host outside any `Intermediate` parent (see the source-engine dependency-cache limitation in [Native Server probe](NATIVE_PROBE.md)):
 
 ```bash
-python3 tools/prepare_profile.py --profile direct-only --output LocalBuilds/NativeMediaDirect
+python3 tools/prepare_profile.py --profile direct-only \
+  --native-artifact LocalBuilds/Artifacts/M155-Mac --output LocalBuilds/NativeMediaDirect
 PROJECT="$PWD/LocalBuilds/NativeMediaDirect/ContractHost.uproject"
 "$UE_ROOT/Engine/Build/BatchFiles/Mac/Build.sh" ContractHost Mac Development -Project="$PROJECT" -architecture=arm64
 "$UE_ROOT/Engine/Build/BatchFiles/Mac/Build.sh" ContractHostEditor Mac Development -Project="$PROJECT" -architecture=arm64
@@ -56,7 +58,8 @@ PROJECT="$PWD/LocalBuilds/NativeMediaDirect/ContractHost.uproject"
   -map=/Engine/Maps/Entry '-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound' -unattended -utf8output
 python3 tools/run_media_probe.py \
   --executable "$PWD/LocalBuilds/NativeMediaDirect/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost" \
-  --kind game --output "$PWD/Intermediate/Reports/MediaGame"
+  --kind game --native-artifact LocalBuilds/Artifacts/M155-Mac \
+  --output "$PWD/Intermediate/Reports/MediaGame"
 ```
 
 NullRHI/nosound are cooker options only. The runtime harness uses Metal and UE's mixer. Repeat the last command with a new output directory and `--negative null-rhi` or `--negative no-audio`. Packaged evidence must report `editor_build=false`.

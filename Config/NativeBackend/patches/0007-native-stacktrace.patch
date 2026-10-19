@@ -1,0 +1,26 @@
+--- a/rtc_base/system/BUILD.gn
++++ b/rtc_base/system/BUILD.gn
+@@ -126,7 +126,22 @@
+     sources += [ "warn_current_thread_is_deadlocked.cc" ]
+     deps += [
+       "..:logging",
+-      "../../sdk/android:native_api_stacktrace",
++      ":native_stacktrace",
+     ]
+   }
+ }
++
++# Preserve native deadlock diagnostics without pulling in the Android Java SDK.
++if (is_android && !build_with_chromium) {
++  rtc_library("native_stacktrace") {
++    sources = [
++      "../../sdk/android/native_api/stacktrace/stacktrace.cc",
++      "../../sdk/android/native_api/stacktrace/stacktrace.h",
++    ]
++    deps = [
++      "..:criticalsection", "..:logging", "..:stringutils",
++      "../synchronization:mutex",
++      "//third_party/abseil-cpp/absl/base:core_headers",
++    ]
++  }
++}

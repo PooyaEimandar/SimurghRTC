@@ -1,0 +1,11 @@
+--- a/flatbuffers/BUILD.gn
++++ b/flatbuffers/BUILD.gn
+@@ -281,7 +281,7 @@
+   ]
+ }
+ 
+-if (is_android) {
++if (is_android && enable_java_templates) {
+   import("//build/config/android/rules.gni")
+ 
+   android_library("flatbuffers_java") {

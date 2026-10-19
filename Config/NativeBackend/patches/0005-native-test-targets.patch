@@ -1,0 +1,11 @@
+--- a/test.gni
++++ b/test.gni
+@@ -433,7 +433,7 @@
+            "allow_cleartext_traffic can be set only for Android tests")
+   }
+ 
+-  if (is_android) {
++  if (is_android && enable_java_templates) {
+     assert(!defined(invoker.use_xvfb) || !invoker.use_xvfb)
+ 
+     _use_default_launcher =

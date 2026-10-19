@@ -1,5 +1,7 @@
 # Build mobile libwebrtc
 
+**Historical M109 workflow.** The current plugin requires the [isolated M155 backend](NATIVE_BACKEND.md). The format and commands below preserve earlier build evidence; their exports cannot be used with the new adapter.
+
 Use this workflow to build the M0 native dependency for **Android ARM64** or **iOS device ARM64**. Each platform gets its own library and matching headers. The engine is read only; no engine patch is needed.
 
 For local iOS testing, `--platform IOSSimulator` produces a separate ARM64 simulator artifact with its own Xcode pin. It also builds portable-C VPX from Unreal's checked source archive, because the engine's VPX binary is device-only. See the [simulator probe steps](MOBILE_PROBE.md#test-with-the-ios-simulator). Simulator results do not establish physical-device behavior or delivery size.
@@ -20,7 +22,7 @@ Run commands from the repository root. Keep at least **30 GiB free per build wor
 
 The script checks these versions and the engine dependency hashes. Install the matching tools instead of bypassing a mismatch. It does not download Xcode or change your active Xcode installation.
 
-The exact WebRTC commit, dependency commits, tool downloads, header/library hashes, flags and patches live in [the build lock](../Config/MobileWebRTC.lock.json). This uses WebRTC 5414 to match the current adapter. The [SR-003 review](DEPENDENCY_REVIEW.md) is complete: this remains an experimental compatibility baseline. SR-008 tracks security/provenance updates and SR-902 tracks complete distribution notices.
+The exact WebRTC commit, dependency commits, tool downloads, header/library hashes, flags and patches live in [the build lock](../Config/MobileWebRTC.lock.json). This used WebRTC 5414 to match the earlier adapter. The [SR-003 review](DEPENDENCY_REVIEW.md) is complete: this remains an experimental compatibility baseline. SR-008 tracks security/provenance updates and SR-902 tracks complete distribution notices.
 
 ## Build iOS
 

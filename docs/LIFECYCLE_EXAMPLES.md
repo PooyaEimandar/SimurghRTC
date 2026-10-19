@@ -1,5 +1,7 @@
 # C++ and Blueprint lifecycle examples
 
+Build the [M155 Mac artifact](NATIVE_BACKEND.md) first and pass `--native-artifact LocalBuilds/Artifacts/M155-Mac` to each profile-staging command below. API v1 and the example graphs are unchanged. Earlier results retain their original dependency identity.
+
 These examples teach the frozen [API v1 contract](API_CONTRACT.md) in Unreal **5.8.3**. They run the same steps through a C++ actor and an actual Blueprint graph. They need no server, camera, microphone or graphics device.
 
 | Step | Expected outcome |

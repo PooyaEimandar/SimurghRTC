@@ -1,5 +1,7 @@
 # Prepare mobile WebRTC artifacts
 
+**Historical M109 workflow.** The current plugin requires the [isolated M155 backend](NATIVE_BACKEND.md). The format and commands below preserve earlier build evidence; their exports cannot be used with the new adapter.
+
 **Status: experimental build integration.** Android/iOS can select a separately built ARM64 library. Use the [pinned source-build workflow](MOBILE_BUILDS.md) to produce one, and check [validation results](M0_VALIDATION.md) for current evidence. Packaged physical-device validation remains open. Generated binaries are not committed to this repository.
 
 This page describes the SR-006/SR-007 artifact format and staging checks. It lets us check, share and reuse a dependency without copying it into the engine.
@@ -17,7 +19,7 @@ python3 tools/prepare_profile.py --profile direct-only \
 
 Use an iOS artifact the same way. Repeat `--mobile-artifact` to include one artifact for each platform. Full, Direct-only, Janus-only and Data-only all use this mechanism. The Server profile rejects mobile artifacts.
 
-The staged plugin stores each dependency under `ThirdParty/WebRTC/<Android-or-IOS>/arm64`. Unreal selects the target's artifact and checks its identity and file hashes when evaluating build rules. Missing or incompatible artifacts stop the build with an explanation. Desktop targets continue using the engine library.
+The staged plugin stores each dependency under `ThirdParty/WebRTC/<Android-or-IOS>/arm64`. Unreal selects the target's artifact and checks its identity and file hashes when evaluating build rules. Missing or incompatible artifacts stop the build with an explanation. The earlier desktop adapter used the engine library.
 
 Simulator testing uses `ThirdParty/WebRTC/IOSSimulator/arm64` and `-architecture=iossimulator`. Its manifest identifies platform `IOSSimulator` and dependencies `unreal-openssl-opus-simulator-vpx`; it additionally contains `Lib/libvpx.a`, `Build/vpx-build.json` and the VPX license. Both archives must contain simulator objects. An iOS device build cannot select this artifact.
 

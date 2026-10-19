@@ -1,0 +1,350 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "issue": "SR-008",
+  "status": "local integration accepted; qualification incomplete",
+  "engine": {
+    "version": "5.8.3",
+    "revision": "3c5c6b098ec411254cb662437676de5548d929be",
+    "working_tree_clean": true,
+    "source_changes_by_task": false
+  },
+  "repository_base": "0546e275dda7afb40be31143cc43a4a94ebbb099",
+  "adapter": "webrtc-m155-cabi-v1",
+  "pins": {
+    "abi_header_sha256": "3744d1c5f4aa87166748dba4acd71331efdee42f6115d89b3c3fcd72554f293f",
+    "android_source_lock_sha256": "b02a73f9a8301c4e9a1c54b81f4285bfb533a6379ec18f66f1522b8ce1dc9ae3",
+    "bridge_sources": {
+      "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
+      "BUILD.gn": "51f5a3f2966a1d856179df954baab8b2d4921bfb1060bdf992c186afe1bc5fb2",
+      "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
+      "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
+      "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
+      "abi_test.c": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b",
+      "exports.txt": "33ef2225593da2c82cbb5e16720f86701cdc191c35235a500d0969ae2e1f6015",
+      "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
+      "runtime.cc": "de264c699750f059f38ebd2c5dae3e1187a37452a9f5ce8ee5fbc4c3469bc0cb",
+      "simurgh_rtc_abi.h": "3744d1c5f4aa87166748dba4acd71331efdee42f6115d89b3c3fcd72554f293f"
+    },
+    "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+    "source_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d"
+  },
+  "artifacts": {
+    "Mac": {
+      "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+      "platform": "Mac",
+      "architecture": "arm64",
+      "files": 7,
+      "objects": 1,
+      "archive_bytes": 17820448,
+      "manifest_sha256": "282dcd1c3fc38a45a79d17a449659b5330393ec754c5b19be6f958bf17a9184f",
+      "archive_sha256": "f886f94cca58b50f8aac0132090e64efbe8767532fb14fb7a65e60a71e01814a",
+      "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+      "recipe_sha256": "dd7febbab9495ef681609bf328017b23b8e796f4d4677abefceab6e01f3cc32c",
+      "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/third_party/llvm-build/Release+Asserts/bin",
+      "exports": [
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1"
+      ],
+      "runtime_scope": "see packages"
+    },
+    "Android": {
+      "artifact_id": "android-arm64-m155-b02a73f9a830",
+      "platform": "Android",
+      "architecture": "arm64",
+      "files": 17,
+      "objects": 1,
+      "archive_bytes": 28104458,
+      "manifest_sha256": "196782c29fcfa5abccf0e3536c44c7ba029a4e91317aab41ec121aab72507a3d",
+      "archive_sha256": "1ad590d890a9903a5ffab49eacf4a72c9d6bb28c60938bb855f62d027f70516c",
+      "source_lock_sha256": "b02a73f9a8301c4e9a1c54b81f4285bfb533a6379ec18f66f1522b8ce1dc9ae3",
+      "recipe_sha256": "aee59c9165e00bc740af5d92cd64dd6bbefb687377ce029e1d97c7b2bd7e1bce",
+      "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /build/src/third_party/llvm-build/Release+Asserts/bin",
+      "exports": [
+        "SimurghRTC_CreatePeerV1",
+        "SimurghRTC_CreateV1",
+        "SimurghRTC_DestroyV1",
+        "SimurghRTC_DiagnosticsV1",
+        "SimurghRTC_MediaProbeV1",
+        "SimurghRTC_NativeVersionV1"
+      ],
+      "runtime_scope": "see packages"
+    },
+    "IOS": {
+      "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+      "platform": "IOS",
+      "architecture": "arm64",
+      "files": 7,
+      "objects": 1,
+      "archive_bytes": 17259440,
+      "manifest_sha256": "527b4d029787b7f5e131bc30d75ffa5f8f0cd45b21e24be92977b6c70889230d",
+      "archive_sha256": "54d0ac9f07efedfd7d53d441306f40761eda81187f37dd78d5aeac9fcf7a128f",
+      "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+      "recipe_sha256": "dd7febbab9495ef681609bf328017b23b8e796f4d4677abefceab6e01f3cc32c",
+      "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/third_party/llvm-build/Release+Asserts/bin",
+      "exports": [
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1"
+      ],
+      "runtime_scope": "built only"
+    },
+    "IOSSimulator": {
+      "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+      "platform": "IOSSimulator",
+      "architecture": "arm64",
+      "files": 7,
+      "objects": 1,
+      "archive_bytes": 17331008,
+      "manifest_sha256": "cbcc72a7d14e2f118e86acdfa30509fdb40d4cdd0f8fe45ea9184b8db1e1dae1",
+      "archive_sha256": "3d8b7b34a1618a37077baf46abc42ea1edd2195bd5e9fceead34d3ef19cc4b77",
+      "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+      "recipe_sha256": "dd7febbab9495ef681609bf328017b23b8e796f4d4677abefceab6e01f3cc32c",
+      "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/third_party/llvm-build/Release+Asserts/bin",
+      "exports": [
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1"
+      ],
+      "runtime_scope": "see packages"
+    }
+  },
+  "packages": {
+    "Android-direct": {
+      "passed": true,
+      "device": "SM-S938B",
+      "os": "16",
+      "system_page_bytes": 4096,
+      "apk_sha256": "b7a47e4a3d46b24a4f851ed3f1c75f67584e9fa7e201b053b4396a0c4d088c37",
+      "apk_bytes": 105609617,
+      "packaged_elf_sha256": "352b1cba6a027f6dcffbc274b2b9bf30f03ec5f94c9aac51f271bba21b4be765",
+      "packaged_elf_bytes": 177164464,
+      "build_id": "ade9f3f0d703c25ff64fc3dd6cd55450dd4f7657",
+      "minimum_load_alignment": 16384,
+      "with_janus": false,
+      "manifest_sha256": "196782c29fcfa5abccf0e3536c44c7ba029a4e91317aab41ec121aab72507a3d",
+      "peers_created": 9,
+      "local_codecs_passed": true,
+      "media": {
+        "rhi": "OpenGL",
+        "capture_uv_flipped": true,
+        "decoded_frames": 12,
+        "pcm_samples": 96000,
+        "render_target_captures": 2,
+        "capture_max_color_error": 0,
+        "pcm_consumed_bytes": 192000,
+        "audio_callbacks": 96,
+        "audio_callback_on_game_thread": false,
+        "resources_released": true
+      },
+      "app_stopped": true,
+      "evidence": [
+        {
+          "path": "Intermediate/SR008Integration/AndroidDirectLifecycleFinal/result.json",
+          "sha256": "ac4e378687ae2e4fbba8f366cde88b9434e315c8bb6d7e3e519ec380a4213d84"
+        },
+        {
+          "path": "Intermediate/SR008Integration/AndroidDirectMediaComplete/result.json",
+          "sha256": "19cabf0505aa5750ac6a77e2e3a241843dd0086e42afcc54b42ce82b0b78191f"
+        },
+        {
+          "path": "Intermediate/SR008Integration/android-direct-link-audit.json",
+          "sha256": "5e453a541ad4eb4cba1706035eeec8d88f81e982e042ba56d5450baa705b28ff"
+        }
+      ]
+    },
+    "IOSSimulator-direct": {
+      "passed": true,
+      "scope": "ARM64 simulator lifecycle/local codecs; NullRHI and nosound",
+      "executable_sha256": "7a95adba8c78de91de074c300e65e5ffc57ab038f86b17f164d6678214098399",
+      "manifest_sha256": "cbcc72a7d14e2f118e86acdfa30509fdb40d4cdd0f8fe45ea9184b8db1e1dae1",
+      "size": {
+        "bundle_file_bytes": 284459367,
+        "executable_bytes": 252280272,
+        "shipping_baseline": false,
+        "rtc_size_delta_measured": false
+      },
+      "peers_created": 9,
+      "decoded_frames": 12,
+      "pcm_samples": 96000,
+      "app_stopped": true,
+      "evidence": [
+        {
+          "path": "Intermediate/SR008Integration/SimulatorDirect/result.json",
+          "sha256": "865803998063d94f1516eb19699cd01278772d855503dbc50923f49ae62efe2e"
+        },
+        {
+          "path": "Intermediate/SR008Integration/simulator-direct-link-audit.json",
+          "sha256": "b400dc59695c07361503b2f21b5a078a826cb16a8af55388f48697618e7f24ff"
+        }
+      ]
+    },
+    "Android-full": {
+      "passed": true,
+      "device": "SM-S938B",
+      "os": "16",
+      "system_page_bytes": 4096,
+      "apk_sha256": "32b3ac07fd61ef0bb66c366646d8e79457853407303ecbf929a314a371538f03",
+      "apk_bytes": 105611024,
+      "packaged_elf_sha256": "3a5bfd2968b5c0ca20cf5c662872081dba68ddd406d1bbfe1f71c880c461a7cb",
+      "packaged_elf_bytes": 177174192,
+      "build_id": "d50c5acce1841b92e54b022fec3cff2f5890e95b",
+      "minimum_load_alignment": 16384,
+      "with_janus": true,
+      "manifest_sha256": "196782c29fcfa5abccf0e3536c44c7ba029a4e91317aab41ec121aab72507a3d",
+      "peers_created": 9,
+      "local_codecs_passed": true,
+      "media": {
+        "rhi": "OpenGL",
+        "capture_uv_flipped": true,
+        "decoded_frames": 12,
+        "pcm_samples": 96000,
+        "render_target_captures": 2,
+        "capture_max_color_error": 0,
+        "pcm_consumed_bytes": 192000,
+        "audio_callbacks": 96,
+        "audio_callback_on_game_thread": false,
+        "resources_released": true
+      },
+      "app_stopped": true,
+      "evidence": [
+        {
+          "path": "Intermediate/SR008Integration/AndroidFullLifecycleFinal/result.json",
+          "sha256": "1243de919f993e9537ed46ca3cf02b96ad48ed0e8600e35eb7a46cf69ad20371"
+        },
+        {
+          "path": "Intermediate/SR008Integration/AndroidFullMediaComplete/result.json",
+          "sha256": "875741f0a32e31d89128a59bda2bffb9093ada1d9900f16d6dc3fb9e455abdf0"
+        },
+        {
+          "path": "Intermediate/SR008Integration/android-full-link-audit.json",
+          "sha256": "73061c36b42371ce80bc36ad1d70d595ea9de38aed41d3740ad813a3b5224cd9"
+        }
+      ]
+    },
+    "IOSSimulator-full": {
+      "passed": true,
+      "scope": "ARM64 simulator lifecycle/local codecs; NullRHI and nosound",
+      "executable_sha256": "924f1150b49a29535ff9c33f21c68ce12b38ba68153e587f9966a013d6798bdb",
+      "manifest_sha256": "cbcc72a7d14e2f118e86acdfa30509fdb40d4cdd0f8fe45ea9184b8db1e1dae1",
+      "size": {
+        "bundle_file_bytes": 284465191,
+        "executable_bytes": 252285712,
+        "shipping_baseline": false,
+        "rtc_size_delta_measured": false
+      },
+      "peers_created": 9,
+      "decoded_frames": 12,
+      "pcm_samples": 96000,
+      "app_stopped": true,
+      "evidence": [
+        {
+          "path": "Intermediate/SR008Integration/SimulatorFull/result.json",
+          "sha256": "6b255b80666572c39208889fe1de04cf405966b9acacd5011f0b71cbfb1dbf43"
+        },
+        {
+          "path": "Intermediate/SR008Integration/simulator-full-link-audit.json",
+          "sha256": "b9de16510f198163122c5ffd5c1ea096814b9e857bde58f498389d20680d6178"
+        }
+      ]
+    },
+    "Mac-direct": {
+      "passed": true,
+      "executable_sha256": "bf54fcc84f40162a14a2f71b4889085208ede9854078613feaf3ec1f728e8e8e",
+      "executable_bytes": 281578656,
+      "manifest_sha256": "282dcd1c3fc38a45a79d17a449659b5330393ec754c5b19be6f958bf17a9184f",
+      "peers_created": 9,
+      "media": {
+        "rhi": "Metal",
+        "decoded_frames": 12,
+        "pcm_samples": 96000,
+        "render_target_captures": 2,
+        "capture_max_color_error": 0,
+        "pcm_consumed_bytes": 192000,
+        "audio_callback_on_game_thread": false,
+        "resources_released": true
+      },
+      "exit_code": 0,
+      "evidence": [
+        {
+          "path": "Intermediate/SR008Integration/MacLifecycle/result.json",
+          "sha256": "79c4e629d7e32639ad75619be4035d9a701b8b095d4adb26e393dbb5af7002b3"
+        },
+        {
+          "path": "Intermediate/SR008Integration/MacMediaAccepted/result.json",
+          "sha256": "cf1ff99ecb8cb60bb37630d99a43e16e8e6cb78bb3be7798b7c24cfef4412579"
+        },
+        {
+          "path": "Intermediate/SR008Integration/mac-link-audit.json",
+          "sha256": "37ef01ad51a0803de84d0020709da6245fddfff61cba01643a7fcd26b6d23775"
+        }
+      ]
+    }
+  },
+  "checks": {
+    "python": {
+      "passed": 134,
+      "evidence": {
+        "path": "Intermediate/SR008Integration/python-tests-final4.log",
+        "sha256": "a82e03e709dcf903f0201983f27c34a2994527c4aefc35fdf0131b5a80cd217d"
+      }
+    },
+    "compiled_unreal_rules": {
+      "passed": 71,
+      "evidence": {
+        "path": "Intermediate/SR008Integration/RulesWithNDK/result.json",
+        "sha256": "59ec3f7de9533afa133fa7983fd3a88c78d8535ce2b546e7638c99c20acbeb77"
+      }
+    },
+    "unreal_automation": {
+      "passed": 11,
+      "failed": 0,
+      "warnings": 0,
+      "evidence": {
+        "path": "Intermediate/SR008Integration/UnrealTests/index.json",
+        "sha256": "a7b49d79200f480368113ff9e296b7ad0fb822ac63f87adb27e49d5fc9b9c74a"
+      }
+    },
+    "editor_server_http": {
+      "passed": true,
+      "packaged_server": false,
+      "evidence": {
+        "path": "Intermediate/SR008Integration/EditorHTTP/result.json",
+        "sha256": "39a778af1662a7c9bbe9827272344307a563c602c03bb6b6b92e96127d1069ce"
+      }
+    },
+    "android_native_c_consumer": {
+      "passed": true,
+      "evidence": {
+        "path": "Intermediate/SR008Integration/AndroidABIv2/result.json",
+        "sha256": "be85c3688626e80d8391cc371d451debb35332bc5a3964e6f591b4a1b4576e53"
+      }
+    }
+  },
+  "remaining": [
+    "Fresh repeat builds and independent-host reproduction of the final six-entry-point backend.",
+    "Source and enabled-feature disposition of relevant dependency advisories.",
+    "Packaged dedicated Server validation with the replacement backend (Editor Server passed).",
+    "Signed physical iOS validation, deferred by the user; Windows/Linux replacement integration.",
+    "Shipping RTC-on/off size measurements and final artifact/app notices under SR-902.",
+    "Real connections and network media in M1/M2; shared Connect remains NotImplemented."
+  ],
+  "notes": [
+    "Apple runs precede the Android-specific capture/report changes.",
+    "The Samsung uses 4 KiB pages; 16 KiB load alignment is a static ELF check, not a 16 KiB-device run.",
+    "Development package bytes are not Shipping delivery sizes or incremental RTC cost.",
+    "No camera, microphone, remote peer, network media, or Janus message flow is exercised by these package probes.",
+    "Engine-owned HTTP/crypto/audio dependencies are unchanged; isolated RTC does not upgrade them.",
+    "Earlier failed runs remain under Intermediate/SR008Integration and are not counted as acceptance."
+  ]
+}

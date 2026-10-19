@@ -1,17 +1,18 @@
 # Packaged mobile lifecycle probe
 
-This M0 probe checks whether the separately built ARM64 libwebrtc works inside a packaged Unreal 5.8.3 app. It creates and closes idle PeerConnections; it does not connect to a remote peer or test camera, microphone or network media.
+This M0 probe checks whether the separately built ARM64 libwebrtc works inside a packaged Unreal 5.8.3 app. The M155 probe creates and closes nine idle PeerConnections, then checks generated VP8 video and decoded Opus PCM; it does not connect to a remote peer or test camera, microphone or network media.
 
 Run both **Direct-only** and **Full** to check packaging with Janus disabled and enabled. See [validation results](M0_VALIDATION.md) for what has actually passed.
 
 ## Prepare a project
 
-First [build the pinned libraries](MOBILE_BUILDS.md). Then stage a fresh project:
+First [build the pinned M155 libraries](NATIVE_BACKEND.md). Then stage a fresh project:
 
 ```sh
 python3 tools/prepare_mobile_probe.py --profile direct-only \
-  --artifact LocalBuilds/Artifacts/Android-arm64-itanium \
-  --artifact LocalBuilds/Artifacts/IOS-arm64-release \
+  --artifact LocalBuilds/Artifacts/M155-Mac \
+  --artifact LocalBuilds/Artifacts/M155-Android \
+  --artifact LocalBuilds/Artifacts/M155-IOS \
   --output LocalBuilds/MobileProbeDirect \
   --app-id org.simurghrtc.probe.direct
 ```
@@ -58,24 +59,18 @@ Use the existing Xcode and an installed iOS simulator runtime. No Apple developm
 Build a separate simulator dependency, then stage it:
 
 ```sh
-PYTHON=/absolute/path/to/python3.10
-"$PYTHON" tools/mobile_build.py fetch --platform IOSSimulator --work LocalBuilds/MobileIOS
-"$PYTHON" tools/mobile_build.py build --platform IOSSimulator \
-  --work LocalBuilds/MobileIOS --engine "$UE_ROOT" --python "$PYTHON" \
-  --output LocalBuilds/Artifacts/IOSSimulator-arm64
-
-"$PYTHON" tools/ios_simulator_support.py --engine "$UE_ROOT" \
+python3 tools/build_native_backend.py --platform IOSSimulator \
+  --work LocalBuilds/NativeBackend --output LocalBuilds/Artifacts/M155-IOSSimulator
+python3 tools/ios_simulator_support.py --engine "$UE_ROOT" \
   --output LocalBuilds/SimulatorSupport/nghttp2-arm64
-
 python3 tools/prepare_mobile_probe.py --profile direct-only \
-  --artifact LocalBuilds/Artifacts/IOSSimulator-arm64 \
+  --artifact LocalBuilds/Artifacts/M155-Mac \
+  --artifact LocalBuilds/Artifacts/M155-IOSSimulator \
   --simulator-support LocalBuilds/SimulatorSupport/nghttp2-arm64 \
   --output LocalBuilds/MobileSimulatorDirect --app-id org.simurghrtc.probe.simdirect
 ```
 
-The artifact contains simulator libwebrtc and a simulator VPX library built from Unreal's pinned source archive. It links Unreal's simulator OpenSSL and Opus libraries. Device archives remain separate and cannot substitute for simulator binaries.
-
-To test the saved Xcode 27.1 repeat build, select `LocalBuilds/Artifacts/IOSSimulator-repeat-20261018-a`. Use that same artifact for both profiles, with fresh project directories and separate application IDs. Build the HTTP/2 support library with the same pinned Xcode into a new output directory as well. The [validation record](M0_VALIDATION.md) identifies the exact manifests used by each run.
+The simulator artifact contains its own isolated crypto and codecs. Device archives remain separate and cannot substitute for simulator binaries. Use the same selected artifacts for both profiles, with fresh project directories and separate application IDs. The [validation record](M0_VALIDATION.md) identifies each tested manifest.
 
 This engine also supplies a device-only `nghttp2` library to its content streaming module. The support step builds pinned nghttp2 1.70.0 for the simulator, including the CVE-2026-27135 fix. Unreal keeps its 1.64.0 consumer headers; the local regression checks the exercised C API against them. The sample target explicitly loads the simulator library and verifies its archive and current source lock. Old support exports must be rebuilt. See [SR-008](DEPENDENCY_SECURITY.md) for the security checks and remaining migration work. This support library is separate from the WebRTC artifact and is used only by simulator probe builds.
 
@@ -103,7 +98,7 @@ env UE_SKIP_UBT=1 "$UE_ROOT/Engine/Build/BatchFiles/RunUAT.sh" BuildCookRun -Wai
 
 The first two commands compile; the last stages cooked content and creates an ad-hoc signed simulator app. `SDKROOT=iphonesimulator` is required because this engine's generated Xcode project otherwise selects the device SDK. Check Xcode's `BUILD SUCCEEDED` messages as well as UAT's exit code: this engine can report UAT success after a signing failure. The harness also verifies the bundle platform and signature.
 
-Both profiles passed with the Xcode/SDK 27.1 repeat-build artifact and matching packaging tools, running on the installed iOS 27.0 simulator. See [packaged results](M0_VALIDATION.md#packaged-mobile-probe-work) for the selected manifest and measurements. Earlier runtime reports retain their original dependency identities; the iOS device build keeps its 27.0 pin.
+Earlier M109 runs passed both profiles with Xcode/SDK 27.1 and the installed iOS 27.0 simulator. M155 acceptance is recorded separately. See [packaged results](M0_VALIDATION.md#packaged-mobile-probe-work) for the selected manifest and measurements. Earlier runtime reports retain their original dependency identities; the M155 device and simulator builds use separate Xcode 27.1 artifacts.
 
 Run the resulting simulator `.app` with its UDID from `xcrun simctl list devices available`:
 
@@ -128,6 +123,8 @@ python3 tools/run_mobile_probe.py --platform Android \
   --output Intermediate/MobileProbes/AndroidDirect
 ```
 
+For Android render-target capture and silent mixer playback, run the same checked APK again with a new evidence directory and `--probe media`. This mode enables the real graphics and audio backends and validates decoded video uploads, two captures and PCM consumption. It uses generated inputs and opens no camera or microphone. On Android, the harness retains logcat output and reconstructs bounded media-report chunks so long JSON reports cannot be silently truncated. The OpenGL probe corrects draw orientation before checking the original top-left fixture.
+
 For iOS, enable Developer Mode, trust the Mac and use a signed device app:
 
 ```sh
@@ -147,4 +144,4 @@ Each run completes three cycles: nine factories and nine peers, six explicit sto
 
 Keep the linker response/map alongside the report and verify that only the selected libwebrtc archive is linked. For Android, inspect final ELF load-segment alignment as well as the ARM64-only APK. The harness records Development package sizes. These are initial measurements, not Shipping delivery sizes or the incremental cost of RTC; those require matching RTC-off/on builds described in [Mobile clients](MOBILE_CLIENTS.md).
 
-For simulator evidence, also record the selected VPX and HTTP/2 archives, Xcode/SDK versions, and the engine revision. Compare the native executable's UUID with the packaged executable's UUID to tie the link map to the app that ran. Verify Janus is absent in Direct-only and present in Full. Keep earlier reports attached to their original dependency manifests.
+For simulator evidence, also record the isolated codec inputs, selected HTTP/2 support archive, Xcode/SDK versions, and the engine revision. Compare the native executable's UUID with the packaged executable's UUID to tie the link map to the app that ran. Verify Janus is absent in Direct-only and present in Full. Keep earlier reports attached to their original dependency manifests.

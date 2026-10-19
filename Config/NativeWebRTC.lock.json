@@ -1,0 +1,161 @@
+{
+  "patches": [
+    {
+      "repository": "src",
+      "path": "Config/NativeWebRTC/0001-probe-target.patch",
+      "sha256": "6fd3fa28477159c57e54f8b7c4d96dc2d4f2d6e4e5cd00013568b713811d202c",
+      "files": {
+        "BUILD.gn": {
+          "before": "4ac1321f55a875ebf7e0ced8c0cc69bf8d1bee9484540e9721ecfbd6f9e3b173",
+          "after": "51eb94b59fac81e92cda671fb6432e8d69325519dd22ad0e506e471923f91534"
+        }
+      }
+    }
+  ],
+  "repositories": {
+    "src": {
+      "url": "https://webrtc.googlesource.com/src",
+      "revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d"
+    },
+    "src/build": {
+      "url": "https://chromium.googlesource.com/chromium/src/build",
+      "revision": "e6aa79b579ec7536ac9cbb92b47c1d3c2ecec984"
+    },
+    "src/buildtools": {
+      "url": "https://chromium.googlesource.com/chromium/src/buildtools",
+      "revision": "c202b4a9dac30e789ed6e3b2354efa94357a56f3"
+    },
+    "src/ios": {
+      "url": "https://chromium.googlesource.com/chromium/src/ios",
+      "revision": "9fac5364ca3912fb3f6c7ff754c577ad9b64a34e"
+    },
+    "src/testing": {
+      "url": "https://chromium.googlesource.com/chromium/src/testing",
+      "revision": "f853eb533f7edf30355ff6b5446b3419ae14d3c3"
+    },
+    "src/third_party": {
+      "url": "https://chromium.googlesource.com/chromium/src/third_party",
+      "revision": "74ec8c2ee533c9eb78e660876c6fa12d47626176"
+    },
+    "src/tools": {
+      "url": "https://chromium.googlesource.com/chromium/src/tools",
+      "revision": "bbae40a5511ca4ea79ab1db39e0ed272295d0dc3"
+    },
+    "src/third_party/boringssl/src": {
+      "url": "https://boringssl.googlesource.com/boringssl.git",
+      "revision": "ebd832c3924065de594ffda62b376aeb2e4f61a9"
+    },
+    "src/third_party/crc32c/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/crc32c.git",
+      "revision": "2bbb3be42e20a0e6c0f7b39dc07dc863d9ffbc07"
+    },
+    "src/third_party/depot_tools": {
+      "url": "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
+      "revision": "36a8df4ad006eaa0572fb446edb8145fe5403592"
+    },
+    "src/third_party/google_benchmark/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/benchmark.git",
+      "revision": "8abf1e701fbd88c8170f48fe0558247e2e5f8e7d"
+    },
+    "src/third_party/googletest/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/googletest.git",
+      "revision": "4fe3307fb2d9f86d19777c7eb0e4809e9694dde7"
+    },
+    "src/third_party/libjpeg_turbo": {
+      "url": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+      "revision": "640f254ad0fa03f6b1f29f89b7dd9366f2f6e533"
+    },
+    "src/third_party/libsrtp": {
+      "url": "https://chromium.googlesource.com/chromium/deps/libsrtp.git",
+      "revision": "cd5d177bf1fde755ddb4c7f0d9ff7693f8b49e5e"
+    },
+    "src/third_party/dav1d/libdav1d": {
+      "url": "https://chromium.googlesource.com/external/github.com/videolan/dav1d.git",
+      "revision": "a34e0685b9111b9eb1d7835ea7bea5b425dced73"
+    },
+    "src/third_party/libaom/source/libaom": {
+      "url": "https://aomedia.googlesource.com/aom.git",
+      "revision": "b7926e61f11b6393d5178805fb6a85b1d8f25daf"
+    },
+    "src/third_party/libvpx/source/libvpx": {
+      "url": "https://chromium.googlesource.com/webm/libvpx.git",
+      "revision": "d2413e2ca11039724ca33bb4d661ca2c94cb501e"
+    },
+    "src/third_party/libyuv": {
+      "url": "https://chromium.googlesource.com/libyuv/libyuv.git",
+      "revision": "2dd4257364d39c38d79465c4ddc4b93137fe729b"
+    },
+    "src/third_party/lss": {
+      "url": "https://chromium.googlesource.com/linux-syscall-support.git",
+      "revision": "29164a80da4d41134950d76d55199ea33fbb9613"
+    },
+    "src/third_party/nasm": {
+      "url": "https://chromium.googlesource.com/chromium/deps/nasm.git",
+      "revision": "525a09a813be0f75b646ee93fc2a31c27b87d722"
+    },
+    "src/third_party/catapult": {
+      "url": "https://chromium.googlesource.com/catapult.git",
+      "revision": "471aa8aec31a4de79a96b72815180bc9dc71c420"
+    },
+    "src/third_party/jsoncpp/source": {
+      "url": "https://chromium.googlesource.com/external/github.com/open-source-parsers/jsoncpp.git",
+      "revision": "3347a4b86bb914cb565f0cbda19c06e109513300"
+    },
+    "src/third_party/perfetto": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/perfetto.git",
+      "revision": "d3b1841f171c17161cb4faa1489052a09d8545d9"
+    }
+  },
+  "schema": 1,
+  "status": "integration",
+  "review_date": "2026-10-19",
+  "chromium_reference": "155.0.8059.85",
+  "source_epoch": 1791023587,
+  "upstream_deps_sha256": "44b6ac23b75309917d7d81d7c627ddf58fd999246199ff7f2d63078fe0c6afe5",
+  "tools": {
+    "gn": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/gn/gn/mac-arm64/+/git_revision:cfcd774b98f3433e18b722f9a7ff06119825b8eb",
+      "sha256": "ed796dfc54a14f7aab7735e5fdad0aa1ed397b0b648b1e171693490a3c0e3fc7"
+    },
+    "clang": {
+      "url": "https://storage.googleapis.com/chromium-browser-clang/Mac_arm64/clang-llvmorg-24-init-7747-g62397f8b-27.tar.xz",
+      "sha256": "b1d5d53f8dba60834fc3287ff53276fbed4273eee6a8f31a1ff7825f91db77c1",
+      "bytes": 47539924
+    },
+    "ninja": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/infra/3pp/tools/ninja/mac-arm64/+/version:3@1.12.1.chromium.4",
+      "sha256": "c5e9b4ffab3b2edefbc41849fc81f116c8d047b258906becc061be9ecaf04afd"
+    }
+  },
+  "mac": {
+    "xcode": "Xcode 27.1\nBuild version 27A9275",
+    "sdk": "27.0",
+    "architecture": "arm64",
+    "minimum_os": "12.0"
+  },
+  "coexistence_engine_libraries": {
+    "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/Mac/libcrypto.a": "420ae2d6ae083d52e6d088283b1505ebfcec34de64b7f2374791f321aa33c173",
+    "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/Mac/libssl.a": "756fedd418b04b11ebeb717af54ef843529ef96d24f22c6cd5469b9d3d332418",
+    "Engine/Source/ThirdParty/libOpus/opus-1.1/Mac/libopus.a": "81c47fecac668805b54d4b13c4cf54977b93a75fffc650acce7c8b84c82cd4c8",
+    "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/lib/Mac/libvpx.a": "bcde1a20086f18be02f18844ecef0ea9e652aee4a6e2374a1fd4f2d887fb03e0"
+  },
+  "engine_version": "5.8.3",
+  "adapter": "webrtc-m155-cabi-v1",
+  "platforms": {
+    "Mac": {
+      "sdk": "27.0",
+      "minimum_os": "12.0",
+      "sdk_name": "macosx"
+    },
+    "IOS": {
+      "sdk": "27.1",
+      "minimum_os": "15.0",
+      "sdk_name": "iphoneos"
+    },
+    "IOSSimulator": {
+      "sdk": "27.1",
+      "minimum_os": "15.0",
+      "sdk_name": "iphonesimulator"
+    }
+  }
+}

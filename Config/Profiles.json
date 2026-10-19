@@ -18,12 +18,7 @@
         "Core",
         "SimurghRTCCore"
       ],
-      "desktop_third_party_dependencies": [
-        "WebRTC",
-        "OpenSSL",
-        "libOpus",
-        "LibVpx"
-      ]
+      "desktop_third_party_dependencies": []
     },
     "SimurghRTCDirect": {
       "dependencies": [

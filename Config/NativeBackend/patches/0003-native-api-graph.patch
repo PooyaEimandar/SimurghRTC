@@ -1,0 +1,11 @@
+--- a/api/BUILD.gn
++++ b/api/BUILD.gn
+@@ -767,7 +767,7 @@
+   ]
+ }
+ 
+-if (is_android) {
++if (is_android && enable_java_templates) {
+   java_cpp_enum("priority_enums") {
+     sources = [ "priority.h" ]
+   }

@@ -1,6 +1,7 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "Modules/ModuleManager.h"
 #include "SimurghRTCNativeMediaProbe.h"
+#include "SimurghRTCNativeRuntime.h"
 #include "SimurghRTCProbeSoundWave.h"
 #include "AudioThread.h"
 #include "CanvasItem.h"
@@ -75,6 +76,18 @@ class FSimurghRTCMediaModule final : public IModuleInterface
         // Packaged platform-file policies can reject external ABSLOG/report paths.
         // The harness also reads this bounded, single-line report from captured stdout.
         UE_LOG(LogSimurghRTCMediaProbe, Display, TEXT("SIMURGHRTC_MEDIA_REPORT %s"), *Json);
+#if PLATFORM_ANDROID
+        // Android's UE log sink truncates long lines. Emit bounded pieces too;
+        // the harness requires all pieces from this run, then checks PID/identity.
+        const FString RunId = Report->GetStringField(TEXT("run_id"));
+        constexpr int32 ChunkSize = 640;
+        const int32 Chunks = FMath::DivideAndRoundUp(Json.Len(), ChunkSize);
+        for (int32 Index = 0; Index < Chunks; ++Index)
+        {
+            UE_LOG(LogSimurghRTCMediaProbe, Display, TEXT("SIMURGHRTC_MEDIA_CHUNK %s %d/%d %s"),
+                *RunId, Index + 1, Chunks, *Json.Mid(Index * ChunkSize, ChunkSize));
+        }
+#endif
         if (!Output.IsEmpty() && !FFileHelper::SaveStringToFile(Json, *Output))
             UE_LOG(LogSimurghRTCMediaProbe, Display, TEXT("Media report file unavailable; use structured log evidence."));
         UE_LOG(LogSimurghRTCMediaProbe, Display, TEXT("SIMURGHRTC_MEDIA_PROBE_%s %s"), bPass ? TEXT("PASSED") : TEXT("FAILED"), *Error);
@@ -89,6 +102,10 @@ class FSimurghRTCMediaModule final : public IModuleInterface
         if (GUsingNullRHI || !GDynamicRHI || !FApp::CanEverRender())
         { Error = TEXT("Render-target probe requires a real RHI; NullRHI is not a capture pass."); return false; }
         Report->SetStringField(TEXT("rhi"), GDynamicRHI->GetName());
+        // UE 5.8.3 Android OpenGL reads FCanvas targets with the opposite Y
+        // convention. Correct the draw UVs; keep top-left fixture checks intact.
+        const bool bFlipCaptureUV = PLATFORM_ANDROID && FString(GDynamicRHI->GetName()) == TEXT("OpenGL");
+        Report->SetBoolField(TEXT("capture_uv_flipped"), bFlipCaptureUV);
         Texture.Reset(UTexture2D::CreateTransient(W, H, PF_B8G8R8A8));
         if (!Texture) { Error = TEXT("Transient texture allocation failed."); return false; }
         Texture->SRGB = false;
@@ -114,6 +131,11 @@ class FSimurghRTCMediaModule final : public IModuleInterface
                 [](uint8* Data, const FUpdateTextureRegion2D* Regions) { delete[] Data; delete Regions; });
             FCanvas Canvas(Resource, nullptr, World, GMaxRHIFeatureLevel);
             FCanvasTileItem Tile(FVector2D::ZeroVector, Texture->GetResource(), FVector2D(W, H), FLinearColor::White);
+            if (bFlipCaptureUV)
+            {
+                Tile.UV0 = FVector2D(0, 1);
+                Tile.UV1 = FVector2D(1, 0);
+            }
             Tile.BlendMode = SE_BLEND_Opaque;
             Canvas.DrawItem(Tile);
             Canvas.Flush_GameThread();
@@ -126,6 +148,10 @@ class FSimurghRTCMediaModule final : public IModuleInterface
             for (int32 Y : {16, 48}) for (int32 X : {16, 48})
             {
                 const FColor Want = Expected[Y * W + X], Got = Captured[Y * W + X];
+                if (Want != Got)
+                    UE_LOG(LogSimurghRTCMediaProbe, Display,
+                        TEXT("Capture sample pass=%d x=%d y=%d expected=%s actual=%s"),
+                        Pass, X, Y, *Want.ToString(), *Got.ToString());
                 MaxError = FMath::Max(MaxError, FMath::Max3(FMath::Abs(int32(Want.R) - Got.R),
                     FMath::Abs(int32(Want.G) - Got.G), FMath::Abs(int32(Want.B) - Got.B)));
             }
@@ -205,6 +231,8 @@ class FSimurghRTCMediaModule final : public IModuleInterface
         Report->SetNumberField(TEXT("pid"), FPlatformProcess::GetCurrentProcessId());
         Report->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString());
         Report->SetBoolField(TEXT("editor_build"), WITH_EDITOR != 0);
+        Report->SetStringField(TEXT("native_backend"), SimurghRTC::FNativeRuntime::GetBackendVersion());
+        Report->SetStringField(TEXT("artifact_manifest_sha256"), SimurghRTC::FNativeRuntime::GetMobileArtifactSHA256());
         Report->SetBoolField(TEXT("network_transport_tested"), false);
         Deadline = FPlatformTime::Seconds() + 30.0;
         TickHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateRaw(this, &FSimurghRTCMediaModule::Tick));

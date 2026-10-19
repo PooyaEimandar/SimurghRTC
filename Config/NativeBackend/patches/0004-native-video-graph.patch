@@ -1,0 +1,11 @@
+--- a/api/video/BUILD.gn
++++ b/api/video/BUILD.gn
+@@ -75,7 +75,7 @@
+   ]
+ }
+ 
+-if (is_android) {
++if (is_android && enable_java_templates) {
+   java_cpp_enum("video_frame_enums") {
+     sources = [ "video_frame_buffer.h" ]
+   }

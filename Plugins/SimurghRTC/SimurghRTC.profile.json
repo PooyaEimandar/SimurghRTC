@@ -8,7 +8,7 @@
   "with_media": true,
   "with_server": true,
   "native_transport": "unimplemented",
-  "desktop_native_factory": "engine-webrtc-5414",
+  "desktop_native_factory": "isolated-artifact-required",
   "mobile_native_factory": "external-artifact-required",
   "modules": [
     "SimurghRTCCore",

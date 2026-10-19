@@ -1,0 +1,345 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "issues": [
+    "SR-006",
+    "SR-007",
+    "SR-008"
+  ],
+  "status": "same-host fresh repeat builds and native consumers passed; M0 remains open",
+  "repository_base": "0546e275dda7afb40be31143cc43a4a94ebbb099",
+  "scope": "two fresh Ninja output directories per platform; shared verified checkout/toolchain on the same Mac and Docker host; not independent-host acceptance",
+  "independent_host_validated": false,
+  "source_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+  "environment": {
+    "path": "Intermediate/SR008Repeat20261019/environment.json",
+    "sha256": "ada6af966c8f94233038264d603cd6dd091a52ababb3dc84d170cfcc9511dc74"
+  },
+  "android_builder_image": "sha256:5f9c28f382deece4b0d12109e35faa496c7b2b356ad33b85c5dd1225ea344c86",
+  "native_sources_flags_and_pins_unchanged": true,
+  "tool_installation_fix": {
+    "reason": "macOS terminated the reinstalled GN executable before compilation; fresh-inode installation fixes invocation",
+    "original_helper_sha256": "50e0b52b8184aa3a09516aeb30583519d685aa36060bbce4c6cd08d0cfb2101a",
+    "updated_helper_sha256": "ac2d4921f560d6b450485e5770cce5efbace5df71e20ffa0fb0d032b3ec200ae",
+    "native_compiler_flags_source_and_pinned_tool_archives_changed": false,
+    "failed_run": "Mac-B.log",
+    "retry_build_directory": "NativeMacRepeat20261019BRetry",
+    "gn_exit_code": -9,
+    "macos_termination": {
+      "signal": "SIGKILL (Code Signature Invalid)",
+      "namespace": "CODESIGNING",
+      "indicator": "Taskgated Invalid Signature"
+    },
+    "on_disk_codesign_verification_passed": true,
+    "retry_gn_generation_passed": true,
+    "evidence": {
+      "path": "Intermediate/SR008Repeat20261019/tool-install-fix.json",
+      "sha256": "be2b94132b821675f5a32d2454aa0249aaecbba2e3dbae904347237848765fce"
+    }
+  },
+  "platforms": {
+    "Mac": {
+      "archive_bytes": 17820448,
+      "archive_sha256": "f886f94cca58b50f8aac0132090e64efbe8767532fb14fb7a65e60a71e01814a",
+      "matches_accepted_archive": true,
+      "comparison": {
+        "path": "Intermediate/SR008Repeat20261019/Mac-final-comparison.json",
+        "sha256": "6a39c3dd5d9c3707d74d9ae6f7e2e609d453f3491ff7e491ba2b8717f29122b8"
+      },
+      "byte_identical_payloads": [
+        "Build/args.gn",
+        "Build/patches/0001-probe-target.patch",
+        "Build/source-lock.json",
+        "Include/simurgh_rtc_abi.h",
+        "Lib/libwebrtc.a",
+        "Licenses/THIRD_PARTY_NOTICES.txt"
+      ],
+      "baseline_manifest_sha256": "282dcd1c3fc38a45a79d17a449659b5330393ec754c5b19be6f958bf17a9184f",
+      "recipe_sha256": "f62b60c8ad54f3b49e9e46aa27810102889a743e65b846071f678ef44aa19bd5",
+      "runs": {
+        "b": {
+          "manifest_sha256": "d55a6cd3f910213075896827bcbfefead7f455e736d573ceb168c5966a32fdbb",
+          "fresh_output": true,
+          "build_directory": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeMacRepeat20261019BRetry",
+          "compile_actions": 3429,
+          "started": "2026-10-19T16:34:20.576692+00:00",
+          "finished": "2026-10-19T16:39:29.775508+00:00",
+          "build_log": {
+            "path": "Intermediate/SR008Repeat20261019/Mac-B-build.log",
+            "sha256": "2f490721a6c55a6ff51b6dd73a6191f1cc82e36e3725d088ef679ac993f1a7ed"
+          },
+          "runtime": {
+            "path": "Intermediate/SR008Repeat20261019/Mac-B-runtime/result.json",
+            "sha256": "777b22240e9f1928c2c6fa2eec3003b52623207397d6ac687db4536050a1ffe5"
+          },
+          "runtime_log": {
+            "path": "Intermediate/SR008Repeat20261019/Mac-B-runtime/runtime.log",
+            "sha256": "510a780df3712eca986004466ba66f25515b497c151005cb7832fcca540ee1ee"
+          },
+          "consumer_executable_sha256": "1d64ab112be04587bbc70981e1542faeecb3f98738f08a7ab69f9e99e256c965",
+          "peers_created": 6,
+          "codec_runs": 2,
+          "device": "Mac ARM64 host",
+          "minimum_load_alignment": null,
+          "temporary_device_binary_removed": null
+        },
+        "c": {
+          "manifest_sha256": "a1b95e2fed5426c1a77e2c35db31cb601cd1c8f86d506163bc36bb955902c646",
+          "fresh_output": true,
+          "build_directory": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeMacRepeat20261019C",
+          "compile_actions": 3429,
+          "started": "2026-10-19T16:49:54.211316+00:00",
+          "finished": "2026-10-19T16:54:46.892875+00:00",
+          "build_log": {
+            "path": "Intermediate/SR008Repeat20261019/Mac-C-build.log",
+            "sha256": "240a1237a013c433011d2a3ca3e6f887c25c892fcbe8b0e93ea9a1dc04274dc6"
+          },
+          "runtime": {
+            "path": "Intermediate/SR008Repeat20261019/Mac-C-runtime/result.json",
+            "sha256": "6001a93cce11239b606a5b1e6fb78b98e6d6eb49e76527d9f909d01345c90447"
+          },
+          "runtime_log": {
+            "path": "Intermediate/SR008Repeat20261019/Mac-C-runtime/runtime.log",
+            "sha256": "510a780df3712eca986004466ba66f25515b497c151005cb7832fcca540ee1ee"
+          },
+          "consumer_executable_sha256": "1d64ab112be04587bbc70981e1542faeecb3f98738f08a7ab69f9e99e256c965",
+          "peers_created": 6,
+          "codec_runs": 2,
+          "device": "Mac ARM64 host",
+          "minimum_load_alignment": null,
+          "temporary_device_binary_removed": null
+        }
+      }
+    },
+    "Android": {
+      "archive_bytes": 28104458,
+      "archive_sha256": "1ad590d890a9903a5ffab49eacf4a72c9d6bb28c60938bb855f62d027f70516c",
+      "matches_accepted_archive": true,
+      "comparison": {
+        "path": "Intermediate/SR008Repeat20261019/Android-comparison.json",
+        "sha256": "f0a55b8c4975dc0b7d5393eb6579f93e39e297ebd4f3f6eaceb04c81e9291be5"
+      },
+      "byte_identical_payloads": [
+        "Build/args.gn",
+        "Build/debian-packages.txt",
+        "Build/patches/0001-native-graph.patch",
+        "Build/patches/0001-probe-target.patch",
+        "Build/patches/0002-external-ndk.patch",
+        "Build/patches/0003-native-api-graph.patch",
+        "Build/patches/0004-native-video-graph.patch",
+        "Build/patches/0005-native-test-targets.patch",
+        "Build/patches/0006-native-test-options.patch",
+        "Build/patches/0007-native-stacktrace.patch",
+        "Build/patches/0008-native-flatbuffers.patch",
+        "Build/source-lock.json",
+        "Include/simurgh_rtc_abi.h",
+        "Lib/libwebrtc.a",
+        "Licenses/THIRD_PARTY_NOTICES.txt"
+      ],
+      "baseline_manifest_sha256": "196782c29fcfa5abccf0e3536c44c7ba029a4e91317aab41ec121aab72507a3d",
+      "recipe_sha256": "5dc5037076f98b61085c69dfe8f7ea61e78beedfa3036b45399dff5ae536748d",
+      "runs": {
+        "a": {
+          "manifest_sha256": "66bafd9789286a5cd7d4164832429cc178d189a4c890b2e44179cae9813f045b",
+          "fresh_output": true,
+          "build_directory": "/build/src/out/NativeAndroidRepeat20261019A",
+          "compile_actions": 3561,
+          "started": "2026-10-19T16:26:34.623695+00:00",
+          "finished": "2026-10-19T16:46:21.523533+00:00",
+          "build_log": {
+            "path": "Intermediate/SR008Repeat20261019/Android-A-build.log",
+            "sha256": "ea4071c14c1a73a17bff4a0784406ad366910dd83e01a11b0e1ccf92ad8b6209"
+          },
+          "runtime": {
+            "path": "Intermediate/SR008Repeat20261019/Android-A-runtime/result.json",
+            "sha256": "d79075fb40a801f267e59edcba37716013ae854881882f210744568898244012"
+          },
+          "runtime_log": {
+            "path": "Intermediate/SR008Repeat20261019/Android-A-runtime/runtime.log",
+            "sha256": "2d761e6809238adff21f73e74fc966df7d42217993cc57605e2b9725ed8edb52"
+          },
+          "consumer_executable_sha256": "f2697112cf37fdccb69fc4550959a43a2bcb23312a412a0f6a25d0bf53ff7f2a",
+          "peers_created": 6,
+          "codec_runs": 2,
+          "device": {
+            "model": "SM-S938B",
+            "os": "16"
+          },
+          "minimum_load_alignment": 16384,
+          "temporary_device_binary_removed": true
+        },
+        "b": {
+          "manifest_sha256": "743c0d2ce61aefa4e6e6cf02fbd2c45deb5218ae9fe9a0bb07d3525097230c52",
+          "fresh_output": true,
+          "build_directory": "/build/src/out/NativeAndroidRepeat20261019B",
+          "compile_actions": 3561,
+          "started": "2026-10-19T16:46:21.523997+00:00",
+          "finished": "2026-10-19T17:02:39.864919+00:00",
+          "build_log": {
+            "path": "Intermediate/SR008Repeat20261019/Android-B-build.log",
+            "sha256": "f2ea7e5c41e95fbde57fc4c1bcedd1f6fafbb0d1c8c121243a78d839d77fa847"
+          },
+          "runtime": {
+            "path": "Intermediate/SR008Repeat20261019/Android-B-runtime/result.json",
+            "sha256": "8200f74c47d7c6efc87901aa49843db752e0ca388ccf4c2446f0b95e48d0a9a5"
+          },
+          "runtime_log": {
+            "path": "Intermediate/SR008Repeat20261019/Android-B-runtime/runtime.log",
+            "sha256": "2d761e6809238adff21f73e74fc966df7d42217993cc57605e2b9725ed8edb52"
+          },
+          "consumer_executable_sha256": "f2697112cf37fdccb69fc4550959a43a2bcb23312a412a0f6a25d0bf53ff7f2a",
+          "peers_created": 6,
+          "codec_runs": 2,
+          "device": {
+            "model": "SM-S938B",
+            "os": "16"
+          },
+          "minimum_load_alignment": 16384,
+          "temporary_device_binary_removed": true
+        }
+      }
+    },
+    "IOSSimulator": {
+      "archive_bytes": 17331008,
+      "archive_sha256": "3d8b7b34a1618a37077baf46abc42ea1edd2195bd5e9fceead34d3ef19cc4b77",
+      "matches_accepted_archive": true,
+      "comparison": {
+        "path": "Intermediate/SR008Repeat20261019/IOSSimulator-comparison.json",
+        "sha256": "6ef19255eca4a5a16a1ed9fc71a352694189bc4aa30b18d4b5b0f2b432520006"
+      },
+      "byte_identical_payloads": [
+        "Build/args.gn",
+        "Build/patches/0001-probe-target.patch",
+        "Build/source-lock.json",
+        "Include/simurgh_rtc_abi.h",
+        "Lib/libwebrtc.a",
+        "Licenses/THIRD_PARTY_NOTICES.txt"
+      ],
+      "baseline_manifest_sha256": "cbcc72a7d14e2f118e86acdfa30509fdb40d4cdd0f8fe45ea9184b8db1e1dae1",
+      "recipe_sha256": "f62b60c8ad54f3b49e9e46aa27810102889a743e65b846071f678ef44aa19bd5",
+      "runs": {
+        "a": {
+          "manifest_sha256": "d7b6793da6b53c8e0ea95ca9d24b3683f966ac1ee880863850090995918deef3",
+          "fresh_output": true,
+          "build_directory": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeIOSSimulatorRepeat20261019ARetry",
+          "compile_actions": 3452,
+          "started": "2026-10-19T16:39:29.775995+00:00",
+          "finished": "2026-10-19T16:44:53.542248+00:00",
+          "build_log": {
+            "path": "Intermediate/SR008Repeat20261019/IOSSimulator-A-build.log",
+            "sha256": "e0b3c5094d845d924704c4a42078c3e79bc35abd5587a0ce2cba43db41ba55d0"
+          },
+          "runtime": {
+            "path": "Intermediate/SR008Repeat20261019/IOSSimulator-A-runtime/result.json",
+            "sha256": "fb706b13ab6076bb22b69da451cc1f4e13c157b06f21e7b5f0a7b50866456732"
+          },
+          "runtime_log": {
+            "path": "Intermediate/SR008Repeat20261019/IOSSimulator-A-runtime/runtime.log",
+            "sha256": "2d761e6809238adff21f73e74fc966df7d42217993cc57605e2b9725ed8edb52"
+          },
+          "consumer_executable_sha256": "d385e53b3f4c8139b93d3f9f607830e8fe0e7877030741450b43c0beee166200",
+          "peers_created": 6,
+          "codec_runs": 2,
+          "device": {
+            "name": "iPhone 17",
+            "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+          },
+          "minimum_load_alignment": null,
+          "temporary_device_binary_removed": null
+        },
+        "b": {
+          "manifest_sha256": "68ac7d7841415a624cbeaeb16fca3c588931caeed7be86901d60070f1cb77cf7",
+          "fresh_output": true,
+          "build_directory": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeIOSSimulatorRepeat20261019BRetry",
+          "compile_actions": 3452,
+          "started": "2026-10-19T16:44:53.542690+00:00",
+          "finished": "2026-10-19T16:49:52.582528+00:00",
+          "build_log": {
+            "path": "Intermediate/SR008Repeat20261019/IOSSimulator-B-build.log",
+            "sha256": "da64110d4ce30390d7d12ece049faf0ad03cb60a858ddd376947dbf250c6838a"
+          },
+          "runtime": {
+            "path": "Intermediate/SR008Repeat20261019/IOSSimulator-B-runtime/result.json",
+            "sha256": "c0d08ab591552e5d0372d8a1a1eb5c0a5484fccaab2f3d881e80b1ac02000035"
+          },
+          "runtime_log": {
+            "path": "Intermediate/SR008Repeat20261019/IOSSimulator-B-runtime/runtime.log",
+            "sha256": "2d761e6809238adff21f73e74fc966df7d42217993cc57605e2b9725ed8edb52"
+          },
+          "consumer_executable_sha256": "d385e53b3f4c8139b93d3f9f607830e8fe0e7877030741450b43c0beee166200",
+          "peers_created": 6,
+          "codec_runs": 2,
+          "device": {
+            "name": "iPhone 17",
+            "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+          },
+          "minimum_load_alignment": null,
+          "temporary_device_binary_removed": null
+        }
+      }
+    }
+  },
+  "commands": [
+    {
+      "path": "Intermediate/SR008Repeat20261019/apple-commands.json",
+      "sha256": "e61611fc541ac8ffd614fc13852c9d4723e04392a59101c7bc643d8bb7e641c0"
+    },
+    {
+      "path": "Intermediate/SR008Repeat20261019/apple-retry-commands.json",
+      "sha256": "f425a81318909ef1794217d46ce09ea60675390e0bd2028caef7dcf24fea7648"
+    },
+    {
+      "path": "Intermediate/SR008Repeat20261019/apple-final-commands.json",
+      "sha256": "c3a1a490047fb6b50ed1397d4ac6d5de84a01b3b541f499bfef2aa9a41acdedd"
+    },
+    {
+      "path": "Intermediate/SR008Repeat20261019/android-commands.json",
+      "sha256": "4fc086306c637af1ecec2b90c9a98db075430ae90a9c22b73b88127b98170722"
+    },
+    {
+      "path": "Intermediate/SR008Repeat20261019/inputs.json",
+      "sha256": "bf9b2114e8cbc569eb1ff8b75dbad48d45c289d0738a137c61d88c948dc4fe6e"
+    }
+  ],
+  "validation_tools": {
+    "compare_native_builds.py": "fd84ea7c0b0135814082dd3d29cd2a58c8c989d0ad5d75dc52fb996db7f1739a",
+    "run_native_abi_probe.py": "162ab7cd35b56fe07ef06c829634c8cc12dfff6069dd809c982f806804af3d5a"
+  },
+  "python_tests": {
+    "passed": 142,
+    "evidence": {
+      "path": "Intermediate/SR008Repeat20261019/python-tests-final.log",
+      "sha256": "c0f75f169ff70a3706f79f00c9f73bc9458939f3884c55c84519577d80be3660"
+    }
+  },
+  "previous_packaged_validation": {
+    "path": "docs/reviews/SR008-M155-validation.json",
+    "sha256": "32a355bae813e871c1b700b91cd3cfd81266a82f86239c4a9d529ac7a85d4a00"
+  },
+  "preliminary_mac_a": {
+    "comparison": {
+      "path": "Intermediate/SR008Repeat20261019/Mac-comparison.json",
+      "sha256": "8ecae52b6b9095a8f3628a70d73fd4b4b05f97bab2397b50eecce47932e5da67"
+    },
+    "runtime": {
+      "path": "Intermediate/SR008Repeat20261019/Mac-A-runtime/result.json",
+      "sha256": "341eb3608a97313e5c074a7a5df2ff149db15168bcffeb57b2e5792fdd1a2630"
+    }
+  },
+  "notes": [
+    "The accepted Mac pair is B/C, both after the tool installation fix. Initial Mac A also matches the accepted library and passed its native consumer; its preliminary evidence is retained separately.",
+    "All shipped archive, header, GN flags, patches, source-lock and notice bytes match the accepted artifacts.",
+    "Manifest hashes differ because build records include output paths and intermediate object hashes. Android consumer executable hashes may also differ.",
+    "No archive normalization or rewriting was performed by the comparison.",
+    "Each native consumer checks six peer lifecycles, overlapping data/media owners, invalid ABI inputs, and two local VP8/Opus passes.",
+    "These are new standalone native consumer runs. Unreal packages were not rebuilt or rerun during this repeat-build check; their earlier identities remain in the integration snapshot.",
+    "Physical iOS, camera/microphone, network media and remote peers are not exercised.",
+    "Static Android 16 KiB ELF alignment does not establish execution on a 16 KiB-page device."
+  ],
+  "remaining": [
+    "Independent-host reproduction for replacement artifacts; iOS device artifact repeat build and signed physical-device acceptance (device testing deferred).",
+    "Source/advisory qualification for enabled RTC dependencies and a packaged dedicated Server run with M155.",
+    "Windows/Linux replacement integration, Shipping RTC-on/off size measurements and final SR-902 distribution notices.",
+    "Real connections and network media in M1/M2; shared Connect remains NotImplemented."
+  ]
+}

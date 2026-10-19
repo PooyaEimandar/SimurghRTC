@@ -10,65 +10,37 @@ public class SimurghRTCNative : SimurghRTCModuleRules
     public SimurghRTCNative(ReadOnlyTargetRules Target) : base(Target)
     {
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "SimurghRTCCore" });
-        bool UseEngineWebRTC = Target.Platform == UnrealTargetPlatform.Mac
-            || Target.Platform == UnrealTargetPlatform.Win64
-            || (Target.Platform == UnrealTargetPlatform.Linux && Target.Architecture == UnrealArch.X64);
-        bool UseMobileWebRTC = Target.Platform == UnrealTargetPlatform.Android || Target.Platform == UnrealTargetPlatform.IOS;
-        PrivateDefinitions.Add("SIMURGHRTC_WITH_ENGINE_WEBRTC=" + (UseEngineWebRTC ? "1" : "0"));
-        PrivateDefinitions.Add("SIMURGHRTC_WITH_WEBRTC=" + (UseEngineWebRTC || UseMobileWebRTC ? "1" : "0"));
-        if (UseEngineWebRTC || UseMobileWebRTC)
+        bool IsSimulator = Target.Platform == UnrealTargetPlatform.IOS && Target.Architecture == UnrealArch.IOSSimulator;
+        bool Supported = (Target.Platform == UnrealTargetPlatform.Mac || Target.Platform == UnrealTargetPlatform.Android
+            || Target.Platform == UnrealTargetPlatform.IOS) && (Target.Architecture == UnrealArch.Arm64 || IsSimulator);
+        PrivateDefinitions.Add("SIMURGHRTC_WITH_ENGINE_WEBRTC=0");
+        PrivateDefinitions.Add("SIMURGHRTC_WITH_WEBRTC=" + (Supported ? "1" : "0"));
+        if (!Supported) return; // Other host adapters remain unverified; never fall back to engine RTC libraries.
+        if (Target.Version.MajorVersion != 5 || Target.Version.MinorVersion != 8 || Target.Version.PatchVersion != 3)
+            throw new BuildException("The SimurghRTC native adapter requires Unreal Engine 5.8.3.");
+        if (Target.Type == TargetType.Server && Target.Platform != UnrealTargetPlatform.Mac)
+            throw new BuildException("Mobile Server targets are not supported.");
+        string Platform = IsSimulator ? "IOSSimulator" : Target.Platform.ToString();
+        string Root = Path.Combine(PluginDirectory, "ThirdParty", "WebRTC", Platform, "arm64");
+        try
         {
-            if (Target.Version.MajorVersion != 5 || Target.Version.MinorVersion != 8 || Target.Version.PatchVersion != 3)
-                throw new BuildException("The SimurghRTC native adapter currently targets Unreal Engine 5.8.3. Review the adapter before using another version.");
+            ExternalDependencies.AddRange(SimurghRTCMobileArtifact.ValidateIsolated(Root, Platform,
+                Path.Combine(ModuleDirectory, "NativeBackend.inputs.json")));
+            using FileStream Stream = File.OpenRead(Path.Combine(Root, "artifact.json"));
+            string Hash = Convert.ToHexString(SHA256.HashData(Stream)).ToLowerInvariant();
+            PrivateDefinitions.Add("SIMURGHRTC_NATIVE_ARTIFACT_SHA256=\"" + Hash + "\"");
         }
-        if (UseEngineWebRTC)
+        catch (Exception Error)
         {
-            // Explicitly include archive dependencies: precompiled engine external modules may not propagate private links.
-            AddEngineThirdPartyPrivateStaticDependencies(Target, "WebRTC", "OpenSSL", "libOpus", "LibVpx");
-            if (Target.Platform == UnrealTargetPlatform.Mac)
-                PublicFrameworks.AddRange(new string[] { "AudioToolbox", "CoreAudio", "CoreVideo", "VideoToolbox" });
+            throw new BuildException("SimurghRTC isolated artifact rejected: " + Error.Message
+                + " Build/stage M155 with tools/build_native_backend.py and tools/prepare_profile.py --native-artifact.");
         }
-        if (UseMobileWebRTC)
-        {
-            bool IsSimulator = Target.Platform == UnrealTargetPlatform.IOS && Target.Architecture == UnrealArch.IOSSimulator;
-            if (Target.Type == TargetType.Server || (Target.Architecture != UnrealArch.Arm64 && !IsSimulator))
-                throw new BuildException("SimurghRTC mobile artifacts require ARM64 device clients or the explicit iOS ARM64 simulator target.");
-            string ArtifactPlatform = IsSimulator ? "IOSSimulator" : Target.Platform.ToString();
-            string Root = Path.Combine(PluginDirectory, "ThirdParty", "WebRTC", ArtifactPlatform, "arm64");
-            try
-            {
-                ExternalDependencies.AddRange(SimurghRTCMobileArtifact.Validate(Root, ArtifactPlatform));
-                using FileStream ManifestStream = File.OpenRead(Path.Combine(Root, "artifact.json"));
-                string ManifestHash = Convert.ToHexString(SHA256.HashData(ManifestStream)).ToLowerInvariant();
-                PrivateDefinitions.Add("SIMURGHRTC_MOBILE_ARTIFACT_SHA256=\"" + ManifestHash + "\"");
-            }
-            catch (Exception Error)
-            {
-                throw new BuildException("SimurghRTC mobile artifact rejected: " + Error.Message
-                    + " Stage a checked artifact with tools/prepare_profile.py --mobile-artifact. See docs/MOBILE_ARTIFACTS.md.");
-            }
-            // This path never requests Unreal's WebRTC module or its Android Java payload.
-            PrivateIncludePaths.Add(Path.Combine(Root, "Include"));
-            PrivateIncludePaths.Add(Path.Combine(Root, "Include", "third_party", "abseil-cpp"));
-            PrivateIncludePaths.Add(Path.Combine(Root, "Include", "third_party", "libyuv", "include"));
-            PublicAdditionalLibraries.Add(Path.Combine(Root, "Lib", "libwebrtc.a"));
-            PrivateDefinitions.AddRange(new string[] { "WEBRTC_5414=1", "WEBRTC_POSIX=1", "ABSL_ALLOCATOR_NOTHROW=1" });
-            AddEngineThirdPartyPrivateStaticDependencies(Target, "OpenSSL", "libOpus");
-            if (IsSimulator)
-                PublicAdditionalLibraries.Add(Path.Combine(Root, "Lib", "libvpx.a"));
-            else
-                AddEngineThirdPartyPrivateStaticDependencies(Target, "LibVpx");
-            if (Target.Platform == UnrealTargetPlatform.Android)
-            {
-                PrivateDefinitions.Add("WEBRTC_ANDROID=1");
-                PublicSystemLibraries.AddRange(new string[] { "log", "android" });
-            }
-            else
-            {
-                PrivateDefinitions.AddRange(new string[] { "WEBRTC_MAC=1", "WEBRTC_IOS=1" });
-                PublicFrameworks.AddRange(new string[] { "AudioToolbox", "CoreAudio", "CoreMedia", "CoreVideo", "VideoToolbox" });
-            }
-        }
+        PrivateIncludePaths.Add(Path.Combine(Root, "Include"));
+        PublicAdditionalLibraries.Add(Path.Combine(Root, "Lib", "libwebrtc.a"));
+        if (Target.Platform == UnrealTargetPlatform.Android)
+            PublicSystemLibraries.AddRange(new string[] { "log", "android" });
+        else
+            PublicFrameworks.AddRange(new string[] { "Foundation", "Security", "SystemConfiguration", "AudioToolbox", "CoreAudio" });
     }
 }
 
@@ -123,6 +95,71 @@ public static class SimurghRTCMobileArtifact
             if ((Attributes & FileAttributes.Directory) != 0) CollectFiles(Root, Entry, Files, Names);
             else if (Name != "artifact.json") Files.Add(Name, Entry);
         }
+    }
+
+    public static List<string> ValidateIsolated(string Root, string Platform, string ExpectedPath)
+    {
+        Dictionary<string, string> Files = new Dictionary<string, string>(StringComparer.Ordinal);
+        CollectFiles(Root, Root, Files, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+        string Manifest = Path.Combine(Root, "artifact.json");
+        using FileStream Stream = File.OpenRead(Manifest);
+        using JsonDocument Document = JsonDocument.ParseAsync(Stream).GetAwaiter().GetResult();
+        using FileStream ExpectedStream = File.OpenRead(ExpectedPath);
+        using JsonDocument Expected = JsonDocument.ParseAsync(ExpectedStream).GetAwaiter().GetResult();
+        JsonElement Top = Document.RootElement, Pins = Expected.RootElement;
+        CheckObject(Top);
+        JsonElement Meta = Top.GetProperty("metadata");
+        Require(Meta.GetProperty("schema").GetInt32() == 2, "Rebuild the retired M109 artifact using the M155 C ABI.");
+        foreach (var Pair in new Dictionary<string, string> {
+            { "platform", Platform }, { "architecture", "arm64" }, { "engine_version", "5.8.3" },
+            { "adapter", "webrtc-m155-cabi-v1" }, { "configuration", "Release" },
+            { "dependencies", "isolated-boringssl-opus-vpx" },
+            { "source_revision", Pins.GetProperty("source_revision").GetString()! },
+            { "abi_header_sha256", Pins.GetProperty("abi_header_sha256").GetString()! }
+        }) Require(Meta.GetProperty(Pair.Key).GetString() == Pair.Value, "Incompatible native " + Pair.Key);
+        foreach (string Required in new[] { "Lib/libwebrtc.a", "Include/simurgh_rtc_abi.h", "Build/source-lock.json",
+            "Build/args.gn", "Build/build.json", "Licenses/THIRD_PARTY_NOTICES.txt" })
+            Require(Files.ContainsKey(Required) && new FileInfo(Files[Required]).Length > 0, "Missing or empty " + Required);
+        List<string> Dependencies = new List<string> { Manifest, ExpectedPath };
+        JsonElement Inventory = Top.GetProperty("files");
+        int Count = 0;
+        foreach (JsonProperty Entry in Inventory.EnumerateObject())
+        {
+            CheckPath(Entry.Name);
+            Require(Files.ContainsKey(Entry.Name), "Missing native file: " + Entry.Name);
+            string PathValue = Files[Entry.Name];
+            string Extension = Path.GetExtension(PathValue).ToLowerInvariant();
+            Require(!new HashSet<string> { ".a", ".o", ".so", ".dylib", ".dll", ".lib", ".jar", ".aar" }.Contains(Extension)
+                || Entry.Name == "Lib/libwebrtc.a", "Unexpected native binary: " + Entry.Name);
+            using FileStream Payload = File.OpenRead(PathValue);
+            string Hash = Convert.ToHexString(SHA256.HashData(Payload)).ToLowerInvariant();
+            Require(Hash == Entry.Value.GetString(), "SHA256 mismatch: " + Entry.Name);
+            Dependencies.Add(PathValue); ++Count;
+        }
+        Require(Count == Files.Count, "Native inventory differs from disk.");
+        Require(Inventory.GetProperty("Include/simurgh_rtc_abi.h").GetString() == Pins.GetProperty("abi_header_sha256").GetString(), "ABI header drift.");
+        Require(Inventory.GetProperty("Build/source-lock.json").GetString() == Pins.GetProperty(Platform == "Android" ? "android_source_lock_sha256" : "source_lock_sha256").GetString(), "Native source lock drift.");
+        using FileStream BuildStream = File.OpenRead(Files["Build/build.json"]);
+        using JsonDocument Build = JsonDocument.ParseAsync(BuildStream).GetAwaiter().GetResult();
+        CheckObject(Build.RootElement);
+        foreach (JsonProperty Source in Pins.GetProperty("bridge_sources").EnumerateObject())
+            Require(Build.RootElement.GetProperty("bridge_sources").GetProperty(Source.Name).GetString() == Source.Value.GetString(), "Native bridge drift: " + Source.Name);
+        if (Platform == "Android")
+        {
+            Require(Files.ContainsKey("Build/link-probe.json"), "Android artifact lacks its NDK consumer link check.");
+            using FileStream LinkStream = File.OpenRead(Files["Build/link-probe.json"]);
+            using JsonDocument Link = JsonDocument.ParseAsync(LinkStream).GetAwaiter().GetResult();
+            CheckObject(Link.RootElement);
+            JsonElement Proof = Link.RootElement;
+            Require(Proof.GetProperty("passed").GetBoolean() && Proof.GetProperty("minimum_api").GetInt32() == 26
+                && Proof.GetProperty("load_alignment").GetInt32() == 16384
+                && Build.RootElement.GetProperty("ndk").GetString() == "27.2.12479018"
+                && Proof.GetProperty("compiler").GetString()!.Contains("clang version 18.0.3"), "Invalid Android NDK consumer check.");
+            string RuntimeHash = Proof.GetProperty("compiler_runtime_sha256").GetString()!;
+            Require(System.Text.RegularExpressions.Regex.IsMatch(RuntimeHash, @"\A[0-9a-f]{64}\z")
+                && RuntimeHash == Build.RootElement.GetProperty("compiler_runtime_sha256").GetString(), "Android compiler runtime identity mismatch.");
+        }
+        return Dependencies;
     }
 
     public static List<string> Validate(string Root, string Platform)

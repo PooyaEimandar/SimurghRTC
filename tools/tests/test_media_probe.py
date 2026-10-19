@@ -25,6 +25,21 @@ class MediaEvidenceTests(unittest.TestCase):
     def test_complete_packaged_evidence(self):
         validate_report(self.report, 'fixture', 123, False)
 
+    def test_selected_backend_identity_and_mobile_report_kind(self):
+        from run_mobile_probe import read_report
+        identity = 'a' * 64
+        with self.assertRaises(ValueError):
+            validate_report(self.report, 'fixture', 123, False, artifact_sha256=identity)
+        self.report.update(artifact_manifest_sha256=identity,
+                           native_backend='M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d')
+        validate_report(self.report, 'fixture', 123, False, artifact_sha256=identity)
+        log = 'SIMURGHRTC_MEDIA_REPORT ' + json.dumps(self.report)
+        self.assertIsNone(read_report(log, 'fixture'))
+        self.assertEqual(read_report(log, 'fixture', 'SIMURGHRTC_MEDIA_REPORT '), self.report)
+        self.report['native_backend'] = 'retired'
+        with self.assertRaises(ValueError):
+            validate_report(self.report, 'fixture', 123, False, artifact_sha256=identity)
+
     def test_packaged_stdout_fallback_requires_one_complete_report(self):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary)

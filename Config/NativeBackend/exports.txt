@@ -1,0 +1,6 @@
+_SimurghRTC_CreateV1
+_SimurghRTC_CreatePeerV1
+_SimurghRTC_DiagnosticsV1
+_SimurghRTC_DestroyV1
+_SimurghRTC_MediaProbeV1
+_SimurghRTC_NativeVersionV1

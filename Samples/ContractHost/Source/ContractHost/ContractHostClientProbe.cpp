@@ -1,6 +1,7 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "ContractHostClientProbe.h"
 #include "SimurghRTCNativeRuntime.h"
+#include "SimurghRTCNativeMediaProbe.h"
 #include "HAL/FileManager.h"
 #include "HAL/PlatformProcess.h"
 #include "HAL/PlatformProperties.h"
@@ -89,9 +90,11 @@ bool FContractHostClientProbe::Run(float)
     for (; Completed < 3; ++Completed)
         if (!ExerciseCycle()) break; // Stack unwinding also tears down failed cycles.
 
-    const bool bPassed = Completed == 3;
+    FNativeMediaProbeResult Media;
+    const bool bMediaPassed = Completed == 3 && RunNativeMediaProbe(Media, Error);
+    const bool bPassed = Completed == 3 && bMediaPassed;
     auto Report = MakeShared<FJsonObject>();
-    Report->SetNumberField(TEXT("schema"), 1);
+    Report->SetNumberField(TEXT("schema"), 2);
     Report->SetStringField(TEXT("run_id"), RunId);
     Report->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString());
     Report->SetStringField(TEXT("platform"), FPlatformProperties::IniPlatformName());
@@ -111,6 +114,14 @@ bool FContractHostClientProbe::Run(float)
 #endif
     Report->SetBoolField(TEXT("with_janus"), SIMURGHRTC_WITH_JANUS != 0);
     Report->SetStringField(TEXT("artifact_manifest_sha256"), FNativeRuntime::GetMobileArtifactSHA256());
+    Report->SetStringField(TEXT("native_backend"), FNativeRuntime::GetBackendVersion());
+    Report->SetBoolField(TEXT("media_codecs_passed"), bMediaPassed);
+    Report->SetNumberField(TEXT("decoded_video_frames"), Media.DecodedFrames);
+    Report->SetNumberField(TEXT("decoded_pcm_samples"), Media.DecodedPCM.Num());
+    Report->SetNumberField(TEXT("audio_packets"), Media.AudioPackets);
+    Report->SetNumberField(TEXT("video_color_error"), Media.MaxColorError);
+    Report->SetNumberField(TEXT("audio_tone_correlation"), Media.ToneCorrelation);
+    Report->SetBoolField(TEXT("render_capture_tested"), false);
     Report->SetBoolField(TEXT("network_transport_tested"), false);
     Report->SetBoolField(TEXT("hardware_capture_tested"), false);
     Report->SetNumberField(TEXT("completed_cycles"), Completed);

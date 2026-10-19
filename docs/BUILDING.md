@@ -2,7 +2,7 @@
 
 Use **Unreal Engine 5.8.3**, its supported platform toolchain and **Python 3.10+**. The commands below target Mac ARM64, the platform tested so far.
 
-A regular engine installation is enough for Editor/Game tests. Dedicated Server builds need a source-built engine with Server support; follow the [Server guide](NATIVE_PROBE.md). For Android/iOS, [build the pinned ARM64 dependency](MOBILE_BUILDS.md), then follow the [packaged device probe](MOBILE_PROBE.md). Mobile device qualification remains open.
+A regular engine installation is enough for Editor/Game tests. Dedicated Server builds need a source-built engine with Server support; follow the [Server guide](NATIVE_PROBE.md). Build the [isolated M155 dependency](NATIVE_BACKEND.md) for each target. For Android/iOS, follow the [packaged device probe](MOBILE_PROBE.md). Mobile device qualification remains open.
 
 ## 1. Check the source and fixtures
 
@@ -22,7 +22,9 @@ Set `UE_ROOT` to your engine directory, the one containing `Engine`:
 
 ```sh
 UE_ROOT=/absolute/path/to/UE_5.8
-PROJECT="$PWD/Samples/ContractHost/ContractHost.uproject"
+python3 tools/prepare_profile.py --profile full \
+  --native-artifact LocalBuilds/Artifacts/M155-Mac --output LocalBuilds/Full
+PROJECT="$PWD/LocalBuilds/Full/ContractHost.uproject"
 "$UE_ROOT/Engine/Build/BatchFiles/Mac/Build.sh" ContractHostEditor Mac Development \
   -Project="$PROJECT" -WaitMutex -NoHotReloadFromIDE -architecture=arm64
 
@@ -44,7 +46,8 @@ These tests run without graphics or audio devices. For texture capture and audio
 A profile chooses which plugin modules are included. For a build without Janus:
 
 ```sh
-python3 tools/prepare_profile.py --profile direct-only --output LocalBuilds/Direct
+python3 tools/prepare_profile.py --profile direct-only \
+  --native-artifact LocalBuilds/Artifacts/M155-Mac --output LocalBuilds/Direct
 ```
 
 This creates a standalone `ContractHost.uproject` and copies only the selected plugin source. Set `PROJECT="$PWD/LocalBuilds/Direct/ContractHost.uproject"`, then repeat the build/test commands with a different report directory.
@@ -102,7 +105,7 @@ All plugin modules below live under `Plugins/SimurghRTC/Source/`.
 
 The project targets UE **5.8.3**, but the `.uplugin` file uses `EngineVersion: 5.8.0`. This matches the engine's compatibility version. Setting that field to `5.8.3` caused an incompatibility prompt and skipped optional modules in unattended startup. It does not mean other engine patches have been tested.
 
-Desktop builds link the engine's WebRTC 5414 library plus OpenSSL, Opus and VPX. The sample finds the source plugin through `AdditionalPluginDirectories`; staged samples use their local copy.
+Mac ARM64, Android ARM64 and iOS device/simulator ARM64 select separate M155 artifacts with private copies of BoringSSL, Opus and VPX. The plugin uses a small C interface; internal native symbols stay isolated. Missing or stale artifacts stop the build. Windows and Linux replacement backends are not available yet. Stage a project with its checked artifacts before building.
 
 Generated descriptors select modules for Unreal's build tools and Header Tool. Build.cs reads `SimurghRTC.profile.json` and defines `SIMURGHRTC_WITH_DIRECT`, `SIMURGHRTC_WITH_JANUS`, `SIMURGHRTC_WITH_JANUS_EXTENSIONS` and `SIMURGHRTC_WITH_MEDIA`. The extension flag follows its own module selection. `SIMURGHRTC_WITH_NATIVE_TRANSPORT` remains **0** because shared session transport is unfinished. Server targets omit Janus and client-media modules, even under Full. Use a staged `server` host for the Server probe so its sample content also excludes client-only extensions.
 

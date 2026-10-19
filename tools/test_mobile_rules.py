@@ -19,6 +19,7 @@ def main():
     parser.add_argument('--rules', type=Path, required=True, help='ContractHostModuleRules.dll from a completed UBT build.')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--simulator-support', type=Path, help='Also check the current simulator support export.')
+    parser.add_argument('--isolated', action='store_true', help='Also exercise the M155 C ABI artifact validator.')
     args = parser.parse_args()
     output = args.output.resolve()
     if output.exists():
@@ -92,6 +93,36 @@ def main():
             manifest_path.write_text(json.dumps(manifest))
             cases.append({'name': 'simulator support: ' + name, 'validator': 'simulator-support',
                           'root': str(project_root), 'accept': name == 'valid'})
+    if args.isolated:
+        from test_native_artifacts import make_native_payload, seal_native
+        import native_artifacts
+        for target in ('Mac','Android','IOS','IOSSimulator'):
+            names = ('valid','wrong-platform','corrupt-archive','resealed-header','resealed-lock','resealed-bridge','retired-schema','extra-binary')
+            if target == 'Android': names += ('missing-ndk-link','failed-ndk-link','runtime-drift')
+            for name in names:
+                root = output / ('isolated-' + target + '-' + name)
+                make_native_payload(root,target)
+                selected_platform = target
+                if name == 'wrong-platform': selected_platform = 'IOS' if target != 'IOS' else 'Mac'
+                if name == 'corrupt-archive': (root / 'Lib/libwebrtc.a').write_bytes(b'bad')
+                if name in ('resealed-header','resealed-lock'):
+                    (root / ('Include/simurgh_rtc_abi.h' if name == 'resealed-header' else 'Build/source-lock.json')).write_text('changed')
+                    seal_native(root)
+                if name == 'resealed-bridge':
+                    path = root / 'Build/build.json'; doc=json.loads(path.read_text());doc['bridge_sources']['runtime.cc']='0'*64
+                    path.write_text(json.dumps(doc));seal_native(root)
+                if name == 'retired-schema':
+                    path=root/'artifact.json';doc=json.loads(path.read_text());doc['metadata']['schema']=1;path.write_text(json.dumps(doc))
+                if name == 'extra-binary':
+                    (root/'Lib/libcrypto.a').write_bytes(b'bad');seal_native(root)
+                if name == 'missing-ndk-link':
+                    (root/'Build/link-probe.json').unlink();seal_native(root)
+                if name in ('failed-ndk-link','runtime-drift'):
+                    path=root/'Build/link-probe.json';proof=json.loads(path.read_text())
+                    proof['passed' if name == 'failed-ndk-link' else 'compiler_runtime_sha256'] = False if name == 'failed-ndk-link' else 'b'*64
+                    path.write_text(json.dumps(proof));seal_native(root)
+                cases.append({'name':'isolated ' + target + ': ' + name,'validator':'isolated','root':str(root),
+                              'platform':selected_platform,'pins':str(native_artifacts.PINS),'accept':name=='valid'})
     cases_path = output / 'cases.json'
     cases_path.write_text(json.dumps(cases))
     project = Path(__file__).parent / 'tests/mobile_rules/RulesProbe.csproj'

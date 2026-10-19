@@ -3,14 +3,14 @@
 **M0 is in progress**, targeting Unreal Engine **5.8.3**. Updated 2026-10-19.
 
 - **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-002 build profiles, SR-003 dependency/ABI review and headless Server feasibility, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
-- **In progress:** SR-006/SR-007 mobile artifact integration. SR-008 is fixing the dependency security/provenance blockers and moving desktop and mobile to separately built, maintained dependencies; the current RTC libraries are not a supported release baseline.
-- **Still to prove:** real connections, network media and packaged Android/iOS device acceptance. The [mobile lifecycle probe](docs/MOBILE_PROBE.md) is implemented; see the validation record for build and device results.
+- **Integrated and locally tested:** the isolated M155 backend on Mac, Android and the iOS simulator. Android Direct-only/Full packages pass lifecycle, local codecs, capture and mixer checks; both simulator profiles pass lifecycle/local codecs. Fresh repeat builds also pass on those three targets. SR-006/SR-007/SR-008 remain open for independent-host reproduction, remaining iOS checks and dependency qualification.
+- **Still to prove:** real connections, network media, signed physical iOS behavior and broader platform/release coverage. See [M0 validation](docs/M0_VALIDATION.md) for exact test scope; the current dependencies are not a qualified release baseline.
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
 
 ## 1. Goal and scope
 
-Build a standalone plugin for standard Unreal Engine 5.8.3. Developers should use the same C++ API and Blueprint nodes to send WebRTC data, audio and video to either a native Unreal server or Janus. Use separately built, pinned libwebrtc dependencies for desktop clients/servers and Android/iOS clients, with optimized ARM64 mobile builds. SR-008 is migrating the existing desktop integration from engine libraries. Include native desktop/mobile sample projects and require no engine-source patches.
+Build a standalone plugin for standard Unreal Engine 5.8.3. Developers should use the same C++ API and Blueprint nodes to send WebRTC data, audio and video to either a native Unreal server or Janus. Use separately built, pinned libwebrtc dependencies for desktop clients/servers and Android/iOS clients, with optimized ARM64 mobile builds. SR-008 has replaced the Mac/mobile RTC backend; Windows/Linux integration and dependency qualification remain open. Include native desktop/mobile sample projects and require no engine-source patches.
 
 The plugin includes the Unreal server endpoint, which must be enabled and configured. A normal Unreal dedicated server does not expose WebRTC automatically. Mobile targets are clients only; the Server profile remains on desktop/server hosts. Janus and STUN/TURN run separately; provide repeatable local configurations for testing.
 
@@ -120,7 +120,7 @@ Create the plugin layout and one place to select modules, generate descriptors a
 
 **SR-003 complete, 2026-10-19:** the [dependency review](docs/DEPENDENCY_REVIEW.md) records linked versions, licenses, security findings and mobile ABI constraints. A packaged Mac ARM64 Server creates a libwebrtc factory and runs the HTTP test without graphics or hardware audio. Security/provenance remediation is SR-008; final distribution notices are SR-902. Review completion does not approve the current libraries for release.
 
-**SR-004 complete on the available Mac:** the packaged Direct-only Game passed local VP8/Opus, texture, render-target and audio-mixer tests. Missing graphics/audio were also tested. Network media and mobile testing come later. See the [media guide](docs/MEDIA_PROBE.md).
+**SR-004 complete on the available Mac:** the packaged Direct-only Game passed local VP8/Opus, texture, render-target and audio-mixer tests. Missing graphics/audio were also tested. The M155 backend also passes Samsung local media checks under SR-008; network media remains later work. See the [media guide](docs/MEDIA_PROBE.md).
 
 ##### SR-003 — Audit native libwebrtc and Server target feasibility (P0)
 
@@ -150,7 +150,7 @@ Create a sample project and test harness with generated audio/video and versione
 
 ##### SR-006 — Build and integrate Android ARM64 libwebrtc (P0)
 
-**In progress:** two fresh [pinned Linux builds](docs/MOBILE_BUILDS.md) reproduce the corrected ARM64 archive and its headers/notices byte for byte. They retain Unreal-compatible vtables and 16 KiB link-probe alignment. Packaged Direct-only and Full lifecycle probes already pass on a Galaxy S25 Ultra using these same library bytes. See [repeat-build results](docs/M0_VALIDATION.md#mobile-repeat-build-validation) and [packaged results](docs/M0_VALIDATION.md#packaged-mobile-probe-work). Independent-host reproduction remains open; Shipping RTC size deltas are separate work.
+**In progress, 2026-10-19.** The pinned M155 Linux build now produces an isolated ARM64 backend that links with NDK r27c. Packaged Direct-only and Full probes pass lifecycle, local VP8/Opus, OpenGL capture and silent mixer checks on the Galaxy S25 Ultra. Final ELF load segments are 16 KiB aligned. Two fresh builds reproduce the accepted library bytes, and both native consumers pass on the Samsung. Independent-host reproduction remains open. Earlier M109 repeat results remain historical; see [current results](docs/M0_VALIDATION.md#sr-008-packaged-m155-integration).
 
 Create a reproducible Linux-hosted build of pinned upstream libwebrtc for `arm64-v8a`, with UE-compatible NDK/compiler settings and required Java/JNI helpers. Record flags, codecs, patches, checksums, symbols and notices; validate native-library page-size requirements.
 
@@ -160,7 +160,7 @@ Create a reproducible Linux-hosted build of pinned upstream libwebrtc for `arm64
 
 ##### SR-007 — Build and integrate iOS ARM64 libwebrtc (P0)
 
-**In progress:** the [pinned build](docs/MOBILE_BUILDS.md) produces separate device and simulator ARM64 archives. Two fresh simulator builds match with Xcode/SDK 27.1, including portable-C VPX. The selected repeat-build artifact also passes packaged UE 5.8.3 Direct-only and Full probes on the ARM64 iOS simulator: nine PeerConnections created and torn down per profile, with dependency identity and app shutdown verified. See [repeat-build results](docs/M0_VALIDATION.md#mobile-repeat-build-validation) and [packaged results](docs/M0_VALIDATION.md#packaged-mobile-probe-work). Independent-host reproduction and signed physical-device acceptance remain open. Physical iPhone testing is deferred at the user's request.
+**In progress, 2026-10-19.** Separate M155 device and simulator ARM64 libraries build with Xcode 27.1. Packaged Direct-only and Full probes pass on the iOS 27.0 ARM64 simulator: nine peer lifecycles, generated VP8 and decoded Opus PCM per profile. Graphics/audio-device behavior is untested there. Two fresh simulator builds reproduce the accepted library bytes, and both native consumers pass. The iOS device repeat build, independent-host reproduction and signed physical-device acceptance remain open. Physical iPhone testing is deferred at the user's request. See [current results](docs/M0_VALIDATION.md#sr-008-packaged-m155-integration).
 
 Create a reproducible macOS/Xcode build of pinned upstream libwebrtc for device `arm64`, with matching headers and required Objective-C++ helpers. Select static library/framework packaging and XCFramework distribution where useful; keep simulator outputs and dSYMs separate.
 
@@ -170,7 +170,7 @@ Create a reproducible macOS/Xcode build of pinned upstream libwebrtc for device 
 
 ##### SR-008 — Qualify the native dependency security baseline (P0)
 
-**In progress; owner: SimurghRTC maintainer.** The simulator HTTP/2 fix and Epic distribution checks are implemented. A pinned M155 candidate passes Mac symbol isolation and local PeerConnection lifecycle checks; see [SR-008 progress](docs/DEPENDENCY_SECURITY.md). On 2026-10-19, the maintainer approved separately built, maintained dependencies for desktop and mobile. Replace the opaque WebRTC/crypto/codec inputs with pinned source builds and isolate their symbols from Unreal's own libraries. Map relevant advisories to source and enabled features before untrusted network acceptance or a supported release. Controlled local feature development can continue while this work is open.
+**In progress; owner: SimurghRTC maintainer.** The simulator HTTP/2 fix and Epic distribution checks are implemented. The isolated M155 backend is integrated through a private C interface. Mac/Android packages pass lifecycle and local media probes; both iOS simulator profiles pass lifecycle/codecs, and the device library builds. Fresh repeat builds pass on Mac, Android and the iOS simulator. Source/advisory qualification and a replacement dedicated Server package remain open; see [SR-008 progress](docs/DEPENDENCY_SECURITY.md). On 2026-10-19, the maintainer approved separately built, maintained dependencies for desktop and mobile. Replace the opaque WebRTC/crypto/codec inputs with pinned source builds and isolate their symbols from Unreal's own libraries. Map relevant advisories to source and enabled features before untrusted network acceptance or a supported release. Controlled local feature development can continue while this work is open.
 
 **Done when:** every native RTC component selected by the plugin has traceable source and patches, relevant dependency findings have recorded resolutions, and refreshed pins pass repeat builds, mobile ABI checks, one-copy linkage and packaged lifecycle/media tests. Any change that requires an engine source patch remains a design blocker. Revalidate the RTC dependency set together; do not introduce conflicting crypto/runtime symbols. SR-902 separately verifies distribution notices.
 
@@ -796,7 +796,7 @@ See [Architecture](docs/ARCHITECTURE.md) for the API and build boundaries.
 | UE 5.9 | Future compatibility port | Separate adapter audit and regression pass when the target engine is available |
 | Other mobile architectures and consoles | Future evaluation | Separate SDK, capture/codec, hardware and platform-policy work; no inherited support claim |
 
-The available test machine is a Mac. Android dependency builds use the pinned Linux container; iOS dependencies use the pinned Xcode SDK. Samsung and ARM64 iOS simulator lifecycle tests pass with Janus on/off. Physical iPhone testing is deferred, and independent build hosts are still needed. Record the engine revision and toolchains for each result; Server targets may need a source build. Broader Android/iOS runtime support remains Unverified until its gates pass. Simulator results do not establish physical iPhone behavior; Windows/Linux runtime coverage also requires its own hosts. See [Mobile clients](docs/MOBILE_CLIENTS.md) for dependency manifests, codec optimization and size measurement.
+The available test machine is a Mac. Android dependency builds use the pinned Linux container; iOS dependencies use the pinned Xcode SDK. Samsung lifecycle/local-media tests and ARM64 iOS simulator lifecycle/codec tests pass with Janus on/off using M155. Physical iPhone testing is deferred, and independent build hosts are still needed. Record the engine revision and toolchains for each result; Server targets may need a source build. Broader Android/iOS runtime support remains Unverified until its gates pass. Simulator results do not establish physical iPhone behavior; Windows/Linux runtime coverage also requires its own hosts. See [Mobile clients](docs/MOBILE_CLIENTS.md) for dependency manifests, codec optimization and size measurement.
 
 ## 7. Release gates
 

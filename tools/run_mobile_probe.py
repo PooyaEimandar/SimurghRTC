@@ -25,15 +25,22 @@ def require(ok, message):
         raise ValueError(message)
 
 
-def validate_report(report, run_id, platform, manifest_sha256, with_janus, *, editor=False, simulator=False):
+def validate_report(report, run_id, platform, manifest_sha256, with_janus, *, editor=False, simulator=False, media=False):
     require(isinstance(report, dict), 'Expected a JSON object report.')
-    expected = {'schema': 1, 'run_id': run_id, 'platform': platform, 'editor_build': editor,
+    expected = {'schema': 2 if media else 1, 'run_id': run_id, 'platform': platform, 'editor_build': editor,
                 'server_build': False, 'arm64_build': True, 'simulator_build': simulator, 'with_janus': with_janus,
                 'artifact_manifest_sha256': manifest_sha256, 'network_transport_tested': False,
                 'hardware_capture_tested': False, 'completed_cycles': 3, 'factories_created': 9,
                 'peers_created': 9, 'explicit_teardowns': 6, 'destructor_teardowns': 3,
                 'overlapping_owners_checked': True, 'duplicate_calls_checked': True,
                 'readiness_cleared_after_stop': True, 'passed': True, 'error': ''}
+    if media:
+        expected.update(media_codecs_passed=True, decoded_video_frames=12, decoded_pcm_samples=96000,
+                        audio_packets=50, render_capture_tested=False,
+                        native_backend='M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d')
+        for key, low, high in [('video_color_error',0,12),('audio_tone_correlation',0.95,1.01)]:
+            value = report.get(key)
+            require(type(value) in (int,float) and math.isfinite(value) and low <= value <= high, 'Invalid codec measurement: ' + key)
     for key, value in expected.items():
         require(type(report.get(key)) is type(value) and report[key] == value,
                 f'Unexpected {key}: {report.get(key)!r}; expected {value!r}')
@@ -45,13 +52,13 @@ def validate_report(report, run_id, platform, manifest_sha256, with_janus, *, ed
             'Invalid or excessive lifecycle duration.')
 
 
-def read_report(log, run_id):
+def read_report(log, run_id, marker=MARKER):
     matches = []
     for line in log.splitlines():
-        if MARKER not in line:
+        if marker not in line:
             continue
         try:
-            report = json.loads(line.split(MARKER, 1)[1])
+            report = json.loads(line.split(marker, 1)[1])
         except json.JSONDecodeError:
             continue  # A live log read can end partway through a line.
         if isinstance(report, dict) and report.get('run_id') == run_id:
@@ -124,6 +131,29 @@ def process_alive(pid):
         return False
 
 
+def read_android_media_chunks(log, run_id):
+    marker = 'SIMURGHRTC_MEDIA_CHUNK ' + run_id + ' '
+    chunks, total = {}, None
+    for line in log.splitlines():
+        if marker not in line:
+            continue
+        match = re.fullmatch(r'([0-9]+)/([0-9]+) (.*)', line.split(marker, 1)[1])
+        require(match is not None, 'Malformed Android media report chunk.')
+        index, count, payload = int(match[1]), int(match[2]), match[3]
+        require(1 <= index <= count <= 16 and len(payload) <= 640, 'Invalid Android media chunk bounds.')
+        require(total in (None, count) and index not in chunks, 'Conflicting or duplicate Android media chunks.')
+        total, chunks[index] = count, payload
+    if total is None or len(chunks) != total:
+        return None
+    try:
+        report = json.loads(''.join(chunks[index] for index in range(1, total + 1)))
+    except json.JSONDecodeError:
+        raise ValueError('Truncated or invalid Android media report.') from None
+    require(isinstance(report, dict) and report.get('run_id') == run_id,
+            'Android media report does not match this run.')
+    return report
+
+
 def android_package_sizes(app):
     with zipfile.ZipFile(app) as package:
         libraries = [entry for entry in package.infolist() if entry.filename.startswith('lib/') and not entry.is_dir()]
@@ -160,7 +190,11 @@ def main():
     parser.add_argument('--aapt', type=Path, default=Path.home() / 'Library/Android/sdk/build-tools/36.0.0/aapt2')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--timeout', type=float, default=180)
+    parser.add_argument('--probe', choices=['lifecycle', 'media'], default='lifecycle',
+                        help='Android media additionally checks render-target capture and silent mixer playback.')
     args = parser.parse_args()
+    require(args.probe != 'media' or args.platform == 'Android',
+            'The mobile render/mixer harness currently supports physical Android devices.')
     require(math.isfinite(args.timeout) and 5 <= args.timeout <= 600, 'Use a timeout from 5 to 600 seconds.')
     output = args.output.resolve()
     require(not output.exists(), 'Use a new evidence directory; previous reports are never overwritten.')
@@ -175,6 +209,7 @@ def main():
     output.mkdir(parents=True)
     record = {'schema': 1, 'passed': False, 'platform': args.platform, 'profile': config['profile'],
               'artifact': identity, 'run_id': str(uuid.uuid4()), 'device': args.device, 'app_id': app_id}
+    record['probe_kind'] = args.probe
     simulator = args.platform == 'IOSSimulator'
     record['validation_scope'] = 'simulator' if simulator else 'physical-device'
     run_id, capture, launched, pid = record['run_id'], None, False, None
@@ -193,9 +228,14 @@ def main():
     try:
         options = ['-SimurghRTCClientProbe', '-SimurghRTCClientRunId=' + run_id, '-nosound',
                    '-stdout', '-FullStdOutLogOutput']
+        if args.probe == 'media':
+            options = ['-SimurghRTCMediaProbe', '-SimurghRTCMediaRunId=' + run_id,
+                       '-unattended', '-stdout', '-FullStdOutLogOutput']
         if simulator:
             options += ['-nullrhi', '-sm5']  # Matches the probe's headless platform metadata.
         if args.platform == 'Android':
+            # adb launches have no stdout reader. Preserve Unreal's logcat sink.
+            options = [option for option in options if option not in ('-stdout', '-FullStdOutLogOutput')]
             require(not args.device.startswith('emulator-'), 'A physical Android device is required.')
             require(command(adb + ['get-state']).stdout.strip() == 'device', 'Device is not authorized/online.')
             require(command(adb + ['shell', 'getprop', 'ro.kernel.qemu']).stdout.strip() != '1', 'Emulator rejected.')
@@ -290,13 +330,18 @@ def main():
             if args.platform == 'Android':
                 console.write_text(command(adb + ['logcat', '-d', '-v', 'brief', '--pid=' + str(pid)]).stdout)
             log = console.read_text(errors='replace') if console.exists() else ''
-            report = read_report(log, run_id)
+            report = read_report(log, run_id, 'SIMURGHRTC_MEDIA_REPORT ' if args.probe == 'media' else MARKER)
+            if report is None and args.platform == 'Android' and args.probe == 'media':
+                report = read_android_media_chunks(log, run_id)
+                if report is not None:
+                    record['report_source'] = 'android-log-chunks'
+                    (output / 'probe.json').write_text(json.dumps(report, indent=2) + '\n')
             if report is None and simulator_container:
                 report = read_simulator_report(simulator_container, run_id)
                 if report is not None:
                     record['report_source'] = 'simulator-app-container'
                     (output / 'probe.json').write_text(json.dumps(report, indent=2) + '\n')
-            if report:
+            if report and (args.probe != 'media' or 'SIMURGHRTC_MEDIA_PROBE_' in log):
                 break
             require(args.platform != 'Android' or 'Fatal signal ' not in log,
                     'Android native crash; see process.log and the device crash buffer.')
@@ -305,13 +350,19 @@ def main():
             if simulator:
                 require(process_alive(pid), 'Simulator app exited before its correlated report was received.')
             time.sleep(1)
-        require(report is not None, 'Timed out waiting for the correlated lifecycle report.')
-        validate_report(report, run_id, 'IOS' if simulator else args.platform, identity['manifest_sha256'],
-                        config['with_janus'], simulator=simulator)
+        require(report is not None, 'Timed out waiting for the correlated probe report.')
+        record['probe'] = report  # Retain structured failures as well as successes.
+        if args.probe == 'media':
+            from run_media_probe import validate_report as validate_media
+            validate_media(report, run_id, pid, False, artifact_sha256=identity['manifest_sha256'])
+            require('SIMURGHRTC_MEDIA_PROBE_PASSED' in log, 'Missing media completion marker.')
+        else:
+            validate_report(report, run_id, 'IOS' if simulator else args.platform, identity['manifest_sha256'],
+                            config['with_janus'], simulator=simulator,
+                            media=mobile_artifacts.read_json(artifact / 'artifact.json')['metadata']['schema'] == 2)
         if pid is not None:
             require(report['pid'] == pid, 'Report PID differs from the launched app process.')
         pid = report['pid']
-        record['probe'] = report
         record['passed'] = True
     except (OSError, ValueError, KeyError, subprocess.TimeoutExpired) as error:
         record['error'] = str(error)

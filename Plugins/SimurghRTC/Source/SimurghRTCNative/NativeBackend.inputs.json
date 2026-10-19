@@ -1,0 +1,18 @@
+{
+  "abi_header_sha256": "3744d1c5f4aa87166748dba4acd71331efdee42f6115d89b3c3fcd72554f293f",
+  "android_source_lock_sha256": "b02a73f9a8301c4e9a1c54b81f4285bfb533a6379ec18f66f1522b8ce1dc9ae3",
+  "bridge_sources": {
+    "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
+    "BUILD.gn": "51f5a3f2966a1d856179df954baab8b2d4921bfb1060bdf992c186afe1bc5fb2",
+    "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
+    "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
+    "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
+    "abi_test.c": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b",
+    "exports.txt": "33ef2225593da2c82cbb5e16720f86701cdc191c35235a500d0969ae2e1f6015",
+    "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
+    "runtime.cc": "de264c699750f059f38ebd2c5dae3e1187a37452a9f5ce8ee5fbc4c3469bc0cb",
+    "simurgh_rtc_abi.h": "3744d1c5f4aa87166748dba4acd71331efdee42f6115d89b3c3fcd72554f293f"
+  },
+  "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+  "source_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d"
+}

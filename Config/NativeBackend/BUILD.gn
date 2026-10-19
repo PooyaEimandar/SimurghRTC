@@ -1,0 +1,17 @@
+# Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
+import("//webrtc.gni")
+rtc_static_library("probe") {
+  complete_static_lib = true
+  suppressed_configs = [ "//build/config/compiler:thin_archive" ]
+  sources = [ "runtime.cc", "media.cc", "simurgh_rtc_abi.h" ]
+  deps = [
+    "//third_party/boringssl", "//third_party/opus", "//third_party/libvpx",
+    "//api:create_peerconnection_factory", "//api:create_modular_peer_connection_factory",
+    "//api/video:video_frame", "//rtc_base:buffer", "//third_party/libyuv",
+    "//api:make_ref_counted", "//api:scoped_refptr",
+    "//api/audio:builtin_audio_processing_builder", "//api/environment:environment_factory",
+    "//api/audio_codecs:builtin_audio_encoder_factory", "//api/audio_codecs:builtin_audio_decoder_factory",
+    "//api/video_codecs:builtin_video_encoder_factory", "//api/video_codecs:builtin_video_decoder_factory",
+    "//modules/audio_device:audio_device_api", "//rtc_base:ssl", "//rtc_base:threading"
+  ]
+}
