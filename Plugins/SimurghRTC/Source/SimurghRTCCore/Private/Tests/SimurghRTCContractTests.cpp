@@ -166,8 +166,19 @@ bool FSimurghRTCProfileTest::RunTest(const FString&)
         SIMURGHRTC_WITH_JANUS ? ESimurghRTCErrorCode::NotImplemented : ESimurghRTCErrorCode::BuildExcluded);
     const UClass* JanusClass = FindObject<UClass>(nullptr, TEXT("/Script/SimurghRTCJanusExtensions.SimurghRTCJanusOperation"));
     const UClass* MediaClass = FindObject<UClass>(nullptr, TEXT("/Script/SimurghRTCMedia.SimurghRTCMediaOperation"));
-    TestEqual(TEXT("Optional Janus reflection matches profile"), JanusClass != nullptr, bool(SIMURGHRTC_WITH_JANUS && SIMURGHRTC_WITH_MEDIA));
+    TestEqual(TEXT("Optional Janus reflection matches profile"), JanusClass != nullptr, bool(SIMURGHRTC_WITH_JANUS_EXTENSIONS));
     TestEqual(TEXT("Optional media reflection matches profile"), MediaClass != nullptr, bool(SIMURGHRTC_WITH_MEDIA));
+    const auto Rooms = Fixture.Session->GetCapability(ESimurghRTCProvider::Janus, ESimurghRTCFeature::JanusRooms);
+    TestEqual(TEXT("Room capability follows extension module selection"), Rooms.Reason.Code,
+        SIMURGHRTC_WITH_JANUS_EXTENSIONS ? ESimurghRTCErrorCode::NotImplemented : ESimurghRTCErrorCode::BuildExcluded);
+    const auto Audio = Fixture.Session->GetCapability(Fixture.Session->GetProvider(), ESimurghRTCFeature::Audio);
+    TestEqual(TEXT("Audio capability follows target media selection"), Audio.Reason.Code,
+        (SIMURGHRTC_WITH_MEDIA || UE_SERVER) ? ESimurghRTCErrorCode::NotImplemented : ESimurghRTCErrorCode::BuildExcluded);
+    auto DirectConfig = Fixture.Config(); DirectConfig.Provider = ESimurghRTCProvider::DirectUnreal;
+    TStrongObjectPtr<USimurghRTCOperation> DirectConnect(USimurghRTCOperation::Connect(Fixture.Session.Get(), DirectConfig));
+    DirectConnect->Activate(); TickOperations();
+    TestEqual(TEXT("Direct exclusion is enforced by the async API"), DirectConnect->GetResult().Error.Code,
+        SIMURGHRTC_WITH_DIRECT ? ESimurghRTCErrorCode::NotImplemented : ESimurghRTCErrorCode::BuildExcluded);
     for (const TCHAR* Name : {TEXT("Connect"), TEXT("Disconnect"), TEXT("OpenChannel"), TEXT("CloseChannel"), TEXT("Call"), TEXT("AcceptCall"), TEXT("RejectCall"), TEXT("HangUp"), TEXT("JoinTextRoom"), TEXT("LeaveTextRoom"), TEXT("SendRoomText"), TEXT("CreateGeneratedSource"), TEXT("AttachSource"), TEXT("ReplaceSource"), TEXT("SetSourceMuted"), TEXT("StopSource"), TEXT("DetachTrack"), TEXT("SetDecodedFrameDelivery"), TEXT("Cancel")})
     {
         const UFunction* Function = USimurghRTCOperation::StaticClass()->FindFunctionByName(Name);

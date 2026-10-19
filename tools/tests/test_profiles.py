@@ -39,6 +39,13 @@ class ProfileTests(unittest.TestCase):
                     blueprint = Path('Content/Examples/BP_RtcLifecycle.uasset')
                     self.assertEqual((profiles.ROOT / 'Samples/ContractHost' / blueprint).read_bytes(),
                                      (output / blueprint).read_bytes())
+                    janus = Path('Content/Examples/Janus/BP_JanusProfile.uasset')
+                    if 'SimurghRTCJanusExtensions' in expected:
+                        self.assertEqual((profiles.ROOT / 'Samples/ContractHost' / janus).read_bytes(),
+                                         (output / janus).read_bytes())
+                    else:
+                        self.assertFalse((output / janus.parent).exists())
+                    self.assertEqual('SimurghRTCJanusExtensions' in expected, manifest['with_janus_extensions'])
                     for module in expected:
                         build = (plugin / 'Source' / module / f'{module}.Build.cs').read_text()
                         spec = policy['modules'][module]

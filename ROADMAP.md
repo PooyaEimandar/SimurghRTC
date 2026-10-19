@@ -2,8 +2,8 @@
 
 **M0 is in progress**, targeting Unreal Engine **5.8.3**. Updated 2026-10-19.
 
-- **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
-- **In progress:** SR-002 build profiles, SR-003 dependency review and SR-006/SR-007 mobile artifact integration.
+- **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-002 build profiles, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
+- **In progress:** SR-003 dependency review and SR-006/SR-007 mobile artifact integration.
 - **Still to prove:** real connections, network media and packaged Android/iOS device acceptance. The [mobile lifecycle probe](docs/MOBILE_PROBE.md) is implemented; see the validation record for build and device results.
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
@@ -80,7 +80,7 @@ A preview describes what is included; it does not mean production-ready. Set dat
 
 ## 4. Milestones, epics, issues
 
-SR-001 is **Complete (API v1 and executable lifecycle examples)**; SR-002, SR-003, SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
+SR-001 is **Complete (API v1 and executable lifecycle examples)** and SR-002 is **Complete (available Mac profile/package checks)**; SR-003, SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
 
 ### M0 Foundation and feasibility
 
@@ -90,7 +90,7 @@ A standalone plugin contract and proven native client/server build boundaries.
 
 #### E01 API and build contract
 
-**In progress.** SR-001 is complete: [API v1](docs/API_CONTRACT.md) is frozen, and the same [C++ and Blueprint lifecycle examples](docs/LIFECYCLE_EXAMPLES.md) pass in Editor and packaged Mac ARM64 builds with Janus enabled or excluded. Remaining profile/package coverage and broader mobile integration stay open under SR-002/SR-006/SR-007. See [validation results](docs/M0_VALIDATION.md).
+**Complete on the available Mac.** [API v1](docs/API_CONTRACT.md) is frozen. Full, Direct-only, Janus-only and data-only pass UHT, compilation, cooking and packaged ARM64 lifecycle checks. Optional Janus Blueprint content is included only with its extension module. Mobile module selection is defined; broader mobile acceptance stays under SR-006/SR-007. See [validation results](docs/M0_VALIDATION.md#sr-002-build-profiles-and-optional-content).
 
 ##### SR-001 — Define the portable client contract (P0)
 
@@ -103,6 +103,8 @@ Define the shared API: sessions, calls, text rooms, channels, media sources and 
 **Depends on:** None
 
 ##### SR-002 — Prove plugin modules and optional build profiles (P0)
+
+**Complete, 2026-10-19 (available Mac).** All four client profiles pass Unreal automation and Editor/packaged lifecycle checks. Link maps and UHT inputs contain the selected modules, one libwebrtc archive and no Editor generator in Game. The optional Janus graph runs in Full/Janus-only and is absent from Direct-only/data-only; Server staging excludes it too. Earlier dedicated Server runtime evidence remains recorded under SR-003.
 
 Create the plugin layout and one place to select modules, generate descriptors and set `SIMURGHRTC_WITH_JANUS`. Define Full, Direct-only, Janus-only and data-only client profiles for desktop and mobile, plus the desktop/server-host Server profile. Select engine-bundled or separately built mobile libwebrtc headers/libraries by target, independently of provider.
 

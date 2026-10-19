@@ -17,11 +17,13 @@ public abstract class SimurghRTCModuleRules : ModuleRules
         bool IsServer = Target.Type == TargetType.Server;
         bool Direct = Profile.GetBoolField("with_direct");
         bool Janus = Profile.GetBoolField("with_janus") && !IsServer;
+        bool JanusExtensions = Profile.GetBoolField("with_janus_extensions") && !IsServer;
         bool Media = Profile.GetBoolField("with_media") && !IsServer;
         if (IsServer && !Profile.GetBoolField("with_server"))
             throw new BuildException("This SimurghRTC profile excludes the Unreal Server endpoint.");
         PublicDefinitions.Add("SIMURGHRTC_WITH_DIRECT=" + (Direct ? "1" : "0"));
         PublicDefinitions.Add("SIMURGHRTC_WITH_JANUS=" + (Janus ? "1" : "0"));
+        PublicDefinitions.Add("SIMURGHRTC_WITH_JANUS_EXTENSIONS=" + (JanusExtensions ? "1" : "0"));
         PublicDefinitions.Add("SIMURGHRTC_WITH_MEDIA=" + (Media ? "1" : "0"));
         // The M0 contract shell never claims a linked/usable native transport.
         PublicDefinitions.Add("SIMURGHRTC_WITH_NATIVE_TRANSPORT=0");

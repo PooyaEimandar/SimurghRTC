@@ -44,6 +44,8 @@ python3 tools/run_lifecycle_probe.py \
 
 The harness starts both actors, checks completion order, IDs and errors, destroys them, allows extra ticks for late callbacks, and requires the launched process to exit. Each run writes `result.json`, a correlated native report and logs. Use a fresh output directory for every run. Repeat with `--provider Janus` and another output directory to switch provider through configuration, without changing either example.
 
+It also checks the selected provider modules, reflected media/extension types and Janus sample asset. Full and Janus-only run `Examples/Janus/BP_JanusProfile`: its real **Join Video Room** node receives no session and must report exactly one `InvalidArgument` failure. This tests optional Blueprint dependencies without claiming a room connection. Direct-only and data-only must have neither that asset nor its reflected extension types.
+
 Run the Unreal automation tests from [Building](BUILDING.md) too. They cover deferred completion, cancellation, reentrant shutdown, garbage collection, profile exclusions and CPU-frame validation. Keep other builds from modifying the shared engine binaries during runtime validation; `-WaitMutex` only serializes UBT builds.
 
 If an incremental build reports stale `GENERATED_BODY` line numbers after copying updated sample headers, repeat the build with `-ForceHeaderGeneration`.
@@ -54,7 +56,7 @@ Build the Game executable, finalize the Mac app, and cook the Blueprint director
 
 ```sh
 env UE_BUILD_FROM_XCODE=1 "$UE_ROOT/Engine/Build/BatchFiles/Mac/Build.sh" \
-  ContractHost Mac Development -Project="$PROJECT" -architecture=arm64 -NoDebugInfo -NoUBA -WaitMutex
+  ContractHost Mac Development -Project="$PROJECT" -architecture=arm64 -NoDebugInfo -NoUBA -WaitMutex -MapFile
 PROJECT_DIR="$(dirname "$PROJECT")"
 env UE_SKIP_UBT=1 "$UE_ROOT/Engine/Build/BatchFiles/Mac/Build.sh" -Mode=ApplePostBuildSync \
   -Input="$PROJECT_DIR/Intermediate/Build/Mac/arm64/ContractHost/Development/PostBuildSync_ContractHost.json" \
@@ -75,7 +77,18 @@ python3 tools/run_lifecycle_probe.py \
 
 The environment flags split native compilation from Xcode app finalization, avoiding the recursive build problem on the tested source engine. Require successful native compilation and Xcode finalization before accepting the package. The harness can recover its correlated JSON report from stdout when packaged Mac file policy prevents writing the requested external report file.
 
-Repeat with a fresh `direct-only` staged host and `--profile direct-only` to prove the same asset loads and runs without Janus classes. `prepare_profile.py` copies the shared Content directory as well as source. The generator module is Editor-only and must not appear in the packaged game.
+Repeat with fresh `direct-only`, `janus-only` and `data-only` staged hosts and the matching `--profile`. The harness defaults to Janus for Janus-only and DirectUnreal otherwise; it rejects a provider excluded by the profile. Exercise both providers for Full and data-only. The shared lifecycle asset is identical across profiles; optional Janus content follows module selection. The generator module is Editor-only and must not appear in the packaged game.
+
+After a packaged run, audit the selected modules and executable:
+
+```sh
+python3 tools/audit_profile_package.py \
+  --project-dir "$PROJECT_DIR" --profile full \
+  --runtime-result Intermediate/Reports/LifecycleFullGame/result.json \
+  --output Intermediate/Reports/LifecycleFullGame/package-audit.json
+```
+
+The audit requires the Game link map produced by `-MapFile`, matching native/package UUIDs, the runtime executable hash, exact plugin modules in the map, and the expected reflected modules in UHT inputs. It also requires one linked libwebrtc archive. Runtime report schema **2** includes profile/asset checks; API contract version remains **1**. Older schema-1 reports remain historical evidence and are not accepted by the current runner.
 
 ## Regenerate the Blueprint
 
@@ -88,5 +101,7 @@ The checked-in `.uasset` is ready to open, compile and cook. Its source recipe i
 ```
 
 Without the replacement flag, an existing sample is preserved. The generator requires every pin connection to succeed and compiles the graph with zero warnings/errors before saving. It does not modify the engine or use Python Editor plugins. Regeneration creates fresh editor node GUIDs; the `.uasset` bytes are not a reproducible build artifact.
+
+Add `-JanusExample` to regenerate the optional Janus graph instead. This requires Full or Janus-only. Its options input uses the reflected Janus struct, so the sample tests both extension types and async nodes.
 
 These examples validate lifecycle behavior on the tested host. They do not establish network calls, device capture, frame streaming, mobile Blueprint acceptance or Shipping app sizes. See [M0 validation](M0_VALIDATION.md) for the exact tested profiles and engine revision.

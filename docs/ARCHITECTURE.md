@@ -99,18 +99,18 @@ Use a namespaced numeric build definition:
 #endif
 ```
 
-`SIMURGHRTC_WITH_JANUS=1` enables the provider and its extension modules. A value of `0` excludes them. Do not use a global `JANUS` macro or assume `#ifdef` excludes a macro defined as zero.
+`SIMURGHRTC_WITH_JANUS` selects the provider. `SIMURGHRTC_WITH_JANUS_EXTENSIONS` separately selects its optional reflected room API; data-only includes the provider without that API. Do not use a global `JANUS` macro or assume `#ifdef` excludes a macro defined as zero.
 
-The implemented module boundaries are `SimurghRTCCore`, `SimurghRTCNative`, `SimurghRTCDirect`, `SimurghRTCMedia`, `SimurghRTCServer`, `SimurghRTCJanus` and `SimurghRTCJanusExtensions`, under one plugin distribution. The minimal ContractHost is a separate sample project; demo assets will follow. C++/Blueprint adapters belong to the same feature boundary as the implementation they expose. [SR-002](../ROADMAP.md#e01-api-and-build-contract) still owns native dependency selection and packaging proof.
+The implemented module boundaries are `SimurghRTCCore`, `SimurghRTCNative`, `SimurghRTCDirect`, `SimurghRTCMedia`, `SimurghRTCServer`, `SimurghRTCJanus` and `SimurghRTCJanusExtensions`, under one plugin distribution. ContractHost is a separate sample with shared lifecycle and optional Janus Blueprint assets. C++/Blueprint adapters belong to the same feature boundary as the implementation they expose. [SR-002](../ROADMAP.md#e01-api-and-build-contract) covers module selection and packaging proof.
 
-Unreal Header Tool must not be expected to accept arbitrary feature guards around reflected declarations. Keep Janus-only reflected types and Blueprint assets in modules/content selected by the build profile. Generate or select the matching plugin descriptor and dependency graph during packaging. Prove this approach in M0 with Janus on and off, including cook/load checks; a macro alone is insufficient.
+Unreal Header Tool must not be expected to accept arbitrary feature guards around reflected declarations. Staging selects modules and optional sample content from `Config/Profiles.json`, then generates the matching descriptor. The [profile checks](LIFECYCLE_EXAMPLES.md) verify reflected types, cooked assets and final linked modules; a macro alone is insufficient.
 
 | Profile | Included behavior |
 |---|---|
 | Full | Both providers and all selected client media/data features |
 | Direct-only | Common API and Direct provider; Janus code and demo assets excluded |
-| Janus-only | Common API and Janus provider; Direct server module excluded |
-| Data-only | DataChannels and signaling; media sources/sinks and sample media assets excluded where practical |
+| Janus-only | Common API, Janus provider/extensions and client media; Direct and Server modules excluded |
+| Data-only | Both client providers; client media and Janus room extension modules/assets excluded |
 | Server | Native endpoint and selected software media/data support; no client capture/rendering or editor dependency |
 
 Full, Direct-only, Janus-only and Data-only client profiles apply to desktop, Android and iOS. Server is a desktop/server-host profile. Mobile library selection is a platform build choice independent of provider selection.

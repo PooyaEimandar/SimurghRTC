@@ -43,6 +43,7 @@ def documents(profile: str) -> tuple[dict, dict]:
     manifest = {'schema': 1, 'profile': profile, 'engine_version': policy['engine_version'],
                 'with_direct': 'SimurghRTCDirect' in names,
                 'with_janus': 'SimurghRTCJanus' in names,
+                'with_janus_extensions': 'SimurghRTCJanusExtensions' in names,
                 'with_media': 'SimurghRTCMedia' in names,
                 'with_server': 'SimurghRTCServer' in names,
                 'native_transport': 'unimplemented', 'desktop_native_factory': 'engine-webrtc-5414',
@@ -91,7 +92,13 @@ def stage(profile: str, destination: Path, artifacts: list[Path] | None = None) 
     for name in ['Source','Config']:
         shutil.copytree(host/name, destination/name)
     if (host/'Content').is_dir():
-        shutil.copytree(host/'Content', destination/'Content')
+        content = host/'Content'
+        rules = json.loads(POLICY.read_text())['sample_content']
+        def excluded(directory, names):
+            return [name for name in names
+                    if (Path(directory)/name).relative_to(content).as_posix() in rules
+                    and rules[(Path(directory)/name).relative_to(content).as_posix()] not in manifest['modules']]
+        shutil.copytree(content, destination/'Content', ignore=excluded)
     project = json.loads((host/'ContractHost.uproject').read_text())
     project.pop('AdditionalPluginDirectories', None)
     (destination/'ContractHost.uproject').write_text(json.dumps(project, indent=2)+'\n')

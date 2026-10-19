@@ -1,11 +1,13 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "ContractExamplesCommandlet.h"
 #include "ContractLifecycleExample.h"
+#include "ContractExtensionExample.h"
 #include "EdGraph/EdGraph.h"
 #include "EdGraphSchema_K2.h"
 #include "Engine/Blueprint.h"
 #include "K2Node_AsyncAction.h"
 #include "K2Node_BreakStruct.h"
+#include "K2Node_MakeStruct.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "K2Node_CallFunction.h"
 #include "K2Node_Event.h"
@@ -122,6 +124,62 @@ UContractExamplesCommandlet::UContractExamplesCommandlet()
 }
 int32 UContractExamplesCommandlet::Main(const FString& Params)
 {
+    if (FParse::Param(*Params, TEXT("JanusExample")))
+    {
+        UClass* Extension = FindObject<UClass>(nullptr, TEXT("/Script/SimurghRTCJanusExtensions.SimurghRTCJanusOperation"));
+        if (!Extension) { UE_LOG(LogTemp, Error, TEXT("This profile excludes the Janus extension module.")); return 1; }
+        const FString PackageName = TEXT("/Game/Examples/Janus/BP_JanusProfile");
+        const FString Filename = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+        if (FPaths::FileExists(Filename) && !FParse::Param(*Params, TEXT("ReplaceGeneratedExample")))
+        { UE_LOG(LogTemp, Error, TEXT("Example exists; use -ReplaceGeneratedExample to regenerate it.")); return 1; }
+        UPackage* Package = nullptr;
+        UBlueprint* Blueprint = nullptr;
+        if (FPaths::FileExists(Filename))
+        {
+            Package = LoadPackage(nullptr, *PackageName, LOAD_None);
+            if (Package) Package->FullyLoad();
+            Blueprint = Package ? FindObject<UBlueprint>(Package, TEXT("BP_JanusProfile")) : nullptr;
+            if (!Blueprint || Blueprint->ParentClass != AContractExtensionExample::StaticClass()) return 1;
+        }
+        else
+        {
+            Package = CreatePackage(*PackageName);
+            Blueprint = FKismetEditorUtilities::CreateBlueprint(AContractExtensionExample::StaticClass(), Package,
+                TEXT("BP_JanusProfile"), BPTYPE_Normal);
+        }
+        FExampleGraph G{FBlueprintEditorUtils::FindEventGraph(Blueprint)};
+        const auto PreviousNodes = G.Graph->Nodes;
+        for (UEdGraphNode* Node : PreviousNodes) FBlueprintEditorUtils::RemoveNode(Blueprint, Node, true);
+        int32 Y = 0;
+        auto* Begin = FKismetEditorUtilities::AddDefaultEventNode(Blueprint, G.Graph, TEXT("ReceiveBeginPlay"), AActor::StaticClass(), Y);
+        auto* Join = G.Node<UK2Node_AsyncAction>(300, 0, TEXT("Build-profile check: missing session must fail locally"));
+        Join->InitializeProxyFromFunction(Extension->FindFunctionByName(TEXT("JoinVideoRoom")));
+        Join->AllocateDefaultPins();
+        auto* Options = G.Node<UK2Node_MakeStruct>(0, 200, TEXT("Optional reflected Janus options"));
+        Options->StructType = FindObject<UScriptStruct>(nullptr, TEXT("/Script/SimurghRTCJanusExtensions.SimurghRTCJanusRoomOptions"));
+        if (!Options->StructType) return 1;
+        Options->AllocateDefaultPins();
+        G.Wire(Options, TEXT("SimurghRTCJanusRoomOptions"), Join, TEXT("Options"));
+        G.Wire(Begin, TEXT("then"), Join, TEXT("execute"));
+        for (const TCHAR* Branch : {TEXT("OnSuccess"), TEXT("OnFailure"), TEXT("OnCancelled")})
+        {
+            auto* Record = G.Call(AContractExtensionExample::StaticClass(), TEXT("RecordExtensionResult"), 800, Y);
+            Record->FindPinChecked(TEXT("bFailureBranch"))->DefaultValue = FCString::Strcmp(Branch, TEXT("OnFailure")) == 0 ? TEXT("true") : TEXT("false");
+            G.Wire(Join, Branch, Record, TEXT("execute"));
+            G.Wire(Join, TEXT("Result"), Record, TEXT("Result"));
+            Y += 250;
+        }
+        if (!G.bValid) return 2;
+        FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+        FCompilerResultsLog Results;
+        FKismetEditorUtilities::CompileBlueprint(Blueprint, EBlueprintCompileOptions::SkipGarbageCollection, &Results);
+        if (Results.NumErrors || Results.NumWarnings || Blueprint->Status == BS_Error) return 2;
+        FSavePackageArgs Args; Args.TopLevelFlags = RF_Public | RF_Standalone;
+        IFileManager::Get().MakeDirectory(*FPaths::GetPath(Filename), true);
+        if (!UPackage::SavePackage(Package, Blueprint, *Filename, Args)) return 3;
+        UE_LOG(LogTemp, Display, TEXT("Saved compiled Janus Blueprint: %s (%d nodes, zero warnings/errors)"), *Filename, G.Graph->Nodes.Num());
+        return 0;
+    }
     const FString PackageName = TEXT("/Game/Examples/BP_RtcLifecycle");
     const FString Filename = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
     if (FPaths::FileExists(Filename) && !FParse::Param(*Params, TEXT("ReplaceGeneratedExample")))

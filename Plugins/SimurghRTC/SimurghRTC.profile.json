@@ -4,6 +4,7 @@
   "engine_version": "5.8.3",
   "with_direct": true,
   "with_janus": true,
+  "with_janus_extensions": true,
   "with_media": true,
   "with_server": true,
   "native_transport": "unimplemented",

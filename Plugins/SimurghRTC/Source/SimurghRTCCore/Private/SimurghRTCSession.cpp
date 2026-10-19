@@ -49,7 +49,7 @@ FSimurghRTCCapability USimurghRTCSession::GetCapability(ESimurghRTCProvider Requ
         const bool Compiled = SimurghRTC::IsProviderCompiled(RequestedProvider)
             && (!Media || SIMURGHRTC_WITH_MEDIA || UE_SERVER)
             && (Feature != ESimurghRTCFeature::DeviceCapture || SIMURGHRTC_WITH_MEDIA)
-            && (!Extension || (SIMURGHRTC_WITH_JANUS && SIMURGHRTC_WITH_MEDIA));
+            && (!Extension || SIMURGHRTC_WITH_JANUS_EXTENSIONS);
         Result.Compiled = Compiled ? ESimurghRTCSupport::Available : ESimurghRTCSupport::Unavailable;
         Result.Service = ESimurghRTCSupport::Unavailable;
         if (!Compiled)

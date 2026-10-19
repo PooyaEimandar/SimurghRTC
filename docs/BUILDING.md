@@ -56,10 +56,14 @@ Use a new or empty destination under `LocalBuilds/`. Do not place staged project
 | `full` | Both providers, client media, and Server probe for Editor/Server targets |
 | `direct-only` | Direct provider and client media; Janus source/types omitted |
 | `janus-only` | Janus provider/extensions and client media; no Direct or Server module |
-| `data-only` | Both client providers; no client media or Server module |
+| `data-only` | Both client providers; no client media, Janus room extensions or Server module |
 | `server` | Core, native adapter, Direct and Server probe; no client media or Janus |
 
 Profiles select code; they do not make the unfinished session transport available. The data-only profile is a client build. To test a dedicated data-only factory, use the Server profile and its probe option.
+
+Staging also selects sample content. `Examples/BP_RtcLifecycle` is shared by every profile. `Examples/Janus/BP_JanusProfile` needs the Janus extension module and is copied only into Full and Janus-only hosts. This rule lives beside the module lists in `Config/Profiles.json`; excluded assets are omitted before cooking.
+
+The [lifecycle harness](LIFECYCLE_EXAMPLES.md) supports all four client profiles. It checks provider modules, reflected media/extension classes and the optional asset inside the running package. The package audit then checks UHT inputs, the linker map, one libwebrtc archive and the identity of the tested executable.
 
 ## 4. Check a minimal cook
 
@@ -100,7 +104,7 @@ The project targets UE **5.8.3**, but the `.uplugin` file uses `EngineVersion: 5
 
 Desktop builds link the engine's WebRTC 5414 library plus OpenSSL, Opus and VPX. The sample finds the source plugin through `AdditionalPluginDirectories`; staged samples use their local copy.
 
-Generated descriptors select modules for Unreal's build tools and Header Tool. Build.cs reads `SimurghRTC.profile.json` and defines `SIMURGHRTC_WITH_DIRECT`, `SIMURGHRTC_WITH_JANUS` and `SIMURGHRTC_WITH_MEDIA`. `SIMURGHRTC_WITH_NATIVE_TRANSPORT` remains **0** because shared session transport is unfinished. Server targets omit Janus and client-media modules, even under Full.
+Generated descriptors select modules for Unreal's build tools and Header Tool. Build.cs reads `SimurghRTC.profile.json` and defines `SIMURGHRTC_WITH_DIRECT`, `SIMURGHRTC_WITH_JANUS`, `SIMURGHRTC_WITH_JANUS_EXTENSIONS` and `SIMURGHRTC_WITH_MEDIA`. The extension flag follows its own module selection. `SIMURGHRTC_WITH_NATIVE_TRANSPORT` remains **0** because shared session transport is unfinished. Server targets omit Janus and client-media modules, even under Full. Use a staged `server` host for the Server probe so its sample content also excludes client-only extensions.
 
 After changing profile policy, use `prepare_profile.py --refresh-default`, update the matching Build.cs dependencies and rerun the checks. Changing a macro alone does not remove reflected types or assets.
 
