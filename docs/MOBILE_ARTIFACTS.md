@@ -110,4 +110,4 @@ python3 tools/test_mobile_rules.py --engine /absolute/path/to/UE_5.8 \
   --output Intermediate/MobileRulesCheck
 ```
 
-Use a new output directory. Also rerun the seven [Unreal tests](BUILDING.md#2-build-and-run-unreal-tests) after changing native selection. The [build workflow](MOBILE_BUILDS.md) checks source/toolchain inputs and linkage; signed device probes and [app-size validation](MOBILE_CLIENTS.md#app-size-validation) remain separate gates.
+Use a new output directory. Also rerun the [Unreal tests](BUILDING.md#2-build-and-run-unreal-tests) after changing native selection. The [build workflow](MOBILE_BUILDS.md) checks source/toolchain inputs and linkage; signed device probes and [app-size validation](MOBILE_CLIENTS.md#app-size-validation) remain separate gates. The [dependency review](DEPENDENCY_REVIEW.md) records the remaining security, provenance and notice requirements. A valid manifest does not approve a dependency for release.

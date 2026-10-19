@@ -2,8 +2,8 @@
 
 **M0 is in progress**, targeting Unreal Engine **5.8.3**. Updated 2026-10-19.
 
-- **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-002 build profiles, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
-- **In progress:** SR-003 dependency review and SR-006/SR-007 mobile artifact integration.
+- **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-002 build profiles, SR-003 dependency/ABI review and headless Server feasibility, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
+- **In progress:** SR-006/SR-007 mobile artifact integration. SR-008 tracks the dependency security/provenance blockers found by the review; the current libraries are not a supported release baseline.
 - **Still to prove:** real connections, network media and packaged Android/iOS device acceptance. The [mobile lifecycle probe](docs/MOBILE_PROBE.md) is implemented; see the validation record for build and device results.
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
@@ -80,7 +80,7 @@ A preview describes what is included; it does not mean production-ready. Set dat
 
 ## 4. Milestones, epics, issues
 
-SR-001 is **Complete (API v1 and executable lifecycle examples)** and SR-002 is **Complete (available Mac profile/package checks)**; SR-003, SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
+SR-001 is **Complete (API v1 and executable lifecycle examples)**, SR-002 is **Complete (available Mac profile/package checks)** and SR-003 is **Complete (review with tracked release blockers)**; SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; all other issues remain **Planned**, including the new SR-008 dependency qualification. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
 
 ### M0 Foundation and feasibility
 
@@ -118,11 +118,13 @@ Create the plugin layout and one place to select modules, generate descriptors a
 
 **SR-005 complete:** fixed audio/video inputs, versioned signaling examples and local Janus/TURN tests are in place. The tests use pinned service versions and external credentials. See the [fixture guide](docs/FIXTURES.md) and [results](docs/M0_VALIDATION.md).
 
-**SR-003 in progress:** a packaged Mac ARM64 Server can create a libwebrtc factory and run the HTTP test without graphics or hardware audio. Dependency/license review and mobile builds remain open. See the [Server guide](docs/NATIVE_PROBE.md).
+**SR-003 complete, 2026-10-19:** the [dependency review](docs/DEPENDENCY_REVIEW.md) records linked versions, licenses, security findings and mobile ABI constraints. A packaged Mac ARM64 Server creates a libwebrtc factory and runs the HTTP test without graphics or hardware audio. Security/provenance remediation is SR-008; final distribution notices are SR-902. Review completion does not approve the current libraries for release.
 
 **SR-004 complete on the available Mac:** the packaged Direct-only Game passed local VP8/Opus, texture, render-target and audio-mixer tests. Missing graphics/audio were also tested. Network media and mobile testing come later. See the [media guide](docs/MEDIA_PROBE.md).
 
 ##### SR-003 — Audit native libwebrtc and Server target feasibility (P0)
+
+**Complete with follow-ups.** Exact mobile pins and local binary/header/notice fingerprints are recorded. Epic's upstream WebRTC revision/patch list and some codec source-to-binary identities are unresolved and assigned to SR-008. The [review](docs/DEPENDENCY_REVIEW.md) gives the decision, evidence and owners; the [Server guide](docs/NATIVE_PROBE.md) covers the runtime probe.
 
 Check the engine headers and libraries, target restrictions, codecs, audio processing (APM), debug symbols, private API dependencies and distribution licenses. Record the engine libwebrtc revision and the Android/iOS ABI, dependency and adapter constraints for separate builds. Prove that a native UE Server target can create a PeerConnection factory and use the standard UE HTTPServer.
 
@@ -166,9 +168,17 @@ Create a reproducible macOS/Xcode build of pinned upstream libwebrtc for device 
 
 **Depends on:** [SR-002](#e01-api-and-build-contract), [SR-003](#e02-native-feasibility-and-test-fixtures)
 
-**Epic complete when:** Headless Server and native media probes run on the available Mac; separately built Android/iOS ARM64 libraries run in packaged device probes. Dependency manifests, initial size baselines, generated media and controlled Janus/TURN fixtures are reproducible. Missing mobile build hosts/devices remain Unverified and do not close the epic.
+##### SR-008 — Qualify the native dependency security baseline (P0)
 
-**Milestone complete when:** Freeze the API and prove standard UE builds, headless Server/libwebrtc linkage and plugin-accessible native media on the available Mac, plus separate Android/iOS ARM64 dependency builds and packaged device startup. Prove Janus-disabled packaging on desktop and both mobile targets. Assign every unresolved blocker an owner and issue before feature work starts.
+**Planned; owner: SimurghRTC maintainer.** Resolve the [SR-003 findings](docs/DEPENDENCY_REVIEW.md#security-review) before untrusted network acceptance or a supported release. Identify Epic's WebRTC source/patch history and Opus/Speex binary origins. Select supported crypto/media dependencies or documented maintained backports, map relevant advisories to source and enabled features, and update the simulator nghttp2 support library. Controlled local feature development can continue while this work is open.
+
+**Done when:** every linked component has traceable source and patches, security findings have recorded dispositions, and refreshed pins pass repeat builds, mobile ABI checks, one-copy linkage and packaged lifecycle/media tests. Any change that requires an engine source patch remains a design blocker. Revalidate the external dependency set together; do not introduce a conflicting second crypto/runtime implementation. SR-902 separately verifies distribution notices.
+
+**Depends on:** [SR-003](#e02-native-feasibility-and-test-fixtures)
+
+**Epic complete when:** Headless Server and native media probes run on the available Mac; separately built Android/iOS ARM64 libraries run in packaged device probes. Dependency manifests, initial size baselines, generated media and controlled Janus/TURN fixtures are reproducible, and SR-008 qualifies the native dependency baseline. Missing mobile build hosts/devices remain Unverified and do not close the epic.
+
+**Milestone complete when:** Freeze the API and prove standard UE builds, headless Server/libwebrtc linkage and plugin-accessible native media on the available Mac, plus separate Android/iOS ARM64 dependency builds and packaged device startup. Prove Janus-disabled packaging on desktop and both mobile targets, and close SR-008's dependency qualification. Assign every unresolved blocker an owner and issue before feature work starts.
 
 ### M1 Direct Unreal data
 
@@ -724,6 +734,8 @@ Document standard UE plugin installation, native client/Server builds and packag
 
 ##### SR-902 — Record source provenance and notices (P1)
 
+**Owner: SimurghRTC release maintainer.** The [SR-003 license review](docs/DEPENDENCY_REVIEW.md#license-and-distribution-review) found missing external OpenSSL/Opus/Speex notices in mobile artifacts, a missing simulator VPX patent file and no final-app notice validation. These block publication until resolved.
+
 Maintain third-party notices, source origins, generated-asset licenses and a dependency inventory, including separately built mobile libwebrtc revisions, patches, codecs and binary provenance. Keep Apache 2.0 for the repository and document the separate engine and dependency obligations.
 
 **Done when:** public sources contain no copied restricted engine implementation or unapproved binary redistribution; Janus is documented as an external service; sample/effect assets have recorded distribution rights.
@@ -748,7 +760,7 @@ Prepare versioned packages, checksums, release notes, an API migration policy an
 
 **Done when:** release artifacts match documented profiles and evidence; a new project can run the supported samples. Publishing a marketplace listing, hosting servers or changing repositories is not part of this issue unless separately requested.
 
-**Depends on:** [SR-903](#e20-release-qualification-and-packaging), [SR-902](#e19-documentation-and-source-provenance)
+**Depends on:** [SR-903](#e20-release-qualification-and-packaging), [SR-902](#e19-documentation-and-source-provenance), [SR-008](#e02-native-feasibility-and-test-fixtures)
 
 **Epic complete when:** Release evidence records each target and capability outcome; packages match selected profiles, checksums and reproducible build instructions.
 
@@ -804,7 +816,7 @@ The available test machine is a Mac. Android dependency builds use the pinned Li
 
 | Milestone | Epics | Issues | Status |
 |---|---|---|---|
-| [M0 Foundation and feasibility](#m0-foundation-and-feasibility) | E01–E02 | SR-001–SR-007 | In progress |
+| [M0 Foundation and feasibility](#m0-foundation-and-feasibility) | E01–E02 | SR-001–SR-008 | In progress |
 | [M1 Direct Unreal data](#m1-direct-unreal-data) | E03–E04 | SR-101–SR-107 | Planned |
 | [M2 Direct Unreal media](#m2-direct-unreal-media) | E05–E06 | SR-201–SR-208 | Planned |
 | [M3 Janus provider parity](#m3-janus-provider-parity) | E07–E08 | SR-301–SR-306 | Planned |

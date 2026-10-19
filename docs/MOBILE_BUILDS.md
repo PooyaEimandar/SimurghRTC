@@ -20,7 +20,7 @@ Run commands from the repository root. Keep at least **30 GiB free per build wor
 
 The script checks these versions and the engine dependency hashes. Install the matching tools instead of bypassing a mismatch. It does not download Xcode or change your active Xcode installation.
 
-The exact WebRTC commit, dependency commits, tool downloads, header/library hashes, flags and patches live in [the build lock](../Config/MobileWebRTC.lock.json). This uses WebRTC 5414 to match the current adapter. It is a compatibility baseline; the SR-003 security and distribution review is still open.
+The exact WebRTC commit, dependency commits, tool downloads, header/library hashes, flags and patches live in [the build lock](../Config/MobileWebRTC.lock.json). This uses WebRTC 5414 to match the current adapter. The [SR-003 review](DEPENDENCY_REVIEW.md) is complete: this remains an experimental compatibility baseline. SR-008 tracks security/provenance updates and SR-902 tracks complete distribution notices.
 
 ## Build iOS
 

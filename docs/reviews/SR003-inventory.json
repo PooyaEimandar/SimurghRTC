@@ -1,0 +1,689 @@
+{
+  "engine": {
+    "android_additional_library": {
+      "bytes": 108828,
+      "sha256": "86e38e5ea1a283ed85af1e4fd7dbc903574670660c85f612a5a2c67cd2981fe0"
+    },
+    "build_version": {
+      "BranchName": "UE5",
+      "Changelist": 0,
+      "CompatibleChangelist": 55116800,
+      "IsLicenseeVersion": 0,
+      "IsPromotedBuild": 0,
+      "MajorVersion": 5,
+      "MinorVersion": 8,
+      "PatchVersion": 3
+    },
+    "headers": {
+      "openssl-android": {
+        "files": 104,
+        "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/include/Android",
+        "tree_sha256": "f124da377a9adee96b8251d2a05e88f0c0bc026f83930122ee6bb89012f0c17e"
+      },
+      "openssl-ios": {
+        "files": 104,
+        "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/include/IOS",
+        "tree_sha256": "84d3bfd6f9080695fa21e58ac2ea617d4161ff60d0658835d1a78384bc7078c5"
+      },
+      "opus": {
+        "files": 6,
+        "path": "Engine/Source/ThirdParty/libOpus/opus-1.1/include",
+        "tree_sha256": "483666b5af0fd409a015cdef077eaf18729d940b0244eda79f01e72b6f40605d"
+      },
+      "vpx": {
+        "files": 22,
+        "path": "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/include",
+        "tree_sha256": "6fa452d87399f91829a9f41fefb7e58636fe0264d8c6aa4eee215d8d78a20262"
+      }
+    },
+    "mac_libraries": {
+      "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/Mac/libcrypto.a": {
+        "bytes": 8283408,
+        "sha256": "420ae2d6ae083d52e6d088283b1505ebfcec34de64b7f2374791f321aa33c173",
+        "version_strings": [
+          "OpenSSL 1.1.1t  7 Feb 2023"
+        ]
+      },
+      "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/Mac/libssl.a": {
+        "bytes": 1570024,
+        "sha256": "756fedd418b04b11ebeb717af54ef843529ef96d24f22c6cd5469b9d3d332418",
+        "version_strings": [
+          "OpenSSL 1.1.1t  7 Feb 2023"
+        ]
+      },
+      "Engine/Source/ThirdParty/WebRTC/5414/Lib/Mac/Release/libwebrtc.a": {
+        "bytes": 41870008,
+        "sha256": "172e7fdd53b10e78b5e06a268fca9f8ee85492e24f04fea800b65c35c07966cf",
+        "version_strings": []
+      },
+      "Engine/Source/ThirdParty/libOpus/opus-1.1/Mac/libopus.a": {
+        "bytes": 2901608,
+        "sha256": "81c47fecac668805b54d4b13c4cf54977b93a75fffc650acce7c8b84c82cd4c8",
+        "version_strings": [
+          "libopus 1.1"
+        ]
+      },
+      "Engine/Source/ThirdParty/libOpus/opus-1.1/Mac/libspeex_resampler.a": {
+        "bytes": 30560,
+        "sha256": "e9ea8bda61a0de646a97d4a435449f8131940928d95b1bbfa090461c199cc1f0",
+        "version_strings": []
+      },
+      "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/lib/Mac/libvpx.a": {
+        "bytes": 6945264,
+        "sha256": "bcde1a20086f18be02f18844ecef0ea9e652aee4a6e2374a1fd4f2d887fb03e0",
+        "version_strings": [
+          "v1.14.1"
+        ]
+      },
+      "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/lib/Mac/libvpx_fPIC.a": {
+        "bytes": 6945264,
+        "sha256": "99e899fa2c75c5900bb210a418a8a49877f91f6dce3548e0a3915934ab564f71",
+        "version_strings": [
+          "v1.14.1"
+        ]
+      }
+    },
+    "notice_inputs": {
+      "Engine/Source/ThirdParty/Licenses/OpenSSL_License.txt": "c32913b33252e71190af2066f08115c69bc9fddadf3bf29296e20c835389841c",
+      "Engine/Source/ThirdParty/Licenses/Opus_License.txt": "9e038e02a487b3db23ed88cd1c7c2e2c8b8ec44294294e31f9bccab5094b0004",
+      "Engine/Source/ThirdParty/Licenses/WebRTC_License.txt": "d94f21ed189304e8733dc2b9c5c68ff82119a4021e21531af74c989552376a24",
+      "Engine/Source/ThirdParty/Licenses/abseil-cpp_LICENSE.txt": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+      "Engine/Source/ThirdParty/Licenses/nghttp2_License.txt": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+      "Engine/Source/ThirdParty/WebRTC/5414/Include/third_party/libsrtp/LICENSE": "8e19d42a1eec9561f3f347253ddf2e385c55f392f025bb0fd41b88dbf38db5ae",
+      "Engine/Source/ThirdParty/WebRTC/5414/Include/third_party/libvpx/source/libvpx/LICENSE": "8267348d5af1262c11d1a08de2f5afc77457755f1ac658627dd9acf71011d615",
+      "Engine/Source/ThirdParty/WebRTC/5414/Include/third_party/libyuv/LICENSE": "2b2cc1180c7e6988328ad2033b04b80117419db9c4c584918bbb3cfec7e9364f",
+      "Engine/Source/ThirdParty/libOpus/opus-1.1/COPYING": "8338ce8d922bb4416ce3dd1e5680173332435e3f0755007ac7801ccd674fe682",
+      "Engine/Source/ThirdParty/libOpus/opus-1.1/include/speex_resampler.h": "4988d1d9a24396999ea7dadcdd35d3fef15cd647005f47b813fbfc7e2522659c"
+    },
+    "rules": {
+      "Engine/Source/ThirdParty/OpenSSL/OpenSSL.Build.cs": "5beaccc9011a25ab8c7795476d3036c2002e75d1fd9d5ba2c554ce7ea72fcb9b",
+      "Engine/Source/ThirdParty/WebRTC/WebRTC.Build.cs": "9a9cdbbdeadc0b042fa727700861c18aa440f25c86f5a7552a0a201a90ed01c3",
+      "Engine/Source/ThirdParty/libOpus/libOpus.Build.cs": "225e55b3f04183bd897c85d0849b258bdab80f24933d06941464cfb7f8f8c837",
+      "Engine/Source/ThirdParty/libvpx/LibVpx.Build.cs": "54c8509d27f5b2b875fa7b20e2f38a6ad2d696cbb00e22a3210bd49414d1cd59"
+    },
+    "webrtc_headers": {
+      "files": 4597,
+      "tree_sha256": "c815636152207f199d84e67f0756a93983a775ff7c958cf7586ebe6016c312d1"
+    }
+  },
+  "mobile": {
+    "Android": {
+      "build_lock_sha256": "5089c53c0ea5463f6e2e8320f40a7b5a7b010d894c57981eb410a76c642adbf1",
+      "engine_libraries": {
+        "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/Android/ARM64/libcrypto.a": {
+          "bytes": 5882776,
+          "sha256": "8aae283dd80a38e39660ed8f54b5a53b754d5d4b455ed6b39afbb9ec0c416513",
+          "version_strings": [
+            "OpenSSL 1.1.1t  7 Feb 2023"
+          ]
+        },
+        "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/Android/ARM64/libssl.a": {
+          "bytes": 1127406,
+          "sha256": "16b7b3efd15ed338908dc360944e2c6d3d155973840c15fe3bcf85f5053632be",
+          "version_strings": [
+            "OpenSSL 1.1.1t  7 Feb 2023"
+          ]
+        },
+        "Engine/Source/ThirdParty/libOpus/opus-1.1/Android/ARM64/libopus.a": {
+          "bytes": 3065236,
+          "sha256": "dfaf746e503c5e6dda6fffc08973f6c9165b9eb071c00c360b5c838d65cab566",
+          "version_strings": [
+            "libopus unknown-fixed"
+          ]
+        },
+        "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/lib/Android/arm64-v8a/Release/libvpx.a": {
+          "bytes": 3799930,
+          "sha256": "c51efe494328678659456e4c22daa6f6469af289e0fc5f99e38eb5e955545796",
+          "version_strings": [
+            "v1.14.1"
+          ]
+        }
+      },
+      "libraries": {
+        "Lib/libwebrtc.a": {
+          "bytes": 42103278,
+          "sha256": "950bae6ef80ee71d0509d235f7eb0e5dfa1aa03d964cb8f3004df572e781b5d3"
+        }
+      },
+      "link_probe": {
+        "binary_sha256": "97fabeb18b61b85131d3a450a9dbc62d68e083462138a47f162e1f6e4e67a04d",
+        "cpp_linkage": "static libc++; Unreal-style local symbol binding",
+        "engine_libraries": [
+          {
+            "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/Android/ARM64/libssl.a",
+            "sha256": "16b7b3efd15ed338908dc360944e2c6d3d155973840c15fe3bcf85f5053632be"
+          },
+          {
+            "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/Android/ARM64/libcrypto.a",
+            "sha256": "8aae283dd80a38e39660ed8f54b5a53b754d5d4b455ed6b39afbb9ec0c416513"
+          },
+          {
+            "path": "Engine/Source/ThirdParty/libOpus/opus-1.1/Android/ARM64/libopus.a",
+            "sha256": "dfaf746e503c5e6dda6fffc08973f6c9165b9eb071c00c360b5c838d65cab566"
+          },
+          {
+            "path": "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/lib/Android/arm64-v8a/Release/libvpx.a",
+            "sha256": "c51efe494328678659456e4c22daa6f6469af289e0fc5f99e38eb5e955545796"
+          }
+        ],
+        "external_codec_crypto_definitions": [],
+        "load_alignment_bytes": [
+          16384,
+          16384,
+          16384,
+          16384
+        ],
+        "probe_sha256": "62b634d0ad814579d20a846d19d81141bc61011d633871b157b34cd9f81b978e",
+        "runtime_validation": "unverified",
+        "status": "linked",
+        "whole_archive": true
+      },
+      "matches_current_build_lock": true,
+      "metadata": {
+        "adapter": "webrtc-5414-ue5.8.3-v1",
+        "architecture": "arm64",
+        "artifact_id": "android-arm64-4e8a5ac68e8a-5089c53c0ea5",
+        "codecs": {
+          "audio": [
+            "opus",
+            "ISAC",
+            "G722",
+            "PCMU",
+            "PCMA",
+            "multiopus",
+            "L16"
+          ],
+          "video": [
+            "VP8",
+            "VP9"
+          ]
+        },
+        "configuration": "Release",
+        "dependencies": "unreal-openssl-opus-vpx",
+        "engine_version": "5.8.3",
+        "platform": "Android",
+        "schema": 1,
+        "source_revision": "4e8a5ac68e8a4ae0588f54f2fdb8cbd1eb5fa50d",
+        "toolchain": {
+          "compiler": "Android (12470979, +pgo, +bolt, +lto, +mlgo, based on r522817c) clang version 18.0.3 (https://android.googlesource.com/toolchain/llvm-project d8003a456d14a3deb8054cdaa529ffbf02d9b262)",
+          "cpp_abi": "itanium",
+          "cpp_runtime": "libc++",
+          "host": "Linux",
+          "minimum_os": "26",
+          "sdk": "27.2.12479018"
+        }
+      },
+      "notice_files": {
+        "Licenses/JSONCPP-LICENSE.txt": "76c45ece83a26117f86f4e349e7df118708e061e87225328fb478ce1e8b3eb86",
+        "Licenses/LIBYUV-PATENTS.txt": "4da84211f947c6f9f7dd8fbce513e1522e01833407ae732b8c9a2bbb75fed495",
+        "Licenses/LICENSE.md": "df432e72dfbfc0ebfb6b166ba5b4b94da8f28b17cfdee76ea19eeffed0407692",
+        "Licenses/PORTAUDIO-LICENSE.txt": "641007ea2810c4cfc10a5d1a44db33983ec1409305e953c7119cc2457ec5c536",
+        "Licenses/SOCKETROCKET-LICENSE.txt": "21a742dd8cceebb1d5df7c6f945c75ccf1ad4f0d4c17e404517500c1a7de86a4",
+        "Licenses/THIRD_PARTY_NOTICES.txt": "0d50e8c25a8f06deff1db89740010f587ac8d4605deb58ebeb8f9ca0eb686368",
+        "Licenses/WEBRTC-PATENTS.txt": "01462e2068d1a04c2274f3389773014c14ed9bc3446b28303543bd3e3c064145"
+      },
+      "notice_sections": [
+        "webrtc",
+        "abseil-cpp",
+        "android_ndk",
+        "android_sdk",
+        "base64",
+        "crc32c",
+        "fft",
+        "g711",
+        "g722",
+        "libsrtp",
+        "libyuv",
+        "ooura",
+        "pffft",
+        "rnnoise",
+        "sigslot",
+        "spl_sqrt_floor",
+        "JSONCPP exported headers",
+        "PORTAUDIO exported headers",
+        "SOCKETROCKET exported headers"
+      ],
+      "patches": {
+        "Build/patches/0001-native-probe-scope.patch": "12d795133ec4d6a694866296c8424e934ebe762bf22ec26773a4c20ebb9b3c3b",
+        "Build/patches/0002-external-openssl.patch": "7fb119636f7501c0210f832e311bad9c09996992c75d57a28ff81eb83e755797",
+        "Build/patches/0003-crc32c-clang.patch": "022ee4d04b6551587fb8942b2912749966dcc13f31218df99250ea4e81a9d373",
+        "Build/patches/0004-legacy-stats-clang.patch": "3f082e2b99777044fc50f54d44bb83207ad00aed7cba47d19e4fc24eec2b2e84",
+        "Build/patches/0005-native-android-target.patch": "ff8bed54ef7b8e5a56e6610387d5722f5cdc61360304a1663f5e8b245194a42d",
+        "Build/patches/0006-external-ndk-target.patch": "cf9fb2cc68b18310ec6cdc0da5d815ca0e2fbd1adb21eb3ec3689dc155603db8",
+        "Build/patches/0007-native-audio-target.patch": "8c63fbb8d8cd9781f0bbb99f01db31641dbb099bbff861b92101986f0f6d23f6",
+        "Build/patches/0008-native-stacktrace-target.patch": "91db3b59f91a98d28377546187a2893cd73ad00009efcfbbeee45b1da87f7e1f",
+        "Build/patches/0009-native-only-test-graph.patch": "487baa47795bf13d6a5e1fc4362869916998a047195be3053c16abedbb713a7a",
+        "Build/patches/0010-native-java-templates.patch": "c25d2a72cd634b1fc4134fc46c34ec45c69f16ad8978bb631c6cac97ba03ad6c",
+        "Build/patches/0011-native-test-runners.patch": "c6d7f56c93681467f7d1910e941f9ef9a84a91d363e0a947a7974dfdda75ba0c",
+        "Build/patches/0012-pinned-license-gn.patch": "013494b54c9ed8be26bb9181323383b13ae44219175929c917d988b1c7971f09",
+        "Build/patches/0013-android-itanium-abi.patch": "bb3571d3e6841400d6b067250d651d2951610fefdac536254b7dd6cb2ca009be"
+      },
+      "source_dependencies": {
+        "build-lock": "5089c53c0ea5463f6e2e8320f40a7b5a7b010d894c57981eb410a76c642adbf1",
+        "build-runner": "63b261a6ebb829c7a285e370f39d57ce42dcd92c12c874a32f3a82bf79454fd5",
+        "gn-linux-amd64": "971fdc1572daedd2919646bbfb9b73c445563ab4fe867f0df75dceeba2a9d733",
+        "gn-mac-arm64": "6ee55c0d888539a88aee49854ad9a58b8cab9c7cff2fac72a5bdb1837fba47ff",
+        "link-probe": "62b634d0ad814579d20a846d19d81141bc61011d633871b157b34cd9f81b978e",
+        "ndk-archive": "59c2f6dc96743b5daf5d1626684640b20a6bd2b1d85b13156b90333741bad5cc",
+        "ndk-gn-overlay": "3f7bba8a4d17640704b71c58d2e5b7295f7bfaa5a752c97f0b8a65086c31deab",
+        "ninja-linux-amd64": "3d4bdd8b12b114efca564f5de961695cb54330cd0c1eff3a8f2cb2493310eca2",
+        "ninja-mac-arm64": "9d53be2b3ca4cbd9df1b8a516f7428eca771ca81178ddc2e3a1570cbe874adb3",
+        "openssl-android": "f124da377a9adee96b8251d2a05e88f0c0bc026f83930122ee6bb89012f0c17e",
+        "opus": "483666b5af0fd409a015cdef077eaf18729d940b0244eda79f01e72b6f40605d",
+        "src/base": "7ee725c53f7e5a822cf4c571ce4e8ff787bfc0c7",
+        "src/build": "18e9d3c3adadf2489507e4e62afffafa46717d26",
+        "src/buildtools": "33b52eafd539278600d34cd9ba23550d28c933d2",
+        "src/ios": "dc273d7b2d91ad6c39d99604682a4e82c0278383",
+        "src/testing": "e3bca95dbc08d3879eadc39a66141210e85ee76f",
+        "src/third_party": "38080027ded6b80f8f121e748ae8ecc60d9314b4",
+        "src/third_party/catapult": "3ffa6b222803f54188a7b249383b2f092a24d19a",
+        "src/third_party/crc32c/src": "fa5ade41ee480003d9c5af6f43567ba22e4e17e6",
+        "src/third_party/dav1d/libdav1d": "87f9a81cd770e49394a45deca7a3df41243de00b",
+        "src/third_party/depot_tools": "b52683fa2e74087464d32a1a9c76bf1b5275e4fe",
+        "src/third_party/google_benchmark/src": "f730846b0a3c0dc0699978846fb14ffb2fad0bdc",
+        "src/third_party/googletest/src": "af29db7ec28d6df1c7f0f745186884091e602e07",
+        "src/third_party/icu": "da07448619763d1cde255b361324242646f5b268",
+        "src/third_party/jsoncpp/source": "42e892d96e47b1f6e29844cc705e148ec4856448",
+        "src/third_party/libaom/source/libaom": "7f32eb35ff2589369f095388701e3dfc4d6a9381",
+        "src/third_party/libjpeg_turbo": "ed683925e4897a84b3bffc5c1414c85b97a129a3",
+        "src/third_party/libsrtp": "5b7c744eb8310250ccc534f3f86a2015b3887a0a",
+        "src/third_party/libvpx/source/libvpx": "5245f6e9cb7e6bb68ab45fe4d8b00bc9b16857e1",
+        "src/third_party/libyuv": "fe9ced6e3c8ae6c69bcc3ebb8505a650d2df30e0",
+        "src/third_party/lss": "ce877209e11aa69dcfffbd53ef90ea1d07136521",
+        "src/third_party/nasm": "0873b2bae6a5388a1c55deac8456e3c60a47ca08",
+        "src/tools": "a398922738180b9301ebb4f2bf0896763ee921ed",
+        "vpx": "6fa452d87399f91829a9f41fefb7e58636fe0264d8c6aa4eee215d8d78a20262"
+      },
+      "validation": {
+        "architecture": "arm64",
+        "archive_bytes": 42103278,
+        "artifact_id": "android-arm64-4e8a5ac68e8a-5089c53c0ea5",
+        "files": 2945,
+        "manifest_sha256": "63b8c3d2ec4a040f5e621602486ce3ff99f3a36de16d0c076beb51b646723344",
+        "objects": 1250,
+        "platform": "Android",
+        "runtime_validation": "unverified"
+      }
+    },
+    "IOS": {
+      "build_lock_sha256": "7c97d0e5a9e9f5312a71711e8ea53ff8fbf3e072d5e36c83ee62a4365a87b327",
+      "engine_libraries": {
+        "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libcrypto.a": {
+          "bytes": 35371448,
+          "sha256": "541e25ec080f165c97c0a2d036432c99d5570a599311486f6a8521d61ea46a52",
+          "version_strings": [
+            "OpenSSL 1.1.1t  7 Feb 2023"
+          ]
+        },
+        "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libssl.a": {
+          "bytes": 7236912,
+          "sha256": "f047bceb81f9c9c08c7327fcc12d0bf729926f388bb6607d7bfb727aa789ecc6",
+          "version_strings": [
+            "OpenSSL 1.1.1t  7 Feb 2023"
+          ]
+        },
+        "Engine/Source/ThirdParty/libOpus/opus-1.1/IOS/libOpus.a": {
+          "bytes": 4923936,
+          "sha256": "42da022bce3a50acb3c7c09d043bcc5924fdc64d7461a817212bc287b7e3c12b",
+          "version_strings": [
+            "libopus 1.1-beta"
+          ]
+        },
+        "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/lib/IOS/libvpx.a": {
+          "bytes": 2268680,
+          "sha256": "23b777490086f2e2ed52d76e88f145d85d387c1fc9eee9f668fdc2fcf62ee25d",
+          "version_strings": [
+            "v1.14.1"
+          ]
+        }
+      },
+      "libraries": {
+        "Lib/libwebrtc.a": {
+          "bytes": 25297696,
+          "sha256": "6865dd8162410a4a680f538fb1ebc9767c4f5821a6ce980678af43235cb245ad"
+        }
+      },
+      "link_probe": {
+        "binary_sha256": "0c6b39dbafdae442df6c1be5d5ee4850054410667e316d7fdd103734f16ba2c4",
+        "engine_libraries": [
+          {
+            "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libssl.a",
+            "sha256": "f047bceb81f9c9c08c7327fcc12d0bf729926f388bb6607d7bfb727aa789ecc6"
+          },
+          {
+            "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libcrypto.a",
+            "sha256": "541e25ec080f165c97c0a2d036432c99d5570a599311486f6a8521d61ea46a52"
+          },
+          {
+            "path": "Engine/Source/ThirdParty/libOpus/opus-1.1/IOS/libOpus.a",
+            "sha256": "42da022bce3a50acb3c7c09d043bcc5924fdc64d7461a817212bc287b7e3c12b"
+          },
+          {
+            "path": "Engine/Source/ThirdParty/libvpx/libvpx-1.14.1/lib/IOS/libvpx.a",
+            "sha256": "23b777490086f2e2ed52d76e88f145d85d387c1fc9eee9f668fdc2fcf62ee25d"
+          }
+        ],
+        "external_codec_crypto_definitions": [],
+        "probe_sha256": "62b634d0ad814579d20a846d19d81141bc61011d633871b157b34cd9f81b978e",
+        "runtime_validation": "unverified",
+        "status": "linked",
+        "whole_archive": true
+      },
+      "matches_current_build_lock": false,
+      "metadata": {
+        "adapter": "webrtc-5414-ue5.8.3-v1",
+        "architecture": "arm64",
+        "artifact_id": "ios-arm64-4e8a5ac68e8a-7c97d0e5a9e9",
+        "codecs": {
+          "audio": [
+            "opus",
+            "ISAC",
+            "G722",
+            "PCMU",
+            "PCMA",
+            "multiopus",
+            "L16"
+          ],
+          "video": [
+            "VP8",
+            "VP9"
+          ]
+        },
+        "configuration": "Release",
+        "dependencies": "unreal-openssl-opus-vpx",
+        "engine_version": "5.8.3",
+        "platform": "IOS",
+        "schema": 1,
+        "source_revision": "4e8a5ac68e8a4ae0588f54f2fdb8cbd1eb5fa50d",
+        "toolchain": {
+          "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
+          "cpp_runtime": "libc++",
+          "host": "Mac",
+          "minimum_os": "15.0",
+          "sdk": "27.0"
+        }
+      },
+      "notice_files": {
+        "Licenses/JSONCPP-LICENSE.txt": "76c45ece83a26117f86f4e349e7df118708e061e87225328fb478ce1e8b3eb86",
+        "Licenses/LIBYUV-PATENTS.txt": "4da84211f947c6f9f7dd8fbce513e1522e01833407ae732b8c9a2bbb75fed495",
+        "Licenses/LICENSE.md": "4c375b3d31a27eb0c75f2195198e2d4f3332162c3f2fb4ef6475fe6588eb2b17",
+        "Licenses/PORTAUDIO-LICENSE.txt": "641007ea2810c4cfc10a5d1a44db33983ec1409305e953c7119cc2457ec5c536",
+        "Licenses/SOCKETROCKET-LICENSE.txt": "21a742dd8cceebb1d5df7c6f945c75ccf1ad4f0d4c17e404517500c1a7de86a4",
+        "Licenses/THIRD_PARTY_NOTICES.txt": "95d6120b2055f77711b2ac9d79aa106aa0425e533f58b3edd8a22f1108ae38ca",
+        "Licenses/WEBRTC-PATENTS.txt": "01462e2068d1a04c2274f3389773014c14ed9bc3446b28303543bd3e3c064145"
+      },
+      "notice_sections": [
+        "webrtc",
+        "abseil-cpp",
+        "base64",
+        "crc32c",
+        "fft",
+        "g711",
+        "g722",
+        "libsrtp",
+        "libyuv",
+        "ooura",
+        "pffft",
+        "rnnoise",
+        "sigslot",
+        "spl_sqrt_floor",
+        "JSONCPP exported headers",
+        "PORTAUDIO exported headers",
+        "SOCKETROCKET exported headers"
+      ],
+      "patches": {
+        "Build/patches/0001-native-probe-scope.patch": "12d795133ec4d6a694866296c8424e934ebe762bf22ec26773a4c20ebb9b3c3b",
+        "Build/patches/0002-external-openssl.patch": "7fb119636f7501c0210f832e311bad9c09996992c75d57a28ff81eb83e755797",
+        "Build/patches/0003-crc32c-clang.patch": "022ee4d04b6551587fb8942b2912749966dcc13f31218df99250ea4e81a9d373",
+        "Build/patches/0004-legacy-stats-clang.patch": "3f082e2b99777044fc50f54d44bb83207ad00aed7cba47d19e4fc24eec2b2e84",
+        "Build/patches/0005-native-android-target.patch": "ff8bed54ef7b8e5a56e6610387d5722f5cdc61360304a1663f5e8b245194a42d",
+        "Build/patches/0006-external-ndk-target.patch": "cf9fb2cc68b18310ec6cdc0da5d815ca0e2fbd1adb21eb3ec3689dc155603db8",
+        "Build/patches/0007-native-audio-target.patch": "8c63fbb8d8cd9781f0bbb99f01db31641dbb099bbff861b92101986f0f6d23f6",
+        "Build/patches/0008-native-stacktrace-target.patch": "91db3b59f91a98d28377546187a2893cd73ad00009efcfbbeee45b1da87f7e1f",
+        "Build/patches/0009-native-only-test-graph.patch": "487baa47795bf13d6a5e1fc4362869916998a047195be3053c16abedbb713a7a",
+        "Build/patches/0010-native-java-templates.patch": "c25d2a72cd634b1fc4134fc46c34ec45c69f16ad8978bb631c6cac97ba03ad6c",
+        "Build/patches/0011-native-test-runners.patch": "c6d7f56c93681467f7d1910e941f9ef9a84a91d363e0a947a7974dfdda75ba0c",
+        "Build/patches/0012-pinned-license-gn.patch": "013494b54c9ed8be26bb9181323383b13ae44219175929c917d988b1c7971f09"
+      },
+      "source_dependencies": {
+        "build-lock": "7c97d0e5a9e9f5312a71711e8ea53ff8fbf3e072d5e36c83ee62a4365a87b327",
+        "build-runner": "9c7bdd4068e51f99e9ea5bbd69a742b08d8679143b76621c6354f290bde83f1c",
+        "gn-linux-amd64": "971fdc1572daedd2919646bbfb9b73c445563ab4fe867f0df75dceeba2a9d733",
+        "gn-mac-arm64": "6ee55c0d888539a88aee49854ad9a58b8cab9c7cff2fac72a5bdb1837fba47ff",
+        "link-probe": "62b634d0ad814579d20a846d19d81141bc61011d633871b157b34cd9f81b978e",
+        "ninja-linux-amd64": "3d4bdd8b12b114efca564f5de961695cb54330cd0c1eff3a8f2cb2493310eca2",
+        "ninja-mac-arm64": "9d53be2b3ca4cbd9df1b8a516f7428eca771ca81178ddc2e3a1570cbe874adb3",
+        "openssl-ios": "84d3bfd6f9080695fa21e58ac2ea617d4161ff60d0658835d1a78384bc7078c5",
+        "opus": "483666b5af0fd409a015cdef077eaf18729d940b0244eda79f01e72b6f40605d",
+        "src/base": "7ee725c53f7e5a822cf4c571ce4e8ff787bfc0c7",
+        "src/build": "18e9d3c3adadf2489507e4e62afffafa46717d26",
+        "src/buildtools": "33b52eafd539278600d34cd9ba23550d28c933d2",
+        "src/ios": "dc273d7b2d91ad6c39d99604682a4e82c0278383",
+        "src/testing": "e3bca95dbc08d3879eadc39a66141210e85ee76f",
+        "src/third_party": "38080027ded6b80f8f121e748ae8ecc60d9314b4",
+        "src/third_party/catapult": "3ffa6b222803f54188a7b249383b2f092a24d19a",
+        "src/third_party/crc32c/src": "fa5ade41ee480003d9c5af6f43567ba22e4e17e6",
+        "src/third_party/dav1d/libdav1d": "87f9a81cd770e49394a45deca7a3df41243de00b",
+        "src/third_party/depot_tools": "b52683fa2e74087464d32a1a9c76bf1b5275e4fe",
+        "src/third_party/google_benchmark/src": "f730846b0a3c0dc0699978846fb14ffb2fad0bdc",
+        "src/third_party/googletest/src": "af29db7ec28d6df1c7f0f745186884091e602e07",
+        "src/third_party/icu": "da07448619763d1cde255b361324242646f5b268",
+        "src/third_party/jsoncpp/source": "42e892d96e47b1f6e29844cc705e148ec4856448",
+        "src/third_party/libaom/source/libaom": "7f32eb35ff2589369f095388701e3dfc4d6a9381",
+        "src/third_party/libjpeg_turbo": "ed683925e4897a84b3bffc5c1414c85b97a129a3",
+        "src/third_party/libsrtp": "5b7c744eb8310250ccc534f3f86a2015b3887a0a",
+        "src/third_party/libvpx/source/libvpx": "5245f6e9cb7e6bb68ab45fe4d8b00bc9b16857e1",
+        "src/third_party/libyuv": "fe9ced6e3c8ae6c69bcc3ebb8505a650d2df30e0",
+        "src/third_party/lss": "ce877209e11aa69dcfffbd53ef90ea1d07136521",
+        "src/third_party/nasm": "0873b2bae6a5388a1c55deac8456e3c60a47ca08",
+        "src/tools": "a398922738180b9301ebb4f2bf0896763ee921ed",
+        "vpx": "6fa452d87399f91829a9f41fefb7e58636fe0264d8c6aa4eee215d8d78a20262"
+      },
+      "validation": {
+        "architecture": "arm64",
+        "archive_bytes": 25297696,
+        "artifact_id": "ios-arm64-4e8a5ac68e8a-7c97d0e5a9e9",
+        "files": 2942,
+        "manifest_sha256": "e23130035eec685fc8d3626c23d52f1814f1ffbf2b4af85c14d6f07dfa67c045",
+        "objects": 1246,
+        "platform": "IOS",
+        "runtime_validation": "unverified"
+      }
+    },
+    "IOSSimulator": {
+      "build_lock_sha256": "5089c53c0ea5463f6e2e8320f40a7b5a7b010d894c57981eb410a76c642adbf1",
+      "engine_libraries": {
+        "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libcrypto.sim.a": {
+          "bytes": 21885576,
+          "sha256": "bd2d77b6004679bb53bdd4b3209e65f9e87662c9a1797a1b13ee57c1e576ad16",
+          "version_strings": [
+            "OpenSSL 1.1.1t  7 Feb 2023"
+          ]
+        },
+        "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libssl.sim.a": {
+          "bytes": 4416048,
+          "sha256": "35fc534696e491a87395787ce5c083694a042a72d1135271e85dd57d8b4df443",
+          "version_strings": [
+            "OpenSSL 1.1.1t  7 Feb 2023"
+          ]
+        },
+        "Engine/Source/ThirdParty/libOpus/opus-1.1/IOS/libOpus.sim.a": {
+          "bytes": 9931512,
+          "sha256": "9e578499c3c96b35b56bcb971d6794599bea3b341f62ea1775d5d98eadd3d47b",
+          "version_strings": [
+            "libopus 1.1-beta"
+          ]
+        }
+      },
+      "libraries": {
+        "Lib/libvpx.a": {
+          "bytes": 1784592,
+          "sha256": "919f7d108a8b78fca36475f3d9077661d8060b00ef1f147a1685dd52ec6c2c20"
+        },
+        "Lib/libwebrtc.a": {
+          "bytes": 25273184,
+          "sha256": "53216b093aeaf0127c874ac16f31ca8846a3eb0dd0fdab47057ca1e1b1e4f354"
+        }
+      },
+      "link_probe": {
+        "binary_sha256": "697099d05b899f9c72077556b5a4f3e6b8cab5c2957b18c3e37f475751207780",
+        "engine_libraries": [
+          {
+            "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libssl.sim.a",
+            "sha256": "35fc534696e491a87395787ce5c083694a042a72d1135271e85dd57d8b4df443"
+          },
+          {
+            "path": "Engine/Source/ThirdParty/OpenSSL/1.1.1t/lib/IOS/libcrypto.sim.a",
+            "sha256": "bd2d77b6004679bb53bdd4b3209e65f9e87662c9a1797a1b13ee57c1e576ad16"
+          },
+          {
+            "path": "Engine/Source/ThirdParty/libOpus/opus-1.1/IOS/libOpus.sim.a",
+            "sha256": "9e578499c3c96b35b56bcb971d6794599bea3b341f62ea1775d5d98eadd3d47b"
+          }
+        ],
+        "external_codec_crypto_definitions": [],
+        "probe_sha256": "62b634d0ad814579d20a846d19d81141bc61011d633871b157b34cd9f81b978e",
+        "runtime_validation": "unverified",
+        "simulator_vpx_sha256": "89a36f7aef383135ceed140351869cbb3bb47883bcd0544ebb16651e32573e27",
+        "status": "linked",
+        "whole_archive": true
+      },
+      "matches_current_build_lock": true,
+      "metadata": {
+        "adapter": "webrtc-5414-ue5.8.3-v1",
+        "architecture": "arm64",
+        "artifact_id": "iossimulator-arm64-4e8a5ac68e8a-5089c53c0ea5",
+        "codecs": {
+          "audio": [
+            "opus",
+            "ISAC",
+            "G722",
+            "PCMU",
+            "PCMA",
+            "multiopus",
+            "L16"
+          ],
+          "video": [
+            "VP8",
+            "VP9"
+          ]
+        },
+        "configuration": "Release",
+        "dependencies": "unreal-openssl-opus-simulator-vpx",
+        "engine_version": "5.8.3",
+        "platform": "IOSSimulator",
+        "schema": 1,
+        "source_revision": "4e8a5ac68e8a4ae0588f54f2fdb8cbd1eb5fa50d",
+        "toolchain": {
+          "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)",
+          "cpp_abi": "itanium",
+          "cpp_runtime": "libc++",
+          "host": "Mac",
+          "minimum_os": "15.0",
+          "sdk": "27.1"
+        }
+      },
+      "notice_files": {
+        "Licenses/JSONCPP-LICENSE.txt": "76c45ece83a26117f86f4e349e7df118708e061e87225328fb478ce1e8b3eb86",
+        "Licenses/LIBYUV-PATENTS.txt": "4da84211f947c6f9f7dd8fbce513e1522e01833407ae732b8c9a2bbb75fed495",
+        "Licenses/LICENSE.md": "4c375b3d31a27eb0c75f2195198e2d4f3332162c3f2fb4ef6475fe6588eb2b17",
+        "Licenses/PORTAUDIO-LICENSE.txt": "641007ea2810c4cfc10a5d1a44db33983ec1409305e953c7119cc2457ec5c536",
+        "Licenses/SOCKETROCKET-LICENSE.txt": "21a742dd8cceebb1d5df7c6f945c75ccf1ad4f0d4c17e404517500c1a7de86a4",
+        "Licenses/THIRD_PARTY_NOTICES.txt": "95d6120b2055f77711b2ac9d79aa106aa0425e533f58b3edd8a22f1108ae38ca",
+        "Licenses/VPX-LICENSE.txt": "8267348d5af1262c11d1a08de2f5afc77457755f1ac658627dd9acf71011d615",
+        "Licenses/WEBRTC-PATENTS.txt": "01462e2068d1a04c2274f3389773014c14ed9bc3446b28303543bd3e3c064145"
+      },
+      "notice_sections": [
+        "webrtc",
+        "abseil-cpp",
+        "base64",
+        "crc32c",
+        "fft",
+        "g711",
+        "g722",
+        "libsrtp",
+        "libyuv",
+        "ooura",
+        "pffft",
+        "rnnoise",
+        "sigslot",
+        "spl_sqrt_floor",
+        "JSONCPP exported headers",
+        "PORTAUDIO exported headers",
+        "SOCKETROCKET exported headers"
+      ],
+      "patches": {
+        "Build/patches/0001-native-probe-scope.patch": "12d795133ec4d6a694866296c8424e934ebe762bf22ec26773a4c20ebb9b3c3b",
+        "Build/patches/0002-external-openssl.patch": "7fb119636f7501c0210f832e311bad9c09996992c75d57a28ff81eb83e755797",
+        "Build/patches/0003-crc32c-clang.patch": "022ee4d04b6551587fb8942b2912749966dcc13f31218df99250ea4e81a9d373",
+        "Build/patches/0004-legacy-stats-clang.patch": "3f082e2b99777044fc50f54d44bb83207ad00aed7cba47d19e4fc24eec2b2e84",
+        "Build/patches/0005-native-android-target.patch": "ff8bed54ef7b8e5a56e6610387d5722f5cdc61360304a1663f5e8b245194a42d",
+        "Build/patches/0006-external-ndk-target.patch": "cf9fb2cc68b18310ec6cdc0da5d815ca0e2fbd1adb21eb3ec3689dc155603db8",
+        "Build/patches/0007-native-audio-target.patch": "8c63fbb8d8cd9781f0bbb99f01db31641dbb099bbff861b92101986f0f6d23f6",
+        "Build/patches/0008-native-stacktrace-target.patch": "91db3b59f91a98d28377546187a2893cd73ad00009efcfbbeee45b1da87f7e1f",
+        "Build/patches/0009-native-only-test-graph.patch": "487baa47795bf13d6a5e1fc4362869916998a047195be3053c16abedbb713a7a",
+        "Build/patches/0010-native-java-templates.patch": "c25d2a72cd634b1fc4134fc46c34ec45c69f16ad8978bb631c6cac97ba03ad6c",
+        "Build/patches/0011-native-test-runners.patch": "c6d7f56c93681467f7d1910e941f9ef9a84a91d363e0a947a7974dfdda75ba0c",
+        "Build/patches/0012-pinned-license-gn.patch": "013494b54c9ed8be26bb9181323383b13ae44219175929c917d988b1c7971f09",
+        "Build/patches/0013-android-itanium-abi.patch": "bb3571d3e6841400d6b067250d651d2951610fefdac536254b7dd6cb2ca009be"
+      },
+      "source_dependencies": {
+        "build-lock": "5089c53c0ea5463f6e2e8320f40a7b5a7b010d894c57981eb410a76c642adbf1",
+        "build-runner": "63b261a6ebb829c7a285e370f39d57ce42dcd92c12c874a32f3a82bf79454fd5",
+        "gn-linux-amd64": "971fdc1572daedd2919646bbfb9b73c445563ab4fe867f0df75dceeba2a9d733",
+        "gn-mac-arm64": "6ee55c0d888539a88aee49854ad9a58b8cab9c7cff2fac72a5bdb1837fba47ff",
+        "link-probe": "62b634d0ad814579d20a846d19d81141bc61011d633871b157b34cd9f81b978e",
+        "ninja-linux-amd64": "3d4bdd8b12b114efca564f5de961695cb54330cd0c1eff3a8f2cb2493310eca2",
+        "ninja-mac-arm64": "9d53be2b3ca4cbd9df1b8a516f7428eca771ca81178ddc2e3a1570cbe874adb3",
+        "openssl-ios": "84d3bfd6f9080695fa21e58ac2ea617d4161ff60d0658835d1a78384bc7078c5",
+        "opus": "483666b5af0fd409a015cdef077eaf18729d940b0244eda79f01e72b6f40605d",
+        "simulator-vpx-source": "901747254d80a7937c933d03bd7c5d41e8e6c883e0665fadcb172542167c7977",
+        "src/base": "7ee725c53f7e5a822cf4c571ce4e8ff787bfc0c7",
+        "src/build": "18e9d3c3adadf2489507e4e62afffafa46717d26",
+        "src/buildtools": "33b52eafd539278600d34cd9ba23550d28c933d2",
+        "src/ios": "dc273d7b2d91ad6c39d99604682a4e82c0278383",
+        "src/testing": "e3bca95dbc08d3879eadc39a66141210e85ee76f",
+        "src/third_party": "38080027ded6b80f8f121e748ae8ecc60d9314b4",
+        "src/third_party/catapult": "3ffa6b222803f54188a7b249383b2f092a24d19a",
+        "src/third_party/crc32c/src": "fa5ade41ee480003d9c5af6f43567ba22e4e17e6",
+        "src/third_party/dav1d/libdav1d": "87f9a81cd770e49394a45deca7a3df41243de00b",
+        "src/third_party/depot_tools": "b52683fa2e74087464d32a1a9c76bf1b5275e4fe",
+        "src/third_party/google_benchmark/src": "f730846b0a3c0dc0699978846fb14ffb2fad0bdc",
+        "src/third_party/googletest/src": "af29db7ec28d6df1c7f0f745186884091e602e07",
+        "src/third_party/icu": "da07448619763d1cde255b361324242646f5b268",
+        "src/third_party/jsoncpp/source": "42e892d96e47b1f6e29844cc705e148ec4856448",
+        "src/third_party/libaom/source/libaom": "7f32eb35ff2589369f095388701e3dfc4d6a9381",
+        "src/third_party/libjpeg_turbo": "ed683925e4897a84b3bffc5c1414c85b97a129a3",
+        "src/third_party/libsrtp": "5b7c744eb8310250ccc534f3f86a2015b3887a0a",
+        "src/third_party/libvpx/source/libvpx": "5245f6e9cb7e6bb68ab45fe4d8b00bc9b16857e1",
+        "src/third_party/libyuv": "fe9ced6e3c8ae6c69bcc3ebb8505a650d2df30e0",
+        "src/third_party/lss": "ce877209e11aa69dcfffbd53ef90ea1d07136521",
+        "src/third_party/nasm": "0873b2bae6a5388a1c55deac8456e3c60a47ca08",
+        "src/tools": "a398922738180b9301ebb4f2bf0896763ee921ed",
+        "vpx": "6fa452d87399f91829a9f41fefb7e58636fe0264d8c6aa4eee215d8d78a20262"
+      },
+      "validation": {
+        "architecture": "arm64",
+        "archive_bytes": 25273184,
+        "artifact_id": "iossimulator-arm64-4e8a5ac68e8a-5089c53c0ea5",
+        "files": 2946,
+        "manifest_sha256": "765657e8fa7cf55d4337654f5de39ba9f17fc8188c0e3c317d721408df1f85ff",
+        "objects": 1246,
+        "platform": "IOSSimulator",
+        "runtime_validation": "unverified"
+      }
+    }
+  },
+  "mobile_build_lock_sha256": "5089c53c0ea5463f6e2e8320f40a7b5a7b010d894c57981eb410a76c642adbf1",
+  "schema": 1,
+  "scope": "SR-003 local inventory; see docs/DEPENDENCY_REVIEW.md",
+  "security_approval": "not_granted",
+  "simulator_http2": {
+    "archive_sha256": "a0e549237cfb56d29d79ffa67c868fb3f6fc25e84356e51322e95a9918c75243",
+    "manifest_sha256": "217edfdf490360cb152bcaf7546ad2231a2d0e152920d375e23ecaaa1627e5f8",
+    "ndebug_in_recorded_flags": false,
+    "notice_sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+    "source_sha256": "20e73f3cf9db3f05988996ac8b3a99ed529f4565ca91a49eb0550498e10621e8",
+    "version": "1.64.0"
+  }
+}

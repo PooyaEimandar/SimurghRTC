@@ -1,6 +1,6 @@
 # M0 status and test results
 
-Updated **2026-10-19**. M0 is still in progress. API v1 and lifecycle examples (SR-001), Mac build profiles (SR-002), local media feasibility (SR-004) and repeatable fixtures (SR-005) are complete on the available host.
+Updated **2026-10-19**. M0 is still in progress. API v1 and lifecycle examples (SR-001), Mac build profiles (SR-002), dependency/ABI review and Server feasibility (SR-003), local media feasibility (SR-004) and repeatable fixtures (SR-005) are complete on the available host. SR-003 found release blockers now tracked by SR-008 and SR-902.
 
 The plugin has working test probes, but the shared `Connect` API still returns `NotImplemented`. No Unreal RTC call or network media flow has been demonstrated yet.
 
@@ -10,7 +10,8 @@ Tests ran on a Mac with Apple M2 Max and UE 5.8.3. Janus/TURN ran in Linux ARM64
 
 | Check | Result | What it establishes |
 |---|---|---|
-| Python checks | 117 passed | Pinned inputs, fixtures, mobile/lifecycle reports, optional asset staging and package audits |
+| Python checks | 120 passed | Pinned inputs, dependency inventory, fixtures, mobile/lifecycle reports, optional asset staging and package audits |
+| Native dependency inventory | Passed on Mac and all three mobile artifacts | External mobile library/header hashes, archive members, versions and notice inputs checked; security approval is withheld |
 | Compiled UBT artifact validator | 30 current fixture cases passed; 2 earlier device exports passed | Valid Android/iOS metadata and rejection of missing, changed, extra or incompatible inputs |
 | Android/iOS ARM64 dependencies | Corrected Android and simulator repeat builds passed | Two fresh builds per target match; earlier device iOS evidence is retained |
 | Packaged Android lifecycle | Direct-only and Full passed on Samsung S25 Ultra | Each run created and closed nine peers; dependency identity and app cleanup verified |
@@ -29,14 +30,17 @@ These results do not establish Windows, native Linux Unreal or full Android/iOS 
 
 | Issue | Remaining work |
 |---|---|
-| SR-003 | Complete dependency, license, security and mobile ABI review |
+| SR-008 | Resolve dependency security/provenance findings before untrusted network acceptance or a supported release |
 | SR-006 / SR-007 | Reproduce dependencies on independent hosts. Physical iPhone validation is deferred |
+
+SR-902 also blocks publication until complete dependency notices and patent files are delivered with artifacts and apps. Owners and exact findings are in the [dependency review](DEPENDENCY_REVIEW.md#follow-up-owners).
 
 SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its message contracts against real Unreal providers; SR-305 covers provider parity. A Python model passing does not mean those providers are implemented.
 
 ## Reproduce the checks
 
 - [Building](BUILDING.md): Python and Unreal automation.
+- [Dependency review](DEPENDENCY_REVIEW.md): SR-003 findings and the repeatable inventory check.
 - [Lifecycle examples](LIFECYCLE_EXAMPLES.md): API v1 C++ and Blueprint examples in Editor and packaged games.
 - [Server probe](NATIVE_PROBE.md): packaged headless Server.
 - [Media probe](MEDIA_PROBE.md): codecs, textures and audio integration.
@@ -45,9 +49,17 @@ SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its mess
 - [Mobile builds](MOBILE_BUILDS.md): pinned sources/toolchains, separate ARM64 libraries and repeat-build checks.
 - [Mobile probe](MOBILE_PROBE.md): package and run on Android or the iOS simulator.
 
-Generated logs and reports stay under `Intermediate/` and are not committed. Start with `Intermediate/SR002/result.json` for profile/package acceptance, `Intermediate/SR001/result.json` for the earlier API v1 acceptance, `Intermediate/MobileProbes/current-results.json` for packaged mobile runs and `Intermediate/MobileBuilds/Repeat20261018/result.json` for the latest dependency repeat checks.
+Generated logs and reports stay under `Intermediate/`. The compact [SR-003 inventory snapshot](reviews/SR003-inventory.json) is retained with the review; its rerun is `Intermediate/SR003/inventory.json`. Start with `Intermediate/SR002/result.json` for profile/package acceptance, `Intermediate/SR001/result.json` for the earlier API v1 acceptance, `Intermediate/MobileProbes/current-results.json` for packaged mobile runs and `Intermediate/MobileBuilds/Repeat20261018/result.json` for the latest dependency repeat checks.
 
 The latest simulator packages use source engine revision `82051d771c6227c2d5d10737c46d5e5d5a837c0b`. `Intermediate/MobileProbes/Xcode271/build-commands.json` records commands, tool versions and engine state before and after each step. Concurrent work changed HTML5-only files in the shared engine checkout; those paths are retained in the evidence. This task made no engine source edits.
+
+## SR-003: native dependency and ABI review
+
+**Complete with release blockers, 2026-10-19.** The [review](DEPENDENCY_REVIEW.md) covers desktop/mobile dependencies, codec/APM scope, private interfaces, debug symbols, license inputs, security advisories and ABI constraints. The inventory command validated the corrected Android artifact, earlier iOS device artifact and Xcode 27.1 simulator artifact, including their external engine libraries. The full Python suite passed **120 tests**.
+
+The main findings are unsupported public-upstream maintenance for OpenSSL 1.1.1t, missing Epic WebRTC/codec provenance, advisories requiring source-level disposition, a simulator nghttp2 version in an affected range, and incomplete distribution notices. SR-008 owns dependency qualification; SR-902 owns the final notice bundle. Existing Server/Samsung/simulator feasibility evidence is retained. No Unreal binaries, dependency pins or engine sources changed, and no new device/runtime acceptance is claimed.
+
+The older device artifact correctly reports a different build lock and 12 patches. Android/simulator repeat artifacts match the current lock with 13 patches. Embedded Opus strings are `1.1` on Mac, `1.1-beta` on device/simulator and `unknown-fixed` on Android; the inventory does not infer a release version from the folder name.
 
 ## SR-002: build profiles and optional content
 

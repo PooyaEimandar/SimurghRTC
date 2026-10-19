@@ -19,7 +19,7 @@ The engine archive does not export `AudioDeviceModule::Create`. The private UE58
 
 The desktop adapter selects the engine's matching headers/archive through UBT's `WebRTC` module, with explicit `OpenSSL`, `libOpus` and `LibVpx` dependencies. Precompiled external modules did not propagate all private static links in the installed-engine build. Mac also links AudioToolbox, CoreAudio, CoreVideo and VideoToolbox; linking frameworks does not open a device.
 
-UBT requires engine version 5.8.3 and the adapter checks `WEBRTC_5414`. Mac, Win64 and Linux x64 select the engine library; **only Mac ARM64 has been validated**. Android/iOS require a [separate ARM64 artifact](MOBILE_ARTIFACTS.md) and fail the build when it is absent or incompatible. They have no engine fallback. Mobile factory/device behavior remains unverified. Provider/module profiles are independent of library selection. `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` remains correct because the shared session service is not implemented.
+UBT requires engine version 5.8.3 and the adapter checks `WEBRTC_5414`. Mac, Win64 and Linux x64 select the engine library; **only Mac ARM64 has been validated among desktop targets**. Android/iOS require a [separate ARM64 artifact](MOBILE_ARTIFACTS.md) and fail the build when it is absent or incompatible. They have no engine fallback. Packaged factory/teardown probes pass on Samsung S25 Ultra and the ARM64 iOS simulator; physical iPhone acceptance is deferred. Provider/module profiles are independent of library selection. `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` remains correct because the shared session service is not implemented.
 
 Local audit on 2026-10-17:
 
@@ -35,7 +35,7 @@ Local audit on 2026-10-17:
 | Builtin sender audio names observed | `opus`, `red`, `ISAC`, `G722`, `PCMU`, `PCMA`, `CN`, `telephone-event` |
 | Builtin sender video names observed | `VP8`, `rtx`, `VP9`, `red`, `ulpfec`; no H.264 or AV1 advertised |
 
-These are local factory capabilities, including repair/auxiliary formats, not negotiated codec support or throughput measurements. The exact upstream WebRTC commit and Epic patch inventory are not established by the `5414` directory name. The archive checksum identifies the tested binary; it is not a mobile revision pin or an app-size measurement. Security maintenance and distribution review remain open before declaring a supported release baseline.
+These are local factory capabilities, including repair/auxiliary formats, not negotiated codec support or throughput measurements. The exact upstream WebRTC commit and Epic patch inventory are not established by the `5414` directory name. The archive checksum identifies the tested binary; it is not a mobile revision pin or an app-size measurement. The [completed SR-003 review](DEPENDENCY_REVIEW.md) assigns security/provenance remediation to SR-008 and final notices to SR-902 before release approval.
 
 The repository contains our adapter source and no copied engine binaries or implementation. Relevant supplied notice locations include `Engine/Source/ThirdParty/Licenses/{WebRTC_License,OpenSSL_License,Opus_License,abseil-cpp_LICENSE}.txt`, and the WebRTC include tree's libyuv, libsrtp and libvpx license files. This is an initial inventory, not a complete redistributed-dependency notice bundle. Preserve the engine/dependency notices required for the final packaged product; the repository's Apache-2.0 license does not replace them. Mobile artifacts need their own full source/patch/license inventory.
 
@@ -108,7 +108,7 @@ UE 5.8's Mac generic `RequestExitWithStatus` ignores the requested exit code dur
 
 An installed engine can run the same probe using `--kind editor-server --project "$PROJECT" --executable "$UE_ROOT/Engine/Binaries/Mac/UnrealEditor-Cmd"`. Its JSON explicitly reports `compiled_server_target: false`; it cannot satisfy dedicated Server acceptance. Build that project's Editor target with the same engine first. Run Editor processes sequentially to avoid unrelated SDK/trace-log initialization races.
 
-After building the Full source host, run all seven contract/native tests (including the local media codec fixture):
+After building the Full source host, run the contract/native tests (including the local media codec fixture):
 
 ```sh
 "$UE_ROOT/Engine/Binaries/Mac/UnrealEditor-Cmd" "$PROJECT" \
