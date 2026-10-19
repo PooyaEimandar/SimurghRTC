@@ -75,6 +75,8 @@ python3 tools/prepare_mobile_probe.py --profile direct-only \
 
 The artifact contains simulator libwebrtc and a simulator VPX library built from Unreal's pinned source archive. It links Unreal's simulator OpenSSL and Opus libraries. Device archives remain separate and cannot substitute for simulator binaries.
 
+To test the saved Xcode 27.1 repeat build, select `LocalBuilds/Artifacts/IOSSimulator-repeat-20261018-a`. Use that same artifact for both profiles, with fresh project directories and separate application IDs. Build the HTTP/2 support library with the same pinned Xcode into a new output directory as well. The [validation record](M0_VALIDATION.md) identifies the exact manifests used by each run.
+
 This engine also supplies a device-only `nghttp2` library to its content streaming module. The support step builds the matching pinned 1.64.0 release for the simulator. The sample target explicitly loads that library so the linker does not select device objects. It verifies the archive hash and leaves the engine unchanged. This support library is separate from the WebRTC artifact and is used only by simulator probe builds.
 
 Build the simulator executable and the Editor modules needed for cooking, then package:
@@ -101,7 +103,7 @@ env UE_SKIP_UBT=1 "$UE_ROOT/Engine/Build/BatchFiles/RunUAT.sh" BuildCookRun -Wai
 
 The first two commands compile; the last stages cooked content and creates an ad-hoc signed simulator app. `SDKROOT=iphonesimulator` is required because this engine's generated Xcode project otherwise selects the device SDK. Check Xcode's `BUILD SUCCEEDED` messages as well as UAT's exit code: this engine can report UAT success after a signing failure. The harness also verifies the bundle platform and signature.
 
-New simulator dependency builds pin Xcode 27.1 and SDK 27.1. The earlier packaged lifecycle runs used 27.0 dependency artifacts with 27.1 packaging; their reports remain bound to those original manifests. See [repeat-build results](M0_VALIDATION.md#mobile-repeat-build-validation) for the newer dependencies. The iOS device build keeps its 27.0 pin.
+Both profiles passed with the Xcode/SDK 27.1 repeat-build artifact and matching packaging tools, running on the installed iOS 27.0 simulator. See [packaged results](M0_VALIDATION.md#packaged-mobile-probe-work) for the selected manifest and measurements. Earlier runtime reports retain their original dependency identities; the iOS device build keeps its 27.0 pin.
 
 Run the resulting simulator `.app` with its UDID from `xcrun simctl list devices available`:
 
@@ -144,3 +146,5 @@ The harness installs the supplied app, starts a fresh run, saves its log and sto
 Each run completes three cycles: nine factories and nine peers, six explicit stops and three destructor cleanups. It checks media/data-only factories, duplicate calls, overlapping owners and restart after stop. The report must match the run ID, platform, profile and SHA-256 of the staged artifact manifest. Editor, simulator, stale and incomplete reports cannot count as device acceptance.
 
 Keep the linker response/map alongside the report and verify that only the selected libwebrtc archive is linked. For Android, inspect final ELF load-segment alignment as well as the ARM64-only APK. The harness records Development package sizes. These are initial measurements, not Shipping delivery sizes or the incremental cost of RTC; those require matching RTC-off/on builds described in [Mobile clients](MOBILE_CLIENTS.md).
+
+For simulator evidence, also record the selected VPX and HTTP/2 archives, Xcode/SDK versions, and the engine revision. Compare the native executable's UUID with the packaged executable's UUID to tie the link map to the app that ran. Verify Janus is absent in Direct-only and present in Full. Keep earlier reports attached to their original dependency manifests.

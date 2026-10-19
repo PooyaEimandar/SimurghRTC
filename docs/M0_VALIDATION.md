@@ -14,7 +14,7 @@ Tests ran on a Mac with Apple M2 Max and UE 5.8.3. Janus/TURN ran in Linux ARM64
 | Compiled UBT artifact validator | 30 current fixture cases passed; 2 earlier device exports passed | Valid Android/iOS metadata and rejection of missing, changed, extra or incompatible inputs |
 | Android/iOS ARM64 dependencies | Corrected Android and simulator repeat builds passed | Two fresh builds per target match; earlier device iOS evidence is retained |
 | Packaged Android lifecycle | Direct-only and Full passed on Samsung S25 Ultra | Each run created and closed nine peers; dependency identity and app cleanup verified |
-| Packaged iOS simulator lifecycle | Direct-only and Full passed on ARM64, iOS 27.0 | Same nine-peer checks, matching launch PID and dependency identity, verified app shutdown |
+| Packaged iOS simulator lifecycle | Direct-only and Full passed with Xcode/SDK 27.1 artifacts on ARM64, iOS 27.0 | Same nine-peer checks, matching launch PID and dependency identity, verified linkage and app shutdown |
 | Full Unreal automation | 7 passed; no test warnings or failures | API lifecycle, native factory/peer setup and repeated local codec tests |
 | Packaged Server probe | Passed, including data-only and occupied-port cases | Native factory and HTTPServer work without graphics or hardware audio |
 | Packaged Direct-only Game media probe | Passed, including missing-graphics/audio cases | Local codecs, texture upload, render-target capture and audio-mixer consumption |
@@ -31,7 +31,7 @@ These results do not establish Windows, native Linux Unreal or full Android/iOS 
 | SR-001 | Review and freeze the API; finish device/headless contracts and working C++/Blueprint flows |
 | SR-002 | Finish executable Blueprint flows and remaining profile/package coverage |
 | SR-003 | Complete dependency, license, security and mobile ABI review |
-| SR-006 / SR-007 | Reproduce dependencies on independent hosts and package the new simulator export. Physical iPhone validation is deferred |
+| SR-006 / SR-007 | Reproduce dependencies on independent hosts. Physical iPhone validation is deferred |
 
 SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its message contracts against real Unreal providers; SR-305 covers provider parity. A Python model passing does not mean those providers are implemented.
 
@@ -47,7 +47,7 @@ SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its mess
 
 Generated logs and reports stay under `Intermediate/` and are not committed. Start with `Intermediate/MobileProbes/current-results.json` for packaged mobile runs and `Intermediate/MobileBuilds/Repeat20261018/result.json` for the latest dependency repeat checks.
 
-The final simulator rebuild uses the supplied source engine at revision `2cafb2d9194e503358a1fbeced79e621f2620abc`. Its tracked files were clean when recorded. This shared checkout advanced during other work; `engine-provenance.json` records the revision, and this task introduced no engine source edits.
+The latest simulator packages use source engine revision `82051d771c6227c2d5d10737c46d5e5d5a837c0b`. `Intermediate/MobileProbes/Xcode271/build-commands.json` records commands, tool versions and engine state before and after each step. Concurrent work changed HTML5-only files in the shared engine checkout; those paths are retained in the evidence. This task made no engine source edits.
 
 ## Mobile source-build checks
 
@@ -59,7 +59,7 @@ All three targets build from pinned WebRTC 5414 sources and checked toolchains. 
 | `IOS-arm64-release` | 25,297,696 bytes | Device build/link and repeat comparison pass; physical run deferred |
 | `IOSSimulator-arm64-current` | 25,273,184 bytes | Packaged Direct-only and Full simulator lifecycle probes pass |
 
-These archive sizes are not app sizes. The packaged runtime results below remain bound to these earlier artifacts. New repeat-build results are recorded separately.
+These archive sizes are not app sizes. Android runtime evidence still uses the earlier corrected artifact. The latest simulator runs use the Xcode 27.1 repeat-build artifact described below; earlier simulator reports are preserved separately.
 
 ## Mobile repeat-build validation
 
@@ -74,7 +74,7 @@ Each run starts with an empty Ninja output directory and reuses its platform's v
 
 Exports are under `LocalBuilds/Artifacts/`, named `Android-repeat-20261018-a` / `-b` and `IOSSimulator-repeat-20261018-a` / `-b`. Their matching `.symbols` directories retain diagnostic WebRTC archives. Android keeps NDK r27c, Clang 18.0.3 and API 26. Its library, headers and notices also match the earlier corrected Samsung-tested artifact; only build provenance changed.
 
-Simulator builds now pin the installed Xcode 27.1 (`27A9275`) and SDK 27.1 (`24A94232`), with Apple Clang 21.0.0. Headers and notices match the earlier simulator export. All 1,246 WebRTC and 160 VPX objects differ from the originals only in their recorded SDK version (27.0 to 27.1); `simulator-sdk-delta.json` records that audit. These new manifests have not been tested in packaged Unreal apps. The earlier runtime evidence and the iOS device build's Xcode/SDK 27.0 pins are preserved.
+Simulator builds now pin the installed Xcode 27.1 (`27A9275`) and SDK 27.1 (`24A94232`), with Apple Clang 21.0.0. Headers and notices match the earlier simulator export. All 1,246 WebRTC and 160 VPX objects differ from the originals only in their recorded SDK version (27.0 to 27.1); `simulator-sdk-delta.json` records that audit. The `IOSSimulator-repeat-20261018-a` export also passed the packaged Unreal checks below in both profiles. The `-b` export supplies repeat-build comparison evidence. Earlier runtime reports and the iOS device build's Xcode/SDK 27.0 pins are preserved.
 
 Evidence is under `Intermediate/MobileBuilds/Repeat20261018/`: `result.json`, `Android-comparison.json`, `IOSSimulator-comparison.json`, per-build command records/logs and `python-tests.log` (108 passed). The new checks reject reused output directories, changed tools/flags and missing fresh-build evidence. Full compiler logs remain in each workspace's `src/out/<build-name>/` directory.
 
@@ -114,20 +114,22 @@ The corrected Android archive is 42,103,278 bytes, SHA-256 `950bae6ef80ee71d0509
 
 The Direct-only iOS native executable compiled and linked successfully after scoping a Clang warning suppression to the pinned Abseil headers. Its link response/map select one iOS WebRTC archive, with iOS 15.0 minimum and SDK 27.0. Evidence is `ios-direct-build-fixed.log` and `ios-direct-link-audit.json`. Physical iPhone testing is deferred at the user’s request. Current iOS work targets the installed simulator; no older Xcode setup is planned. An unsigned device executable is not a simulator or device runtime pass.
 
-Both simulator profiles passed on the installed iPhone 17 simulator, iOS 27.0 (`24A434`), ARM64. Each run completed three cycles, nine factories/peers, six explicit stops and three destructor cleanups. Reports match the launch PID, run UUID and simulator artifact manifest `a0dd1843b77eb2288dec27c96d3ff438f2913bfd9dc094cdc551313b82fb746d`. Both apps were stopped and their processes confirmed absent.
+On 2026-10-18, both simulator profiles passed using `LocalBuilds/Artifacts/IOSSimulator-repeat-20261018-a`. The dependencies and packaged UE 5.8.3 apps use Xcode 27.1 (`27A9275`) and SDK 27.1 (`24A94232`). They ran on the installed iPhone 17 simulator, iOS 27.0 (`24A434`), ARM64.
+
+Each run completed three cycles: nine factories/peers, six explicit stops and three destructor cleanups. Duplicate calls, overlapping owners and restart after stop passed. Reports match the launch PID, run UUID and artifact manifest `765657e8fa7cf55d4337654f5de39ba9f17fc8188c0e3c317d721408df1f85ff`. Both apps were stopped and their processes confirmed absent.
 
 | iOS simulator Development package | Bundle file bytes | Executable bytes | Evidence directory under `Intermediate/MobileProbes/` |
 |---|---:|---:|---|
-| Direct-only | 283,675,760 | 251,680,960 | `IOSSimulatorDirectValidated/` |
-| Full | 283,698,000 | 251,702,800 | `IOSSimulatorFullValidated/` |
+| Direct-only | 283,675,788 | 251,680,976 | `Xcode271/Direct/` |
+| Full | 283,698,028 | 251,702,816 | `Xcode271/Full/` |
 
-These are simulator bundle measurements, not iPhone delivery sizes or Shipping RTC deltas. Each evidence directory contains the saved native report, launch/command logs and `result.json`. The `ios-simulator-*-final-link-audit.json` files bind the final packaged executable hashes to maps selecting only the simulator WebRTC, VPX and HTTP/2 archives, with Janus off/on as expected.
+These are simulator bundle measurements, not iPhone delivery sizes or Shipping RTC deltas. Each evidence directory contains the native report, launch/command logs and `result.json`. The summary is `Intermediate/MobileProbes/Xcode271/result.json`; that directory also holds build/package logs, linker maps/responses and per-profile link audits. The packaged and native executable UUIDs match, tying each app to its map. Both maps select exactly one staged WebRTC, VPX and HTTP/2 archive, with Janus absent in Direct-only and present in Full. All 108 Python checks passed in this run.
 
-The simulator uses separately built libwebrtc and portable-C VPX, plus pinned `nghttp2` 1.64.0 because Unreal’s bundled HTTP/2 archive is device-only. The sample enables Unreal's scene lifecycle and supplies project-local metadata for its headless `-nullrhi -sm5` startup. All 30 compiled UBT validator cases passed (`SimulatorRules/result.json`). Tests reject device/simulator object mismatches and prevent simulator reports from counting as physical-device results. No engine source edits were needed.
+The simulator uses separately built libwebrtc and portable-C VPX, plus pinned `nghttp2` 1.64.0 because Unreal’s bundled HTTP/2 archive is device-only. The HTTP/2 support library was also rebuilt with Xcode/SDK 27.1 in `LocalBuilds/SimulatorSupport/nghttp2-arm64-xcode271`; its manifest and archive hashes are recorded in both link audits. The sample enables Unreal's scene lifecycle and supplies project-local metadata for its headless `-nullrhi -sm5` startup. The earlier 30 compiled UBT validator cases passed (`SimulatorRules/result.json`). Tests reject device/simulator object mismatches and prevent simulator reports from counting as physical-device results. No engine source edits were needed.
 
 Network media, provider interoperability, suspend/resume and Shipping RTC-off/on size comparisons remain separate work.
 
-The host updated from Xcode 27.0 to 27.1 during the packaged-probe run. Its dependency artifacts retain their pinned 27.0 provenance. Both final simulator executables and packages use 27.1 (`27A9275`), SDK 27.1 (`24A94232`). The later repeat-build work updates the simulator dependency pin to 27.1; it does not change these earlier runtime records.
+Earlier simulator runs used Xcode/SDK 27.0 dependencies with 27.1 packaging. Their reports remain in `IOSSimulatorDirectValidated/` and `IOSSimulatorFullValidated/`, under `Intermediate/MobileProbes/`, with the original manifest `a0dd1843b77eb2288dec27c96d3ff438f2913bfd9dc094cdc551313b82fb746d`. Their engine revision was `2cafb2d9194e503358a1fbeced79e621f2620abc`, with clean tracked files when recorded in `engine-provenance.json`. The old aggregate is preserved as `Xcode271/previous-mobile-results.json`.
 
 ## Detailed validation record
 
