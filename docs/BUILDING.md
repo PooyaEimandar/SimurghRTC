@@ -33,7 +33,9 @@ PROJECT="$PWD/Samples/ContractHost/ContractHost.uproject"
   -ReportExportPath="$PWD/Intermediate/Reports/Full"
 ```
 
-The sample uses the Full profile. Its seven tests cover API validation, completion, cancellation, teardown, profile selection, native factory/peer lifetimes and local video/audio codecs. Check the report for failures; process exit alone is not enough.
+The sample uses the Full profile. Its tests cover API validation, completion, cancellation, teardown, garbage collection, frame bounds, profile selection, native factory/peer lifetimes and local video/audio codecs. Check the report for failures; process exit alone is not enough.
+
+For executable C++ and Blueprint graphs, including packaged runs, follow [Lifecycle examples](LIFECYCLE_EXAMPLES.md).
 
 These tests run without graphics or audio devices. For texture capture and audio-mixer checks, follow the [media guide](MEDIA_PROBE.md).
 

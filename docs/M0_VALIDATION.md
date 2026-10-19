@@ -1,6 +1,6 @@
 # M0 status and test results
 
-Updated **2026-10-18**. M0 is still in progress. Local media feasibility (SR-004) and repeatable fixtures (SR-005) are complete on the available host.
+Updated **2026-10-19**. M0 is still in progress. API v1 and lifecycle examples (SR-001), local media feasibility (SR-004) and repeatable fixtures (SR-005) are complete on the available host.
 
 The plugin has working test probes, but the shared `Connect` API still returns `NotImplemented`. No Unreal RTC call or network media flow has been demonstrated yet.
 
@@ -10,12 +10,13 @@ Tests ran on a Mac with Apple M2 Max and UE 5.8.3. Janus/TURN ran in Linux ARM64
 
 | Check | Result | What it establishes |
 |---|---|---|
-| Python checks | 108 passed | Pinned inputs, fresh-build evidence, artifacts, fixtures and mobile report validation |
+| Python checks | 112 passed | Pinned inputs, artifacts, fixtures, mobile reports and correlated C++/Blueprint lifecycle reports |
 | Compiled UBT artifact validator | 30 current fixture cases passed; 2 earlier device exports passed | Valid Android/iOS metadata and rejection of missing, changed, extra or incompatible inputs |
 | Android/iOS ARM64 dependencies | Corrected Android and simulator repeat builds passed | Two fresh builds per target match; earlier device iOS evidence is retained |
 | Packaged Android lifecycle | Direct-only and Full passed on Samsung S25 Ultra | Each run created and closed nine peers; dependency identity and app cleanup verified |
 | Packaged iOS simulator lifecycle | Direct-only and Full passed with Xcode/SDK 27.1 artifacts on ARM64, iOS 27.0 | Same nine-peer checks, matching launch PID and dependency identity, verified linkage and app shutdown |
-| Full Unreal automation | 7 passed; no test warnings or failures | API lifecycle, native factory/peer setup and repeated local codec tests |
+| Full and Direct-only Unreal automation | 11 passed per profile; no test warnings or failures | API lifecycle, GC, enum/frame boundaries, client media placeholders and native factory/codec probes |
+| C++ and Blueprint lifecycle examples | Six Editor/packaged Mac runs passed | Both implementations handle local success, failure, cancellation, silent shutdown and EndPlay; same Blueprint with Janus enabled/excluded |
 | Packaged Server probe | Passed, including data-only and occupied-port cases | Native factory and HTTPServer work without graphics or hardware audio |
 | Packaged Direct-only Game media probe | Passed, including missing-graphics/audio cases | Local codecs, texture upload, render-target capture and audio-mixer consumption |
 | Janus/TURN service tests | Passed twice, including a fresh restart | Janus authentication/session cleanup and a 29-byte binary message relayed in both directions through TURN |
@@ -28,8 +29,7 @@ These results do not establish Windows, native Linux Unreal or full Android/iOS 
 
 | Issue | Remaining work |
 |---|---|
-| SR-001 | Review and freeze the API; finish device/headless contracts and working C++/Blueprint flows |
-| SR-002 | Finish executable Blueprint flows and remaining profile/package coverage |
+| SR-002 | Finish remaining profile/package coverage beyond the validated Full and Direct-only Mac examples |
 | SR-003 | Complete dependency, license, security and mobile ABI review |
 | SR-006 / SR-007 | Reproduce dependencies on independent hosts. Physical iPhone validation is deferred |
 
@@ -38,6 +38,7 @@ SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its mess
 ## Reproduce the checks
 
 - [Building](BUILDING.md): Python and Unreal automation.
+- [Lifecycle examples](LIFECYCLE_EXAMPLES.md): API v1 C++ and Blueprint examples in Editor and packaged games.
 - [Server probe](NATIVE_PROBE.md): packaged headless Server.
 - [Media probe](MEDIA_PROBE.md): codecs, textures and audio integration.
 - [Fixtures](FIXTURES.md): fixed input files and local Janus/TURN.
@@ -45,9 +46,28 @@ SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its mess
 - [Mobile builds](MOBILE_BUILDS.md): pinned sources/toolchains, separate ARM64 libraries and repeat-build checks.
 - [Mobile probe](MOBILE_PROBE.md): package and run on Android or the iOS simulator.
 
-Generated logs and reports stay under `Intermediate/` and are not committed. Start with `Intermediate/MobileProbes/current-results.json` for packaged mobile runs and `Intermediate/MobileBuilds/Repeat20261018/result.json` for the latest dependency repeat checks.
+Generated logs and reports stay under `Intermediate/` and are not committed. Start with `Intermediate/SR001/result.json` for API v1 acceptance, `Intermediate/MobileProbes/current-results.json` for packaged mobile runs and `Intermediate/MobileBuilds/Repeat20261018/result.json` for the latest dependency repeat checks.
 
 The latest simulator packages use source engine revision `82051d771c6227c2d5d10737c46d5e5d5a837c0b`. `Intermediate/MobileProbes/Xcode271/build-commands.json` records commands, tool versions and engine state before and after each step. Concurrent work changed HTML5-only files in the shared engine checkout; those paths are retained in the evidence. This task made no engine source edits.
+
+## SR-001: API v1 and lifecycle examples
+
+**Passed on 2026-10-19:** the shared contract is frozen as version 1 for UE 5.8.3. The review defines provider topology, session/source ownership, cancellation, structured errors, device discovery and headless PCM/BGRA frame boundaries. Shared source controls now live in Core. Public types expose no libwebrtc or Janus implementation details; [API v1](API_CONTRACT.md) includes migration and compatibility rules.
+
+The executable examples use `AContractLifecycleCpp` and the actual `BP_RtcLifecycle` graph. The graph compiles with zero Blueprint warnings/errors, prints the shared error message, and calls Shutdown from EndPlay. Its parent records outcomes; it does not run the Blueprint's operation chain.
+
+| Profile | Editor game | Packaged Mac ARM64 game |
+|---|---|---|
+| Full | DirectUnreal and Janus passed | DirectUnreal and Janus passed |
+| Direct-only | DirectUnreal passed | DirectUnreal passed |
+
+Each of these six runs executes both examples, checks operation/session IDs and ordered outcomes, verifies silent shutdown and actor destruction, waits for late callbacks, and requires process exit. Disconnect supplies local success; Connect deliberately reports `NotImplemented`. No network session or call is claimed.
+
+Both profiles passed all **11 Unreal automation tests**, including pending null-session failures surviving garbage collection, disconnect/reuse, generated enum sentinel rejection, PCM/BGRA validation and honest device/source placeholders. **112 Python tests** passed. The same Blueprint asset was cooked into both packages; link maps include Janus only in Full and exclude the Editor-only generator from both games.
+
+Evidence is under `Intermediate/SR001/`: `result.json`, `commands.json`, `FullFinalAutomation/`, `DirectFinalAutomation/` and the six `FullFinal*` / `DirectFinal*` runtime report directories. Reports retain run IDs, PIDs, executable/source hashes, native/package UUIDs and link maps. Earlier development attempts are preserved separately from the final accepted runs.
+
+The accepted runs used source engine `365b52acc1836aebbad937d565f2f8f2ed9240f1`, Xcode 27.1 and the engine's desktop WebRTC archive. Concurrent HTML5 work changed the shared engine checkout and rebuilt its binaries; command records retain those observations. This task made no engine source edits. Ordinary Editor startup also reports missing optional ACL compression assets; the Blueprint compile and automation test results have no warnings. These Mac results do not add mobile Blueprint acceptance, live transport, hardware capture or Shipping-size evidence.
 
 ## Mobile source-build checks
 

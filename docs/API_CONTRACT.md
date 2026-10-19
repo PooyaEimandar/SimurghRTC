@@ -1,81 +1,109 @@
-# Shared API contract — M0 draft
+# Shared API contract — version 1
 
-This document describes the C++ and Blueprint API for **UE 5.8.3**. Types, async nodes, argument checks and cancellation handling are implemented. Connections, channels and shared media/room services are still pending; `Connect` returns `NotImplemented`.
+Version **1** freezes the shared C++ and Blueprint surface for **Unreal Engine 5.8.3**. Applications can query `USimurghRTCSession::GetApiContractVersion()`. The [lifecycle examples](LIFECYCLE_EXAMPLES.md) execute local success, failure, cancellation and owner cleanup through both interfaces.
 
-Separate [native probes](NATIVE_PROBE.md) can create an idle peer and test HTTP/media integration. Those probes do not enable the shared session API. See [validation results](M0_VALIDATION.md) for what has been tested.
+This is an API contract, not a completed RTC implementation. `Connect` still returns `NotImplemented`. Channels, calls, rooms, device capture and shared media delivery also remain unimplemented. The separate [native probes](NATIVE_PROBE.md) test libwebrtc feasibility; they do not make the session API operational.
 
-The API is still under review in [SR-001/SR-002](../ROADMAP.md#e01-api-and-build-contract). [Signaling examples](SIGNALING_V1.md) describe future provider messages; they stay private to the plugin and do not change the public API.
+The SR-001 review fixes ownership, call topology, headless media, device discovery, cancellation and errors below. Public v1 names, parameter types, Blueprint pins, enum values and these lifecycle rules are compatibility commitments. Additive APIs are allowed; breaking changes require a new contract version and migration notes. Append enum values rather than reordering them. The earlier M0 draft had no compatibility guarantee.
 
-## Public surface
+## Use the same API for both providers
 
-Applications depend on `SimurghRTCCore` and include `SimurghRTCSession.h` and `SimurghRTCOperation.h`. All common operations use Unreal-owned types, GUID handles and string identities. No libwebrtc headers, provider JSON or Janus numeric handles cross this boundary.
+Applications depend on `SimurghRTCCore` and include `SimurghRTCSession.h` and `SimurghRTCOperation.h`. Common types contain Unreal values, opaque string identities and plugin-owned GUID handles. Public headers expose no libwebrtc types, Janus numeric handles or provider JSON.
 
 | Surface | C++ entry points | Blueprint equivalent |
 |---|---|---|
-| Session | `USimurghRTCSession::CreateSession(Owner)`, `GetSessionId`, `GetState`, `GetProvider`, `Shutdown` | Callable functions and pure queries |
-| Connection | `USimurghRTCOperation::Connect(Session, Config)`, `Disconnect(Session)` | Async Connect / Disconnect nodes |
-| Data channels | `OpenChannel(Session, Options)`, `CloseChannel(Session, Handle)` | Async Open Channel / Close Channel nodes |
-| Data IO | `Session->SendText(Handle, Text)`, `SendBytes(Handle, Bytes)`, `GetChannelInfo(Handle, OutInfo)` | Callable nodes returning a structured error |
-| Calls | `Call`, `AcceptCall`, `RejectCall`, `HangUp` | Matching async nodes |
+| Session | `CreateSession(Owner)`, `GetSessionId`, `GetState`, `GetProvider`, `Shutdown` | Callable functions and pure queries |
+| Connection | `Connect(Session, Config)`, `Disconnect(Session)` | Async Connect / Disconnect |
+| Channels | `OpenChannel`, `CloseChannel` | Matching async nodes |
+| Data | `Session->SendText`, `SendBytes`, `GetChannelInfo` | Callable nodes with a structured error |
+| Calls | `Call`, `AcceptCall`, `RejectCall`, `HangUp`; `Session->GetCallInfo` | Async nodes and a pure call query |
 | Text rooms | `JoinTextRoom`, `LeaveTextRoom`, `SendRoomText` | Matching async nodes |
-| Diagnostics | `GetCapability(Provider, Feature)`, `GetStatistics()` | Pure queries exposing reflected structs |
-| Events | `OnStateChanged`, `OnMessage`, `OnChannelChanged`, `OnTrackChanged`, `OnParticipantChanged`, `OnRoomText`, `OnIncomingCall` | Assignable multicast events |
+| Generated media | `CreateGeneratedSource`, `AttachSource`, `ReplaceSource`, `SetSourceMuted`, `StopSource`, `DetachTrack` | Matching async nodes in Core |
+| CPU frames | `Session->PushAudioFrame`, `PushVideoFrame`; `SetDecodedFrameDelivery` | Callable submissions and async delivery control |
+| Diagnostics | `GetCapability(Provider, Feature)`, `GetStatistics`, `GetApiContractVersion` | Pure queries |
 
-`FSimurghRTCSessionConfig` holds provider (`DirectUnreal` or `Janus`), purpose, signaling endpoint, opaque local identity, access token, ICE servers and timeout. Direct uses HTTP(S); Janus also permits WS(S). Insecure signaling requires explicit development opt-in. Credentials are transient and are not copied into errors or logs; completion releases the operation's config copy. `Transient` does not secure a credential embedded by application code or a Blueprint literal.
+Unless prefixed with `Session->`, async operations in this table are static factories on `USimurghRTCOperation`. Output fields are in `FSimurghRTCOperationResult`: `Error`, `Channel`, `Source`, `Track`, `Call` and `RoomId`. Only fields belonging to the successful operation are populated; failure never manufactures a handle.
 
-Provider selection occurs at Connect. An active connection must be disconnected before changing provider; no migration of an existing PeerConnection is promised. Direct Call targets the Unreal server participant; Janus VideoCall targets another registered participant. Text rooms represent application services with explicit participant identities, not automatic multicast DataChannels.
+Session events are `OnStateChanged`, `OnMessage`, `OnChannelChanged`, `OnTrackChanged`, `OnParticipantChanged`, `OnRoomText`, `OnIncomingCall`, `OnCallChanged`, `OnAudioFrame` and `OnVideoFrame`. Both C++ and Blueprints can bind the reflected events. Operation completion additionally offers `OnCompletedNative` for C++.
 
-Channel options separate ordering from reliability. `Reliable` requires a zero bound; `MaxRetransmits` uses a retransmission count and `MaxLifetime` uses milliseconds, both in 0–65535. Labels are bounded by UTF-8 byte length, not Unreal character count. Handles belong to one session and must never be fabricated or reused after close. M1 will implement their registry and negotiated limits. `MaximumMessageBytes == 0` means unknown, not unlimited. Future send success will mean accepted into a bounded local queue, not delivered to a peer; M0 rejects every send because no open channels exist.
+### Configuration and topology
 
-## Async lifecycle and ownership
+`FSimurghRTCSessionConfig` selects provider, purpose, endpoint, local identity, access token, ICE servers and timeout. Direct permits HTTP(S); Janus also permits WS(S). Insecure signaling needs explicit development opt-in. Endpoints require a host and cannot embed user credentials, fragments or whitespace. Credentials are transient and omitted from errors/logs. Operation completion releases its configuration copy. Application code and Blueprint literals must not embed production secrets.
 
-All public calls and callbacks run on the game thread. C++ factories return a dormant operation: bind completion, retain it, then call `Activate()`. Blueprint async nodes bind their output pins and activate automatically. Activated operations are held by the session until completion and registered with its game instance when one exists. Retain the session in a `UPROPERTY` or Blueprint variable; an Outer alone is not the application's owning reference.
+| Purpose | Direct Unreal | Janus |
+|---|---|---|
+| Echo | The plugin's Unreal endpoint is the remote peer | Janus EchoTest is the remote peer |
+| Call | One client calls the server participant identified by the application | VideoCall joins two registered participants through Janus |
+| TextRoom | The Unreal application's room service routes messages | Janus TextRoom routes messages |
+| Receive | Receive tracks offered by the Unreal endpoint | Receive from a configured Janus service, subject to its capabilities |
 
-Each operation has a GUID and one final `FSimurghRTCOperationResult`. Its error carries the operation and session IDs. `GetResult()` reports `InvalidState` until `IsFinished()` is true. Activation is idempotent and normal completion is deferred to a later core-ticker tick. Explicit `Cancel()` may complete immediately on the game thread, including before activation; bind listeners first.
+Both providers use the same native libwebrtc adapter. Before Connect, `GetProvider` defaults to Direct if included, otherwise Janus. Provider selection happens at Connect; disconnect before changing it. No live PeerConnection migration is promised. Direct does not turn an ordinary Unreal dedicated server into a WebRTC endpoint, or add client-to-client calling implicitly. Janus VideoRoom/SFU operations are separate extensions, not the portable one-to-one `Call` operation. [Signaling v1](SIGNALING_V1.md) describes private provider messages.
 
-For a live session, exactly one of **On Success**, **On Failure**, or **On Cancelled** fires. C++ may bind `OnCompletedNative` to receive the same result; this fires before the Blueprint multicast. Finishing or cancelling an already finished operation has no effect. Reentrant local shutdown suppresses further Blueprint callbacks into that owner.
+A session has at most one call. `Call` success means an active call and returns its opaque `CallId` and `PeerId`; progress arrives through `OnCallChanged` (`Dialing`, `Ringing`, `Active`, `Ended`). Incoming calls supply the identity needed by `AcceptCall`/`RejectCall`. `HangUp` ends the current call. `GetCallInfo` returns `None` with empty identities when no call exists. M0 never emits a call event or claims a live call.
 
-`Disconnect()` closes local session state and cancels other pending operations. The facade can be connected again. `Shutdown()` is final local teardown: it marks pending operations cancelled, suppresses callbacks, and closes the facade permanently. Call it from an actor's EndPlay, a widget's teardown, or the application's equivalent lifecycle hook. World cleanup and UObject destruction also perform silent shutdown. After shutdown, create a new session. No future worker callback may retain an unsafe raw UObject pointer; transport callbacks must marshal through this ownership boundary.
+Rooms use opaque string IDs. Successful join/leave/send results identify `RoomId`; participant and text events carry explicit identities. A room is an application service, not an automatic multicast DataChannel. Common operations do not expose administrative Janus credentials.
 
-Current Connect behavior is `Idle/Closed/Failed → Connecting → Failed`, returning `NotImplemented`. Local Disconnect succeeds without making a network claim. Other operations validate arguments, build availability and relevant state, then report an explicit failure. No success path creates fake channel/source/track handles. Source/track ownership, device discovery, headless PCM/frame sinks, timeouts and negotiation semantics still require the native feasibility probes before this draft is frozen.
+## Lifecycle and ownership
 
-### C++ flow
+All public calls and callbacks run on the **game thread**. Retain a session in a `UPROPERTY` or Blueprint variable. Its Outer alone is not an owning reference. One owner can keep several independent sessions.
 
-Store `Session` and any dormant `PendingOperation` as `UPROPERTY(Transient) TObjectPtr<...>` members on the application owner. Bind the native event with the same UObject owner so destroyed listeners are skipped:
+C++ factories return dormant operations: retain the proxy, bind completion, then call `Activate()`. Blueprint async nodes bind their output pins and activate automatically. Activated operations survive until completion, even when a null session must produce a deferred argument failure. A dormant proxy remains the caller's responsibility.
 
-```cpp
-Session = USimurghRTCSession::CreateSession(this);
-FSimurghRTCSessionConfig Config;
-Config.Provider = ESimurghRTCProvider::DirectUnreal;
-Config.Endpoint = TEXT("https://rtc.example/session");
-PendingOperation = USimurghRTCOperation::Connect(Session, Config);
-PendingOperation->OnCompletedNative.AddUObject(this, &UMyClient::HandleConnectResult);
-PendingOperation->Activate();
-// Handler signature: void HandleConnectResult(const FSimurghRTCOperationResult& Result);
-// M0 reports Result.Error.Code == ESimurghRTCErrorCode::NotImplemented.
-// EndPlay / owner teardown: Session->Shutdown();
-```
+Each operation has a GUID and one final result. `GetResult()` returns `InvalidState` until `IsFinished()` is true. Every operation result carries its operation ID and, when supplied, its session ID in `Error`, including on success. Synchronous session calls carry only a session ID; static validation and device queries have neither. Activation is idempotent. Ordinary completion is deferred to a later core-ticker tick; explicit `Cancel()` can complete immediately, including before activation. Bind listeners first.
 
-### Blueprint flow sketches
+For a live owner, exactly one of **On Success**, **On Failure** or **On Cancelled** fires. `OnCompletedNative` receives the same result before the Blueprint event. Repeated cancellation or activation after completion does nothing. If a native listener shuts down the session, no subsequent Blueprint completion is started. A multicast dispatch already in progress may finish its current listener list.
 
-1. Create Session with Self as owner; store the returned session.
-2. Make Session Config, select provider/endpoint and call Connect.
-3. On Success: request the desired channel/call/room operation. This branch will become reachable when transport is implemented.
-4. On Failure: break Result → Error; display a user-facing error and retain IDs for diagnostics. M0 takes this branch with `NotImplemented` for a valid connection request.
-5. Store the exposed Operation proxy to Cancel. On Cancelled handles cancellation separately from failure. Owner EndPlay calls Shutdown and expects no further completion events.
+| Action | Result |
+|---|---|
+| `Disconnect` | Cancel other active operations, close local state, retain a reusable session. Repeated local disconnect succeeds. |
+| `Cancel` | Finish that operation with `Cancelled`. It does not shut down its owner. |
+| `Shutdown` | Final local teardown: silently cancel active operations and permanently close the session. Repeat calls do nothing. |
+| Owner EndPlay / widget teardown | Call `Shutdown`; do not wait for a completion event. |
+| World cleanup / session destruction | Perform silent shutdown as a fallback. |
+| Activate a dormant proxy after shutdown | Settle it as cancelled without calling the former owner. |
 
-These are graph sketches; executable Blueprint sample assets and graph/cook parity tests remain outstanding. UHT/reflection tests alone do not prove Blueprint graph behavior.
+Current Connect goes `Idle/Closed/Failed → Connecting → Failed` and reports `NotImplemented`. Validation failures leave session state unchanged. Cancelling during `Connecting` returns to `Idle`; cancellation before execution leaves the prior state unchanged. Disconnect currently closes local state without network activity. `Connected` and `Closing` remain transport states for later milestones.
 
-## Capabilities and errors
+Future transport work must use weak UObject references when crossing threads, return to the game thread before callbacks, ignore stale callbacks after teardown, and enforce the configured deadline (1–300,000 ms, starting at activation). Other remote operations use the connected session's timeout. These are implementation requirements; M0 completes locally without a network wait.
 
-`FSimurghRTCCapability` separates `Compiled`, `Platform`, `Service` and `Negotiated` support, each Unknown/Available/Unavailable. `IsAvailable()` requires all four to be Available. In M0, compilation availability reflects the staged modules, platform/negotiation remain Unknown, and the unimplemented service is Unavailable. A compiled class does not establish operational support.
+## Channels, sources and sinks
 
-Errors distinguish `InvalidArgument`, `InvalidState`, `BuildExcluded`, `PlatformUnavailable`, `ServiceUnsupported`, `NotNegotiated`, `Unauthorized`, `Timeout`, `Cancelled`, `NotImplemented` and `InternalError`. `None` represents success. The latter runtime-specific errors reserve semantics for later implementation; the current shell does not pretend to exercise them. Diagnostics expose no raw provider payloads. Statistics are explicitly unavailable rather than reporting zeros as measurements.
+Handles belong to one session. Applications must not fabricate them or reuse them after close/stop. Later registries must reject unknown, foreign and stale handles. `IsValid()` currently means only that a GUID is present, not that its resource exists.
 
-## Optional reflected APIs
+Channel options separate ordering and reliability. `Reliable` requires a zero bound; `MaxRetransmits` takes a count and `MaxLifetime` takes milliseconds, both 0–65,535. Labels are limited to 65,535 UTF-8 bytes and cannot contain a null character. `MaximumMessageBytes == 0` means unknown, not unlimited. Send success will mean admission to a bounded local queue, not remote delivery. M0 rejects every send because no open channels exist.
 
-`SimurghRTCMedia` declares `USimurghRTCMediaOperation` nodes for CreateSource, AttachSource, ReplaceSource, SetSourceMuted, StopSource, DetachTrack, BindVideo and BindAudio. Source kinds cover microphone, camera, render target, screen, generated audio and generated video. Unreal sink references stay in this client media module. SR-004 now proves local codec and UE integration paths through the separate [media probe](MEDIA_PROBE.md). These public signatures still await SR-001 review and production media integration; their shared-service implementations remain placeholders.
+Track information distinguishes local and remote tracks with `bRemote`; `Source` identifies a local track's source and is empty for remote tracks. `OnTrackChanged` with `bAdded=true` adds or updates information, and `false` removes it.
 
-`SimurghRTCJanusExtensions` declares `USimurghRTCJanusOperation::JoinVideoRoom` and a string-based room options struct as the optional-reflection probe. It does not implement VideoRoom. Janus-only classes live entirely in this optional module; portable application graphs use only Core types. The provider enum remains in Core so a shared configuration can report `BuildExcluded` when Janus is absent.
+Source ownership is independent of track ownership. Creating a source can precede Connect; attaching it requires a connected session and returns a track. Replacing a source preserves that track's identity and media kind. Muting retains the source; stopping invalidates it and ends its attached tracks. Detaching a track leaves the source available for another attachment. Disconnect closes channels/tracks and stops session-owned sources. Shutdown also releases sink references. These operations currently return explicit errors rather than fabricating resources.
 
-Do not wrap reflected UCLASS/USTRUCT/UFUNCTION declarations in custom feature macros. Stage a profile that physically omits the module. Native consumers that add the optional dependency may use `#if SIMURGHRTC_WITH_JANUS` for ordinary C++ call sites; runtime capability checks are still required.
+### Headless media in Core
+
+Generated sources and decoded frames require no RHI texture, audio component or client capture module. They are available as a contract on Server targets too. Data-only client profiles exclude media capability.
+
+| Frame | Layout and validation |
+|---|---|
+| `FSimurghRTCAudioFrame` | Interleaved float PCM in [-1, 1]; finite samples; 1 or 2 channels; 8,000 / 16,000 / 32,000 / 44,100 / 48,000 Hz; complete sample frames, at most 100 ms per submission |
+| `FSimurghRTCVideoFrame` | Tightly packed, top-down BGRA8; positive dimensions up to 3840 × 2160; exactly `Width × Height × 4` bytes |
+| Both | Nonnegative microsecond timestamp, relative to a source's monotonic clock; no platform buffer pointers |
+
+`CreateGeneratedSource(Session, Kind)` selects audio or video. Submit through `PushAudioFrame`/`PushVideoFrame`; the implementation must copy accepted input before returning. Source kind and monotonically increasing timestamps must be checked by the future source registry. The structural validators already reject invalid lengths, dimensions and samples.
+
+Decoded frame delivery is off by default. Enable it per track with `SetDecodedFrameDelivery`; results arrive through `OnAudioFrame`/`OnVideoFrame` on the game thread. Copy event data if keeping it after the callback. Transport implementations must bound queued media, reject full submission queues with `ResourceExhausted`, and suppress delivery after disable/detach/shutdown. These CPU copies are a portable baseline; they do not promise zero-copy performance.
+
+### Optional client devices and Unreal sinks
+
+`SimurghRTCMedia` adds `USimurghRTCMediaOperation::GetDevices`, `CreateSource`, `BindVideo` and `BindAudio`. `GetDevices(Kind, OutDevices)` queries a cached microphone/camera list without requesting permission. IDs are opaque and may change between runs; labels may be empty until access is granted. The result includes Unknown/Available/Unavailable permission status. M0 returns an empty list with `NotImplemented`, rather than pretending no devices exist.
+
+`CreateSource` supports microphone, camera, render target, screen and generated media. Device access requires an explicit application request and platform permission; denial returns `PermissionDenied`, never a bypass. `BindVideo` takes a render target and `BindAudio` an audio component. These sinks are client-only; headless applications use Core frames. A sink remains referenced until replacement, track teardown or session teardown. Binding a new sink of the same kind replaces the old binding. Platform/device behavior remains work for the media milestones.
+
+The draft's common source/track operations moved to Core for headless use. Use `USimurghRTCOperation` for those controls and proxy fields. Replace pre-v1 Blueprint source/track control nodes with the Core versions and recompile. `USimurghRTCMediaOperation` remains the entry point for device creation and Unreal sinks.
+
+## Capabilities, errors and extensions
+
+`FSimurghRTCCapability` separates `Compiled`, `Platform`, `Service` and `Negotiated`, each Unknown/Available/Unavailable. `IsAvailable()` requires all four to be Available. `DeviceCapture` denotes the optional client capture module; generated/headless media is separate. M0 reports compiled availability, unknown platform/negotiation and unavailable service support. Statistics have `bAvailable == false`; zeros are not measurements.
+
+Errors distinguish invalid input/state, build exclusion, unavailable platforms, unsupported services, missing negotiation, authorization, timeout, cancellation, pending implementation, exhausted resources, denied device permission and internal failure. `None` means success. Invalid payloads are rejected before resource use. Errors do not include raw provider messages or credentials. Runtime-specific failures remain reserved until transport/device implementation can exercise them.
+
+`SimurghRTCJanusExtensions` contains `JoinVideoRoom` and its string-based room options. It is a reflected placeholder, not an implemented VideoRoom service. Janus-only classes are physically omitted from disabled profiles. The Core provider enum remains present so shared configuration can report `BuildExcluded`.
+
+Do not feature-guard reflected UCLASS/USTRUCT/UFUNCTION declarations. Stage the selected modules. The shared lifecycle Blueprint references Core only and uses the same graph with Janus enabled or disabled.

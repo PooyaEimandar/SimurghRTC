@@ -24,7 +24,7 @@ enum class ESimurghRTCSessionState : uint8
 UENUM(BlueprintType)
 enum class ESimurghRTCErrorCode : uint8
 {
-    None, InvalidArgument, InvalidState, BuildExcluded, PlatformUnavailable, ServiceUnsupported, NotNegotiated, Unauthorized, Timeout, Cancelled, NotImplemented, InternalError
+    None, InvalidArgument, InvalidState, BuildExcluded, PlatformUnavailable, ServiceUnsupported, NotNegotiated, Unauthorized, Timeout, Cancelled, NotImplemented, InternalError, ResourceExhausted, PermissionDenied
 };
 
 UENUM(BlueprintType)
@@ -36,7 +36,7 @@ enum class ESimurghRTCSupport : uint8
 UENUM(BlueprintType)
 enum class ESimurghRTCFeature : uint8
 {
-    DataChannels, Audio, Video, TextRooms, IncomingCalls, JanusRooms, MediaSources
+    DataChannels, Audio, Video, TextRooms, IncomingCalls, JanusRooms, MediaSources, DeviceCapture
 };
 
 UENUM(BlueprintType)
@@ -55,6 +55,42 @@ UENUM(BlueprintType)
 enum class ESimurghRTCTrackKind : uint8
 {
     Audio, Video
+};
+
+UENUM(BlueprintType)
+enum class ESimurghRTCCallState : uint8 { None, Dialing, Ringing, Active, Ended };
+
+/** One call per session. CallId and PeerId are opaque strings, never provider handles. */
+USTRUCT(BlueprintType)
+struct SIMURGHRTCCORE_API FSimurghRTCCallInfo
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") FString CallId;
+    UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") FString PeerId;
+    UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") ESimurghRTCCallState State = ESimurghRTCCallState::None;
+    UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") bool bIncoming = false;
+};
+
+/** Owned, interleaved float PCM in [-1, 1], at most 100 ms per submission. */
+USTRUCT(BlueprintType)
+struct SIMURGHRTCCORE_API FSimurghRTCAudioFrame
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC") int32 SampleRate = 48000;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC") int32 Channels = 1;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC") int64 TimestampMicroseconds = 0;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC") TArray<float> Samples;
+};
+
+/** Owned, tightly packed top-down BGRA8, at most 3840 x 2160. No RHI object required. */
+USTRUCT(BlueprintType)
+struct SIMURGHRTCCORE_API FSimurghRTCVideoFrame
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC") int32 Width = 0;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC") int32 Height = 0;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC") int64 TimestampMicroseconds = 0;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC") TArray<uint8> Bgra;
 };
 
 /** Plugin-owned identity; never a provider handle or wire-protocol ID. */
@@ -150,6 +186,8 @@ struct SIMURGHRTCCORE_API FSimurghRTCOperationResult
     UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") FSimurghRTCChannelHandle Channel;
     UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") FSimurghRTCSourceHandle Source;
     UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") FSimurghRTCTrackHandle Track;
+    UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") FSimurghRTCCallInfo Call;
+    UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") FString RoomId;
     bool IsSuccess() const { return !Error.IsError(); }
 };
 
@@ -183,6 +221,8 @@ struct SIMURGHRTCCORE_API FSimurghRTCTrackInfo
     UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") ESimurghRTCTrackKind Kind = ESimurghRTCTrackKind::Audio;
     UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") FString ParticipantId;
     UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") bool bMuted = false;
+    UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") bool bRemote = false;
+    UPROPERTY(BlueprintReadOnly, Category="SimurghRTC") FSimurghRTCSourceHandle Source;
 };
 
 USTRUCT(BlueprintType)
@@ -205,8 +245,11 @@ struct SIMURGHRTCCORE_API FSimurghRTCStatistics
 
 namespace SimurghRTC
 {
+    inline constexpr int32 ApiContractVersion = 1;
     SIMURGHRTCCORE_API FSimurghRTCError MakeError(ESimurghRTCErrorCode Code, const FString& Message);
     SIMURGHRTCCORE_API FSimurghRTCError ValidateSessionConfig(const FSimurghRTCSessionConfig& Config);
     SIMURGHRTCCORE_API FSimurghRTCError ValidateChannelOptions(const FSimurghRTCChannelOptions& Options);
+    SIMURGHRTCCORE_API FSimurghRTCError ValidateAudioFrame(const FSimurghRTCAudioFrame& Frame);
+    SIMURGHRTCCORE_API FSimurghRTCError ValidateVideoFrame(const FSimurghRTCVideoFrame& Frame);
     SIMURGHRTCCORE_API bool IsProviderCompiled(ESimurghRTCProvider Provider);
 }

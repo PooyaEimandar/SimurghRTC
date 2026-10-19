@@ -36,6 +36,9 @@ class ProfileTests(unittest.TestCase):
                     self.assertNotIn('AdditionalPluginDirectories', host)
                     self.assertTrue((output / 'Source' / 'ContractHostServer.Target.cs').is_file())
                     self.assertTrue((plugin / 'LICENSE').is_file())
+                    blueprint = Path('Content/Examples/BP_RtcLifecycle.uasset')
+                    self.assertEqual((profiles.ROOT / 'Samples/ContractHost' / blueprint).read_bytes(),
+                                     (output / blueprint).read_bytes())
                     for module in expected:
                         build = (plugin / 'Source' / module / f'{module}.Build.cs').read_text()
                         spec = policy['modules'][module]

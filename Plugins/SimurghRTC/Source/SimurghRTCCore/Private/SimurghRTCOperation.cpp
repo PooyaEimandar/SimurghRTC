@@ -126,6 +126,83 @@ USimurghRTCOperation* USimurghRTCOperation::SendRoomText(USimurghRTCSession* InS
     return Operation;
 }
 
+USimurghRTCOperation* USimurghRTCOperation::AttachSource(USimurghRTCSession* Session, FSimurghRTCSourceHandle Source)
+{
+    check(IsInGameThread());
+    auto* Operation = NewObject<USimurghRTCOperation>();
+    FSimurghRTCError Error;
+    if (!Source.IsValid())
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
+    Operation->Initialize(Session, TEXT("AttachSource"), ESimurghRTCFeature::MediaSources, Error);
+    return Operation;
+}
+
+USimurghRTCOperation* USimurghRTCOperation::ReplaceSource(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track, FSimurghRTCSourceHandle Source)
+{
+    check(IsInGameThread());
+    auto* Operation = NewObject<USimurghRTCOperation>();
+    FSimurghRTCError Error;
+    if (!Track.IsValid() || !Source.IsValid())
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
+    Operation->Initialize(Session, TEXT("ReplaceSource"), ESimurghRTCFeature::MediaSources, Error);
+    return Operation;
+}
+
+USimurghRTCOperation* USimurghRTCOperation::SetSourceMuted(USimurghRTCSession* Session, FSimurghRTCSourceHandle Source, bool bMuted)
+{
+    check(IsInGameThread());
+    auto* Operation = NewObject<USimurghRTCOperation>();
+    FSimurghRTCError Error;
+    if (!Source.IsValid())
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
+    Operation->Initialize(Session, TEXT("SetSourceMuted"), ESimurghRTCFeature::MediaSources, Error);
+    return Operation;
+}
+
+USimurghRTCOperation* USimurghRTCOperation::StopSource(USimurghRTCSession* Session, FSimurghRTCSourceHandle Source)
+{
+    check(IsInGameThread());
+    auto* Operation = NewObject<USimurghRTCOperation>();
+    FSimurghRTCError Error;
+    if (!Source.IsValid())
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
+    Operation->Initialize(Session, TEXT("StopSource"), ESimurghRTCFeature::MediaSources, Error);
+    return Operation;
+}
+
+USimurghRTCOperation* USimurghRTCOperation::DetachTrack(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track)
+{
+    check(IsInGameThread());
+    auto* Operation = NewObject<USimurghRTCOperation>();
+    FSimurghRTCError Error;
+    if (!Track.IsValid())
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
+    Operation->Initialize(Session, TEXT("DetachTrack"), ESimurghRTCFeature::MediaSources, Error);
+    return Operation;
+}
+
+USimurghRTCOperation* USimurghRTCOperation::CreateGeneratedSource(USimurghRTCSession* InSession, ESimurghRTCTrackKind Kind)
+{
+    check(IsInGameThread());
+    auto* Operation = NewObject<USimurghRTCOperation>();
+    FSimurghRTCError Error;
+    if (Kind != ESimurghRTCTrackKind::Audio && Kind != ESimurghRTCTrackKind::Video)
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid generated source kind."));
+    Operation->Initialize(InSession, TEXT("CreateGeneratedSource"), Kind == ESimurghRTCTrackKind::Audio ? ESimurghRTCFeature::Audio : ESimurghRTCFeature::Video, Error);
+    return Operation;
+}
+
+USimurghRTCOperation* USimurghRTCOperation::SetDecodedFrameDelivery(USimurghRTCSession* InSession, FSimurghRTCTrackHandle Track, bool bEnabled)
+{
+    check(IsInGameThread());
+    auto* Operation = NewObject<USimurghRTCOperation>();
+    FSimurghRTCError Error;
+    if (!Track.IsValid())
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("A track belonging to this session is required."));
+    Operation->Initialize(InSession, TEXT("SetDecodedFrameDelivery"), ESimurghRTCFeature::MediaSources, Error);
+    return Operation;
+}
+
 void USimurghRTCOperation::Activate()
 {
     check(IsInGameThread());
@@ -137,10 +214,10 @@ void USimurghRTCOperation::Activate()
         if (UWorld* World = Session->GetWorld(); World && World->GetGameInstance())
             RegisterWithGameInstance(Session.Get());
     }
-    TWeakObjectPtr<USimurghRTCOperation> WeakThis(this);
-    TickHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([WeakThis](float)
+    TStrongObjectPtr<USimurghRTCOperation> Pending(this);
+    TickHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([Pending](float)
     {
-        TStrongObjectPtr<USimurghRTCOperation> KeepAlive(WeakThis.Get());
+        TStrongObjectPtr<USimurghRTCOperation> KeepAlive(Pending.Get());
         if (auto* Self = KeepAlive.Get())
         {
             Self->TickHandle.Reset();
@@ -194,7 +271,8 @@ void USimurghRTCOperation::Execute()
         Finish(Capability.Reason);
         return;
     }
-    if (Session->GetState() != ESimurghRTCSessionState::Connected)
+    if (OperationName != TEXT("CreateGeneratedSource") && OperationName != TEXT("CreateSource")
+        && Session->GetState() != ESimurghRTCSessionState::Connected)
     {
         Finish(SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("This operation requires a connected session.")));
         return;

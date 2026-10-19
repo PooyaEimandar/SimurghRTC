@@ -39,8 +39,20 @@ bool FSimurghRTCValidationTest::RunTest(const FString&)
     TestEqual(TEXT("Insecure signaling needs opt-in"), SimurghRTC::ValidateSessionConfig(Config).Code, ESimurghRTCErrorCode::InvalidArgument);
     Config.bAllowInsecureDevelopmentSignaling = true;
     TestFalse(TEXT("Explicit development HTTP allowed"), SimurghRTC::ValidateSessionConfig(Config).IsError());
+    for (const TCHAR* Endpoint : {TEXT("https:///missing-host"), TEXT("https://user:secret@rtc.invalid"), TEXT("https://rtc.invalid/a b"), TEXT("https://rtc.invalid/#fragment")})
+    {
+        Config.Endpoint = Endpoint;
+        TestEqual(TEXT("Malformed or credential-bearing URL rejected"), SimurghRTC::ValidateSessionConfig(Config).Code, ESimurghRTCErrorCode::InvalidArgument);
+    }
+    Config.Endpoint = TEXT("https://rtc.invalid/session");
     Config.TimeoutMilliseconds = 0;
     TestEqual(TEXT("Timeout validated in C++ too"), SimurghRTC::ValidateSessionConfig(Config).Code, ESimurghRTCErrorCode::InvalidArgument);
+    Config = Fixture.Config();
+    Config.Provider = static_cast<ESimurghRTCProvider>(StaticEnum<ESimurghRTCProvider>()->GetMaxEnumValue());
+    TestEqual(TEXT("Generated provider MAX is not a provider"), SimurghRTC::ValidateSessionConfig(Config).Code, ESimurghRTCErrorCode::InvalidArgument);
+    Config = Fixture.Config();
+    Config.Purpose = static_cast<ESimurghRTCPurpose>(StaticEnum<ESimurghRTCPurpose>()->GetMaxEnumValue());
+    TestEqual(TEXT("Generated purpose MAX is not a purpose"), SimurghRTC::ValidateSessionConfig(Config).Code, ESimurghRTCErrorCode::InvalidArgument);
 
     FSimurghRTCChannelOptions Channel;
     Channel.Label = TEXT("chat");
@@ -55,6 +67,9 @@ bool FSimurghRTCValidationTest::RunTest(const FString&)
     const TCHAR EmbeddedNull[] = { 'a', 0, 'b' };
     Channel.Label = FString(3, EmbeddedNull);
     TestEqual(TEXT("Embedded null rejected"), SimurghRTC::ValidateChannelOptions(Channel).Code, ESimurghRTCErrorCode::InvalidArgument);
+    Channel.Label = TEXT("chat");
+    Channel.Reliability = static_cast<ESimurghRTCReliability>(StaticEnum<ESimurghRTCReliability>()->GetMaxEnumValue());
+    TestEqual(TEXT("Generated reliability MAX is not a mode"), SimurghRTC::ValidateChannelOptions(Channel).Code, ESimurghRTCErrorCode::InvalidArgument);
     return true;
 }
 
@@ -141,6 +156,10 @@ bool FSimurghRTCProfileTest::RunTest(const FString&)
     FSessionFixture Fixture;
     auto Janus = Fixture.Session->GetCapability(ESimurghRTCProvider::Janus, ESimurghRTCFeature::DataChannels);
     TestFalse(TEXT("Compiled skeleton is not a usable capability"), Janus.IsAvailable());
+    TestEqual(TEXT("Generated feature MAX is not a capability"), Fixture.Session->GetCapability(Fixture.Session->GetProvider(),
+        static_cast<ESimurghRTCFeature>(StaticEnum<ESimurghRTCFeature>()->GetMaxEnumValue())).Reason.Code, ESimurghRTCErrorCode::InvalidArgument);
+    TestEqual(TEXT("Generated provider MAX cannot query capabilities"), Fixture.Session->GetCapability(
+        static_cast<ESimurghRTCProvider>(StaticEnum<ESimurghRTCProvider>()->GetMaxEnumValue()), ESimurghRTCFeature::Audio).Reason.Code, ESimurghRTCErrorCode::InvalidArgument);
     TestEqual(TEXT("Janus compiled availability matches selected profile"), Janus.Compiled,
         SIMURGHRTC_WITH_JANUS ? ESimurghRTCSupport::Available : ESimurghRTCSupport::Unavailable);
     TestEqual(TEXT("Build exclusion differs from implementation pending"), Janus.Reason.Code,
@@ -149,13 +168,102 @@ bool FSimurghRTCProfileTest::RunTest(const FString&)
     const UClass* MediaClass = FindObject<UClass>(nullptr, TEXT("/Script/SimurghRTCMedia.SimurghRTCMediaOperation"));
     TestEqual(TEXT("Optional Janus reflection matches profile"), JanusClass != nullptr, bool(SIMURGHRTC_WITH_JANUS && SIMURGHRTC_WITH_MEDIA));
     TestEqual(TEXT("Optional media reflection matches profile"), MediaClass != nullptr, bool(SIMURGHRTC_WITH_MEDIA));
-    for (const TCHAR* Name : {TEXT("Connect"), TEXT("Disconnect"), TEXT("OpenChannel"), TEXT("CloseChannel"), TEXT("Call"), TEXT("AcceptCall"), TEXT("RejectCall"), TEXT("HangUp"), TEXT("JoinTextRoom"), TEXT("LeaveTextRoom"), TEXT("SendRoomText"), TEXT("Cancel")})
+    for (const TCHAR* Name : {TEXT("Connect"), TEXT("Disconnect"), TEXT("OpenChannel"), TEXT("CloseChannel"), TEXT("Call"), TEXT("AcceptCall"), TEXT("RejectCall"), TEXT("HangUp"), TEXT("JoinTextRoom"), TEXT("LeaveTextRoom"), TEXT("SendRoomText"), TEXT("CreateGeneratedSource"), TEXT("AttachSource"), TEXT("ReplaceSource"), TEXT("SetSourceMuted"), TEXT("StopSource"), TEXT("DetachTrack"), TEXT("SetDecodedFrameDelivery"), TEXT("Cancel")})
     {
         const UFunction* Function = USimurghRTCOperation::StaticClass()->FindFunctionByName(Name);
         TestTrue(FString::Printf(TEXT("%s is Blueprint callable"), Name), Function && Function->HasAnyFunctionFlags(FUNC_BlueprintCallable));
     }
+    TestEqual(TEXT("Initial provider exists in the profile"), Fixture.Session->GetProvider(),
+        SIMURGHRTC_WITH_DIRECT ? ESimurghRTCProvider::DirectUnreal : ESimurghRTCProvider::Janus);
+    auto JanusConfig = Fixture.Config(); JanusConfig.Provider = ESimurghRTCProvider::Janus;
+    TStrongObjectPtr<USimurghRTCOperation> JanusConnect(USimurghRTCOperation::Connect(Fixture.Session.Get(), JanusConfig));
+    JanusConnect->Activate(); TickOperations();
+    TestEqual(TEXT("Async provider selection respects build exclusion"), JanusConnect->GetResult().Error.Code,
+        SIMURGHRTC_WITH_JANUS ? ESimurghRTCErrorCode::NotImplemented : ESimurghRTCErrorCode::BuildExcluded);
     TestFalse(TEXT("No fabricated statistics"), Fixture.Session->GetStatistics().bAvailable);
     TestEqual(TEXT("Invalid channel is rejected"), Fixture.Session->SendText({}, TEXT("hello")).Code, ESimurghRTCErrorCode::InvalidArgument);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSimurghRTCPendingGCTest, "SimurghRTC.Contract.PendingFailureSurvivesGC", TestFlags)
+bool FSimurghRTCPendingGCTest::RunTest(const FString&)
+{
+    TWeakObjectPtr<USimurghRTCOperation> Operation(USimurghRTCOperation::Disconnect(nullptr));
+    int32 Count = 0;
+    FSimurghRTCOperationResult Result;
+    Operation->OnCompletedNative.AddLambda([&](const FSimurghRTCOperationResult& Value) { ++Count; Result = Value; });
+    Operation->Activate();
+    CollectGarbage(RF_NoFlags);
+    TestTrue(TEXT("Deferred null-session failure remains alive"), Operation.IsValid());
+    TickOperations();
+    TestEqual(TEXT("Null-session failure completes once after GC"), Count, 1);
+    TestEqual(TEXT("Null-session input is invalid"), Result.Error.Code, ESimurghRTCErrorCode::InvalidArgument);
+    TickOperations();
+    TestEqual(TEXT("No duplicate failure"), Count, 1);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSimurghRTCDisconnectTest, "SimurghRTC.Contract.DisconnectAndReuse", TestFlags)
+bool FSimurghRTCDisconnectTest::RunTest(const FString&)
+{
+    FSessionFixture Fixture;
+    TStrongObjectPtr<USimurghRTCOperation> Disconnect(USimurghRTCOperation::Disconnect(Fixture.Session.Get()));
+    TStrongObjectPtr<USimurghRTCOperation> Pending(USimurghRTCOperation::Connect(Fixture.Session.Get(), Fixture.Config()));
+    int32 Cancelled = 0;
+    Pending->OnCompletedNative.AddLambda([&](const FSimurghRTCOperationResult& Value)
+    {
+        ++Cancelled;
+        TestEqual(TEXT("Disconnect cancels other active operations"), Value.Error.Code, ESimurghRTCErrorCode::Cancelled);
+    });
+    Disconnect->Activate(); Pending->Activate(); TickOperations();
+    TestEqual(TEXT("One cancellation"), Cancelled, 1);
+    TestTrue(TEXT("Disconnect succeeds"), Disconnect->GetResult().IsSuccess());
+    TStrongObjectPtr<USimurghRTCOperation> Retry(USimurghRTCOperation::Connect(Fixture.Session.Get(), Fixture.Config()));
+    Retry->Activate(); TickOperations();
+    TestEqual(TEXT("Reuse reaches the transport boundary"), Retry->GetResult().Error.Code, ESimurghRTCErrorCode::NotImplemented);
+    TStrongObjectPtr<USimurghRTCOperation> Dormant(USimurghRTCOperation::Disconnect(Fixture.Session.Get()));
+    Dormant->OnCompletedNative.AddLambda([&](const FSimurghRTCOperationResult&) { AddError(TEXT("Callback after final shutdown")); });
+    Fixture.Session->Shutdown(); Dormant->Activate(); TickOperations();
+    TestTrue(TEXT("Activation after shutdown settles silently"), Dormant->IsFinished());
+    TestEqual(TEXT("No fake success after shutdown"), Dormant->GetResult().Error.Code, ESimurghRTCErrorCode::Cancelled);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSimurghRTCFrameContractTest, "SimurghRTC.Contract.FrameBoundaries", TestFlags)
+bool FSimurghRTCFrameContractTest::RunTest(const FString&)
+{
+    FSessionFixture Fixture;
+    TestEqual(TEXT("Frozen contract version"), USimurghRTCSession::GetApiContractVersion(), 1);
+    FSimurghRTCAudioFrame Audio;
+    Audio.Samples.Init(0.25f, 480);
+    TestFalse(TEXT("10 ms PCM accepted structurally"), SimurghRTC::ValidateAudioFrame(Audio).IsError());
+    Audio.Channels = 0;
+    TestTrue(TEXT("Zero channels rejected without dividing by zero"), SimurghRTC::ValidateAudioFrame(Audio).IsError());
+    Audio.Channels = 2; Audio.Samples.Add(0.0f);
+    TestTrue(TEXT("Partial interleaved frame rejected"), SimurghRTC::ValidateAudioFrame(Audio).IsError());
+    Audio.Channels = 1; Audio.Samples.Init(0.0f, 4801);
+    TestTrue(TEXT("More than 100 ms rejected"), SimurghRTC::ValidateAudioFrame(Audio).IsError());
+    Audio.Samples.Init(2.0f, 480);
+    TestTrue(TEXT("Out-of-range PCM rejected"), SimurghRTC::ValidateAudioFrame(Audio).IsError());
+    Audio.Samples.Init(0.0f, 480);
+    FSimurghRTCSourceHandle Forged; Forged.Id = FGuid::NewGuid();
+    TestEqual(TEXT("Valid frame cannot fabricate a source"), Fixture.Session->PushAudioFrame(Forged, Audio).Code,
+        (SIMURGHRTC_WITH_MEDIA || UE_SERVER) ? ESimurghRTCErrorCode::InvalidState : ESimurghRTCErrorCode::BuildExcluded);
+    FSimurghRTCVideoFrame Video; Video.Width = 2; Video.Height = 2; Video.Bgra.Init(0, 16);
+    TestFalse(TEXT("BGRA accepted structurally"), SimurghRTC::ValidateVideoFrame(Video).IsError());
+    Video.Bgra.RemoveAt(0);
+    TestTrue(TEXT("Short pixel buffer rejected"), SimurghRTC::ValidateVideoFrame(Video).IsError());
+    Video.Width = MAX_int32; Video.Height = MAX_int32;
+    TestTrue(TEXT("Oversized dimensions rejected without overflow"), SimurghRTC::ValidateVideoFrame(Video).IsError());
+    TestEqual(TEXT("No fabricated call"), Fixture.Session->GetCallInfo().State, ESimurghRTCCallState::None);
+    TStrongObjectPtr<USimurghRTCOperation> Source(USimurghRTCOperation::CreateGeneratedSource(Fixture.Session.Get(), ESimurghRTCTrackKind::Audio));
+    Source->Activate(); TickOperations();
+    TestEqual(TEXT("Generated-source shell has explicit availability"), Source->GetResult().Error.Code,
+        (SIMURGHRTC_WITH_MEDIA || UE_SERVER) ? ESimurghRTCErrorCode::NotImplemented : ESimurghRTCErrorCode::BuildExcluded);
+    TStrongObjectPtr<USimurghRTCOperation> InvalidSource(USimurghRTCOperation::CreateGeneratedSource(Fixture.Session.Get(),
+        static_cast<ESimurghRTCTrackKind>(StaticEnum<ESimurghRTCTrackKind>()->GetMaxEnumValue())));
+    InvalidSource->Activate(); TickOperations();
+    TestEqual(TEXT("Generated track MAX is not a media kind"), InvalidSource->GetResult().Error.Code, ESimurghRTCErrorCode::InvalidArgument);
     return true;
 }
 

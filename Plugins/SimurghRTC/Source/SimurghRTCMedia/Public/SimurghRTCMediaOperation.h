@@ -33,18 +33,11 @@ class SIMURGHRTCMEDIA_API USimurghRTCMediaOperation : public USimurghRTCOperatio
 {
     GENERATED_BODY()
 public:
+    // Snapshot only; discovery never prompts for permission. CreateSource requests access.
+    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media")
+    static FSimurghRTCError GetDevices(ESimurghRTCSourceKind Kind, TArray<FSimurghRTCDeviceInfo>& Devices);
     UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
     static USimurghRTCMediaOperation* CreateSource(USimurghRTCSession* Session, const FSimurghRTCSourceOptions& Options);
-    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
-    static USimurghRTCMediaOperation* AttachSource(USimurghRTCSession* Session, FSimurghRTCSourceHandle Source);
-    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
-    static USimurghRTCMediaOperation* ReplaceSource(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track, FSimurghRTCSourceHandle Source);
-    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
-    static USimurghRTCMediaOperation* SetSourceMuted(USimurghRTCSession* Session, FSimurghRTCSourceHandle Source, bool bMuted);
-    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
-    static USimurghRTCMediaOperation* StopSource(USimurghRTCSession* Session, FSimurghRTCSourceHandle Source);
-    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
-    static USimurghRTCMediaOperation* DetachTrack(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track);
     UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
     static USimurghRTCMediaOperation* BindVideo(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track, UTextureRenderTarget2D* Target);
     UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))

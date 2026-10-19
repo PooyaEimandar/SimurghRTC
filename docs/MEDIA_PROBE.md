@@ -30,7 +30,7 @@ The generated sources and offscreen texture capture require no camera, microphon
 
 ## Reproduce
 
-Build the full sample Editor target as described in [Building](BUILDING.md), then run all seven tests headlessly (`Automation RunTests SimurghRTC.`). `SimurghRTC.Native.MediaCodecs` repeats the codec fixture to exercise teardown and fresh decoder state.
+Build the full sample Editor target as described in [Building](BUILDING.md), then run the tests headlessly (`Automation RunTests SimurghRTC.`). `SimurghRTC.Native.MediaCodecs` repeats the codec fixture to exercise teardown and fresh decoder state.
 
 Run the full integration probe with a real RHI, not `-NullRHI` or `-nosound`:
 

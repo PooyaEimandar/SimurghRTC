@@ -90,6 +90,8 @@ def stage(profile: str, destination: Path, artifacts: list[Path] | None = None) 
     shutil.copy2(ROOT/'LICENSE', target/'LICENSE')
     for name in ['Source','Config']:
         shutil.copytree(host/name, destination/name)
+    if (host/'Content').is_dir():
+        shutil.copytree(host/'Content', destination/'Content')
     project = json.loads((host/'ContractHost.uproject').read_text())
     project.pop('AdditionalPluginDirectories', None)
     (destination/'ContractHost.uproject').write_text(json.dumps(project, indent=2)+'\n')

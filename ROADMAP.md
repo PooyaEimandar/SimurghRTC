@@ -1,9 +1,9 @@
 # SimurghRTC — Unreal Engine WebRTC plugin roadmap
 
-**M0 is in progress**, targeting Unreal Engine **5.8.3**. Updated 2026-10-18.
+**M0 is in progress**, targeting Unreal Engine **5.8.3**. Updated 2026-10-19.
 
-- **Done on the available Mac:** SR-004 local media tests and SR-005 repeatable fixtures/service tests.
-- **In progress:** SR-001 API design, SR-002 build profiles, SR-003 dependency review and SR-006/SR-007 mobile artifact integration.
+- **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
+- **In progress:** SR-002 build profiles, SR-003 dependency review and SR-006/SR-007 mobile artifact integration.
 - **Still to prove:** real connections, network media and packaged Android/iOS device acceptance. The [mobile lifecycle probe](docs/MOBILE_PROBE.md) is implemented; see the validation record for build and device results.
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
@@ -80,7 +80,7 @@ A preview describes what is included; it does not mean production-ready. Set dat
 
 ## 4. Milestones, epics, issues
 
-SR-001, SR-002, SR-003, SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
+SR-001 is **Complete (API v1 and executable lifecycle examples)**; SR-002, SR-003, SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
 
 ### M0 Foundation and feasibility
 
@@ -90,9 +90,11 @@ A standalone plugin contract and proven native client/server build boundaries.
 
 #### E01 API and build contract
 
-**In progress.** The API skeleton, lifecycle tests, module profiles and Game/Editor/Server targets exist. API review, working Blueprint demos, mobile integration and full package testing are still open. See [validation results](docs/M0_VALIDATION.md).
+**In progress.** SR-001 is complete: [API v1](docs/API_CONTRACT.md) is frozen, and the same [C++ and Blueprint lifecycle examples](docs/LIFECYCLE_EXAMPLES.md) pass in Editor and packaged Mac ARM64 builds with Janus enabled or excluded. Remaining profile/package coverage and broader mobile integration stay open under SR-002/SR-006/SR-007. See [validation results](docs/M0_VALIDATION.md).
 
 ##### SR-001 — Define the portable client contract (P0)
+
+**Complete, 2026-10-19.** API v1 defines ownership, cancellation, errors, call topology, device discovery and headless CPU frames. Full and Direct-only examples execute success, failure, cancellation and EndPlay cleanup. These are local contract tests; shared network operations still return explicit implementation errors.
 
 Define the shared API: sessions, calls, text rooms, channels, media sources and sinks, capabilities, errors and cancellation. Show how both Direct Unreal and Janus use native libwebrtc, and identify Janus-only operations.
 

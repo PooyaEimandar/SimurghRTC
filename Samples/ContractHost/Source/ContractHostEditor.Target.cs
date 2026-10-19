@@ -6,7 +6,7 @@ public class ContractHostEditorTarget : TargetRules
         Type = TargetType.Editor;
         DefaultBuildSettings = BuildSettingsVersion.Latest;
         IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
-        ExtraModuleNames.Add("ContractHost");
+        ExtraModuleNames.AddRange(new[] { "ContractHost", "ContractHostEditor" });
         // Opt in when building a source Editor for the packaged mobile probes.
         if (Target.Arguments?.HasOption("-SimurghRTCAndroidCook") == true)
         {

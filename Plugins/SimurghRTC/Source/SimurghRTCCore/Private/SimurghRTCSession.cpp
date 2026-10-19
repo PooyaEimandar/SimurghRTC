@@ -9,6 +9,7 @@ USimurghRTCSession* USimurghRTCSession::CreateSession(UObject* Owner)
     USimurghRTCSession* Session = NewObject<USimurghRTCSession>(Owner);
     Session->SessionId = FGuid::NewGuid();
     Session->LifetimeOwner = Owner;
+    Session->Provider = SIMURGHRTC_WITH_DIRECT ? ESimurghRTCProvider::DirectUnreal : ESimurghRTCProvider::Janus;
     Session->WorldCleanupHandle = FWorldDelegates::OnWorldCleanup.AddUObject(Session, &USimurghRTCSession::HandleWorldCleanup);
     return Session;
 }
@@ -35,8 +36,8 @@ void USimurghRTCSession::SetState(ESimurghRTCSessionState NewState)
 FSimurghRTCCapability USimurghRTCSession::GetCapability(ESimurghRTCProvider RequestedProvider, ESimurghRTCFeature Feature) const
 {
     FSimurghRTCCapability Result;
-    if (!StaticEnum<ESimurghRTCFeature>()->IsValidEnumValue(static_cast<int64>(Feature))
-        || !StaticEnum<ESimurghRTCProvider>()->IsValidEnumValue(static_cast<int64>(RequestedProvider)))
+    if (uint8(Feature) > uint8(ESimurghRTCFeature::DeviceCapture)
+        || uint8(RequestedProvider) > uint8(ESimurghRTCProvider::Janus))
     {
         Result.Reason = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid capability query."));
     }
@@ -46,7 +47,9 @@ FSimurghRTCCapability USimurghRTCSession::GetCapability(ESimurghRTCProvider Requ
             || Feature == ESimurghRTCFeature::MediaSources;
         const bool Extension = Feature == ESimurghRTCFeature::JanusRooms;
         const bool Compiled = SimurghRTC::IsProviderCompiled(RequestedProvider)
-            && (!Media || SIMURGHRTC_WITH_MEDIA) && (!Extension || (SIMURGHRTC_WITH_JANUS && SIMURGHRTC_WITH_MEDIA));
+            && (!Media || SIMURGHRTC_WITH_MEDIA || UE_SERVER)
+            && (Feature != ESimurghRTCFeature::DeviceCapture || SIMURGHRTC_WITH_MEDIA)
+            && (!Extension || (SIMURGHRTC_WITH_JANUS && SIMURGHRTC_WITH_MEDIA));
         Result.Compiled = Compiled ? ESimurghRTCSupport::Available : ESimurghRTCSupport::Unavailable;
         Result.Service = ESimurghRTCSupport::Unavailable;
         if (!Compiled)
@@ -85,6 +88,30 @@ FSimurghRTCError USimurghRTCSession::SendBytes(FSimurghRTCChannelHandle Channel,
 {
     check(IsInGameThread());
     return ChannelUnavailable(Channel);
+}
+
+FSimurghRTCError USimurghRTCSession::PushAudioFrame(FSimurghRTCSourceHandle Source, const FSimurghRTCAudioFrame& Frame)
+{
+    check(IsInGameThread());
+    auto Error = SimurghRTC::ValidateAudioFrame(Frame);
+    if (!Source.IsValid()) Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("A source handle is required."));
+    if (!Error.IsError() && !SIMURGHRTC_WITH_MEDIA && !UE_SERVER)
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::BuildExcluded, TEXT("Media is excluded by this client profile."));
+    if (!Error.IsError()) Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("An active audio source belonging to this session is required."));
+    Error.SessionId = SessionId;
+    return Error;
+}
+
+FSimurghRTCError USimurghRTCSession::PushVideoFrame(FSimurghRTCSourceHandle Source, const FSimurghRTCVideoFrame& Frame)
+{
+    check(IsInGameThread());
+    auto Error = SimurghRTC::ValidateVideoFrame(Frame);
+    if (!Source.IsValid()) Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("A source handle is required."));
+    if (!Error.IsError() && !SIMURGHRTC_WITH_MEDIA && !UE_SERVER)
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::BuildExcluded, TEXT("Media is excluded by this client profile."));
+    if (!Error.IsError()) Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("An active video source belonging to this session is required."));
+    Error.SessionId = SessionId;
+    return Error;
 }
 
 void USimurghRTCSession::HandleWorldCleanup(UWorld* World, bool, bool)

@@ -12,13 +12,20 @@
       "Name": "ContractHost",
       "Type": "Runtime",
       "LoadingPhase": "Default"
+    },
+    {
+      "Name": "ContractHostEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
     }
   ],
   "Plugins": [
     {
       "Name": "AndroidPermission",
       "Enabled": true,
-      "PlatformAllowList": ["Android"]
+      "PlatformAllowList": [
+        "Android"
+      ]
     },
     {
       "Name": "SimurghRTC",

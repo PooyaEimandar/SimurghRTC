@@ -38,6 +38,21 @@ public:
     UFUNCTION(BlueprintCallable, Category="SimurghRTC", meta=(BlueprintInternalUseOnly="true"))
     static USimurghRTCOperation* SendRoomText(USimurghRTCSession* Session, const FString& RoomId, const FString& Text);
 
+    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Frames", meta=(BlueprintInternalUseOnly="true"))
+    static USimurghRTCOperation* CreateGeneratedSource(USimurghRTCSession* Session, ESimurghRTCTrackKind Kind);
+    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
+    static USimurghRTCOperation* AttachSource(USimurghRTCSession* Session, FSimurghRTCSourceHandle Source);
+    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
+    static USimurghRTCOperation* ReplaceSource(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track, FSimurghRTCSourceHandle Source);
+    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
+    static USimurghRTCOperation* SetSourceMuted(USimurghRTCSession* Session, FSimurghRTCSourceHandle Source, bool bMuted);
+    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
+    static USimurghRTCOperation* StopSource(USimurghRTCSession* Session, FSimurghRTCSourceHandle Source);
+    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
+    static USimurghRTCOperation* DetachTrack(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track);
+    UFUNCTION(BlueprintCallable, Category="SimurghRTC|Frames", meta=(BlueprintInternalUseOnly="true"))
+    static USimurghRTCOperation* SetDecodedFrameDelivery(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track, bool bEnabled);
+
     UFUNCTION(BlueprintCallable, Category="SimurghRTC") void Cancel();
     UFUNCTION(BlueprintPure, Category="SimurghRTC") bool IsFinished() const { return bFinished; }
     UFUNCTION(BlueprintPure, Category="SimurghRTC") FGuid GetOperationId() const { return OperationId; }
