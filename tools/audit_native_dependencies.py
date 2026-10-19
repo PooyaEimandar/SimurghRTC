@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
+import xml.etree.ElementTree as ET
 
 import ios_simulator_support
 import mobile_artifacts as artifacts
@@ -49,6 +51,21 @@ def check_libraries(engine, specs):
         engine / artifacts.relative_path(s['path']), s['sha256'], versions=True) for s in specs}
 
 
+def engine_distribution_provenance(engine, paths):
+    """Confirm Epic distribution identities without inventing an upstream source revision."""
+    manifest = engine / 'Engine/Build/Commit.gitdeps.xml'
+    entries = {e.attrib['Name']: e.attrib['Hash'] for e in ET.parse(manifest).getroot().iter('File')}
+    verified = {}
+    for name in sorted(set(paths)):
+        path = engine / artifacts.relative_path(name)
+        artifacts.require(name in entries, 'No engine distribution identity for: ' + name)
+        sha1 = hashlib.sha1(path.read_bytes()).hexdigest()
+        artifacts.require(sha1 == entries[name], 'Engine distribution mismatch: ' + name)
+        verified[name] = {'gitdeps_sha1': sha1, 'sha256': artifacts.digest(path)}
+    return {'manifest_sha256': artifacts.digest(manifest), 'files': verified,
+            'scope': 'Epic distribution bytes only; upstream source and security patches remain unverified'}
+
+
 def audit_mobile(path, platform, engine, current_lock_hash):
     checked = artifacts.validate(path)
     artifacts.require(checked['platform'] == platform, f'Expected {platform} artifact.')
@@ -85,20 +102,23 @@ def audit(engine, paths, support):
         artifacts.require(actual == spec['tree_sha256'], 'Engine header drift: ' + name)
         headers[name] = {'path': spec['path'], 'tree_sha256': actual, 'files': len(inventory)}
     mobile = {p: audit_mobile(path, p, engine, artifacts.digest(lock_path)) for p, path in paths.items()}
-    support_check = ios_simulator_support.validate(support)
+    support_check = ios_simulator_support.validate(support, require_current=False)
     support_lock = artifacts.read_json(support / 'source-lock.json')
-    artifacts.require(support_lock == artifacts.read_json(ROOT / 'Config/IOSSimulatorProbe.lock.json'),
-                      'Simulator support source lock differs from this review.')
     support_build = artifacts.read_json(support / 'build.json')
     rules = ('WebRTC/WebRTC.Build.cs', 'OpenSSL/OpenSSL.Build.cs',
              'libOpus/libOpus.Build.cs', 'libvpx/LibVpx.Build.cs')
     desktop_headers = mobile_build.tree_inventory(engine / (THIRD_PARTY + 'WebRTC/5414/Include'))
+    engine_libraries = [THIRD_PARTY + p for p in MAC_LIBRARIES]
+    engine_libraries.append(THIRD_PARTY + 'libOpus/opus-1.1/Android/ARM64/libspeex_resampler.a')
+    for record in mobile.values():
+        engine_libraries.extend(record['engine_libraries'])
     return {
-        'schema': 1, 'scope': 'SR-003 local inventory; see docs/DEPENDENCY_REVIEW.md',
+        'schema': 2, 'scope': 'SR-003/SR-008 local inventory; see docs/DEPENDENCY_REVIEW.md',
         'security_approval': 'not_granted',
         'mobile_build_lock_sha256': artifacts.digest(lock_path),
         'engine': {
             'build_version': version, 'headers': headers,
+            'distribution_provenance': engine_distribution_provenance(engine, engine_libraries),
             'webrtc_headers': {'tree_sha256': mobile_build.tree_digest(desktop_headers),
                                'files': len(desktop_headers)},
             'mac_libraries': {THIRD_PARTY + p: file_record(engine / (THIRD_PARTY + p), versions=True)
@@ -112,6 +132,7 @@ def audit(engine, paths, support):
         'mobile': mobile,
         'simulator_http2': {
             **support_check, 'version': support_lock['version'],
+            'matches_current_source_lock': support_lock == artifacts.read_json(ios_simulator_support.LOCK),
             'source_sha256': support_lock['sha256'],
             'notice_sha256': artifacts.digest(support / 'LICENSE.txt'),
             'ndebug_in_recorded_flags': any(f.startswith('-DNDEBUG') for f in support_build['flags']),

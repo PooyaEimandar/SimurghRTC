@@ -51,6 +51,8 @@ The output must be new. The tool copies the input, adds `artifact.json` with a S
 
 The initial adapter uses the same 5414-era C++ API as the desktop probe. Its archive must use Unreal's **OpenSSL, Opus and VPX** dependencies and the target's libc++. A stock upstream archive with bundled BoringSSL/codec copies is incompatible. The exact source revision, necessary patches and toolchain compatibility still need qualification; the adapter name is not a source pin or a supported security baseline.
 
+[SR-008](DEPENDENCY_SECURITY.md) is replacing this adapter with an isolated native dependency build on desktop and mobile. Its M155 candidate is not accepted by this artifact format; do not substitute it into an existing 5414-era export.
+
 Android also requires the standard Itanium C++ ABI. Rebuild earlier artifacts that lack `toolchain.cpp_abi: "itanium"`; Chromium's relative vtables crash when called from Unreal. The pinned build now disables them and checks the resulting thread vtable before export.
 
 Version 1 is limited to the factory and software-media probes: dummy audio device, network monitor disabled, no Java/AAR payload or hardware codec helpers. Camera, microphone, JNI/Objective-C integrations and platform lifecycle support remain separate mobile work. Both media and data-only profiles currently use the same media-capable dependency; no size saving is claimed.
@@ -110,4 +112,6 @@ python3 tools/test_mobile_rules.py --engine /absolute/path/to/UE_5.8 \
   --output Intermediate/MobileRulesCheck
 ```
 
-Use a new output directory. Also rerun the [Unreal tests](BUILDING.md#2-build-and-run-unreal-tests) after changing native selection. The [build workflow](MOBILE_BUILDS.md) checks source/toolchain inputs and linkage; signed device probes and [app-size validation](MOBILE_CLIENTS.md#app-size-validation) remain separate gates. The [dependency review](DEPENDENCY_REVIEW.md) records the remaining security, provenance and notice requirements. A valid manifest does not approve a dependency for release.
+Use a new output directory. To also check simulator support and rejection of retired exports, add `--simulator-support /absolute/path/to/current-support-export` after rebuilding the rules DLL from the current sample.
+
+Also rerun the [Unreal tests](BUILDING.md#2-build-and-run-unreal-tests) after changing native selection. The [build workflow](MOBILE_BUILDS.md) checks source/toolchain inputs and linkage; signed device probes and [app-size validation](MOBILE_CLIENTS.md#app-size-validation) remain separate gates. The [dependency review](DEPENDENCY_REVIEW.md) records the remaining security, provenance and notice requirements. A valid manifest does not approve a dependency for release.

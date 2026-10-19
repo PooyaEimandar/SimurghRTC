@@ -3,14 +3,14 @@
 **M0 is in progress**, targeting Unreal Engine **5.8.3**. Updated 2026-10-19.
 
 - **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-002 build profiles, SR-003 dependency/ABI review and headless Server feasibility, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
-- **In progress:** SR-006/SR-007 mobile artifact integration. SR-008 tracks the dependency security/provenance blockers found by the review; the current libraries are not a supported release baseline.
+- **In progress:** SR-006/SR-007 mobile artifact integration. SR-008 is fixing the dependency security/provenance blockers and moving desktop and mobile to separately built, maintained dependencies; the current RTC libraries are not a supported release baseline.
 - **Still to prove:** real connections, network media and packaged Android/iOS device acceptance. The [mobile lifecycle probe](docs/MOBILE_PROBE.md) is implemented; see the validation record for build and device results.
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
 
 ## 1. Goal and scope
 
-Build a standalone plugin for standard Unreal Engine 5.8.3. Developers should use the same C++ API and Blueprint nodes to send WebRTC data, audio and video to either a native Unreal server or Janus. Desktop clients and servers use the engine's bundled libwebrtc. Android and iOS Unreal clients use separately built, pinned libwebrtc libraries optimized for ARM64. Include native desktop/mobile sample projects and require no engine-source patches.
+Build a standalone plugin for standard Unreal Engine 5.8.3. Developers should use the same C++ API and Blueprint nodes to send WebRTC data, audio and video to either a native Unreal server or Janus. Use separately built, pinned libwebrtc dependencies for desktop clients/servers and Android/iOS clients, with optimized ARM64 mobile builds. SR-008 is migrating the existing desktop integration from engine libraries. Include native desktop/mobile sample projects and require no engine-source patches.
 
 The plugin includes the Unreal server endpoint, which must be enabled and configured. A normal Unreal dedicated server does not expose WebRTC automatically. Mobile targets are clients only; the Server profile remains on desktop/server hosts. Janus and STUN/TURN run separately; provide repeatable local configurations for testing.
 
@@ -80,7 +80,7 @@ A preview describes what is included; it does not mean production-ready. Set dat
 
 ## 4. Milestones, epics, issues
 
-SR-001 is **Complete (API v1 and executable lifecycle examples)**, SR-002 is **Complete (available Mac profile/package checks)** and SR-003 is **Complete (review with tracked release blockers)**; SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; all other issues remain **Planned**, including the new SR-008 dependency qualification. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
+SR-001 is **Complete (API v1 and executable lifecycle examples)**, SR-002 is **Complete (available Mac profile/package checks)** and SR-003 is **Complete (review with tracked release blockers)**; SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; SR-008 is **In progress**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
 
 ### M0 Foundation and feasibility
 
@@ -106,7 +106,7 @@ Define the shared API: sessions, calls, text rooms, channels, media sources and 
 
 **Complete, 2026-10-19 (available Mac).** All four client profiles pass Unreal automation and Editor/packaged lifecycle checks. Link maps and UHT inputs contain the selected modules, one libwebrtc archive and no Editor generator in Game. The optional Janus graph runs in Full/Janus-only and is absent from Direct-only/data-only; Server staging excludes it too. Earlier dedicated Server runtime evidence remains recorded under SR-003.
 
-Create the plugin layout and one place to select modules, generate descriptors and set `SIMURGHRTC_WITH_JANUS`. Define Full, Direct-only, Janus-only and data-only client profiles for desktop and mobile, plus the desktop/server-host Server profile. Select engine-bundled or separately built mobile libwebrtc headers/libraries by target, independently of provider.
+Create the plugin layout and one place to select modules, generate descriptors and set `SIMURGHRTC_WITH_JANUS`. Define Full, Direct-only, Janus-only and data-only client profiles for desktop and mobile, plus the desktop/server-host Server profile. Select one pinned libwebrtc implementation by target, independently of provider. The completed feasibility checks use engine libraries on desktop; SR-008 replaces this baseline with separately built dependencies on all targets.
 
 **Done when:** UHT, compile and sample cook pass with Janus on/off in standard UE on the available Mac; reflected extension types/assets are excluded cleanly and dependency graphs contain only selected modules. Mobile linkage/startup is verified separately by SR-006/SR-007.
 
@@ -170,9 +170,9 @@ Create a reproducible macOS/Xcode build of pinned upstream libwebrtc for device 
 
 ##### SR-008 — Qualify the native dependency security baseline (P0)
 
-**Planned; owner: SimurghRTC maintainer.** Resolve the [SR-003 findings](docs/DEPENDENCY_REVIEW.md#security-review) before untrusted network acceptance or a supported release. Identify Epic's WebRTC source/patch history and Opus/Speex binary origins. Select supported crypto/media dependencies or documented maintained backports, map relevant advisories to source and enabled features, and update the simulator nghttp2 support library. Controlled local feature development can continue while this work is open.
+**In progress; owner: SimurghRTC maintainer.** The simulator HTTP/2 fix and Epic distribution checks are implemented. A pinned M155 candidate passes Mac symbol isolation and local PeerConnection lifecycle checks; see [SR-008 progress](docs/DEPENDENCY_SECURITY.md). On 2026-10-19, the maintainer approved separately built, maintained dependencies for desktop and mobile. Replace the opaque WebRTC/crypto/codec inputs with pinned source builds and isolate their symbols from Unreal's own libraries. Map relevant advisories to source and enabled features before untrusted network acceptance or a supported release. Controlled local feature development can continue while this work is open.
 
-**Done when:** every linked component has traceable source and patches, security findings have recorded dispositions, and refreshed pins pass repeat builds, mobile ABI checks, one-copy linkage and packaged lifecycle/media tests. Any change that requires an engine source patch remains a design blocker. Revalidate the external dependency set together; do not introduce a conflicting second crypto/runtime implementation. SR-902 separately verifies distribution notices.
+**Done when:** every native RTC component selected by the plugin has traceable source and patches, relevant dependency findings have recorded resolutions, and refreshed pins pass repeat builds, mobile ABI checks, one-copy linkage and packaged lifecycle/media tests. Any change that requires an engine source patch remains a design blocker. Revalidate the RTC dependency set together; do not introduce conflicting crypto/runtime symbols. SR-902 separately verifies distribution notices.
 
 **Depends on:** [SR-003](#e02-native-feasibility-and-test-fixtures)
 
@@ -626,7 +626,7 @@ Check the selected desktop/mobile codec factories and native SDP/audio paths for
 
 ##### SR-705 — Design and implement optional media E2EE (P2)
 
-Check encoded-frame encryption hooks in engine-bundled and separately built mobile libwebrtc for the declared client and Server targets. Before implementation, define an interoperable authenticated frame format, key provisioning outside Janus, key rotation, replay handling and a threat model.
+Check encoded-frame encryption hooks in the qualified, separately built libwebrtc for the declared client and Server targets. Before implementation, define an interoperable authenticated frame format, key provisioning outside Janus, key rotation, replay handling and a threat model.
 
 **Done when:** key-holding endpoints exchange media while Janus cannot decode it; wrong keys and rotation are tested; cryptographic review is recorded. DTLS-SRTP alone and insecure demo ciphers do not count as E2EE. Missing hooks remain explicit target limitations.
 
@@ -774,7 +774,7 @@ Prepare versioned packages, checksums, release notes, an API migration policy an
 | ADR-002 | Both providers use the same native libwebrtc backend. Provider selection changes signaling and service behavior: Direct Unreal connects to the plugin's Unreal server endpoint; Janus connects to the selected Janus service. |
 | ADR-003 | Direct Unreal mode terminates WebRTC on the Unreal server. It is not a UDP proxy, an SFU or a replacement for gameplay replication. |
 | ADR-004 | Data is delivered through DataChannels; audio and video through WebRTC media tracks. Signaling is separate from both. |
-| ADR-005 | Libwebrtc supplies DataChannels and media transport: engine-bundled on desktop clients/servers, separately built and pinned for Android/iOS ARM64 clients. Each target links one selected implementation; mobile provisioning does not introduce a second WebRTC stack. |
+| ADR-005 | Libwebrtc supplies DataChannels and media transport through separately built, pinned dependencies on desktop clients/servers and Android/iOS ARM64 clients. Approved 2026-10-19 under SR-008; migration is in progress. Each target links one WebRTC implementation; its crypto/codec symbols must be isolated from Unreal dependencies without engine source patches. Existing engine-backed probes remain feasibility evidence until replacements pass validation. |
 | ADR-006 | Janus-specific functionality is isolated behind `SIMURGHRTC_WITH_JANUS` and optional provider/extension modules. Runtime capabilities also govern what an enabled backend can actually do. |
 | ADR-007 | Shared operations have common semantics; unavailable services return an explicit capability/error result. Switching provider reconnects the session; it is not a transparent migration of a live PeerConnection. |
 | ADR-008 | WebRTC may own its internal threads. Application callbacks are marshalled to the correct Unreal thread, with bounded audio/video queues. No new generic networking event-loop framework is part of this plugin. |

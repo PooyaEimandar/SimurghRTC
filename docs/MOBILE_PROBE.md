@@ -77,7 +77,7 @@ The artifact contains simulator libwebrtc and a simulator VPX library built from
 
 To test the saved Xcode 27.1 repeat build, select `LocalBuilds/Artifacts/IOSSimulator-repeat-20261018-a`. Use that same artifact for both profiles, with fresh project directories and separate application IDs. Build the HTTP/2 support library with the same pinned Xcode into a new output directory as well. The [validation record](M0_VALIDATION.md) identifies the exact manifests used by each run.
 
-This engine also supplies a device-only `nghttp2` library to its content streaming module. The support step builds the matching pinned 1.64.0 release for the simulator. The sample target explicitly loads that library so the linker does not select device objects. It verifies the archive hash and leaves the engine unchanged. This support library is separate from the WebRTC artifact and is used only by simulator probe builds.
+This engine also supplies a device-only `nghttp2` library to its content streaming module. The support step builds pinned nghttp2 1.70.0 for the simulator, including the CVE-2026-27135 fix. Unreal keeps its 1.64.0 consumer headers; the local regression checks the exercised C API against them. The sample target explicitly loads the simulator library and verifies its archive and current source lock. Old support exports must be rebuilt. See [SR-008](DEPENDENCY_SECURITY.md) for the security checks and remaining migration work. This support library is separate from the WebRTC artifact and is used only by simulator probe builds.
 
 Build the simulator executable and the Editor modules needed for cooking, then package:
 

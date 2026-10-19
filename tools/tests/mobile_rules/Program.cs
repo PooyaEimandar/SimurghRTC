@@ -8,7 +8,8 @@ AssemblyLoadContext.Default.Resolving += (_, name) => {
     string path = Path.Combine(args[1], name.Name + ".dll");
     return File.Exists(path) ? AssemblyLoadContext.Default.LoadFromAssemblyPath(path) : null;
 };
-var method = Assembly.LoadFrom(args[0]).GetType("SimurghRTCMobileArtifact", throwOnError: true)
+var rules = Assembly.LoadFrom(args[0]);
+var method = rules.GetType("SimurghRTCMobileArtifact", throwOnError: true)
     .GetMethod("Validate", BindingFlags.Public | BindingFlags.Static);
 using var document = JsonDocument.Parse(File.ReadAllText(args[2]));
 var results = new List<object>();
@@ -19,7 +20,12 @@ foreach (var item in document.RootElement.EnumerateArray())
     string error = "";
     try
     {
-        method.Invoke(null, new object[] { item.GetProperty("root").GetString(), item.GetProperty("platform").GetString() });
+        if (item.TryGetProperty("validator", out var validator) && validator.GetString() == "simulator-support")
+            rules.GetType("ContractHostSimulatorSupport", throwOnError: true)
+                .GetMethod("Library", BindingFlags.Public | BindingFlags.Static)
+                .Invoke(null, new object[] { item.GetProperty("root").GetString() });
+        else
+            method.Invoke(null, new object[] { item.GetProperty("root").GetString(), item.GetProperty("platform").GetString() });
         accepted = true;
     }
     catch (TargetInvocationException exception) { error = exception.InnerException.Message; }

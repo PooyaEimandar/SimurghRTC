@@ -3,6 +3,7 @@
 from __future__ import annotations
 import argparse
 import json
+import os
 from pathlib import Path, PurePosixPath
 import shutil
 import sys
@@ -15,10 +16,10 @@ import mobile_build
 LOCK = Path(__file__).resolve().parents[1] / 'Config/IOSSimulatorProbe.lock.json'
 
 
-def validate(root):
+def validate(root, *, require_current=True):
     files = artifacts.payload_files(root)
     record = artifacts.read_json(root / 'support.json')
-    artifacts.require(record.get('schema') == 1 and record.get('platform') == 'IOSSimulator'
+    artifacts.require(record.get('schema') in (1, 2) and record.get('platform') == 'IOSSimulator'
                       and record.get('architecture') == 'arm64', 'Invalid simulator support metadata.')
     required = {'libnghttp2.a', 'LICENSE.txt', 'build.json', 'source-lock.json'}
     artifacts.require(set(record['files']) == required and set(files) == required | {'support.json'},
@@ -27,6 +28,12 @@ def validate(root):
         artifacts.require(artifacts.digest(files[name]) == record['files'][name], 'Simulator support file changed: ' + name)
     artifacts.require(record['archive_sha256'] == record['files']['libnghttp2.a'], 'Support archive identity mismatch.')
     artifacts.validate_archive(root / 'libnghttp2.a', 'IOSSimulator')
+    if require_current:
+        lock = artifacts.read_json(LOCK)
+        artifacts.require(record['schema'] == 2 and record.get('version') == lock['version']
+                          and record.get('source_lock_sha256') == artifacts.digest(LOCK)
+                          and record['files']['source-lock.json'] == artifacts.digest(LOCK),
+                          'Retired simulator support baseline. Rebuild with the current security lock.')
     return {'manifest_sha256': artifacts.digest(root / 'support.json'), 'archive_sha256': record['archive_sha256']}
 
 
@@ -35,7 +42,7 @@ def build(engine, output, archive=None):
     lock = artifacts.read_json(LOCK)
     mobile_lock = mobile_build.load_lock()
     toolchain = mobile_build.preflight(mobile_lock, 'IOSSimulator', Path(sys.executable))
-    engine_headers = engine / 'Engine/Source/ThirdParty/nghttp2' / lock['version'] / 'include/nghttp2'
+    engine_headers = engine / 'Engine/Source/ThirdParty/nghttp2' / lock['engine_header_version'] / 'include/nghttp2'
     for name, digest in lock['engine_headers'].items():
         artifacts.require(artifacts.digest(engine_headers / name) == digest, 'Unreal nghttp2 header drift: ' + name)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -62,12 +69,13 @@ def build(engine, output, archive=None):
                     path.parent.mkdir(parents=True, exist_ok=True)
                     with tar.extractfile(member) as incoming, path.open('wb') as outgoing:
                         shutil.copyfileobj(incoming, outgoing)
-        for name, digest in lock['engine_headers'].items():
+        for name, digest in lock['source_headers'].items():
             artifacts.require(artifacts.digest(source / 'lib/includes/nghttp2' / name) == digest,
-                              'Upstream and Unreal nghttp2 headers differ: ' + name)
+                              'Upstream nghttp2 header drift: ' + name)
         sdk = mobile_build.run(['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-path'])
         flags = ['-target', 'arm64-apple-ios15.0-simulator', '-isysroot', sdk, '-O2', '-fPIC',
                  '-fvisibility=hidden', '-DNGHTTP2_STATICLIB', '-DBUILDING_NGHTTP2', '-DHAVE_ARPA_INET_H=1',
+                 '-ffile-prefix-map=' + str(source) + '=nghttp2-' + lock['version'],
                  '-I' + str(source / 'lib/includes')]
         objects = []
         for path in sorted((source / 'lib').glob('*.c')):
@@ -76,15 +84,18 @@ def build(engine, output, archive=None):
             objects.append(obj)
         artifacts.require(objects, 'nghttp2 source archive contains no library sources.')
         output.mkdir()
-        mobile_build.run(['xcrun', 'ar', 'rcs', output / 'libnghttp2.a', *objects])
-        mobile_build.run(['xcrun', 'strip', '-S', output / 'libnghttp2.a'])
+        archive_env = dict(os.environ, ZERO_AR_DATE='1')
+        mobile_build.run(['xcrun', 'ar', 'rcs', output / 'libnghttp2.a', *objects], env=archive_env)
+        mobile_build.run(['xcrun', 'strip', '-S', output / 'libnghttp2.a'], env=archive_env)
         artifacts.validate_archive(output / 'libnghttp2.a', 'IOSSimulator')
         shutil.copy2(source / 'COPYING', output / 'LICENSE.txt')
         shutil.copy2(LOCK, output / 'source-lock.json')
         (output / 'build.json').write_text(json.dumps({'toolchain': toolchain, 'flags': flags,
+            'archive_environment': {'ZERO_AR_DATE': '1'},
             'source_files': [p.name for p in objects], 'recipe_sha256': artifacts.digest(Path(__file__))}, indent=2) + '\n')
         files = {name: artifacts.digest(output / name) for name in ['libnghttp2.a', 'LICENSE.txt', 'build.json', 'source-lock.json']}
-        (output / 'support.json').write_text(json.dumps({'schema': 1, 'platform': 'IOSSimulator',
+        (output / 'support.json').write_text(json.dumps({'schema': 2, 'version': lock['version'],
+            'source_lock_sha256': artifacts.digest(LOCK), 'platform': 'IOSSimulator',
             'architecture': 'arm64', 'archive_sha256': files['libnghttp2.a'], 'files': files}, indent=2) + '\n')
     return validate(output)
 

@@ -166,12 +166,35 @@ class MobilePreparationTests(unittest.TestCase):
         root = self.root / 'support'
         root.mkdir()
         (root / 'libnghttp2.a').write_bytes(archive(('http2.o/', macho(platform=platform))))
-        for name in ['LICENSE.txt', 'build.json', 'source-lock.json']:
+        for name in ['LICENSE.txt', 'build.json']:
             (root / name).write_text('Synthetic test fixture')
+        (root / 'source-lock.json').write_bytes(ios_simulator_support.LOCK.read_bytes())
+        lock = ios_simulator_support.artifacts.read_json(ios_simulator_support.LOCK)
         files = {p.name: ios_simulator_support.artifacts.digest(p) for p in root.iterdir()}
-        (root / 'support.json').write_text(json.dumps(dict(schema=1, platform='IOSSimulator', architecture='arm64',
+        (root / 'support.json').write_text(json.dumps(dict(schema=2, version=lock['version'],
+                                                         source_lock_sha256=files['source-lock.json'],
+                                                         platform='IOSSimulator', architecture='arm64',
                                                          archive_sha256=files['libnghttp2.a'], files=files)))
         return root
+
+    def test_simulator_support_rejects_retired_but_self_consistent_manifest(self):
+        root = self.support()
+        manifest = json.loads((root / 'support.json').read_text())
+        manifest['schema'] = 1
+        (root / 'support.json').write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(ValueError, 'Retired'):
+            ios_simulator_support.validate(root)
+        self.assertIn('archive_sha256', ios_simulator_support.validate(root, require_current=False))
+
+    def test_simulator_support_rejects_resealed_source_lock_drift(self):
+        root = self.support()
+        (root / 'source-lock.json').write_text('{}')
+        manifest = json.loads((root / 'support.json').read_text())
+        manifest['files']['source-lock.json'] = ios_simulator_support.artifacts.digest(root / 'source-lock.json')
+        manifest['source_lock_sha256'] = manifest['files']['source-lock.json']
+        (root / 'support.json').write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(ValueError, 'Retired'):
+            ios_simulator_support.validate(root)
 
     def test_simulator_support_rejects_tampering_and_extra_files(self):
         support = self.support()

@@ -2,6 +2,8 @@
 
 **SR-003 reviewed on 2026-10-19 for Unreal Engine 5.8.3.** The existing native integration is suitable for controlled feasibility tests. It is **not approved as a production security or distribution baseline**. SR-008 now owns the dependency updates and missing provenance; SR-902 owns the final notice bundle.
 
+**SR-008 follow-up:** see [current fixes and migration status](DEPENDENCY_SECURITY.md). The tables below describe the original SR-003 inputs; its inventory snapshot is preserved.
+
 The headless Mac Server, Samsung and iOS simulator results remain valid for the exact binaries tested. Completing this review does not close independent-host builds, physical iPhone testing or Shipping app-size validation. See [M0 results](M0_VALIDATION.md).
 
 ## What we actually link

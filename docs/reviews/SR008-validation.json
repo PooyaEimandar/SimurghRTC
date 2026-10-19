@@ -1,0 +1,336 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "issue": "SR-008",
+  "status": "in_progress",
+  "scope": "Unreal plugin dependencies and local build/lifecycle checks",
+  "http2": {
+    "version": "1.70.0",
+    "regression": {
+      "cve": "CVE-2026-27135",
+      "probe_sha256": "b71f6b1c4b077e8b3828111c226e5a4be6bae58370c507645d91c0beaf37eb71",
+      "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+      "engine_headers": {
+        "nghttp2.h": "9a538b11cfb918105551e8427815b966edfb83724d6a0d09c422593d572e807e",
+        "nghttp2ver.h": "49b0c950148846ba506065bb6705ae9261545a61cd0e89c2d0b711fe14e825ce"
+      },
+      "runs": {
+        "baseline": {
+          "source_sha256": "20e73f3cf9db3f05988996ac8b3a99ed529f4565ca91a49eb0550498e10621e8",
+          "library_sha256": "e3cff00b6d54f3c942d0e0dc9174dd761dea4879622174928fdf12a17b79ca13",
+          "cases": [
+            {
+              "mode": 0,
+              "exit_code": 0,
+              "stdout": "PASS mode=0 runtime=1.64.0 headers=1.64.0",
+              "stderr": ""
+            },
+            {
+              "mode": 1,
+              "exit_code": -6,
+              "stdout": "",
+              "stderr": "Assertion failed: (iframe->state == NGHTTP2_IB_IGN_ALL), function nghttp2_session_mem_recv2, file nghttp2_session.c, line 6857."
+            },
+            {
+              "mode": 2,
+              "exit_code": -6,
+              "stdout": "",
+              "stderr": "Assertion failed: (iframe->state == NGHTTP2_IB_IGN_ALL), function nghttp2_session_mem_recv2, file nghttp2_session.c, line 6857."
+            }
+          ]
+        },
+        "current": {
+          "source_sha256": "aa317e2cf9dca6afa0aed68f8fad6ff303ec6982e25a78c75c0b65e2b9b3ded5",
+          "library_sha256": "23a4be2d4f975b90e24ffdfa5e94a72a4b67c2b0a56335e825c58d74c71eb448",
+          "cases": [
+            {
+              "mode": 0,
+              "exit_code": 0,
+              "stdout": "PASS mode=0 runtime=1.70.0 headers=1.64.0",
+              "stderr": ""
+            },
+            {
+              "mode": 1,
+              "exit_code": 0,
+              "stdout": "PASS mode=1 runtime=1.70.0 headers=1.64.0",
+              "stderr": ""
+            },
+            {
+              "mode": 2,
+              "exit_code": 0,
+              "stdout": "PASS mode=2 runtime=1.70.0 headers=1.64.0",
+              "stderr": ""
+            }
+          ]
+        }
+      },
+      "status": "passed"
+    },
+    "repeat_build": {
+      "schema": 1,
+      "status": "passed",
+      "outputs": [
+        "LocalBuilds/SimulatorSupport/nghttp2-1.70.0-sr008-final-a",
+        "LocalBuilds/SimulatorSupport/nghttp2-1.70.0-sr008-final-b"
+      ],
+      "matching_files": {
+        "libnghttp2.a": "8209c79e03666f623cad3e58d37ee974cb9e2ff81ed3e80221950059bba619b4",
+        "LICENSE.txt": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+        "source-lock.json": "28f7039546b941e68c4b6120a848c8a5be1d897c670f9ef0c8ef57ffb8268f0d"
+      },
+      "archive_bytes": 258696,
+      "build_records_note": "Build metadata retains each temporary source path, so its hash and the enclosing support manifest differ."
+    }
+  },
+  "checks": {
+    "python_tests": 123,
+    "python_failures": 0,
+    "compiled_rules": 36,
+    "compiled_rules_failures": 0
+  },
+  "mac_candidate": {
+    "schema": 1,
+    "status": "passed",
+    "scope": "Mac ARM64 standalone dependency coexistence only",
+    "security_approval": "not_granted",
+    "unreal_package_tested": false,
+    "mobile_tested": false,
+    "source_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+    "lock_sha256": "b5ed77eabb7c178fe55322fed7e39381dc10fe56019020fefb78c4bd0465db97",
+    "build_name": "MacCandidate",
+    "archive_sha256": "99f3bcd701d6849f985824096e4ad6ce65dd94b9b039d4cccdb716747d3c4226",
+    "isolated_sha256": "cd5a9c359984f18140d1b3bb6e3080ce4e45f3064e9c076281ce26a176a81932",
+    "exports": [
+      "_SimurghRTC_NativeProbeV1",
+      "_SimurghRTC_NativeVersionV1"
+    ],
+    "runtime_stdout": "candidate: BoringSSL | libopus unknown | v1.17.0-57-gd2413e2ca\nengine: OpenSSL 1.1.1t  7 Feb 2023 | libopus 1.1 | v1.14.1\nPASS: six factory/peer lifecycles; isolated crypto and codec versions\n",
+    "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/third_party/llvm-build/Release+Asserts/bin",
+    "python": "3.14.7",
+    "recipe_sha256": "50e0b52b8184aa3a09516aeb30583519d685aa36060bbce4c6cd08d0cfb2101a",
+    "probe_sources": {
+      "0001-probe-target.patch": "6fd3fa28477159c57e54f8b7c4d96dc2d4f2d6e4e5cd00013568b713811d202c",
+      "BUILD.gn": "cb8b79a797a644246424db8bf9ad99bdcea3fe6138acd4a75f5ee8431a7640ad",
+      "mac-probe.gn": "8a4a7f8b2bd9e92f41afd47b233561ee7c07ed85acfe69da7903d4b9821fc110",
+      "probe.cc": "c3a992c740292abb239d779bdfdf93d81f3cf29ae3d8c7be7062ffed6c7ad82b",
+      "exports.txt": "9356f174a067bf92daac998b7ec9a5c0be4a41d2a3fb751fdd8f6ccb64e76b1a",
+      "coexistence.c": "06ef9be0b0a31a093ecf8f8876d3103ba75388685d7480b5ec2ac8d89ef61243"
+    },
+    "repeat_build": {
+      "status": "passed",
+      "scope": "two Ninja output directories on the same Mac and verified source checkout",
+      "matches": {
+        "archive_sha256": true,
+        "isolated_sha256": true,
+        "lock_sha256": true,
+        "recipe_sha256": true,
+        "probe_sources": true
+      },
+      "archive_sha256": "99f3bcd701d6849f985824096e4ad6ce65dd94b9b039d4cccdb716747d3c4226",
+      "isolated_sha256": "cd5a9c359984f18140d1b3bb6e3080ce4e45f3064e9c076281ce26a176a81932",
+      "runtime_runs": 2,
+      "peer_lifecycles_per_run": 6,
+      "reports": [
+        "M155Mac-accepted-a/result.json",
+        "M155Mac-accepted-b/result.json"
+      ]
+    }
+  },
+  "engine_before": {
+    "revision": "c95c0654d8a28aff46b97644e27a58a81cc7879f",
+    "status": ""
+  },
+  "simulator_packages": {
+    "Direct": {
+      "passed": true,
+      "profile": "direct-only",
+      "artifact": {
+        "artifact_id": "iossimulator-arm64-4e8a5ac68e8a-5089c53c0ea5",
+        "platform": "IOSSimulator",
+        "architecture": "arm64",
+        "files": 2946,
+        "objects": 1246,
+        "archive_bytes": 25273184,
+        "manifest_sha256": "765657e8fa7cf55d4337654f5de39ba9f17fc8188c0e3c317d721408df1f85ff",
+        "runtime_validation": "unverified"
+      },
+      "run_id": "4d8cefea-aea6-49ad-93b6-6b443df0f329",
+      "app_id": "org.simurghrtc.probe.sr008direct",
+      "runtime_info": {
+        "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+        "name": "iOS 27.0",
+        "version": "27.0",
+        "buildversion": "24A434",
+        "supportedArchitectures": [
+          "arm64"
+        ]
+      },
+      "bundle_toolchain": {
+        "DTXcode": "2710",
+        "DTXcodeBuild": "27A9275",
+        "DTSDKName": "iphonesimulator27.1",
+        "DTSDKBuild": "24A94232"
+      },
+      "host_xcode": "Xcode 27.1\nBuild version 27A9275",
+      "executable_sha256": "94e2f8f898eec2267fd543bf5302a63f60f269a5e2b75bacf80f5c8d94e0f479",
+      "size": {
+        "bundle_file_bytes": 283791330,
+        "executable_bytes": 251795024,
+        "shipping_baseline": false,
+        "rtc_size_delta_measured": false
+      },
+      "probe": {
+        "schema": 1,
+        "run_id": "4d8cefea-aea6-49ad-93b6-6b443df0f329",
+        "engine_version": "5.8.3-0+UE5",
+        "platform": "IOS",
+        "pid": 91368,
+        "editor_build": false,
+        "server_build": false,
+        "arm64_build": true,
+        "simulator_build": true,
+        "with_janus": false,
+        "artifact_manifest_sha256": "765657e8fa7cf55d4337654f5de39ba9f17fc8188c0e3c317d721408df1f85ff",
+        "network_transport_tested": false,
+        "hardware_capture_tested": false,
+        "completed_cycles": 3,
+        "factories_created": 9,
+        "peers_created": 9,
+        "explicit_teardowns": 6,
+        "destructor_teardowns": 3,
+        "overlapping_owners_checked": true,
+        "duplicate_calls_checked": true,
+        "readiness_cleared_after_stop": true,
+        "elapsed_seconds": 0.03889508172869682,
+        "passed": true,
+        "error": ""
+      },
+      "app_stopped": true,
+      "simulator_support": {
+        "manifest_sha256": "398c7bd57cc06f7cb730fe40951c9037a645311c760408ad82fa96cd83de5927",
+        "archive_sha256": "8209c79e03666f623cad3e58d37ee974cb9e2ff81ed3e80221950059bba619b4"
+      },
+      "link_audit": {
+        "status": "passed",
+        "profile": "direct",
+        "uuid": "7F324479-3001-3A89-8568-434DFE06D71F",
+        "libraries": {
+          "libwebrtc": [
+            "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/MobileSR008Direct/Plugins/SimurghRTC/ThirdParty/WebRTC/IOSSimulator/arm64/Lib/libwebrtc.a"
+          ],
+          "libnghttp2": [
+            "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/MobileSR008Direct/Build/IOSSimulator/libnghttp2.a"
+          ],
+          "libvpx": [
+            "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/MobileSR008Direct/Plugins/SimurghRTC/ThirdParty/WebRTC/IOSSimulator/arm64/Lib/libvpx.a"
+          ]
+        },
+        "map_sha256": "915405af6a4eca27a483fc47c03fe4c04737ffcc8677f4880a1657e1a43e4e87",
+        "janus_present": false,
+        "nghttp2_sha256": "8209c79e03666f623cad3e58d37ee974cb9e2ff81ed3e80221950059bba619b4"
+      }
+    },
+    "Full": {
+      "passed": true,
+      "profile": "full",
+      "artifact": {
+        "artifact_id": "iossimulator-arm64-4e8a5ac68e8a-5089c53c0ea5",
+        "platform": "IOSSimulator",
+        "architecture": "arm64",
+        "files": 2946,
+        "objects": 1246,
+        "archive_bytes": 25273184,
+        "manifest_sha256": "765657e8fa7cf55d4337654f5de39ba9f17fc8188c0e3c317d721408df1f85ff",
+        "runtime_validation": "unverified"
+      },
+      "run_id": "17bdd8b3-ac2b-429b-afa9-c4f9f0b18e95",
+      "app_id": "org.simurghrtc.probe.sr008full",
+      "runtime_info": {
+        "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+        "name": "iOS 27.0",
+        "version": "27.0",
+        "buildversion": "24A434",
+        "supportedArchitectures": [
+          "arm64"
+        ]
+      },
+      "bundle_toolchain": {
+        "DTXcode": "2710",
+        "DTXcodeBuild": "27A9275",
+        "DTSDKName": "iphonesimulator27.1",
+        "DTSDKBuild": "24A94232"
+      },
+      "host_xcode": "Xcode 27.1\nBuild version 27A9275",
+      "executable_sha256": "da7dc7fc517d766a6cc3baa2580499b6e2e3aa7cbbdcf5b5baf1ee62cf267620",
+      "size": {
+        "bundle_file_bytes": 283813985,
+        "executable_bytes": 251816848,
+        "shipping_baseline": false,
+        "rtc_size_delta_measured": false
+      },
+      "probe": {
+        "schema": 1,
+        "run_id": "17bdd8b3-ac2b-429b-afa9-c4f9f0b18e95",
+        "engine_version": "5.8.3-0+UE5",
+        "platform": "IOS",
+        "pid": 77423,
+        "editor_build": false,
+        "server_build": false,
+        "arm64_build": true,
+        "simulator_build": true,
+        "with_janus": true,
+        "artifact_manifest_sha256": "765657e8fa7cf55d4337654f5de39ba9f17fc8188c0e3c317d721408df1f85ff",
+        "network_transport_tested": false,
+        "hardware_capture_tested": false,
+        "completed_cycles": 3,
+        "factories_created": 9,
+        "peers_created": 9,
+        "explicit_teardowns": 6,
+        "destructor_teardowns": 3,
+        "overlapping_owners_checked": true,
+        "duplicate_calls_checked": true,
+        "readiness_cleared_after_stop": true,
+        "elapsed_seconds": 0.03770437464118004,
+        "passed": true,
+        "error": ""
+      },
+      "app_stopped": true,
+      "simulator_support": {
+        "manifest_sha256": "398c7bd57cc06f7cb730fe40951c9037a645311c760408ad82fa96cd83de5927",
+        "archive_sha256": "8209c79e03666f623cad3e58d37ee974cb9e2ff81ed3e80221950059bba619b4"
+      },
+      "link_audit": {
+        "status": "passed",
+        "profile": "full",
+        "uuid": "32C08C5A-97F0-38CC-978E-2010DBC7FB73",
+        "libraries": {
+          "libwebrtc": [
+            "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/MobileSR008Full/Plugins/SimurghRTC/ThirdParty/WebRTC/IOSSimulator/arm64/Lib/libwebrtc.a"
+          ],
+          "libnghttp2": [
+            "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/MobileSR008Full/Build/IOSSimulator/libnghttp2.a"
+          ],
+          "libvpx": [
+            "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/MobileSR008Full/Plugins/SimurghRTC/ThirdParty/WebRTC/IOSSimulator/arm64/Lib/libvpx.a"
+          ]
+        },
+        "map_sha256": "7e94b48609593f9e14076290d2ccf41a7961e1ac0487f3548ae747eda0b8b092",
+        "janus_present": true,
+        "nghttp2_sha256": "8209c79e03666f623cad3e58d37ee974cb9e2ff81ed3e80221950059bba619b4"
+      }
+    }
+  },
+  "remaining": [
+    "Integrate the isolated native backend into the plugin",
+    "Build and qualify the replacement on Android/iOS and other desktop targets",
+    "Repeat packaged lifecycle and media checks with the replacement",
+    "Complete component source/patch review and distribution notices"
+  ],
+  "evidence_directory": "Intermediate/SR008",
+  "engine_at_recording": {
+    "revision": "3c5c6b098ec411254cb662437676de5548d929be",
+    "status": "",
+    "source_modified_by_this_task": false
+  },
+  "build_commands_sha256": "b44759efcbfaa30e312f6e2103a24abd9f39d68ddbbd79f3611859c89d814af1"
+}

@@ -19,7 +19,7 @@ SimurghRTC is a C++ plugin for **Unreal Engine 5.8.3**. Its goal is to let an Un
 
 ## Technical references
 
-- [Dependency review](docs/DEPENDENCY_REVIEW.md): versions, licenses, security findings and mobile ABI requirements.
+- [Dependency review](docs/DEPENDENCY_REVIEW.md): versions, licenses and mobile ABI requirements. [Security work](docs/DEPENDENCY_SECURITY.md) tracks fixes and the dependency migration.
 - [Native Server test](docs/NATIVE_PROBE.md): libwebrtc setup and headless HTTP checks.
 - [Native media test](docs/MEDIA_PROBE.md): codecs, textures, render targets and audio playback integration.
 - [Signaling examples](docs/SIGNALING_V1.md): the Direct draft and Janus message rules.

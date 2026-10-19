@@ -1,6 +1,6 @@
 # M0 status and test results
 
-Updated **2026-10-19**. M0 is still in progress. API v1 and lifecycle examples (SR-001), Mac build profiles (SR-002), dependency/ABI review and Server feasibility (SR-003), local media feasibility (SR-004) and repeatable fixtures (SR-005) are complete on the available host. SR-003 found release blockers now tracked by SR-008 and SR-902.
+Updated **2026-10-19**. M0 is still in progress. API v1 and lifecycle examples (SR-001), Mac build profiles (SR-002), dependency/ABI review and Server feasibility (SR-003), local media feasibility (SR-004) and repeatable fixtures (SR-005) are complete on the available host. SR-003 found release blockers now tracked by SR-008 and SR-902. SR-008 has updated simulator HTTP/2 and verified Epic distribution hashes; the approved migration to separately built, maintained desktop/mobile dependencies is still in progress.
 
 The plugin has working test probes, but the shared `Connect` API still returns `NotImplemented`. No Unreal RTC call or network media flow has been demonstrated yet.
 
@@ -10,9 +10,10 @@ Tests ran on a Mac with Apple M2 Max and UE 5.8.3. Janus/TURN ran in Linux ARM64
 
 | Check | Result | What it establishes |
 |---|---|---|
-| Python checks | 120 passed | Pinned inputs, dependency inventory, fixtures, mobile/lifecycle reports, optional asset staging and package audits |
+| Python checks | 123 passed | Pinned inputs, dependency inventory, fixtures, mobile/lifecycle reports, optional asset staging and package audits |
 | Native dependency inventory | Passed on Mac and all three mobile artifacts | External mobile library/header hashes, archive members, versions and notice inputs checked; security approval is withheld |
-| Compiled UBT artifact validator | 30 current fixture cases passed; 2 earlier device exports passed | Valid Android/iOS metadata and rejection of missing, changed, extra or incompatible inputs |
+| Compiled UBT artifact validator | 36 current fixture cases passed; 2 earlier device exports passed | Mobile metadata and simulator support checks, including rejection of retired or changed exports |
+| Maintained WebRTC candidate | Mac ARM64 symbol isolation and six local peer lifecycles passed | New crypto/codec copies coexist with Unreal's archives in a standalone test; plugin replacement is not yet accepted |
 | Android/iOS ARM64 dependencies | Corrected Android and simulator repeat builds passed | Two fresh builds per target match; earlier device iOS evidence is retained |
 | Packaged Android lifecycle | Direct-only and Full passed on Samsung S25 Ultra | Each run created and closed nine peers; dependency identity and app cleanup verified |
 | Packaged iOS simulator lifecycle | Direct-only and Full passed with Xcode/SDK 27.1 artifacts on ARM64, iOS 27.0 | Same nine-peer checks, matching launch PID and dependency identity, verified linkage and app shutdown |
@@ -30,7 +31,7 @@ These results do not establish Windows, native Linux Unreal or full Android/iOS 
 
 | Issue | Remaining work |
 |---|---|
-| SR-008 | Resolve dependency security/provenance findings before untrusted network acceptance or a supported release |
+| SR-008 | Qualify the approved separate desktop/mobile dependency builds; see [security progress](DEPENDENCY_SECURITY.md) |
 | SR-006 / SR-007 | Reproduce dependencies on independent hosts. Physical iPhone validation is deferred |
 
 SR-902 also blocks publication until complete dependency notices and patent files are delivered with artifacts and apps. Owners and exact findings are in the [dependency review](DEPENDENCY_REVIEW.md#follow-up-owners).
@@ -51,7 +52,21 @@ SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its mess
 
 Generated logs and reports stay under `Intermediate/`. The compact [SR-003 inventory snapshot](reviews/SR003-inventory.json) is retained with the review; its rerun is `Intermediate/SR003/inventory.json`. Start with `Intermediate/SR002/result.json` for profile/package acceptance, `Intermediate/SR001/result.json` for the earlier API v1 acceptance, `Intermediate/MobileProbes/current-results.json` for packaged mobile runs and `Intermediate/MobileBuilds/Repeat20261018/result.json` for the latest dependency repeat checks.
 
-The latest simulator packages use source engine revision `82051d771c6227c2d5d10737c46d5e5d5a837c0b`. `Intermediate/MobileProbes/Xcode271/build-commands.json` records commands, tool versions and engine state before and after each step. Concurrent work changed HTML5-only files in the shared engine checkout; those paths are retained in the evidence. This task made no engine source edits.
+The earlier Xcode 27.1 simulator packages use source engine revision `82051d771c6227c2d5d10737c46d5e5d5a837c0b`. `Intermediate/MobileProbes/Xcode271/build-commands.json` records commands, tool versions and engine state before and after each step. Concurrent work changed HTML5-only files in the shared engine checkout; those paths are retained in the evidence. This task made no engine source edits.
+
+## SR-008: dependency update and isolation checks
+
+**In progress, 2026-10-19.** The simulator support library is now nghttp2 1.70.0. Its local regression passes against Unreal's existing 1.64.0 headers. Two fresh simulator builds produce identical archive, license and source-lock bytes; build metadata retains its temporary paths and therefore differs. The Python suite passes 123 tests, and the actual UBT rules DLL passes 36 cases, including retired-export rejection.
+
+Both Direct-only and Full simulator packages pass with the new support library. Each run creates nine factories and peers, performs six explicit and three destructor teardowns, and verifies app shutdown. Each link map contains one WebRTC archive, one VPX archive and the selected nghttp2 archive; Janus is present only in Full. Both use Xcode/SDK 27.1 on the ARM64 iPhone 17 simulator running iOS 27.0. These packages retain the earlier WebRTC artifact; this is acceptance of the HTTP/2 update, not of the M155 replacement.
+
+The separate M155 Mac ARM64 candidate builds WebRTC, BoringSSL and codecs from pinned sources. Only its two C entry points remain externally visible. Linking beside Unreal's crypto/codec archives and running six data/media-factory PeerConnection lifecycles succeeds. It does not exchange media or create a network session, and it has not replaced the plugin backend.
+
+The candidate was built in two Ninja output directories on the same host and verified source checkout. Both the native archive and the isolated object match byte for byte after normalizing linker debug paths. Each output passes six local peer lifecycles. Reports are `M155Mac-accepted-a/result.json`, `M155Mac-accepted-b/result.json` and `native-repeat.json` under the SR-008 log directory; acceptance here covers only the standalone Mac test.
+
+The [validation snapshot](reviews/SR008-validation.json) records exact inputs, hashes and results. The [updated inventory](reviews/SR008-inventory.json) verifies 19 engine archives against Epic's distribution manifest. That check identifies the distributed files; it does not recover their upstream patch history. The original SR-003 snapshot remains unchanged. See [dependency progress](DEPENDENCY_SECURITY.md) for reproduction commands and the remaining integration work.
+
+Logs are under `Intermediate/SR008/`: `commands.json`, `Direct/result.json`, `Full/result.json`, both profile link audits, `Rules/result.json`, `python-tests-final.log` and the candidate build reports. The engine was at `c95c0654d8a28aff46b97644e27a58a81cc7879f` when this work started. Concurrent engine changes are recorded in the snapshot; this task made no engine source changes. Development package sizes are recorded as file bytes, not Shipping download sizes or RTC size deltas.
 
 ## SR-003: native dependency and ABI review
 
@@ -175,7 +190,7 @@ Each run completed three cycles: nine factories/peers, six explicit stops and th
 
 These are simulator bundle measurements, not iPhone delivery sizes or Shipping RTC deltas. Each evidence directory contains the native report, launch/command logs and `result.json`. The summary is `Intermediate/MobileProbes/Xcode271/result.json`; that directory also holds build/package logs, linker maps/responses and per-profile link audits. The packaged and native executable UUIDs match, tying each app to its map. Both maps select exactly one staged WebRTC, VPX and HTTP/2 archive, with Janus absent in Direct-only and present in Full. All 108 Python checks passed in this run.
 
-The simulator uses separately built libwebrtc and portable-C VPX, plus pinned `nghttp2` 1.64.0 because Unreal’s bundled HTTP/2 archive is device-only. The HTTP/2 support library was also rebuilt with Xcode/SDK 27.1 in `LocalBuilds/SimulatorSupport/nghttp2-arm64-xcode271`; its manifest and archive hashes are recorded in both link audits. The sample enables Unreal's scene lifecycle and supplies project-local metadata for its headless `-nullrhi -sm5` startup. The earlier 30 compiled UBT validator cases passed (`SimulatorRules/result.json`). Tests reject device/simulator object mismatches and prevent simulator reports from counting as physical-device results. No engine source edits were needed.
+These earlier simulator runs used separately built libwebrtc and portable-C VPX, plus pinned `nghttp2` 1.64.0 because Unreal’s bundled HTTP/2 archive is device-only. That HTTP/2 support export is retired by SR-008. It was built with Xcode/SDK 27.1 in `LocalBuilds/SimulatorSupport/nghttp2-arm64-xcode271`; its manifest and archive hashes remain in the historical link audits. The sample enables Unreal's scene lifecycle and supplies project-local metadata for its headless `-nullrhi -sm5` startup. The earlier 30 compiled UBT validator cases passed (`SimulatorRules/result.json`). Tests reject device/simulator object mismatches and prevent simulator reports from counting as physical-device results. No engine source edits were needed.
 
 Network media, provider interoperability, suspend/resume and Shipping RTC-off/on size comparisons remain separate work.
 

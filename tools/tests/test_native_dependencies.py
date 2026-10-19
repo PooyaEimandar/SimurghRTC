@@ -1,16 +1,33 @@
 """Dependency provenance must not silently accept drift or misleading version paths."""
 from pathlib import Path
 import sys
+import hashlib
 import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from audit_native_dependencies import check_libraries, file_record
+from audit_native_dependencies import check_libraries, file_record, engine_distribution_provenance
 from mobile_artifacts import digest
 
 
 class NativeDependencyTests(unittest.TestCase):
+    def test_distribution_identity_rejects_changed_or_unlisted_archives(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            lib = root / 'lib.a'
+            lib.write_bytes(b'Epic distribution fixture')
+            manifest = root / 'Engine/Build/Commit.gitdeps.xml'
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text('<DependencyManifest><Files><File Name="lib.a" Hash="'
+                + hashlib.sha1(lib.read_bytes()).hexdigest() + '"/></Files></DependencyManifest>')
+            self.assertEqual(engine_distribution_provenance(root, ['lib.a'])['files']['lib.a']['sha256'], digest(lib))
+            with self.assertRaisesRegex(ValueError, 'No engine distribution identity'):
+                engine_distribution_provenance(root, ['absent.a'])
+            lib.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError, 'distribution mismatch'):
+                engine_distribution_provenance(root, ['lib.a'])
+
     def test_detects_changed_external_library(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -1,0 +1,10 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index 6985f3a..371d987 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -857,3 +857,5 @@ if (!build_with_chromium) {
+           ] + build_gn_logs
+   write_file("$root_build_dir/gn_logs.txt", lines)
+ }
++
++group("sr008_native_probe") { deps = [ "simurgh_probe:probe" ] }

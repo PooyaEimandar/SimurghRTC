@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Exercise the mobile artifact validator from a real UE 5.8.3 build-rules DLL."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import platform
@@ -17,6 +18,7 @@ def main():
     parser.add_argument('--engine', type=Path, required=True)
     parser.add_argument('--rules', type=Path, required=True, help='ContractHostModuleRules.dll from a completed UBT build.')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--simulator-support', type=Path, help='Also check the current simulator support export.')
     args = parser.parse_args()
     output = args.output.resolve()
     if output.exists():
@@ -66,6 +68,30 @@ def main():
                 (bad / 'artifact.json').write_text('{"metadata":{},"metadata":{}}')
             cases.append({'name': f'{target}: {name}', 'root': str(bad), 'platform': target, 'accept': False})
     cases.append({'name': 'missing artifact', 'root': str(output / 'absent'), 'platform': 'Android', 'accept': False})
+    if args.simulator_support:
+        for name in ('valid', 'changed-archive', 'missing-lock', 'retired-schema', 'wrong-version', 'resealed-wrong-lock'):
+            project_root = output / ('support-' + name)
+            support = project_root / 'Build/IOSSimulator'
+            shutil.copytree(args.simulator_support, support)
+            manifest_path = support / 'support.json'
+            manifest = json.loads(manifest_path.read_text())
+            if name == 'changed-archive':
+                (support / 'libnghttp2.a').write_bytes(b'changed')
+            elif name == 'missing-lock':
+                (support / 'source-lock.json').unlink()
+            elif name == 'retired-schema':
+                manifest['schema'] = 1
+            elif name == 'wrong-version':
+                manifest['version'] = '1.64.0'
+            elif name == 'resealed-wrong-lock':
+                lock = support / 'source-lock.json'
+                lock.write_text('{}\n')
+                digest = hashlib.sha256(lock.read_bytes()).hexdigest()
+                manifest['source_lock_sha256'] = digest
+                manifest['files']['source-lock.json'] = digest
+            manifest_path.write_text(json.dumps(manifest))
+            cases.append({'name': 'simulator support: ' + name, 'validator': 'simulator-support',
+                          'root': str(project_root), 'accept': name == 'valid'})
     cases_path = output / 'cases.json'
     cases_path.write_text(json.dumps(cases))
     project = Path(__file__).parent / 'tests/mobile_rules/RulesProbe.csproj'

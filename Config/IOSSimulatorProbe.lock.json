@@ -1,8 +1,23 @@
 {
-  "schema": 1,
-  "version": "1.64.0",
-  "url": "https://github.com/nghttp2/nghttp2/releases/download/v1.64.0/nghttp2-1.64.0.tar.gz",
-  "sha256": "20e73f3cf9db3f05988996ac8b3a99ed529f4565ca91a49eb0550498e10621e8",
+  "schema": 2,
+  "version": "1.70.0",
+  "url": "https://github.com/nghttp2/nghttp2/releases/download/v1.70.0/nghttp2-1.70.0.tar.gz",
+  "sha256": "aa317e2cf9dca6afa0aed68f8fad6ff303ec6982e25a78c75c0b65e2b9b3ded5",
+  "engine_header_version": "1.64.0",
+  "source_headers": {
+    "nghttp2.h": "0bd0ee37b1b08fa38f9b773de201fe431846fda2bd0bed44f642c6c332e2e342",
+    "nghttp2ver.h": "53b46254a82c2075b28459e0f0cd8da7369afbd5632a71560ab75d6af920c5e1"
+  },
+  "security_fix": {
+    "cve": "CVE-2026-27135",
+    "upstream_commit": "5c7df8fa815ac1004d9ecb9d1f7595c4d37f46e1",
+    "advisory": "https://github.com/nghttp2/nghttp2/security/advisories/GHSA-6933-cjhr-5qg6"
+  },
+  "regression_baseline": {
+    "version": "1.64.0",
+    "url": "https://github.com/nghttp2/nghttp2/releases/download/v1.64.0/nghttp2-1.64.0.tar.gz",
+    "sha256": "20e73f3cf9db3f05988996ac8b3a99ed529f4565ca91a49eb0550498e10621e8"
+  },
   "engine_headers": {
     "nghttp2.h": "9a538b11cfb918105551e8427815b966edfb83724d6a0d09c422593d572e807e",
     "nghttp2ver.h": "49b0c950148846ba506065bb6705ae9261545a61cd0e89c2d0b711fe14e825ce"
