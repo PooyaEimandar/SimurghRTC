@@ -1,0 +1,266 @@
+{
+  "schema": 1,
+  "date": "2026-10-22",
+  "issue": "SR-008",
+  "status": "packaged Mac ARM64 dedicated Server accepted; M0 qualification remains open",
+  "scope": "factory/idle PeerConnection creation, loopback HTTP routing and native/listener cleanup; no signaling or network media",
+  "engine": {
+    "version": "5.8.3",
+    "revision": "dc88db5c3775843bdebcebfa473ceb22c4d5109f",
+    "working_tree_clean": true,
+    "source_changes_by_task": false
+  },
+  "repository_base": "a8b60e9002110d713c3dee9d9e91a0ed2e70239f",
+  "artifact": {
+    "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+    "platform": "Mac",
+    "architecture": "arm64",
+    "files": 7,
+    "objects": 1,
+    "archive_bytes": 17820448,
+    "manifest_sha256": "a1b95e2fed5426c1a77e2c35db31cb601cd1c8f86d506163bc36bb955902c646",
+    "runtime_scope": "packaged dedicated Server; see scenarios"
+  },
+  "archive_sha256": "f886f94cca58b50f8aac0132090e64efbe8767532fb14fb7a65e60a71e01814a",
+  "package": {
+    "executable_sha256": "2f0e42727120bb8d5aaa7ac631974f4917c0c72d50d3ac6f22ebb659d7041731",
+    "executable_bytes": 283378224,
+    "built_executable_sha256": "9a0f629aa095757ccfbd542af6bd3613ac0cb7609fa01bdd807b9fa06f618331",
+    "built_and_staged_uuid": "3A1A50FC-CE5E-331B-A533-1E9D29063D3A",
+    "bundle_file_bytes": 382705069,
+    "shipping_size_baseline": false,
+    "rtc_size_delta_measured": false
+  },
+  "link_checks": {
+    "arm64_only": true,
+    "isolated_webrtc_archive_count": 1,
+    "archive_c_exports": 6,
+    "editor_dependencies": false,
+    "janus_dependencies": false,
+    "code_signature_valid": true,
+    "evidence": {
+      "path": "Intermediate/SR008Server20261022/package-audit.json",
+      "sha256": "2ee107de26b086d43e607b5260311fbd7f3dfa4f59968c38916cde48f6e33948"
+    }
+  },
+  "scenarios": {
+    "Media": {
+      "passed": true,
+      "scenario": "ready",
+      "exit_code": 0,
+      "native_start_verified": true,
+      "health": {
+        "status": "ready",
+        "run_id": "b4a3c1e7-d9d9-4c36-bfc0-2c2bbe734b40",
+        "pid": 7914,
+        "engine_version": "5.8.3-0+UE5",
+        "webrtc_adapter": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+        "artifact_manifest_sha256": "a1b95e2fed5426c1a77e2c35db31cb601cd1c8f86d506163bc36bb955902c646",
+        "factory_mode": "builtin-media",
+        "compiled_server_target": true,
+        "dedicated_runtime": true,
+        "can_ever_render": false,
+        "factory_ready": true,
+        "peer_connection_ready": true,
+        "dummy_audio_device": true,
+        "audio_processing": true,
+        "rtc_session_connected": false,
+        "audio_codecs": [
+          "opus",
+          "red",
+          "G722",
+          "PCMU",
+          "PCMA",
+          "CN",
+          "telephone-event",
+          "telephone-event"
+        ],
+        "video_codecs": [
+          "VP8",
+          "rtx",
+          "VP9",
+          "VP9",
+          "red",
+          "ulpfec"
+        ]
+      },
+      "engine_ignored_requested_exit_status": false,
+      "result": {
+        "path": "Intermediate/SR008Server20261022/Media/result.json",
+        "sha256": "162f88d318106122a4cb4d2456d676312b6bbfb01fa3bc33ec4c0f9ea668e3c3"
+      },
+      "runtime_log": {
+        "path": "Intermediate/SR008Server20261022/Media/process.log",
+        "sha256": "f1fe6e0c72c0f0880f418feb76ce60316a205d0382a48330b4b0f0eb46e82b9b"
+      }
+    },
+    "DataOnly": {
+      "passed": true,
+      "scenario": "ready",
+      "exit_code": 0,
+      "native_start_verified": true,
+      "health": {
+        "status": "ready",
+        "run_id": "669548f1-50c9-46d2-86b8-6f1a4d517d17",
+        "pid": 7997,
+        "engine_version": "5.8.3-0+UE5",
+        "webrtc_adapter": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+        "artifact_manifest_sha256": "a1b95e2fed5426c1a77e2c35db31cb601cd1c8f86d506163bc36bb955902c646",
+        "factory_mode": "data-only",
+        "compiled_server_target": true,
+        "dedicated_runtime": true,
+        "can_ever_render": false,
+        "factory_ready": true,
+        "peer_connection_ready": true,
+        "dummy_audio_device": false,
+        "audio_processing": false,
+        "rtc_session_connected": false,
+        "audio_codecs": [],
+        "video_codecs": []
+      },
+      "engine_ignored_requested_exit_status": false,
+      "result": {
+        "path": "Intermediate/SR008Server20261022/DataOnly/result.json",
+        "sha256": "9d802067b58f41700f85b818313cd6b70a0f4d3b443fef651bc8aeefd17c5319"
+      },
+      "runtime_log": {
+        "path": "Intermediate/SR008Server20261022/DataOnly/process.log",
+        "sha256": "caffb9549362ef894f71386a059046231285fe11ae1a1525549854eac41d0861"
+      }
+    },
+    "OccupiedMedia": {
+      "passed": true,
+      "scenario": "occupied-port",
+      "exit_code": 0,
+      "native_start_verified": true,
+      "health": null,
+      "engine_ignored_requested_exit_status": true,
+      "result": {
+        "path": "Intermediate/SR008Server20261022/OccupiedMedia/result.json",
+        "sha256": "426bdd5d496fb382cb5e7feb9f00f47eb2e4620dfa86196f0b443ae0fc748e7b"
+      },
+      "runtime_log": {
+        "path": "Intermediate/SR008Server20261022/OccupiedMedia/process.log",
+        "sha256": "39b766859408713e0c2728bc43afc492cfe9b6bd99d7e0ec9420e79b9120bfdc"
+      }
+    },
+    "OccupiedDataOnly": {
+      "passed": true,
+      "scenario": "occupied-port",
+      "exit_code": 0,
+      "native_start_verified": true,
+      "health": null,
+      "engine_ignored_requested_exit_status": true,
+      "result": {
+        "path": "Intermediate/SR008Server20261022/OccupiedDataOnly/result.json",
+        "sha256": "74d566f73e2850bbc12b3e277f97373be29f05ed00fa0d7fa35287db42aa3237"
+      },
+      "runtime_log": {
+        "path": "Intermediate/SR008Server20261022/OccupiedDataOnly/process.log",
+        "sha256": "cb14927462bd845ac6f6edc44ff4fecb4a9dde29be3a8e552cccbe90b812bf30"
+      }
+    }
+  },
+  "build_stages": [
+    {
+      "stage": "cook",
+      "exit_code": 0,
+      "evidence": {
+        "path": "Intermediate/SR008Server20261022/cook-command.json",
+        "sha256": "c59900bebad00a544c70292ea82327e495b92eae452ed644473b1588479136c6"
+      },
+      "log": {
+        "path": "Intermediate/SR008Server20261022/cook.log",
+        "sha256": "843d8269a3d85056eead72998c9b379a369200b867f05890b6489f3b218d820d"
+      }
+    },
+    {
+      "stage": "editor",
+      "exit_code": 0,
+      "evidence": {
+        "path": "Intermediate/SR008Server20261022/editor-command.json",
+        "sha256": "a0621cf83edd52de934db31aef76e7970a57013f56763b42dc3a5adba7fa98d7"
+      },
+      "log": {
+        "path": "Intermediate/SR008Server20261022/editor.log",
+        "sha256": "1ec294ee889b2f99dafdba5496d777dad37b24e8e08aa9d0853b2b36fc4bd97a"
+      }
+    },
+    {
+      "stage": "server",
+      "exit_code": 6,
+      "evidence": {
+        "path": "Intermediate/SR008Server20261022/server-command.json",
+        "sha256": "4a7d5b1a31372e147ac4255bae78ee06072c4f9b014a4440127504e8410452e1"
+      },
+      "log": {
+        "path": "Intermediate/SR008Server20261022/server.log",
+        "sha256": "998061bdaa66f4317b16814721d7228dcaf642c19bb9af51304caa058b580ee5"
+      }
+    },
+    {
+      "stage": "server-finalize",
+      "exit_code": 0,
+      "evidence": {
+        "path": "Intermediate/SR008Server20261022/server-finalize-command.json",
+        "sha256": "43dd8a0568d828008b4ba0f6eae0131b2cd45a77b60eff649c4fc13f929c237c"
+      },
+      "log": {
+        "path": "Intermediate/SR008Server20261022/server-finalize.log",
+        "sha256": "b0b9837418d084472912892b968d1906d89966f02ecdef60afb00df271931f17"
+      }
+    },
+    {
+      "stage": "server-metadata",
+      "exit_code": 0,
+      "evidence": {
+        "path": "Intermediate/SR008Server20261022/server-metadata-command.json",
+        "sha256": "72c47c0fbc71dce9557a1b4ff7ddfc41665529ded4bf2b535945311d5f915ef4"
+      },
+      "log": {
+        "path": "Intermediate/SR008Server20261022/server-metadata.log",
+        "sha256": "d9e4304c30c5641148827e92ecfb80af91872f28c1f5d54c857d2c8f22268469"
+      }
+    }
+  ],
+  "python_tests": {
+    "passed": 144,
+    "evidence": {
+      "path": "Intermediate/SR008Server20261022/python-tests.log",
+      "sha256": "006acd37eb7c10c8b1d83f3766ea60a943aeca1022b171eb9de5e14d3024130e"
+    }
+  },
+  "environment": {
+    "path": "Intermediate/SR008Server20261022/environment.json",
+    "sha256": "c828eb24fec848152e2f795e5b55478462079500e059c3f8ad7185f00f73a9b4"
+  },
+  "source_inputs": {
+    "path": "Intermediate/SR008Server20261022/source-inputs.json",
+    "sha256": "66f89fc4245d9e97be9793d5b8b58868d46134e7e73ee05df1e9d12a07fa4e8f"
+  },
+  "build_notes": [
+    "The Server C++ compile/link succeeded, then recursive Xcode finalization failed. Standalone ApplePostBuildSync and subsequent metadata generation succeeded; the initial failure is retained in the build stages.",
+    "Engine Dawn archives warn about macOS 27.0 objects linked for minimum macOS 14.0. Runtime acceptance covers this macOS 27.0.1 host, not older deployment targets.",
+    "Cooking succeeded with zero errors and four existing ACL-settings warnings in the minimal sample host.",
+    "The minimal host has no OnlineSubsystemUtils IpNetDriver, so its unused gameplay listener logs a startup error. The separate RTC factory and loopback HTTP checks pass; gameplay replication is not validated.",
+    "Mac ignores the requested graceful exit status for the occupied-port cases. Acceptance requires the explicit bind failure and native cleanup markers."
+  ],
+  "remaining": [
+    "Source/advisory qualification of the RTC dependencies under SR-008.",
+    "Independent-host reproduction and iOS device repeat build; physical iOS acceptance remains deferred.",
+    "Windows/Linux replacement integration and later Shipping size/distribution-notice checks.",
+    "Real connections and network media in M1/M2; shared Connect remains NotImplemented."
+  ],
+  "audit_script": {
+    "path": "Intermediate/SR008Server20261022/audit_package.py",
+    "sha256": "75f03866b495ba61f020f90498218f5305a2ac7f8c930dc7a2075fef7db1f385"
+  },
+  "link_response": {
+    "path": "Intermediate/SR008Server20261022/server-link.rsp",
+    "sha256": "4bced3b706f853f89367fe0f51bc2a03cbd2c240eaf2de3061959f5bcbcf5690"
+  },
+  "dynamic_libraries": {
+    "path": "Intermediate/SR008Server20261022/dynamic-libraries.txt",
+    "sha256": "f5c6e6a6d1e5b140bca266ce6cc75c2e996dec9179e9a9d9423392d5920238c6"
+  }
+}

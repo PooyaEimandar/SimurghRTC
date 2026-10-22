@@ -1,6 +1,6 @@
 # Dependency security work (SR-008)
 
-**In progress, 2026-10-19.** The simulator HTTP/2 dependency has been updated. The WebRTC, crypto and codec replacement is still being qualified. The current RTC dependency set is **not approved for untrusted network use or release**.
+**In progress, 2026-10-22.** The simulator HTTP/2 dependency has been updated. The WebRTC, crypto and codec replacement is still being qualified. The current RTC dependency set is **not approved for untrusted network use or release**.
 
 This work is limited to dependencies used by the Unreal plugin and its test apps: pinned builds, library compatibility, packaging and local lifecycle/media checks.
 
@@ -20,7 +20,7 @@ The inventory now also checks engine archives against Epic's `Commit.gitdeps.xml
 
 The plugin now uses a private C interface to separately built M155, BoringSSL, Opus and VPX. Mac, Android, iOS device and iOS simulator ARM64 exports are built from pinned inputs. Only six C entry points remain externally visible.
 
-Packaged Mac Direct-only and Android Direct-only/Full pass lifecycle, local codecs, render-target capture and silent audio-mixer checks. Both iOS simulator profiles pass lifecycle and local codecs without graphics/audio devices. Link audits select one isolated WebRTC archive per package. The iOS device library is built but not device-tested.
+Packaged Mac Direct-only and Android Direct-only/Full pass lifecycle, local codecs, render-target capture and silent audio-mixer checks. Both iOS simulator profiles pass lifecycle and local codecs without graphics/audio devices. Link audits select one isolated WebRTC archive per package. The iOS device library is built but not device-tested. The packaged Mac dedicated Server also passes builtin-media and data-only factory startup, real loopback HTTP responses and occupied-port cleanup in both modes. Its [snapshot](reviews/SR008-M155-server-validation.json) records the exact artifact and executable.
 
 See the [build guide](NATIVE_BACKEND.md), [results](M0_VALIDATION.md#sr-008-packaged-m155-integration) and [snapshot](reviews/SR008-M155-validation.json). These tests establish local integration. Two fresh builds per target now reproduce the accepted Mac, Android and simulator library bytes, and all six native consumers pass. See the [repeat snapshot](reviews/SR008-M155-repeat-validation.json). Independent-host reproduction, the iOS device repeat build, source/advisory qualification and final notices remain open. Unreal's other crypto, HTTP and audio dependencies remain engine-owned.
 
@@ -68,7 +68,7 @@ A newer version number alone is not approval. This work qualifies the plugin's R
 | Epic archive distribution identity | Verified against the engine manifest |
 | Maintained WebRTC/crypto/codec replacement | Mac/Android/simulator integration and same-host fresh repeat builds passed; independent-host and iOS device repeat checks remain open |
 | Known upstream issues in RTC dependencies | Open until the replacement sources and enabled features are checked |
-| Replacement ABI, one-copy linkage and runtime acceptance | Local checks passed on Mac, Samsung and simulator; dedicated Server, physical iOS and Windows/Linux still need replacement-package validation |
+| Replacement ABI, one-copy linkage and runtime acceptance | Local checks passed on Mac clients/Server, Samsung and simulator; physical iOS and Windows/Linux still need replacement-package validation |
 | Final artifact/app notices and patent grants | Separate publication gate under SR-902 |
 
 The [SR-003 review](DEPENDENCY_REVIEW.md) remains the historical baseline. It must not be relabeled as approval of replacement libraries. [M0 validation](M0_VALIDATION.md) records accepted runs and their limits.

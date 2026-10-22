@@ -1,6 +1,6 @@
 # M0 status and test results
 
-Updated **2026-10-19**. M0 is still in progress. The isolated **WebRTC M155** backend now runs inside packaged Unreal 5.8.3 clients on Mac, Android and the iOS simulator. Android/iOS ARM64 libraries are built separately from pinned sources and tools. Fresh repeat builds match the accepted libraries on Mac, Android and the iOS simulator. Source/advisory qualification remains open under SR-008.
+Updated **2026-10-22**. M0 is still in progress. The isolated **WebRTC M155** backend runs inside packaged Unreal 5.8.3 clients on Mac, Android and the iOS simulator, plus a Mac dedicated Server. Android/iOS ARM64 libraries are built separately from pinned sources and tools. Fresh repeat builds match the accepted libraries on Mac, Android and the iOS simulator. Source/advisory qualification remains open under SR-008.
 
 The plugin has working local test probes, but the shared `Connect` API still returns `NotImplemented`. Real connections and network media are M1/M2 work.
 
@@ -12,12 +12,12 @@ The plugin has working local test probes, but the shared `Connect` API still ret
 | Packaged Mac Direct-only | Lifecycle and media passed | Nine peers; local VP8/Opus, Metal capture and silent mixer playback |
 | Packaged Android Direct-only and Full | Lifecycle and media passed on Samsung S25 Ultra | Nine peers per profile; generated video, two OpenGL captures and complete PCM consumption |
 | Packaged iOS simulator Direct-only and Full | Lifecycle and local codecs passed | ARM64 iPhone 17 simulator, iOS 27.0; graphics and audio devices disabled |
-| Native linkage | Passed for those five packages | One isolated WebRTC archive; Janus only in Full; Android ARM64-only with 16 KiB ELF load alignment |
+| Native linkage | Passed for those five client packages and the Mac dedicated Server | One isolated WebRTC archive; Janus only in Full; Android ARM64-only with 16 KiB ELF load alignment |
 | Fresh repeat builds | Passed on Mac, Android and iOS simulator | Two new outputs per target; identical libraries, headers and notice inputs; native consumers passed |
-| Python checks | 142 passed | Artifact integrity, repeat comparison, fixtures, report correlation and failure rejection |
+| Python checks | 144 passed | Artifact integrity, repeat comparison, fixtures, report correlation and failure rejection |
 | Compiled Unreal build-rule checks | 71 passed | Metadata, payloads, ABI inputs and Android NDK consumer proof |
 | Full Unreal automation | 11 passed, no test warnings or failures | Shared API/lifecycle and native factory/codec probes |
-| Headless HTTPServer | Editor Server probe passed | M155 factory/peer ready without graphics; dedicated Server package not rerun |
+| Headless HTTPServer | Packaged Mac dedicated Server passed | Builtin-media and data-only factories, real HTTP responses, occupied-port failures and cleanup |
 
 Each packaged media run encodes/decodes twelve generated VP8 frames and 96,000 PCM samples through Opus. Android and Mac additionally capture two render targets and consume 192,000 PCM bytes in Unreal's mixer, with callbacks off the game thread. Android capture error is zero. No camera, microphone, remote peer or network media is tested.
 
@@ -29,7 +29,7 @@ The earlier API v1, Blueprint examples, four-profile packaging, dedicated Server
 
 | Issue | Remaining work |
 |---|---|
-| SR-008 | Finish source/advisory qualification and rerun the dedicated Server package; see [dependency progress](DEPENDENCY_SECURITY.md) |
+| SR-008 | Finish source/advisory qualification; see [dependency progress](DEPENDENCY_SECURITY.md) |
 | SR-006 / SR-007 | Reproduce replacement artifacts on independent hosts and repeat the iOS device library build. Physical iPhone validation is deferred |
 
 SR-902 also blocks publication until complete dependency notices and patent files are delivered with artifacts and apps. Owners and exact findings are in the [dependency review](DEPENDENCY_REVIEW.md#follow-up-owners).
@@ -51,6 +51,25 @@ SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its mess
 Generated logs and reports stay under `Intermediate/`. The compact [SR-003 inventory snapshot](reviews/SR003-inventory.json) is retained with the review; its rerun is `Intermediate/SR003/inventory.json`. Start with `Intermediate/SR002/result.json` for profile/package acceptance, `Intermediate/SR001/result.json` for the earlier API v1 acceptance, `Intermediate/MobileProbes/current-results.json` for packaged mobile runs and the [M155 repeat snapshot](reviews/SR008-M155-repeat-validation.json) for the latest dependency repeat checks.
 
 The earlier Xcode 27.1 simulator packages use source engine revision `82051d771c6227c2d5d10737c46d5e5d5a837c0b`. `Intermediate/MobileProbes/Xcode271/build-commands.json` records commands, tool versions and engine state before and after each step. Concurrent work changed HTML5-only files in the shared engine checkout; those paths are retained in the evidence. This task made no engine source edits.
+
+## SR-008: packaged M155 dedicated Server
+
+**Passed on 2026-10-22:** a packaged UE 5.8.3 Mac ARM64 Server creates an M155 factory and idle PeerConnection without rendering or hardware audio. Both factory modes pass HTTP readiness and shutdown; both also pass the occupied-port cleanup test.
+
+| Scenario | Result |
+|---|---|
+| Builtin-media factory | HTTP 200 from the launched PID/run ID; Opus and video codecs advertised; clean shutdown |
+| Data-only factory | HTTP 200; no media factories, dummy audio device or audio processing; clean shutdown |
+| Occupied port, each mode | Explicit bind failure, no readiness announcement, native cleanup |
+| Package/link audit | ARM64 only; one isolated WebRTC archive; no Editor or Janus dependency; valid code signature |
+
+The harness now requires the selected artifact hash in HTTP health and the native startup log. The latter also verifies identity when the port cannot bind. Each result records the executable hash. Unknown routes and the wrong HTTP method are rejected, and positive runs leave the listener closed after exit.
+
+The source engine is `dc88db5c3775843bdebcebfa473ceb22c4d5109f`; its working tree stayed clean. The selected library comes from the accepted Mac repeat build. The Development executable is 283,378,224 bytes; this is not a Shipping size or an RTC size delta. All **144 Python tests** pass.
+
+Compilation/linking succeeded; the existing recursive Xcode finalization failure required Unreal's standalone finalization and receipt-generation steps. Cooking passed with zero errors and four known ACL-settings warnings. The minimal host also logs an unused gameplay NetDriver startup error; these checks cover the separate RTC factory and HTTP listener. Dawn's deployment-version warnings mean older macOS compatibility remains unverified.
+
+See the [Server instructions](NATIVE_PROBE.md) and [retained snapshot](reviews/SR008-M155-server-validation.json). Commands, compile/cook logs, link inputs and four runtime reports are under `Intermediate/SR008Server20261022/`. This closes the replacement dedicated Server check under SR-008; source/advisory qualification remains open. No remote connection or network media is tested.
 
 ## SR-008: packaged M155 integration
 
@@ -302,7 +321,7 @@ The connected Samsung is an SM-S938B. The connected iPhone X is an iPhone10,6 on
 | Minimum macOS target | 14.0, as selected by the installed UE toolchain |
 | Native RTC library linked by this plugin | Engine WebRTC **5414 / M109**, Release; explicit OpenSSL/Opus/VPX links |
 
-The [native probe audit](NATIVE_PROBE.md#build-selection-and-provenance) records the archive hash, local dependency versions, symbols and observed codecs. The Mac archives in the source and installed engines are identical. `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` still describes the unavailable shared session service, not factory linkage. Android/iOS engine WebRTC branches are deliberately not selected; their separate dependency builds are recorded above, while device acceptance remains SR-006/SR-007 work. No engine source changes were introduced.
+The [SR-003 inventory](reviews/SR003-inventory.json) retains the earlier archive hashes, local dependency versions and codec observations. The Mac archives in the source and installed engines are identical. `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` still describes the unavailable shared session service, not factory linkage. Android/iOS engine WebRTC branches are deliberately not selected; their separate dependency builds are recorded above, while device acceptance remains SR-006/SR-007 work. No engine source changes were introduced.
 
 ## Earlier evidence
 
@@ -343,6 +362,8 @@ Editor fallback probe evidence is `Intermediate/Reports/NativeEditorProbe/result
 The first integration runs caught and fixed three real boundaries: precompiled external modules needed explicit dependency links; the engine archive lacked the default audio-device factory symbol; and M109's capability query dereferenced a missing media engine in data-only mode. The final lifecycle test covers the corrected data-only branch. The initial installed Server build was rejected because that distribution lacks Server target support (`Intermediate/M0-Server-Build.log`). The supplied source engine is used for dedicated Server acceptance.
 
 ## Dedicated Server evidence
+
+**Historical M109 baseline.** Current M155 Server acceptance is recorded above.
 
 The tested isolated Server profile is `Intermediate/Profiles/NativeServerFinal`. Future builds should use `LocalBuilds/` as documented below. The actual staged executable is:
 

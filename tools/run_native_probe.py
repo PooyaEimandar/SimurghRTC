@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import socket
@@ -11,6 +12,8 @@ import time
 import urllib.error
 import urllib.request
 import uuid
+
+BACKEND_VERSION = 'M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d'
 
 
 def read_runtime_log(output: Path) -> tuple[str, str]:
@@ -21,7 +24,8 @@ def read_runtime_log(output: Path) -> tuple[str, str]:
     return path.name, path.read_text(errors='replace')
 
 
-def validate_health(health: dict, run_id: str, server_target: bool, data_only: bool) -> None:
+def validate_health(health: dict, run_id: str, server_target: bool, data_only: bool,
+                    artifact_sha256: str | None = None) -> None:
     expected = {
         'status': 'ready', 'run_id': run_id, 'compiled_server_target': server_target,
         'dedicated_runtime': True, 'can_ever_render': False, 'factory_ready': True,
@@ -32,6 +36,9 @@ def validate_health(health: dict, run_id: str, server_target: bool, data_only: b
     for key, value in expected.items():
         if health.get(key) != value:
             raise ValueError(f'Unexpected {key}: {health.get(key)!r}; expected {value!r}')
+    if artifact_sha256 is not None:
+        if health.get('artifact_manifest_sha256') != artifact_sha256 or health.get('webrtc_adapter') != BACKEND_VERSION:
+            raise ValueError('HTTP health does not identify the selected isolated backend.')
     if not health.get('engine_version', '').startswith('5.8.3-'):
         raise ValueError('Probe did not run with Unreal Engine 5.8.3')
     if data_only:
@@ -39,6 +46,14 @@ def validate_health(health: dict, run_id: str, server_target: bool, data_only: b
             raise ValueError('Data-only factory advertised media codecs')
     elif 'opus' not in health.get('audio_codecs', []) or not health.get('video_codecs'):
         raise ValueError('Builtin media factory did not advertise Opus and video codecs')
+
+
+def validate_native_log(log: str, artifact_sha256: str, server_target: bool, data_only: bool) -> None:
+    # Also proves native startup identity when a bind failure prevents HTTP health.
+    expected = (f'SIMURGHRTC_PROBE_NATIVE backend={BACKEND_VERSION} artifact={artifact_sha256} '
+                f'compiled_server={int(server_target)} mode={"data-only" if data_only else "builtin-media"}')
+    if not any(line.rstrip().endswith(expected) for line in log.splitlines()):
+        raise ValueError('Runtime log does not identify the selected native backend and target.')
 
 
 def main() -> int:
@@ -50,6 +65,7 @@ def main() -> int:
     parser.add_argument('--output', required=True, type=Path, help='New or empty evidence directory.')
     parser.add_argument('--data-only', action='store_true')
     parser.add_argument('--occupied-port', action='store_true', help='Negative test: require explicit HTTP bind failure and cleanup.')
+    parser.add_argument('--native-artifact', type=Path, help='Require this isolated artifact in HTTP health and native startup logs.')
     parser.add_argument('--startup-timeout', type=float, default=180)
     args = parser.parse_args()
     executable = args.executable.resolve()
@@ -62,6 +78,10 @@ def main() -> int:
         parser.error('Startup timeout must be positive.')
     if output.exists() and any(output.iterdir()):
         parser.error('Evidence directory must be new or empty; existing evidence is never overwritten.')
+    identity = None
+    if args.native_artifact:
+        import native_artifacts
+        identity = native_artifacts.validate(args.native_artifact.resolve())
     output.mkdir(parents=True, exist_ok=True)
     run_id = str(uuid.uuid4())
     reservation = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -78,7 +98,10 @@ def main() -> int:
     if args.data_only:
         command.append('-SimurghRTCProbeDataOnly')
     record = {'schema': 1, 'command': command, 'scenario': 'occupied-port' if args.occupied_port else 'ready',
-              'kind': args.kind, 'run_id': run_id, 'port': port, 'passed': False}
+              'kind': args.kind, 'run_id': run_id, 'port': port, 'passed': False,
+              'executable_sha256': hashlib.sha256(executable.read_bytes()).hexdigest()}
+    if identity:
+        record['native_artifact'] = identity
     process = None
     started = time.monotonic()
     try:
@@ -120,7 +143,8 @@ def main() -> int:
                         time.sleep(0.25)
                 if health is None:
                     raise TimeoutError('Probe did not become HTTP ready within the startup deadline')
-                validate_health(health, run_id, args.kind == 'server', args.data_only)
+                validate_health(health, run_id, args.kind == 'server', args.data_only,
+                                identity['manifest_sha256'] if identity else None)
                 if health.get('pid') != process.pid:
                     raise ValueError('HTTP health response did not come from the launched process')
                 record['health'] = health
@@ -142,6 +166,9 @@ def main() -> int:
                     connection.settimeout(1)
                     if connection.connect_ex(('127.0.0.1', port)) == 0:
                         raise ValueError('Probe port still accepts connections after shutdown')
+            if identity:
+                validate_native_log(log, identity['manifest_sha256'], args.kind == 'server', args.data_only)
+                record['native_start_verified'] = True
             record['passed'] = True
     except (OSError, ValueError, subprocess.TimeoutExpired) as error:
         record['error'] = str(error)

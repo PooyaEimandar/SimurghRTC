@@ -23,6 +23,23 @@ def health(data_only=False):
 
 
 class NativeProbeTests(unittest.TestCase):
+    def test_requires_selected_artifact_and_backend_when_requested(self):
+        report = dict(health(), artifact_manifest_sha256='a' * 64, webrtc_adapter=probe.BACKEND_VERSION)
+        probe.validate_health(report, 'this-run', True, False, 'a' * 64)
+        for field, value in [('artifact_manifest_sha256', 'b' * 64),
+                             ('artifact_manifest_sha256', None), ('webrtc_adapter', '5414/M109')]:
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                probe.validate_health(dict(report, **{field: value}), 'this-run', True, False, 'a' * 64)
+
+    def test_bind_failure_log_must_identify_native_artifact_and_server_mode(self):
+        line = (f'[timestamp]LogSimurghRTCProbe: Display: SIMURGHRTC_PROBE_NATIVE backend={probe.BACKEND_VERSION} '
+                f'artifact={"a" * 64} compiled_server=1 mode=builtin-media')
+        probe.validate_native_log(line, 'a' * 64, True, False)
+        for invalid in ['', line.replace('a' * 64, 'b' * 64), line.replace('compiled_server=1', 'compiled_server=0'),
+                        line.replace('builtin-media', 'data-only'), line + '-unexpected']:
+            with self.subTest(log=invalid), self.assertRaises(ValueError):
+                probe.validate_native_log(invalid, 'a' * 64, True, False)
+
     def test_packaged_server_stdout_without_file_log(self):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary)

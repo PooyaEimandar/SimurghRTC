@@ -78,12 +78,16 @@ private:
         { Fail(Error); return; }
 
         const auto Diagnostics = Runtime->GetDiagnostics();
+        UE_LOG(LogSimurghRTCProbe, Display, TEXT("SIMURGHRTC_PROBE_NATIVE backend=%s artifact=%s compiled_server=%d mode=%s"),
+            *SimurghRTC::FNativeRuntime::GetBackendVersion(), *SimurghRTC::FNativeRuntime::GetMobileArtifactSHA256(),
+            UE_SERVER, bDataOnly ? TEXT("data-only") : TEXT("builtin-media"));
         auto Json = MakeShared<FJsonObject>();
         Json->SetStringField(TEXT("status"), TEXT("ready"));
         Json->SetStringField(TEXT("run_id"), RunId);
         Json->SetNumberField(TEXT("pid"), FPlatformProcess::GetCurrentProcessId());
         Json->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString());
         Json->SetStringField(TEXT("webrtc_adapter"), SimurghRTC::FNativeRuntime::GetBackendVersion());
+        Json->SetStringField(TEXT("artifact_manifest_sha256"), SimurghRTC::FNativeRuntime::GetMobileArtifactSHA256());
         Json->SetStringField(TEXT("factory_mode"), bDataOnly ? TEXT("data-only") : TEXT("builtin-media"));
         Json->SetBoolField(TEXT("compiled_server_target"), UE_SERVER != 0);
         Json->SetBoolField(TEXT("dedicated_runtime"), IsRunningDedicatedServer());

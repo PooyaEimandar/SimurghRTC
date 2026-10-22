@@ -1,6 +1,6 @@
 # Isolated WebRTC backend
 
-WebRTC **M155** is integrated into the Unreal 5.8.3 plugin. Packaged Mac/Android lifecycle and media probes pass; both iOS simulator profiles pass lifecycle and local codecs. Fresh repeat builds pass on Mac, Android and the iOS simulator; independent-host reproduction and dependency qualification remain open under SR-008. See [M0 results](M0_VALIDATION.md) for the exact scope.
+WebRTC **M155** is integrated into the Unreal 5.8.3 plugin. Packaged Mac/Android lifecycle and media probes pass; both iOS simulator profiles pass lifecycle and local codecs. The Mac dedicated Server passes headless factory, HTTP and cleanup checks. Fresh repeat builds pass on Mac, Android and the iOS simulator; independent-host reproduction and dependency qualification remain open under SR-008. See [M0 results](M0_VALIDATION.md) for the exact scope.
 
 The backend builds its own WebRTC, BoringSSL, Opus and VPX. Unreal calls a small private C interface. Factory handles stay inside the backend; Unreal owns the buffers used to copy decoded video and PCM. No WebRTC C++ types or allocations cross that boundary.
 

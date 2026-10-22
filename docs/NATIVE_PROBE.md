@@ -1,45 +1,29 @@
 # Native factory and headless Server probe
 
-**Backend update:** current builds require the [isolated M155 artifact](NATIVE_BACKEND.md). Add `--native-artifact LocalBuilds/Artifacts/M155-Mac` when staging a Server host. The M109 identities and results below document the earlier feasibility baseline; replacement Server acceptance must be recorded separately.
+This M0 probe runs the isolated **WebRTC M155** backend inside Unreal Engine **5.8.3**. It creates a factory and an idle PeerConnection, then exposes diagnostics through Unreal's **HTTPServer** on loopback. The shared session API still returns `NotImplemented` for Connect; this probe does not exchange signaling or network media.
 
-This M0 probe links Unreal Engine **5.8.3**'s WebRTC **5414 / M109**, creates a PeerConnection factory and an idle Unified Plan PeerConnection, and exposes diagnostics through standard UE **HTTPServer**. It does not exchange SDP, gather ICE, connect to a remote peer, send DataChannels or process media. The shared session API still reports `NotImplemented` for Connect.
+The packaged Mac ARM64 Server passed both factory modes and both occupied-port cases on **2026-10-22**. See the [Server validation snapshot](reviews/SR008-M155-server-validation.json) for artifact, executable and engine identities.
 
 ## Integration boundary
 
-`SimurghRTCNative` owns the adapter. Its public integration header uses Unreal types and a PImpl; all WebRTC includes, reference counts and callbacks stay in private source. `FNativeRuntime` is for plugin integration, not the application's shared client contract. Calls and destruction occur on the game thread. Start/stop are synchronous bounded setup operations; future negotiation must use asynchronous callbacks.
+`SimurghRTCNative` owns the Unreal adapter. It calls the separately built library through six private C entry points. WebRTC C++ types, allocations, threads and reference counts stay inside that library. The public client API and Blueprint nodes are unchanged.
 
-The adapter owns network, worker and signaling threads. It creates and closes the peer/factory on the signaling thread, releases audio dependencies on the worker thread, joins all threads, then releases its SSL initialization lease. Multiple runtime instances share that lease. Loading the module alone starts no threads or listeners. The automation test exercises overlapping instances, duplicate calls, teardown and restart.
+The runtime owns network, worker and signaling threads. Shutdown closes the peer, releases the factory and audio dependencies, joins the threads and releases its shared SSL initialization lease. Calls and destruction occur on the game thread. Loading the module alone starts no threads or listeners.
 
 | Mode | Factory dependencies | What the probe establishes |
 |---|---|---|
-| `builtin-media` (default) | Builtin audio/video codec factories, APM and plugin dummy audio device | The archive exports the factory/codecs/APM required to construct a headless peer |
-| `data-only` | Modular factory without a media engine, ADM or APM | An idle peer can be created without constructing media dependencies |
+| `builtin-media` (default) | Builtin codecs, audio processing and a dummy audio device | A headless factory and peer can be created without hardware audio |
+| `data-only` | Modular factory without media dependencies | An idle peer can be created without audio/video factories |
 
-The engine archive does not export `AudioDeviceModule::Create`. The private UE58 adapter supplies a dummy ADM using the M109 `AudioDeviceModuleDefault` interface. It opens no hardware and delivers no audio callbacks. The separate [SR-004 media probe](MEDIA_PROBE.md) now validates local generated VP8/Opus encode/decode, UE texture/render-target capture and procedural PCM consumption. It does not add ADM callbacks, remote tracks or a network media path to this factory probe. M109's RTP capability query requires a media engine; the data-only branch must not call it. Runtime data-only mode does **not** promise codec code is stripped from the linked binary.
+Data-only is a runtime mode; it does not promise a smaller linked library. Codec execution, render-target capture and mixer playback have separate [media probes](MEDIA_PROBE.md).
 
 ## Build selection and provenance
 
-The desktop adapter selects the engine's matching headers/archive through UBT's `WebRTC` module, with explicit `OpenSSL`, `libOpus` and `LibVpx` dependencies. Precompiled external modules did not propagate all private static links in the installed-engine build. Mac also links AudioToolbox, CoreAudio, CoreVideo and VideoToolbox; linking frameworks does not open a device.
+Stage a checked Mac ARM64 artifact from the [native backend build](NATIVE_BACKEND.md). UBT checks its source lock, bridge inputs and payload hashes. The Server profile excludes Janus and the Unreal media presentation module. It links one isolated WebRTC archive; Unreal's own HTTP, audio and crypto dependencies remain engine-owned.
 
-UBT requires engine version 5.8.3 and the adapter checks `WEBRTC_5414`. Mac, Win64 and Linux x64 select the engine library; **only Mac ARM64 has been validated among desktop targets**. Android/iOS require a [separate ARM64 artifact](MOBILE_ARTIFACTS.md) and fail the build when it is absent or incompatible. They have no engine fallback. Packaged factory/teardown probes pass on Samsung S25 Ultra and the ARM64 iOS simulator; physical iPhone acceptance is deferred. Provider/module profiles are independent of library selection. `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` remains correct because the shared session service is not implemented.
+Pass `--native-artifact` to the harness below. Both HTTP health and the startup log must identify that exact artifact manifest and M155 backend. The log check also applies when an occupied port prevents HTTP startup. Each report records the launched executable's SHA-256, PID and run ID.
 
-Local audit on 2026-10-17:
-
-| Item | Observation |
-|---|---|
-| Installed engine | UE 5.8.3, CL 58210709, compatible CL 55116800 |
-| Source engine | UE 5.8.3, CL 0, branch `UE5`; Git `1a6598b42ab311f9d9766e10404e54c82ce1a0a1` |
-| WebRTC archive | `Engine/Source/ThirdParty/WebRTC/5414/Lib/Mac/Release/libwebrtc.a` |
-| Archive architecture and size | Universal x86_64 + arm64, 41,870,008 bytes; the probe target is arm64 |
-| Archive SHA-256, identical in both engines | `172e7fdd53b10e78b5e06a268fca9f8ee85492e24f04fea800b65c35c07966cf` |
-| WebRTC symbols | Engine module selects Release, including for Debug targets; its build rules state Release lacks debug symbols |
-| Engine external dependencies on Mac | OpenSSL 1.1.1t; `libOpus` selects the `opus-1.1` Mac archives and Speex resampler; LibVpx 1.14.1 |
-| Builtin sender audio names observed | `opus`, `red`, `ISAC`, `G722`, `PCMU`, `PCMA`, `CN`, `telephone-event` |
-| Builtin sender video names observed | `VP8`, `rtx`, `VP9`, `red`, `ulpfec`; no H.264 or AV1 advertised |
-
-These are local factory capabilities, including repair/auxiliary formats, not negotiated codec support or throughput measurements. The exact upstream WebRTC commit and Epic patch inventory are not established by the `5414` directory name. The archive checksum identifies the tested binary; it is not a mobile revision pin or an app-size measurement. The [completed SR-003 review](DEPENDENCY_REVIEW.md) assigns security/provenance remediation to SR-008 and final notices to SR-902 before release approval.
-
-The repository contains our adapter source and no copied engine binaries or implementation. Relevant supplied notice locations include `Engine/Source/ThirdParty/Licenses/{WebRTC_License,OpenSSL_License,Opus_License,abseil-cpp_LICENSE}.txt`, and the WebRTC include tree's libyuv, libsrtp and libvpx license files. This is an initial inventory, not a complete redistributed-dependency notice bundle. Preserve the engine/dependency notices required for the final packaged product; the repository's Apache-2.0 license does not replace them. Mobile artifacts need their own full source/patch/license inventory.
+The [M0 validation record](M0_VALIDATION.md) separates current M155 results from the earlier engine-bundled M109 feasibility results. Final dependency qualification and distribution notices remain tracked under SR-008 and SR-902.
 
 ## Build and stage a dedicated Server
 
@@ -49,7 +33,9 @@ Run from this repository root. Use a new staging path for a changed profile/sour
 
 ```sh
 UE_ROOT=/absolute/path/to/UnrealEngine
-python3 tools/prepare_profile.py --profile server --output LocalBuilds/NativeServer
+NATIVE_ARTIFACT="$PWD/LocalBuilds/Artifacts/M155-Mac"
+python3 tools/prepare_profile.py --profile server --native-artifact "$NATIVE_ARTIFACT" \
+  --output LocalBuilds/NativeServer
 PROJECT="$PWD/LocalBuilds/NativeServer/ContractHost.uproject"
 
 "$UE_ROOT/Engine/Build/BatchFiles/Mac/Build.sh" ContractHostServer Mac Development \
@@ -94,12 +80,14 @@ After successful builds/finalization and receipts, cook and stage:
 
 ```sh
 SERVER_EXE=/absolute/path/to/staged/ContractHostServer
-python3 tools/run_native_probe.py --kind server --executable "$SERVER_EXE" \
+python3 tools/run_native_probe.py --kind server --executable "$SERVER_EXE" --native-artifact "$NATIVE_ARTIFACT" \
   --output Intermediate/Reports/ServerMedia
-python3 tools/run_native_probe.py --kind server --executable "$SERVER_EXE" \
+python3 tools/run_native_probe.py --kind server --executable "$SERVER_EXE" --native-artifact "$NATIVE_ARTIFACT" \
   --data-only --output Intermediate/Reports/ServerData
-python3 tools/run_native_probe.py --kind server --executable "$SERVER_EXE" \
+python3 tools/run_native_probe.py --kind server --executable "$SERVER_EXE" --native-artifact "$NATIVE_ARTIFACT" \
   --occupied-port --output Intermediate/Reports/ServerOccupied
+python3 tools/run_native_probe.py --kind server --executable "$SERVER_EXE" --native-artifact "$NATIVE_ARTIFACT" \
+  --occupied-port --data-only --output Intermediate/Reports/ServerDataOccupied
 ```
 
 Use a new/empty output directory for each run. The harness correlates the HTTP response to its launched PID and random run ID, checks the compiled Server flag and factory diagnostics, tests route/method rejection, and verifies process shutdown and listener closure. The occupied-port case verifies explicit bind failure, no readiness announcement and native cleanup. Each directory contains `result.json` and captured `process.log`, plus `unreal.log` when the engine creates a file log. The result identifies which runtime log was checked; the tested packaged Mac Server uses stdout.
@@ -108,7 +96,7 @@ UE 5.8's Mac generic `RequestExitWithStatus` ignores the requested exit code dur
 
 ## Editor fallback and lifecycle automation
 
-An installed engine can run the same probe using `--kind editor-server --project "$PROJECT" --executable "$UE_ROOT/Engine/Binaries/Mac/UnrealEditor-Cmd"`. Its JSON explicitly reports `compiled_server_target: false`; it cannot satisfy dedicated Server acceptance. Build that project's Editor target with the same engine first. Run Editor processes sequentially to avoid unrelated SDK/trace-log initialization races.
+An installed engine can run the same probe using `--kind editor-server --project "$PROJECT" --executable "$UE_ROOT/Engine/Binaries/Mac/UnrealEditor-Cmd"`. Pass the same `--native-artifact` selection. Its JSON explicitly reports `compiled_server_target: false`; it cannot satisfy dedicated Server acceptance. Build that project's Editor target with the same engine first. Run Editor processes sequentially to avoid unrelated SDK/trace-log initialization races.
 
 After building the Full source host, run the contract/native tests (including the local media codec fixture):
 
