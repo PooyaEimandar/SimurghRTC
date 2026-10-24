@@ -1,6 +1,6 @@
 # M0 status and test results
 
-Updated **2026-10-22**. M0 is still in progress. The isolated **WebRTC M155** backend runs inside packaged Unreal 5.8.3 clients on Mac, Android and the iOS simulator, plus a Mac dedicated Server. Android/iOS ARM64 libraries are built separately from pinned sources and tools. Fresh repeat builds match the accepted libraries on Mac, Android and the iOS simulator. Source/advisory qualification remains open under SR-008.
+Updated **2026-10-24**. M0 is still in progress. The isolated **WebRTC M155** backend runs inside packaged Unreal 5.8.3 clients on Mac, Android and the iOS simulator, plus a Mac dedicated Server. Android/iOS ARM64 libraries are built separately from pinned sources and tools. Fresh repeat builds match the accepted libraries on all four targets, including iOS device. The [source review](NATIVE_SOURCE_REVIEW.md) resolves the known dependency findings. Independent-host reproduction and deferred physical iOS acceptance still prevent M0 closure.
 
 The plugin has working local test probes, but the shared `Connect` API still returns `NotImplemented`. Real connections and network media are M1/M2 work.
 
@@ -13,8 +13,9 @@ The plugin has working local test probes, but the shared `Connect` API still ret
 | Packaged Android Direct-only and Full | Lifecycle and media passed on Samsung S25 Ultra | Nine peers per profile; generated video, two OpenGL captures and complete PCM consumption |
 | Packaged iOS simulator Direct-only and Full | Lifecycle and local codecs passed | ARM64 iPhone 17 simulator, iOS 27.0; graphics and audio devices disabled |
 | Native linkage | Passed for those five client packages and the Mac dedicated Server | One isolated WebRTC archive; Janus only in Full; Android ARM64-only with 16 KiB ELF load alignment |
-| Fresh repeat builds | Passed on Mac, Android and iOS simulator | Two new outputs per target; identical libraries, headers and notice inputs; native consumers passed |
-| Python checks | 144 passed | Artifact integrity, repeat comparison, fixtures, report correlation and failure rejection |
+| Fresh repeat builds | Passed on Mac, Android, iOS device and simulator | Two fresh outputs per target match the accepted payloads; iOS device consumers pass compile/link only |
+| Source/advisory review | Known findings resolved for the selected inputs | Four compiled-source inventories, upstream fix ancestry and excluded-component checks |
+| Python checks | 151 passed | Artifact integrity, repeat comparison, fixtures, report correlation and failure rejection |
 | Compiled Unreal build-rule checks | 71 passed | Metadata, payloads, ABI inputs and Android NDK consumer proof |
 | Full Unreal automation | 11 passed, no test warnings or failures | Shared API/lifecycle and native factory/codec probes |
 | Headless HTTPServer | Packaged Mac dedicated Server passed | Builtin-media and data-only factories, real HTTP responses, occupied-port failures and cleanup |
@@ -29,8 +30,10 @@ The earlier API v1, Blueprint examples, four-profile packaging, dedicated Server
 
 | Issue | Remaining work |
 |---|---|
-| SR-008 | Finish source/advisory qualification; see [dependency progress](DEPENDENCY_SECURITY.md) |
-| SR-006 / SR-007 | Reproduce replacement artifacts on independent hosts and repeat the iOS device library build. Physical iPhone validation is deferred |
+| SR-006 / SR-007 | Reproduce replacement artifacts on independent hosts; no second build host has been provided |
+| SR-007 | Signed physical iPhone startup remains deferred at the user's request; simulator and device link checks do not replace it |
+
+SR-008's source/advisory work and available-host integration checks are finished. Its remaining acceptance depends on the mobile gates above. M0 closes after those acceptance results are available.
 
 SR-902 also blocks publication until complete dependency notices and patent files are delivered with artifacts and apps. Owners and exact findings are in the [dependency review](DEPENDENCY_REVIEW.md#follow-up-owners).
 
@@ -48,9 +51,17 @@ SR-005 is complete as a fixture task. Later SR-102/SR-301 work must run its mess
 - [Mobile builds](MOBILE_BUILDS.md): pinned sources/toolchains, separate ARM64 libraries and repeat-build checks.
 - [Mobile probe](MOBILE_PROBE.md): package and run on Android or the iOS simulator.
 
-Generated logs and reports stay under `Intermediate/`. The compact [SR-003 inventory snapshot](reviews/SR003-inventory.json) is retained with the review; its rerun is `Intermediate/SR003/inventory.json`. Start with `Intermediate/SR002/result.json` for profile/package acceptance, `Intermediate/SR001/result.json` for the earlier API v1 acceptance, `Intermediate/MobileProbes/current-results.json` for packaged mobile runs and the [M155 repeat snapshot](reviews/SR008-M155-repeat-validation.json) for the latest dependency repeat checks.
+Generated logs and reports stay under `Intermediate/`. The compact [SR-003 inventory snapshot](reviews/SR003-inventory.json) is retained with the review; its rerun is `Intermediate/SR003/inventory.json`. Start with `Intermediate/SR002/result.json` for profile/package acceptance, `Intermediate/SR001/result.json` for the earlier API v1 acceptance, `Intermediate/MobileProbes/current-results.json` for packaged mobile runs and the [M155 repeat snapshot](reviews/SR008-M155-repeat-validation.json) for the Mac/Android/simulator dependency repeat checks; the [2026-10-24 snapshot](reviews/M0-readiness-20261024.json) adds iOS device repeats.
 
 The earlier Xcode 27.1 simulator packages use source engine revision `82051d771c6227c2d5d10737c46d5e5d5a837c0b`. `Intermediate/MobileProbes/Xcode271/build-commands.json` records commands, tool versions and engine state before and after each step. Concurrent work changed HTML5-only files in the shared engine checkout; those paths are retained in the evidence. This task made no engine source edits.
+
+## Final local M0 checks, 2026-10-24
+
+Two fresh iOS device builds reproduce the accepted 17,259,440-byte library exactly. Both compile and link the C API consumer with Xcode 27.1/SDK 27.1 for ARM64 iOS. Each exposes the expected six C symbols. They were not signed, installed or executed. The first attempt to start build B stopped before compilation because an inspection command had left a Python cache in the source tree; the cache was moved aside and B restarted in a new empty directory.
+
+The [source review](NATIVE_SOURCE_REVIEW.md) records the actual compiled components and resolutions of the known findings. The dependency locks, native bridge and Unreal sources are unchanged. Existing package/runtime results still refer to the same library bytes. All **151 Python tests** pass.
+
+The [readiness snapshot](reviews/M0-readiness-20261024.json) records the build commands, comparisons, link checks and remaining external acceptance. Detailed evidence is in `Intermediate/M0Closeout20261024/`.
 
 ## SR-008: packaged M155 dedicated Server
 

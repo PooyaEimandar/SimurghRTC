@@ -1,6 +1,6 @@
 # Isolated WebRTC backend
 
-WebRTC **M155** is integrated into the Unreal 5.8.3 plugin. Packaged Mac/Android lifecycle and media probes pass; both iOS simulator profiles pass lifecycle and local codecs. The Mac dedicated Server passes headless factory, HTTP and cleanup checks. Fresh repeat builds pass on Mac, Android and the iOS simulator; independent-host reproduction and dependency qualification remain open under SR-008. See [M0 results](M0_VALIDATION.md) for the exact scope.
+WebRTC **M155** is integrated into the Unreal 5.8.3 plugin. Packaged Mac/Android lifecycle and media probes pass; both iOS simulator profiles pass lifecycle and local codecs. The Mac dedicated Server passes headless factory, HTTP and cleanup checks. Fresh repeat builds pass on all four ARM64 targets, including iOS device. The [source review](NATIVE_SOURCE_REVIEW.md) resolves the known findings; independent-host reproduction and physical iOS acceptance remain open. See [M0 results](M0_VALIDATION.md) for the exact scope.
 
 The backend builds its own WebRTC, BoringSSL, Opus and VPX. Unreal calls a small private C interface. Factory handles stay inside the backend; Unreal owns the buffers used to copy decoded video and PCM. No WebRTC C++ types or allocations cross that boundary.
 
@@ -52,7 +52,7 @@ python3 tools/compare_native_builds.py \
   --baseline LocalBuilds/Artifacts/M155-Mac --output Intermediate/M155-Mac-repeat.json
 ```
 
-Use `IOSSimulator` and distinct build names for the simulator. The Android builder accepts the same `--build-name` and `--fresh` options inside its container. Run builds sequentially when sharing a workspace. To resume an interrupted build, omit `--fresh`; that resumed export must not count as a fresh repeat run.
+Use `IOS` or `IOSSimulator` and distinct build names for the Apple mobile targets. The Android builder accepts the same `--build-name` and `--fresh` options inside its container. Run builds sequentially when sharing a workspace. To resume an interrupted build, omit `--fresh`; that resumed export must not count as a fresh repeat run.
 
 The comparison requires the shipped library, header, flags, patches and notice inputs to match byte for byte, including the accepted baseline. Build paths and debug-object hashes are retained separately. Artifact manifest hashes can differ because they include those build records. No library bytes are rewritten for comparison.
 
@@ -64,6 +64,15 @@ python3 tools/run_native_abi_probe.py --artifact LocalBuilds/Artifacts/M155-Mac-
 ```
 
 For Android, add `--device ADB_SERIAL`; the runner uses NDK r27c and removes its temporary device executable afterward. For the simulator, add `--device SIMULATOR_UDID`. Each run checks six peer lifecycles, overlapping owners, invalid ABI inputs and two VP8/Opus fixture passes. It is a standalone native consumer, not a new Unreal package run.
+
+For an iOS **device** artifact, compile and link the consumer without signing or running it:
+
+```sh
+python3 tools/run_native_abi_probe.py --artifact LocalBuilds/Artifacts/M155-IOS-a \
+  --output Intermediate/M155-IOS-a-link --link-only
+```
+
+The report explicitly records `runtime_validation: not_run`. Run this for both device repeat exports. A successful link is not physical-device acceptance.
 
 Separate output directories on one host establish a same-host repeat check. They do not establish independent-host reproduction or physical iPhone behavior.
 

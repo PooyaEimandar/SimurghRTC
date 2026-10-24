@@ -1,0 +1,223 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "m0_status": "in_progress_external_acceptance_needed",
+  "local_work_passed": true,
+  "environment": {
+    "recorded_at": "2026-10-24T05:16:49.463803+00:00",
+    "review_date": "2026-10-24",
+    "repo_revision": "4883b706db38aaa655fc78528915f051c3d01e48",
+    "xcode": "Xcode 27.1\nBuild version 27A9275",
+    "ios_sdk": "27.1",
+    "macos": "ProductName:\t\tmacOS\nProductVersion:\t\t27.0.1\nBuildVersion:\t\t26A434",
+    "python": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+    "recipe_sha256": "f62b60c8ad54f3b49e9e46aa27810102889a743e65b846071f678ef44aa19bd5"
+  },
+  "engine": {
+    "revision": "dc88db5c3775843bdebcebfa473ceb22c4d5109f",
+    "status": "",
+    "sources_modified_by_this_task": false
+  },
+  "consumer_compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+  "ios_device_repeat": {
+    "schema": 1,
+    "passed": true,
+    "platform": "IOS",
+    "scope": "two fresh outputs on the same host; shared verified sources and toolchain",
+    "independent_host_validated": false,
+    "artifacts": {
+      "a": {
+        "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+        "platform": "IOS",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17259440,
+        "manifest_sha256": "cc9dd90091030301e5c2bcc4142bbe60cb15a059ba674d17f29937505b157928",
+        "runtime_validation": "unverified"
+      },
+      "b": {
+        "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+        "platform": "IOS",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17259440,
+        "manifest_sha256": "7308f162331d9da12bd957f030f768cff211190e7d9fb649ade07044c45e9012",
+        "runtime_validation": "unverified"
+      },
+      "baseline": {
+        "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+        "platform": "IOS",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17259440,
+        "manifest_sha256": "527b4d029787b7f5e131bc30d75ffa5f8f0cd45b21e24be92977b6c70889230d",
+        "runtime_validation": "unverified"
+      }
+    },
+    "build_directories": {
+      "a": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeIOSRepeat20261024A",
+      "b": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeIOSRepeat20261024BRetry"
+    },
+    "archive_sha256": "54d0ac9f07efedfd7d53d441306f40761eda81187f37dd78d5aeac9fcf7a128f",
+    "matches_accepted_archive": true,
+    "byte_identical_payloads": [
+      "Build/args.gn",
+      "Build/patches/0001-probe-target.patch",
+      "Build/source-lock.json",
+      "Include/simurgh_rtc_abi.h",
+      "Lib/libwebrtc.a",
+      "Licenses/THIRD_PARTY_NOTICES.txt"
+    ],
+    "record_differences_from_a": {
+      "b": [
+        "Build/build.json"
+      ],
+      "baseline": [
+        "Build/build.json"
+      ]
+    },
+    "recipe_sha256": "f62b60c8ad54f3b49e9e46aa27810102889a743e65b846071f678ef44aa19bd5",
+    "baseline_recipe_sha256": "dd7febbab9495ef681609bf328017b23b8e796f4d4677abefceab6e01f3cc32c",
+    "raw_intermediate_hashes": {
+      "a": {
+        "archive_before_isolation_sha256": "bb5462e73813e612da0d1fdcfaaf8d7b5c312fd3ffc3837cae14b4f196e79f17",
+        "isolated_sha256": "f4bbe4e9d80e5e58fc1020fb9b0e167d56a766ce8aafca77aa7a0fc5e361d812"
+      },
+      "b": {
+        "archive_before_isolation_sha256": "bb5462e73813e612da0d1fdcfaaf8d7b5c312fd3ffc3837cae14b4f196e79f17",
+        "isolated_sha256": "f4bbe4e9d80e5e58fc1020fb9b0e167d56a766ce8aafca77aa7a0fc5e361d812"
+      },
+      "baseline": {
+        "archive_before_isolation_sha256": "bb5462e73813e612da0d1fdcfaaf8d7b5c312fd3ffc3837cae14b4f196e79f17",
+        "isolated_sha256": "f4bbe4e9d80e5e58fc1020fb9b0e167d56a766ce8aafca77aa7a0fc5e361d812"
+      }
+    }
+  },
+  "ios_device_link_checks": {
+    "a": {
+      "schema": 1,
+      "passed": true,
+      "artifact": {
+        "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+        "platform": "IOS",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17259440,
+        "manifest_sha256": "cc9dd90091030301e5c2bcc4142bbe60cb15a059ba674d17f29937505b157928",
+        "runtime_validation": "unverified"
+      },
+      "fixture_sha256": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b",
+      "runtime_validation": "not_run",
+      "scope": "iOS device C ABI compile/link only; no signing, deployment or runtime acceptance",
+      "link_validated": true,
+      "executable_sha256": "4128b67ae61d5015230f1f073e7863478fe2d4a3498f01abb74775ab960af9b3",
+      "exported_symbols": [
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1"
+      ]
+    },
+    "b": {
+      "schema": 1,
+      "passed": true,
+      "artifact": {
+        "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+        "platform": "IOS",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17259440,
+        "manifest_sha256": "7308f162331d9da12bd957f030f768cff211190e7d9fb649ade07044c45e9012",
+        "runtime_validation": "unverified"
+      },
+      "fixture_sha256": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b",
+      "runtime_validation": "not_run",
+      "scope": "iOS device C ABI compile/link only; no signing, deployment or runtime acceptance",
+      "link_validated": true,
+      "executable_sha256": "4128b67ae61d5015230f1f073e7863478fe2d4a3498f01abb74775ab960af9b3",
+      "exported_symbols": [
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1"
+      ]
+    }
+  },
+  "initial_b_attempt": {
+    "exit_code": 1,
+    "compilation_started": false,
+    "reason": "GN inspection had generated src/build/__pycache__; moved aside before a new empty BRetry output was used."
+  },
+  "source_review": {
+    "path": "docs/reviews/SR008-M155-source-review.json",
+    "sha256": "fe97d78ec466dea2577461b2cd23092dd377ee7d6a8806f83d3c310b927fb626",
+    "known_findings_resolved": true,
+    "pin_changes": false
+  },
+  "python_tests": {
+    "passed": 151,
+    "failed": 0
+  },
+  "prior_runtime_evidence": {
+    "docs/reviews/SR008-M155-validation.json": "32a355bae813e871c1b700b91cd3cfd81266a82f86239c4a9d529ac7a85d4a00",
+    "docs/reviews/SR008-M155-repeat-validation.json": "a55ef1acfb919153f087a1871cee6c51e7f95243973f0a7f4698c4b9fd5dcc88",
+    "docs/reviews/SR008-M155-server-validation.json": "a1c59bc327a995007fbbdf4b4aa3983cfc11852f246b5e02f3c0cd981b96ceab"
+  },
+  "remaining_m0": [
+    {
+      "issue": "SR-006/SR-007",
+      "status": "needs_independent_hosts",
+      "owner": "SimurghRTC mobile maintainer",
+      "required": "Reproduce the selected ARM64 artifacts on separate macOS/Xcode and Linux build hosts."
+    },
+    {
+      "issue": "SR-007",
+      "status": "deferred_by_user",
+      "owner": "SimurghRTC mobile maintainer",
+      "required": "Signed physical iOS packaged startup in Direct-only and Full profiles. Simulator and link results cannot close this gate."
+    }
+  ],
+  "limits": [
+    "No new Unreal package/runtime test was run in this task.",
+    "The device libraries were linked but not signed, deployed or executed.",
+    "All repeats use this Mac and its existing verified source/tool workspace; this is not independent-host reproduction.",
+    "Source review is dated and scoped; final notices and untrusted network acceptance are separate gates."
+  ],
+  "evidence": {
+    "Intermediate/M0Closeout20261024/environment.json": "6fdb780f844a840435d4140090428233abf81eab71cf878d1ba4e41839b89e7a",
+    "Intermediate/M0Closeout20261024/ios-commands.json": "16254ce5bdb3eb3f017d95fa360af2f20102190ea844e8809137e88cd029260b",
+    "Intermediate/M0Closeout20261024/ios-b-retry-command.json": "699bdc1ebaf182277391ae176dccfef1dd4d9f23ea53aa4ada112dbb080ea304",
+    "Intermediate/M0Closeout20261024/IOS-comparison.json": "a61ef50e10ad4aa4cf92caeeb53e9b2fa6b57de0d540ba33566c318a9f437869",
+    "Intermediate/M0Closeout20261024/python-tests-final.log": "5f7fb821b47b95f422ed4f1b171c10b31466723b4c23498cd5d0fb0dda9096db",
+    "docs/reviews/SR008-M155-source-review.json": "fe97d78ec466dea2577461b2cd23092dd377ee7d6a8806f83d3c310b927fb626",
+    "tools/audit_native_sources.py": "23f9806bdbc2e232431505e5a28a82fc616ca4b1ddad1e3cbfdc0c25f90e8355",
+    "tools/run_native_abi_probe.py": "ad6ab98cd22e6fc7b40ca628da4890274b4a23e4078f25e0e4d2d1d763abf12b",
+    "tools/tests/test_native_link_only.py": "b41edb44a06c104ff5aaea72f99177f9fd8b459a8a662b84b0eecbe2f44b97a9",
+    "tools/tests/test_native_sources_audit.py": "ad6e700a5fbbbe872bd13bd4f7b058c4af8b34c1306655d4f788329cff4e286a",
+    "Intermediate/M0Closeout20261024/IOS-a-build.log": "a706db3ad96006073d8792913adf29c62fda7ffce8405691cce95858e3236e37",
+    "Intermediate/M0Closeout20261024/IOS-a-gn.log": "1f4053905f183c14a5037bbf2f4c8b83f441de5fb046027c134fb2c1c60834ad",
+    "Intermediate/M0Closeout20261024/IOS-a-isolation.log": "9019a87794c1241eb974a3e0bd5fc315b59fac16445527c657c2969539f3a298",
+    "Intermediate/M0Closeout20261024/IOS-a.log": "5c60efce399fae815d2dd49b6ab9e0a8335102022380b2806321797c6868f551",
+    "Intermediate/M0Closeout20261024/IOS-b-build.log": "5aaa263583b4bfc08bf20609634c7657bdec8e1d73191ba37edb6f888233fbda",
+    "Intermediate/M0Closeout20261024/IOS-b-gn.log": "31c7d21d61fa942ea4f2e896329dba109c8096f6e36f74427140de9115e12fbd",
+    "Intermediate/M0Closeout20261024/IOS-b-isolation.log": "8d894a5110cfc6827c593f10f39c2255947a970956128637ced6bf38468454d5",
+    "Intermediate/M0Closeout20261024/IOS-b-retry.log": "1a9a7dc366e23f3d9100f699a98f262fa43135af341aff5ca85b34f58750bf0f",
+    "Intermediate/M0Closeout20261024/IOS-b.log": "903ea7544e296220629db8f58aedff3eda835dd7fed5162911e9f077cc197676",
+    "Intermediate/M0Closeout20261024/IOS-a-link/result.json": "2dd236cf05ce50d0b8e65287c4d45fc2f103944b5edc4ced32b9b72781403d01",
+    "Intermediate/M0Closeout20261024/IOS-a-link/commands.json": "ed073e150ecb22599d8a143143916e389b629263c329b2e40df4546e30776425",
+    "Intermediate/M0Closeout20261024/IOS-a-link/macho.txt": "d7ecddeb81ee2cf6c2765319f7c0dd2a7c98eefd1c550d26e4123867e209b14d",
+    "Intermediate/M0Closeout20261024/IOS-b-link/result.json": "167a42ac87baa4dcbe3da3668b22937c0b8aff1e194ece6caad99a7794b55a7b",
+    "Intermediate/M0Closeout20261024/IOS-b-link/commands.json": "647553aa71f9be6a3f5c92d23624efe1c94fb671265419f671687bfe47a98b59",
+    "Intermediate/M0Closeout20261024/IOS-b-link/macho.txt": "fa68dee576f0143c5ded0a97b0df8f57e305ed3a95fac551f02b20a8c07df874"
+  }
+}

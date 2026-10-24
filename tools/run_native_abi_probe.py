@@ -15,19 +15,23 @@ from run_mobile_probe import ios_simulator, ios_simulator_runtime
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run_probe(artifact, output, device=None, ndk=None, adb=None):
+def run_probe(artifact, output, device=None, ndk=None, adb=None, link_only=False):
     a.require(not output.exists(), 'Use a new evidence directory.')
     identity = native_artifacts.validate(artifact)
     target = identity['platform']
-    a.require(target in ('Mac', 'IOSSimulator', 'Android'), 'This runner does not support physical iOS.')
+    a.require(not link_only or target == 'IOS', 'Link-only checks are for iOS device artifacts.')
+    a.require(target in ('Mac', 'IOSSimulator', 'Android') or (target == 'IOS' and link_only),
+              'Physical iOS execution is not supported; use --link-only for a device link check.')
     a.require(platform.system() == 'Darwin' and platform.machine() == 'arm64', 'Run this consumer harness on Mac ARM64.')
-    a.require(target == 'Mac' or device, 'Select a device serial or simulator UDID.')
+    a.require(target == 'Mac' or link_only or device, 'Select a device serial or simulator UDID.')
     source = ROOT / 'Config/NativeBackend/abi_test.c'
     build = a.read_json(artifact / 'Build/build.json')
     a.require(a.digest(source) == build['bridge_sources']['abi_test.c'], 'C ABI fixture changed after artifact build.')
     output.mkdir(parents=True)
     record = {'schema': 1, 'passed': False, 'artifact': identity, 'fixture_sha256': a.digest(source),
-              'scope': 'standalone C ABI lifecycle and local codecs; not a packaged Unreal run'}
+              'runtime_validation': 'not_run',
+              'scope': ('iOS device C ABI compile/link only; no signing, deployment or runtime acceptance'
+                        if link_only else 'standalone C ABI lifecycle and local codecs; not a packaged Unreal run')}
     commands, remote = [], None
     adb_args = [str(adb), '-s', device] if target == 'Android' else []
 
@@ -80,7 +84,8 @@ def run_probe(artifact, output, device=None, ndk=None, adb=None):
             a.require(command(['xcrun', '--sdk', spec['sdk_name'], '--show-sdk-version']).stdout.strip() == spec['sdk'],
                       'Apple SDK pin mismatch.')
             sdk = command(['xcrun', '--sdk', spec['sdk_name'], '--show-sdk-path']).stdout.strip()
-            triple = ('arm64-apple-macos' + spec['minimum_os']) if target == 'Mac' else ('arm64-apple-ios' + spec['minimum_os'] + '-simulator')
+            triple = ('arm64-apple-macos' + spec['minimum_os']) if target == 'Mac' else (
+                'arm64-apple-ios' + spec['minimum_os'] + ('-simulator' if target == 'IOSSimulator' else ''))
             command(['xcrun', 'clang', '-target', triple, '-isysroot', sdk, '-std=c11', '-I', artifact / 'Include',
                      '-c', source, '-o', obj])
             frameworks = [arg for name in ('Foundation', 'Security', 'SystemConfiguration', 'CoreAudio', 'AudioToolbox')
@@ -92,8 +97,12 @@ def run_probe(artifact, output, device=None, ndk=None, adb=None):
             a.require(command(['xcrun', 'lipo', '-archs', executable]).stdout.strip() == 'arm64', 'ARM64-only consumer required.')
             headers = command(['xcrun', 'vtool', '-show-build', executable]).stdout
             (output / 'macho.txt').write_text(headers)
-            expected = 'MACOS' if target == 'Mac' else 'IOSSIMULATOR'
+            expected = {'Mac': 'MACOS', 'IOSSimulator': 'IOSSIMULATOR', 'IOS': 'IOS'}[target]
             a.require(re.search(r'platform\s+' + expected + r'\b', headers), 'Incorrect Mach-O target platform.')
+            if link_only:
+                record.update(passed=True, link_validated=True, executable_sha256=a.digest(executable),
+                              exported_symbols=sorted(exports))
+                return record
             command(['codesign', '--force', '--sign', '-', executable])
             if target == 'IOSSimulator':
                 record['device'] = ios_simulator(json.loads(command(['xcrun', 'simctl', 'list', 'devices', 'available', '--json']).stdout), device)
@@ -108,7 +117,7 @@ def run_probe(artifact, output, device=None, ndk=None, adb=None):
                   'C ABI runtime checks did not complete.')
         a.require(text.count('media: 12 frames, 50 packets,') == 2
                   and 'M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d' in text, 'Incomplete media/backend evidence.')
-        record.update(passed=True, exit_code=result.returncode, executable_sha256=a.digest(executable),
+        record.update(passed=True, runtime_validation='passed', exit_code=result.returncode, executable_sha256=a.digest(executable),
                       exported_symbols=sorted(exports), peers_created=6, codec_runs=2)
     except (ValueError, OSError, KeyError, subprocess.TimeoutExpired) as error:
         record['error'] = str(error)
@@ -130,10 +139,11 @@ def main():
     parser.add_argument('--artifact', required=True, type=Path)
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--device')
+    parser.add_argument('--link-only', action='store_true', help='Compile/link an iOS device consumer without running or signing it.')
     parser.add_argument('--ndk', type=Path, default=Path.home() / 'Library/Android/sdk/ndk/27.2.12479018')
     parser.add_argument('--adb', type=Path, default=Path.home() / 'Library/Android/sdk/platform-tools/adb')
     args = parser.parse_args()
-    result = run_probe(args.artifact.resolve(), args.output.resolve(), args.device, args.ndk, args.adb)
+    result = run_probe(args.artifact.resolve(), args.output.resolve(), args.device, args.ndk, args.adb, args.link_only)
     print(json.dumps({'passed': result['passed'], 'report': str(args.output / 'result.json'), 'error': result.get('error')}))
     return 0 if result['passed'] else 1
 

@@ -1,0 +1,1461 @@
+{
+  "schema": 1,
+  "reviewed_on": "2026-10-24",
+  "status": "reviewed_known_findings_resolved",
+  "scope": "Current isolated ARM64 RTC artifacts and known SR-003 findings, plus October 2026 Chrome desktop RTC advisories. Not a complete vulnerability census or runtime network acceptance.",
+  "source_locks": {
+    "Config/NativeWebRTC.lock.json": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+    "Config/NativeWebRTC.android.lock.json": "b02a73f9a8301c4e9a1c54b81f4285bfb533a6379ec18f66f1522b8ce1dc9ae3"
+  },
+  "artifacts": {
+    "Mac": {
+      "artifact_manifest_sha256": "a1b95e2fed5426c1a77e2c35db31cb601cd1c8f86d506163bc36bb955902c646",
+      "archive_sha256": "f886f94cca58b50f8aac0132090e64efbe8767532fb14fb7a65e60a71e01814a",
+      "objects": 2608,
+      "source_inventory_sha256": "7ec9e6b1bbef12f57fa927119f69a0f4155c938d38b314f0953d2fdef957345f"
+    },
+    "Android": {
+      "artifact_manifest_sha256": "743c0d2ce61aefa4e6e6cf02fbd2c45deb5218ae9fe9a0bb07d3525097230c52",
+      "archive_sha256": "1ad590d890a9903a5ffab49eacf4a72c9d6bb28c60938bb855f62d027f70516c",
+      "objects": 2594,
+      "source_inventory_sha256": "2f413044b4db03a92ed885302491f99d3e318dad94971d2e717d135f8311ab2a"
+    },
+    "IOS": {
+      "artifact_manifest_sha256": "cc9dd90091030301e5c2bcc4142bbe60cb15a059ba674d17f29937505b157928",
+      "archive_sha256": "54d0ac9f07efedfd7d53d441306f40761eda81187f37dd78d5aeac9fcf7a128f",
+      "objects": 2492,
+      "source_inventory_sha256": "16feb021e7381d959a9281c25e5c42e35d9c1cfddd5ba360cca4bea704a0df84"
+    },
+    "IOSSimulator": {
+      "artifact_manifest_sha256": "68ac7d7841415a624cbeaeb16fca3c588931caeed7be86901d60070f1cb77cf7",
+      "archive_sha256": "3d8b7b34a1618a37077baf46abc42ea1edd2195bd5e9fceead34d3ef19cc4b77",
+      "objects": 2492,
+      "source_inventory_sha256": "16feb021e7381d959a9281c25e5c42e35d9c1cfddd5ba360cca4bea704a0df84"
+    }
+  },
+  "repositories": {
+    "src": {
+      "url": "https://webrtc.googlesource.com/src",
+      "revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "modified_files": [
+        "BUILD.gn"
+      ]
+    },
+    "src/build": {
+      "url": "https://chromium.googlesource.com/chromium/src/build",
+      "revision": "e6aa79b579ec7536ac9cbb92b47c1d3c2ecec984",
+      "modified_files": []
+    },
+    "src/buildtools": {
+      "url": "https://chromium.googlesource.com/chromium/src/buildtools",
+      "revision": "c202b4a9dac30e789ed6e3b2354efa94357a56f3",
+      "modified_files": []
+    },
+    "src/ios": {
+      "url": "https://chromium.googlesource.com/chromium/src/ios",
+      "revision": "9fac5364ca3912fb3f6c7ff754c577ad9b64a34e",
+      "modified_files": []
+    },
+    "src/testing": {
+      "url": "https://chromium.googlesource.com/chromium/src/testing",
+      "revision": "f853eb533f7edf30355ff6b5446b3419ae14d3c3",
+      "modified_files": []
+    },
+    "src/third_party": {
+      "url": "https://chromium.googlesource.com/chromium/src/third_party",
+      "revision": "74ec8c2ee533c9eb78e660876c6fa12d47626176",
+      "modified_files": []
+    },
+    "src/tools": {
+      "url": "https://chromium.googlesource.com/chromium/src/tools",
+      "revision": "bbae40a5511ca4ea79ab1db39e0ed272295d0dc3",
+      "modified_files": []
+    },
+    "src/third_party/boringssl/src": {
+      "url": "https://boringssl.googlesource.com/boringssl.git",
+      "revision": "ebd832c3924065de594ffda62b376aeb2e4f61a9",
+      "modified_files": []
+    },
+    "src/third_party/crc32c/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/crc32c.git",
+      "revision": "2bbb3be42e20a0e6c0f7b39dc07dc863d9ffbc07",
+      "modified_files": []
+    },
+    "src/third_party/depot_tools": {
+      "url": "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
+      "revision": "36a8df4ad006eaa0572fb446edb8145fe5403592",
+      "modified_files": []
+    },
+    "src/third_party/google_benchmark/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/benchmark.git",
+      "revision": "8abf1e701fbd88c8170f48fe0558247e2e5f8e7d",
+      "modified_files": []
+    },
+    "src/third_party/googletest/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/googletest.git",
+      "revision": "4fe3307fb2d9f86d19777c7eb0e4809e9694dde7",
+      "modified_files": []
+    },
+    "src/third_party/libjpeg_turbo": {
+      "url": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git",
+      "revision": "640f254ad0fa03f6b1f29f89b7dd9366f2f6e533",
+      "modified_files": []
+    },
+    "src/third_party/libsrtp": {
+      "url": "https://chromium.googlesource.com/chromium/deps/libsrtp.git",
+      "revision": "cd5d177bf1fde755ddb4c7f0d9ff7693f8b49e5e",
+      "modified_files": []
+    },
+    "src/third_party/dav1d/libdav1d": {
+      "url": "https://chromium.googlesource.com/external/github.com/videolan/dav1d.git",
+      "revision": "a34e0685b9111b9eb1d7835ea7bea5b425dced73",
+      "modified_files": []
+    },
+    "src/third_party/libaom/source/libaom": {
+      "url": "https://aomedia.googlesource.com/aom.git",
+      "revision": "b7926e61f11b6393d5178805fb6a85b1d8f25daf",
+      "modified_files": []
+    },
+    "src/third_party/libvpx/source/libvpx": {
+      "url": "https://chromium.googlesource.com/webm/libvpx.git",
+      "revision": "d2413e2ca11039724ca33bb4d661ca2c94cb501e",
+      "modified_files": []
+    },
+    "src/third_party/libyuv": {
+      "url": "https://chromium.googlesource.com/libyuv/libyuv.git",
+      "revision": "2dd4257364d39c38d79465c4ddc4b93137fe729b",
+      "modified_files": []
+    },
+    "src/third_party/lss": {
+      "url": "https://chromium.googlesource.com/linux-syscall-support.git",
+      "revision": "29164a80da4d41134950d76d55199ea33fbb9613",
+      "modified_files": []
+    },
+    "src/third_party/nasm": {
+      "url": "https://chromium.googlesource.com/chromium/deps/nasm.git",
+      "revision": "525a09a813be0f75b646ee93fc2a31c27b87d722",
+      "modified_files": []
+    },
+    "src/third_party/catapult": {
+      "url": "https://chromium.googlesource.com/catapult.git",
+      "revision": "471aa8aec31a4de79a96b72815180bc9dc71c420",
+      "modified_files": []
+    },
+    "src/third_party/jsoncpp/source": {
+      "url": "https://chromium.googlesource.com/external/github.com/open-source-parsers/jsoncpp.git",
+      "revision": "3347a4b86bb914cb565f0cbda19c06e109513300",
+      "modified_files": []
+    },
+    "src/third_party/perfetto": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/perfetto.git",
+      "revision": "d3b1841f171c17161cb4faa1489052a09d8545d9",
+      "modified_files": []
+    }
+  },
+  "components": [
+    {
+      "component": "common_audio/third_party/ooura",
+      "objects_by_platform": {
+        "Mac": 3,
+        "Android": 3,
+        "IOS": 3,
+        "IOSSimulator": 3
+      },
+      "source_repositories": [
+        "src"
+      ],
+      "metadata": {
+        "common_audio/third_party/ooura/README.chromium": {
+          "sha256": "80392fe13803dcea137e4c7fb5f3f6d78f66c12269c89b046c660b12d5061538",
+          "declared_fields": {
+            "Name": "General Purpose FFT (Fast Fourier/Cosine/Sine Transform) Package",
+            "URL": "http://www.kurims.kyoto-u.ac.jp/~ooura/fft.html",
+            "Version": "N/A",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        },
+        "common_audio/third_party/ooura/LICENSE": {
+          "sha256": "25b7731b70c77ecd5f3bb19303fbaa99be18860f81d44f71da670fdcd04829db"
+        }
+      }
+    },
+    {
+      "component": "common_audio/third_party/spl_sqrt_floor",
+      "objects_by_platform": {
+        "Mac": 1,
+        "Android": 1,
+        "IOS": 1,
+        "IOSSimulator": 1
+      },
+      "source_repositories": [
+        "src"
+      ],
+      "metadata": {
+        "common_audio/third_party/spl_sqrt_floor/README.chromium": {
+          "sha256": "292b6fa1147d681f40ff6ff81cccbca4e933ab06ef0212e5d589ddccc6ed2d69",
+          "declared_fields": {
+            "Name": "spl sqrt floor",
+            "URL": "http://www.pertinentdetail.org/sqrt",
+            "Version": "N/A",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        },
+        "common_audio/third_party/spl_sqrt_floor/LICENSE": {
+          "sha256": "41d791701e3e1c1073470403de7e342442d1e6a2af72681023b13a2f45f2125c"
+        }
+      }
+    },
+    {
+      "component": "modules/third_party/fft",
+      "objects_by_platform": {
+        "Mac": 1,
+        "Android": 1,
+        "IOS": 1,
+        "IOSSimulator": 1
+      },
+      "source_repositories": [
+        "src"
+      ],
+      "metadata": {
+        "modules/third_party/fft/README.chromium": {
+          "sha256": "f656f4c66749cae59dc5daaa9a477b39e2d28758f292cfd82a5d1ab900e303d7",
+          "declared_fields": {
+            "Name": "fft",
+            "URL": "This is the canonical repository.",
+            "Version": "N/A",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        },
+        "modules/third_party/fft/LICENSE": {
+          "sha256": "6fdbabd2c95c5efc6f1e46175278239afb9343120a3022ed0e0cb04267a6aeb3"
+        }
+      }
+    },
+    {
+      "component": "modules/third_party/g711",
+      "objects_by_platform": {
+        "Mac": 1,
+        "Android": 1,
+        "IOS": 1,
+        "IOSSimulator": 1
+      },
+      "source_repositories": [
+        "src"
+      ],
+      "metadata": {
+        "modules/third_party/g711/README.chromium": {
+          "sha256": "5d57cb71736037846f858d4db1cd28ce20443b81a84a8af6ceae2e7662a37be6",
+          "declared_fields": {
+            "Name": "In line A-law and u-law conversion routines",
+            "URL": "https://www.soft-switch.org/downloads/spandsp/",
+            "Version": "N/A",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        },
+        "modules/third_party/g711/LICENSE": {
+          "sha256": "b29c8f13f91feb2dab7d6655444369fa9f29c0d7121a52dab90ff97e40343a85"
+        }
+      }
+    },
+    {
+      "component": "modules/third_party/g722",
+      "objects_by_platform": {
+        "Mac": 2,
+        "Android": 2,
+        "IOS": 2,
+        "IOSSimulator": 2
+      },
+      "source_repositories": [
+        "src"
+      ],
+      "metadata": {
+        "modules/third_party/g722/README.chromium": {
+          "sha256": "e0d7a24ab30fb0fd49165e0f30c1171be418cec109997e2152f3b3daf1bba589",
+          "declared_fields": {
+            "Name": "The ITU G.722 codec, encode and decode part.",
+            "URL": "https://www.soft-switch.org/downloads/spandsp/",
+            "Version": "N/A",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        },
+        "modules/third_party/g722/LICENSE": {
+          "sha256": "61862327fd00d6a4deb2c1276577782c2500f4fe103e072018fc369d8e37e876"
+        }
+      }
+    },
+    {
+      "component": "simurgh_bridge",
+      "objects_by_platform": {
+        "Mac": 2,
+        "Android": 2,
+        "IOS": 2,
+        "IOSSimulator": 2
+      },
+      "source_repositories": [],
+      "metadata": {}
+    },
+    {
+      "component": "third_party/abseil-cpp",
+      "objects_by_platform": {
+        "Mac": 100,
+        "Android": 100,
+        "IOS": 100,
+        "IOSSimulator": 100
+      },
+      "source_repositories": [
+        "src/third_party"
+      ],
+      "metadata": {
+        "third_party/abseil-cpp/README.chromium": {
+          "sha256": "38ca21459039fb16f7d904b96c8c39fcf864a7a7b761302fe11d624cb831d819",
+          "declared_fields": {
+            "Name": "Abseil",
+            "URL": "https://github.com/abseil/abseil-cpp",
+            "Version": "N/A",
+            "Revision": "a1b9918b18364077b32a820862c63e14c1edb70b",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        },
+        "third_party/abseil-cpp/LICENSE": {
+          "sha256": "c79a7fea0e3cac04cd43f20e7b648e5a0ff8fa5344e644b0ee09ca1162b62747"
+        }
+      }
+    },
+    {
+      "component": "third_party/boringssl",
+      "objects_by_platform": {
+        "Mac": 440,
+        "Android": 440,
+        "IOS": 440,
+        "IOSSimulator": 440
+      },
+      "source_repositories": [
+        "src/third_party/boringssl/src"
+      ],
+      "metadata": {
+        "third_party/boringssl/README.chromium": {
+          "sha256": "5f81c59c5ea248c4fd867ad049c8cd0af206f05e43afef60181beff1ee643330",
+          "declared_fields": {
+            "Name": "BoringSSL",
+            "URL": "https://boringssl.googlesource.com/boringssl",
+            "Version": "N/A",
+            "Revision": "ebd832c3924065de594ffda62b376aeb2e4f61a9",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        }
+      }
+    },
+    {
+      "component": "third_party/cpu_features",
+      "objects_by_platform": {
+        "Mac": 0,
+        "Android": 12,
+        "IOS": 0,
+        "IOSSimulator": 0
+      },
+      "source_repositories": [
+        "src/third_party/cpu_features/src"
+      ],
+      "metadata": {
+        "third_party/cpu_features/README.chromium": {
+          "sha256": "08010573ca27db7cb74f712f3bef3be27f399f46a3977593beeef18368514ea2",
+          "declared_fields": {
+            "Name": "cpu_features",
+            "URL": "https://github.com/google/cpu_features",
+            "Version": "v0.11.0",
+            "Revision": "81d13c49649f0714dd41fb56bb246398b6584085",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        }
+      }
+    },
+    {
+      "component": "third_party/libjpeg_turbo",
+      "objects_by_platform": {
+        "Mac": 113,
+        "Android": 113,
+        "IOS": 0,
+        "IOSSimulator": 0
+      },
+      "source_repositories": [
+        "src/third_party/libjpeg_turbo"
+      ],
+      "metadata": {
+        "third_party/libjpeg_turbo/README.chromium": {
+          "sha256": "9d416e9eceed5b01f665622113e681d707e86e6433ec4c9235a4b7e958acbfc5",
+          "declared_fields": {
+            "Name": "libjpeg-turbo",
+            "URL": "https://github.com/libjpeg-turbo/libjpeg-turbo/",
+            "Version": "3.1.0",
+            "Revision": "20ade4dea9589515a69793e447a6c6220b464535",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        }
+      }
+    },
+    {
+      "component": "third_party/libsrtp",
+      "objects_by_platform": {
+        "Mac": 17,
+        "Android": 17,
+        "IOS": 17,
+        "IOSSimulator": 17
+      },
+      "source_repositories": [
+        "src/third_party/libsrtp"
+      ],
+      "metadata": {
+        "third_party/libsrtp/README.chromium": {
+          "sha256": "e8fb1758e7903b45f4a233108f610addd6120f7e2d2f6c19d46fd332021deb8d",
+          "declared_fields": {
+            "Name": "libsrtp",
+            "URL": "https://github.com/cisco/libsrtp",
+            "Version": "24b3bf8f19b6f5ab4cd2bcceb4f4064efca (v\u2489.8.0)",
+            "Security Critical": "Yes",
+            "Shipped": "yes"
+          }
+        },
+        "third_party/libsrtp/LICENSE": {
+          "sha256": "8e19d42a1eec9561f3f347253ddf2e385c55f392f025bb0fd41b88dbf38db5ae"
+        }
+      }
+    },
+    {
+      "component": "third_party/libvpx",
+      "objects_by_platform": {
+        "Mac": 255,
+        "Android": 226,
+        "IOS": 255,
+        "IOSSimulator": 255
+      },
+      "source_repositories": [
+        "src/third_party/libvpx/source/libvpx"
+      ],
+      "metadata": {
+        "third_party/libvpx/README.chromium": {
+          "sha256": "de89c70d793f034b6496666e5998880cfe604f5dfb175a3d313f52127238ba6c",
+          "declared_fields": {
+            "Name": "libvpx",
+            "URL": "https://chromium.googlesource.com/webm/libvpx",
+            "Version": "N/A",
+            "Revision": "d2413e2ca11039724ca33bb4d661ca2c94cb501e",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        }
+      }
+    },
+    {
+      "component": "third_party/libyuv",
+      "objects_by_platform": {
+        "Mac": 45,
+        "Android": 48,
+        "IOS": 45,
+        "IOSSimulator": 45
+      },
+      "source_repositories": [
+        "src/third_party/libyuv"
+      ],
+      "metadata": {
+        "third_party/libyuv/README.chromium": {
+          "sha256": "117176ae91b9d2d58c5465e057380ca5075b9890b4e7526d0eadb00be8896af8",
+          "declared_fields": {
+            "Name": "libyuv",
+            "URL": "https://chromium.googlesource.com/libyuv/libyuv/",
+            "Version": "1971",
+            "Revision": "DEPS",
+            "Shipped": "yes",
+            "Security Critical": "yes"
+          }
+        },
+        "third_party/libyuv/LICENSE": {
+          "sha256": "2b2cc1180c7e6988328ad2033b04b80117419db9c4c584918bbb3cfec7e9364f"
+        }
+      }
+    },
+    {
+      "component": "third_party/opus",
+      "objects_by_platform": {
+        "Mac": 143,
+        "Android": 143,
+        "IOS": 143,
+        "IOSSimulator": 143
+      },
+      "source_repositories": [
+        "src/third_party"
+      ],
+      "metadata": {
+        "third_party/opus/README.chromium": {
+          "sha256": "b3462b72d621616f2e62f5c9954f0e30288d6fc102bed5b358c99ac23811f604",
+          "declared_fields": {
+            "Name": "opus",
+            "URL": "https://gitlab.xiph.org/xiph/opus",
+            "Version": "55513e81",
+            "Revision": "55513e81d8f606bd75d0ff773d2144e5f2a732f5",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        }
+      }
+    },
+    {
+      "component": "third_party/perfetto",
+      "objects_by_platform": {
+        "Mac": 413,
+        "Android": 413,
+        "IOS": 410,
+        "IOSSimulator": 410
+      },
+      "source_repositories": [
+        "src/third_party/perfetto"
+      ],
+      "metadata": {
+        "third_party/perfetto/README.chromium": {
+          "sha256": "eb9573fc984cfa5f2d411c6c48a88c6033e050ef4aec210e371af405f0fbf2bf",
+          "declared_fields": {
+            "Name": "Perfetto",
+            "URL": "https://github.com/google/perfetto/",
+            "Version": "N/A",
+            "Revision": "DEPS",
+            "Security Critical": "yes",
+            "Shipped": "yes"
+          }
+        },
+        "third_party/perfetto/LICENSE": {
+          "sha256": "9b569417be9f195f8ffa709a23836c4e0f880b2752b09653baa8a98d3b02db3a"
+        }
+      }
+    },
+    {
+      "component": "third_party/pffft",
+      "objects_by_platform": {
+        "Mac": 1,
+        "Android": 1,
+        "IOS": 1,
+        "IOSSimulator": 1
+      },
+      "source_repositories": [
+        "src/third_party"
+      ],
+      "metadata": {
+        "third_party/pffft/README.chromium": {
+          "sha256": "6d53a57a94467b529def637e84fe00969f088394749a95ccf77d7dcc6e0bb5e7",
+          "declared_fields": {
+            "Name": "PFFFT: a pretty fast FFT.",
+            "URL": "https://bitbucket.org/jpommier/pffft/",
+            "Version": "N/A",
+            "Revision": "483453d8f766",
+            "Security Critical": "Yes",
+            "Shipped": "yes"
+          }
+        },
+        "third_party/pffft/LICENSE": {
+          "sha256": "a46200592eb193853527250da098e6bb0c75424e7a2c7db8da526c4f301c3d88"
+        }
+      }
+    },
+    {
+      "component": "third_party/rnnoise",
+      "objects_by_platform": {
+        "Mac": 1,
+        "Android": 1,
+        "IOS": 1,
+        "IOSSimulator": 1
+      },
+      "source_repositories": [
+        "src/third_party"
+      ],
+      "metadata": {
+        "third_party/rnnoise/README.chromium": {
+          "sha256": "396a75a64c73e0348967bc08460b19fab2829b04368088f8cd61dfed47d4d7eb",
+          "declared_fields": {
+            "Name": "Recurrent neural network for audio noise reduction",
+            "URL": "https://github.com/xiph/rnnoise",
+            "Version": "N/A",
+            "Revision": "91ef401f4c3536c6de999ac609262691ec888c4c",
+            "Security Critical": "no",
+            "Shipped": "yes"
+          }
+        },
+        "third_party/rnnoise/COPYING": {
+          "sha256": "e2f59ff41d9d03adc3dcf3deff170f8c8cf4a6eb4a9b174762a7656d23200ffa"
+        }
+      }
+    },
+    {
+      "component": "webrtc",
+      "objects_by_platform": {
+        "Mac": 1070,
+        "Android": 1070,
+        "IOS": 1070,
+        "IOSSimulator": 1070
+      },
+      "source_repositories": [
+        "src"
+      ],
+      "metadata": {}
+    }
+  ],
+  "local_patch_review": "Apple adds the native GN target. Android also selects the native-only graph, external pinned NDK and native stacktrace code; no local codec/crypto algorithm changes or security backports.",
+  "patches": [
+    {
+      "repository": "src",
+      "path": "Config/NativeWebRTC/0001-probe-target.patch",
+      "sha256": "6fd3fa28477159c57e54f8b7c4d96dc2d4f2d6e4e5cd00013568b713811d202c",
+      "files": {
+        "BUILD.gn": {
+          "before": "4ac1321f55a875ebf7e0ced8c0cc69bf8d1bee9484540e9721ecfbd6f9e3b173",
+          "after": "51eb94b59fac81e92cda671fb6432e8d69325519dd22ad0e506e471923f91534"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/NativeBackend/patches/0001-native-graph.patch",
+      "sha256": "2645ecc9badd013cf616a74672b79e8414686c50643b45b5becdb6a79e1a3a21",
+      "files": {
+        "BUILD.gn": {
+          "before": "51eb94b59fac81e92cda671fb6432e8d69325519dd22ad0e506e471923f91534",
+          "after": "8461e3c495d016c75f91bc78606957fa07ab8ceecc6b6d4980ef7e267e7dffc0"
+        },
+        "build_overrides/build.gni": {
+          "before": "51d27356503a3265aae9bb1c3f965bc3dab041ff0a58dc54376fe664d7e7c248",
+          "after": "d8b426a5e0732bebc4bf894afac54d23cabcb1be66e0697875291b2ee928278f"
+        },
+        "rtc_base/BUILD.gn": {
+          "before": "20a6d0c9254f07bc5601e7caf55d9c3d5c325fb661497880bb2b442a9d9a3494",
+          "after": "c447ce94ffcd15d4096da94c01abcab835964853732f39fdb44ad25082df1ea6"
+        },
+        "test/BUILD.gn": {
+          "before": "3f7875ec2a31ab85784e3a190cdf350343f8d8b5fc74ca461befe2b3b82da472",
+          "after": "ed8c10f2487a77edcb1598dee770da3da31380dc9f52bd20fe5b13182e487d57"
+        }
+      }
+    },
+    {
+      "repository": "src/build",
+      "path": "Config/NativeBackend/patches/0002-external-ndk.patch",
+      "sha256": "dfd1b3efdb6a41c006c4cfdf5c191d0b7d76664ac181aeabf7f43f1bc6bf3c42",
+      "files": {
+        "config/android/config.gni": {
+          "before": "1d1e5c05d7aeba47245260d5c71ac4aa1ea42c5415519808b1abd54565482891",
+          "after": "35f43a95bf4fbd39bf8c3aa13e66754c0d3add0b7c74cf294cc9af12c611b9b6"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/NativeBackend/patches/0003-native-api-graph.patch",
+      "sha256": "3cf0f2ca37ed439893cef31d5a7a336f651880efe4a81d52fc2360d1aa0763af",
+      "files": {
+        "api/BUILD.gn": {
+          "before": "4eb70ddec27b4f3bd293b7f29db60416512bbbf3ccf7f60e6d0e2efa9fb45d85",
+          "after": "ae0e993882402ed8916130b2ddbc89c668570faf6e99ef30bf311a8e982331e2"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/NativeBackend/patches/0004-native-video-graph.patch",
+      "sha256": "006580483dc88ca725a4210a0e90ba74659d087eb06b05f5d760f0719af6db14",
+      "files": {
+        "api/video/BUILD.gn": {
+          "before": "e949691d20ae12149ad4c9a3b1b7fbc74a2b36600c1d9f076f696e7e4da42008",
+          "after": "0f8adf6a54411e90b5f6068f2f547086ddf598709c97bc1c976e4bba44ecdc4a"
+        }
+      }
+    },
+    {
+      "repository": "src/testing",
+      "path": "Config/NativeBackend/patches/0005-native-test-targets.patch",
+      "sha256": "51c166558c216a05cf5a1fe3627ed76e81c27d10685d8fc1fa6bd74a85c12276",
+      "files": {
+        "test.gni": {
+          "before": "8a4ae62a3dc2a89408538bac31d90c1deb2318546f7f6dcb1baf5d6c3109ecff",
+          "after": "1c25ce565d09e4efeaea9c5a2c4ec06bb6df59978b44c6179ccb474910ffafdc"
+        }
+      }
+    },
+    {
+      "repository": "src/testing",
+      "path": "Config/NativeBackend/patches/0006-native-test-options.patch",
+      "sha256": "66b70b47beb895e2738ce1b497e52e9e20b12a20420afef2bee2ac1b7b8096f6",
+      "files": {
+        "test.gni": {
+          "before": "1c25ce565d09e4efeaea9c5a2c4ec06bb6df59978b44c6179ccb474910ffafdc",
+          "after": "718354d4c2d56560b809a5b444d8d45b8727230120f515eac44accff05971bce"
+        }
+      }
+    },
+    {
+      "repository": "src",
+      "path": "Config/NativeBackend/patches/0007-native-stacktrace.patch",
+      "sha256": "f742e2976e09a9bf99d72341867a84113f89c0ff225c3af935d5ff9ce0de7968",
+      "files": {
+        "rtc_base/system/BUILD.gn": {
+          "before": "386638fbb350148b0f2032a6e7adb30c0c17f6cd0da7b08247eb5d6dfe423702",
+          "after": "991116f365ff0b0a08b7e71451552616b25515eca17ffa14338bfd14dd20b5ae"
+        }
+      }
+    },
+    {
+      "repository": "src/third_party",
+      "path": "Config/NativeBackend/patches/0008-native-flatbuffers.patch",
+      "sha256": "8b60338b353dee826753038c0c49be9fad7d865dd51206c3634c6473b55889fe",
+      "files": {
+        "flatbuffers/BUILD.gn": {
+          "before": "e467c273d15330d29942befa854a707b9faabe0b5ef9edf154e2408595923b9a",
+          "after": "ac96fc333166c101dace0af610744f2aaad458ed4c443027d328ab62fbd97a77"
+        }
+      }
+    }
+  ],
+  "advisories": [
+    {
+      "id": "CVE-2023-7024",
+      "upstream_issue": "1513170",
+      "disposition": "excluded_from_native_build",
+      "reason": "Chromium WebRtcAudioSink belongs to Blink; the native backend does not compile Blink.",
+      "fix_commit": "340b7e300d380460a039a07b90f62d1febae9da5",
+      "review_url": "https://chromium-review.googlesource.com/c/chromium/src/+/5136295",
+      "changed_files": [
+        "third_party/blink/renderer/platform/peerconnection/webrtc_audio_sink.cc"
+      ],
+      "excluded_prefixes": [
+        "third_party/blink/"
+      ]
+    },
+    {
+      "id": "CVE-2024-5493",
+      "upstream_issue": "339877165",
+      "disposition": "excluded_from_native_build",
+      "reason": "The upstream fix rolls libaom. AV1/libaom is disabled and has no compiled objects in these artifacts.",
+      "fix_commit": "cb5651248b18ef54aa60d6cfbb17dcf1feae7538",
+      "review_url": "https://chromium-review.googlesource.com/c/chromium/src/+/5545036",
+      "changed_files": [
+        "DEPS",
+        "third_party/libaom/README.chromium",
+        "third_party/libaom/source/config/config/aom_version.h",
+        "third_party/libaom/source/config/linux/ia32/config/av1_rtcd.h",
+        "third_party/libaom/source/config/linux/x64/config/av1_rtcd.h",
+        "third_party/libaom/source/config/win/ia32/config/av1_rtcd.h",
+        "third_party/libaom/source/config/win/x64/config/av1_rtcd.h",
+        "third_party/libaom/source/libaom"
+      ],
+      "excluded_prefixes": [
+        "third_party/libaom/"
+      ]
+    },
+    {
+      "id": "CVE-2026-9111",
+      "upstream_issue": "504551032",
+      "disposition": "fix_present",
+      "fix_commit": "90b22181ec922900e26de71463b8e0ed47a5c2dd",
+      "selected_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "ancestor_verified": true,
+      "fix_url": "https://webrtc.googlesource.com/src/+/90b22181ec922900e26de71463b8e0ed47a5c2dd",
+      "selected_files": {
+        "modules/desktop_capture/linux/wayland/shared_screencast_stream.cc": "76efefc2760ecd39b5584463969abf73194dd74aded1051370d1a802a948f627"
+      },
+      "additional_exclusion": "PipeWire/Wayland capture is disabled and not compiled on these targets."
+    },
+    {
+      "id": "CVE-2026-9119",
+      "upstream_issue": "502661101",
+      "disposition": "fix_present",
+      "fix_commit": "ff1be2e8524fe63069fc2406d5e3f3ddccafee1a",
+      "selected_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "ancestor_verified": true,
+      "fix_url": "https://webrtc.googlesource.com/src/+/ff1be2e8524fe63069fc2406d5e3f3ddccafee1a",
+      "selected_files": {
+        "modules/audio_coding/neteq/normal.cc": "e8225ba3003939510a181c88949a4526d0eaada8a3435ffd9878892041df857b"
+      }
+    },
+    {
+      "id": "CVE-2026-9120",
+      "upstream_issue": "504620824",
+      "disposition": "fix_present",
+      "fix_commit": "21d9744bd599d106da9171fbb1ed09047d7178ca",
+      "selected_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "ancestor_verified": true,
+      "fix_url": "https://webrtc.googlesource.com/src/+/21d9744bd599d106da9171fbb1ed09047d7178ca",
+      "selected_files": {
+        "video/video_stream_encoder.cc": "430c690e79ae2a560f2c139023b90bfd0d2cdb1ea360f363317f706ab8b29fb4"
+      }
+    },
+    {
+      "id": "CVE-2026-103631",
+      "upstream_issue": "567088927",
+      "disposition": "fix_present",
+      "fix_commit": "f89edcb7be1f4be029ee7186e36b2b35ec03373e",
+      "selected_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "ancestor_verified": true,
+      "fix_url": "https://webrtc.googlesource.com/src/+/f89edcb7be1f4be029ee7186e36b2b35ec03373e",
+      "selected_files": {
+        "modules/rtp_rtcp/source/rtp_format_vp8.cc": "f7564d6bf163e427828b4cf698c33740ddd311365d9354fc30eeecaa6103557e",
+        "modules/rtp_rtcp/source/rtp_packetizer_av1.cc": "32812e41c1399a9649c8f25b87d21e380849f5d3898b771a39b3c50f891b28c6"
+      }
+    },
+    {
+      "id": "CVE-2026-106268",
+      "upstream_issue": "565742177",
+      "disposition": "fix_present",
+      "fix_commit": "d5c7a213b976fdf43cc17ce490676d2d4a8a1e86",
+      "selected_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "ancestor_verified": true,
+      "fix_url": "https://webrtc.googlesource.com/src/+/d5c7a213b976fdf43cc17ce490676d2d4a8a1e86",
+      "selected_files": {
+        "pc/sdp_offer_answer.cc": "5bff5797a669bb2ea6a969d8dea535218080bfc5f005deea05f03d76a6931c1c"
+      }
+    },
+    {
+      "id": "CVE-2026-106357",
+      "upstream_issue": "567160162",
+      "disposition": "fix_present",
+      "fix_commit": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "selected_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "ancestor_verified": true,
+      "fix_url": "https://webrtc.googlesource.com/src/+/5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "selected_files": {
+        "pc/sdp_offer_answer.cc": "5bff5797a669bb2ea6a969d8dea535218080bfc5f005deea05f03d76a6931c1c",
+        "pc/rtp_transceiver.cc": "969a0a14f3f812dce0e6e110cfbea83d64f6522e6ee915050f4c6f0c34cc07fc",
+        "pc/transceiver_list.cc": "755ab0fd4d7a4b8fd80244a2d5cf2a3efaed7f1b315d3d8a0e9c119b1ade0166"
+      }
+    },
+    {
+      "id": "CVE-2026-110137",
+      "upstream_issue": "561997899",
+      "disposition": "excluded_from_native_build",
+      "reason": "The fix changes Blink encoded-stream lifetime handling, which is absent from the native archive.",
+      "fix_commit": "def00f1d39bb8692e64c167d2b8901e00648b6f2",
+      "review_url": "https://chromium-review.googlesource.com/c/chromium/src/+/8458644",
+      "changed_files": [
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_audio_underlying_source.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_audio_underlying_source.h",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_audio_underlying_source_test.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_video_underlying_source.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_video_underlying_source.h",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_video_underlying_source_test.cc"
+      ],
+      "excluded_prefixes": [
+        "third_party/blink/"
+      ]
+    },
+    {
+      "id": "CVE-2026-113161",
+      "upstream_issue": "568945639",
+      "disposition": "excluded_from_native_build",
+      "reason": "The fix changes Blink encoded-stream transfer optimizers, which are absent from the native archive.",
+      "fix_commit": "6c38d4ec50ea5a153e2e616a39c06d6a4777b7c8",
+      "review_url": "https://chromium-review.googlesource.com/c/chromium/src/+/8577741",
+      "changed_files": [
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_audio_receiver_sink_optimizer.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_audio_receiver_source_optimizer.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_audio_sender_sink_optimizer.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_audio_sender_source_optimizer.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_audio_underlying_sink_test.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_audio_underlying_source_test.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_video_receiver_sink_optimizer.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_video_receiver_source_optimizer.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_video_sender_sink_optimizer.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_video_sender_source_optimizer.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_video_underlying_sink_test.cc",
+        "third_party/blink/renderer/modules/peerconnection/rtc_encoded_video_underlying_source_test.cc"
+      ],
+      "excluded_prefixes": [
+        "third_party/blink/"
+      ]
+    },
+    {
+      "id": "CVE-2026-113303",
+      "upstream_issue": "574041825",
+      "disposition": "excluded_from_native_build",
+      "reason": "The fix changes Blink audio-device/renderer ownership, which is absent from the native archive.",
+      "fix_commit": "e193ceb7de134efa938172d45c38daec31658357",
+      "review_url": "https://chromium-review.googlesource.com/c/chromium/src/+/8591863",
+      "changed_files": [
+        "third_party/blink/renderer/modules/peerconnection/webrtc_audio_renderer_test.cc",
+        "third_party/blink/renderer/modules/webrtc/webrtc_audio_device_impl.cc",
+        "third_party/blink/renderer/modules/webrtc/webrtc_audio_device_impl.h",
+        "third_party/blink/renderer/modules/webrtc/webrtc_audio_device_impl_test.cc"
+      ],
+      "excluded_prefixes": [
+        "third_party/blink/"
+      ]
+    },
+    {
+      "id": "CVE-2024-5197",
+      "upstream_issue": null,
+      "disposition": "fix_present",
+      "fix_commit": "b5ba2274a00e71e0860cc5f6c87d344ce1b6095a",
+      "selected_revision": "d2413e2ca11039724ca33bb4d661ca2c94cb501e",
+      "ancestor_verified": true,
+      "fix_url": "https://chromium.googlesource.com/webm/libvpx/+/b5ba2274a00e71e0860cc5f6c87d344ce1b6095a",
+      "selected_files": {
+        "third_party/libvpx/source/libvpx/vpx/src/vpx_image.c": "9be4048bf5da12acdc9b2d9e9a226818ca49d2ecff459e85ed3dceb60cb7ebae"
+      },
+      "reason": "The v1.14.1 merge explicitly includes the fix; the selected source retains image allocation overflow checks."
+    },
+    {
+      "id": "CVE-2026-1861",
+      "upstream_issue": "478942410",
+      "disposition": "fix_present",
+      "fix_commit": "d5f35ac8d93cba7f7a3f7ddb8f9dc8bd28f785e1",
+      "selected_revision": "d2413e2ca11039724ca33bb4d661ca2c94cb501e",
+      "ancestor_verified": true,
+      "fix_url": "https://chromium.googlesource.com/webm/libvpx/+/d5f35ac8d93cba7f7a3f7ddb8f9dc8bd28f785e1",
+      "selected_files": {
+        "third_party/libvpx/source/libvpx/vp9/vp9_cx_iface.c": "52264879fce65efc0d378a91f4b15a15836e15d85f4cc9b3ab9d63a9b19a382c"
+      }
+    },
+    {
+      "id": "SR003-OpenSSL-Opus-Speex-provenance",
+      "disposition": "replaced_in_rtc_backend",
+      "reason": "RTC archives compile pinned BoringSSL and Opus; no Epic OpenSSL/Opus/Speex archive is an RTC input. This does not qualify unrelated engine-owned libraries."
+    },
+    {
+      "id": "CVE-2026-27135",
+      "disposition": "previously_validated_fix",
+      "source": "docs/reviews/SR008-validation.json",
+      "source_sha256": "2eb1a3d434b29093d5aba46b37fb5ab1d8909ff123835df1a34d0e0510ab40f3",
+      "reason": "Pinned simulator nghttp2 1.70.0, regression and repeat/package acceptance already retained."
+    }
+  ],
+  "october_desktop_releases": [
+    {
+      "date": "2026-10-20T13:09:05.710-07:00",
+      "url": "https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_02018666648.html",
+      "title": "Stable Channel Update for Desktop",
+      "findings": [
+        "[N/A][ 574041825 ] Critical CVE-2026-113303: Memory corruption in WebRTC.  Reported by OpenAI Codex Security (kylebot) on 2026-10-15",
+        "[TBD][ 568945639 ] High CVE-2026-113161: Use after free in WebRTC.  Reported by C0rk1 on 2026-10-03"
+      ]
+    },
+    {
+      "date": "2026-10-15T13:50:35.703-07:00",
+      "url": "https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_01886704284.html",
+      "title": "Stable Channel Update for Desktop",
+      "findings": []
+    },
+    {
+      "date": "2026-10-13T13:53:43.905-07:00",
+      "url": "https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_01668083673.html",
+      "title": "Stable Channel Update for Desktop",
+      "findings": [
+        "[N/A][ 561997899 ] High CVE-2026-110137: Use after free in WebRTC.  Reported by Google on 2026-09-15"
+      ]
+    },
+    {
+      "date": "2026-10-06T10:17:52.425-07:00",
+      "url": "https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_086471744.html",
+      "title": "Stable Channel Update for Desktop",
+      "findings": [
+        "[TBD][ 565742177 ] High CVE-2026-106268: Use after free in WebRTC.  Reported by xinyang on 2026-09-24",
+        "[TBD][ 567160162 ] High CVE-2026-106357: Use after free in WebRTC.  Reported by Xinyang Ge (Anthropic), assisted by Claude on 2026-09-28"
+      ]
+    },
+    {
+      "date": "2026-10-01T18:04:35.613-07:00",
+      "url": "https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop.html",
+      "title": "Stable Channel Update for Desktop",
+      "findings": [
+        "[TBD][ 567088927 ] High CVE-2026-103631: Buffer overflow in WebRTC.  Reported by Xinyang Ge (Anthropic), assisted by Claude on 2026-09-28"
+      ]
+    }
+  ],
+  "osv_queries": [
+    {
+      "path": "src-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "5bd86a2f17a35dfc986b87d058f511e45805bd1d"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    },
+    {
+      "path": "src-third_party-boringssl-src-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "ebd832c3924065de594ffda62b376aeb2e4f61a9"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    },
+    {
+      "path": "src-third_party-crc32c-src-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "2bbb3be42e20a0e6c0f7b39dc07dc863d9ffbc07"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    },
+    {
+      "path": "src-third_party-libjpeg_turbo-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "640f254ad0fa03f6b1f29f89b7dd9366f2f6e533"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    },
+    {
+      "path": "src-third_party-libsrtp-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "cd5d177bf1fde755ddb4c7f0d9ff7693f8b49e5e"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    },
+    {
+      "path": "src-third_party-libvpx-source-libvpx-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "d2413e2ca11039724ca33bb4d661ca2c94cb501e"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    },
+    {
+      "path": "src-third_party-libyuv-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "2dd4257364d39c38d79465c4ddc4b93137fe729b"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    },
+    {
+      "path": "opus-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "55513e81d8f606bd75d0ff773d2144e5f2a732f5"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    },
+    {
+      "path": "abseil-cpp-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "a1b9918b18364077b32a820862c63e14c1edb70b"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    },
+    {
+      "path": "rnnoise-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "91ef401f4c3536c6de999ac609262691ec888c4c"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    },
+    {
+      "path": "perfetto-osv-retry.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "d3b1841f171c17161cb4faa1489052a09d8545d9"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2,
+      "returned_vulnerability_ids": []
+    }
+  ],
+  "query_limit": "Empty responses mean no findings returned for these revisions, not proof of database coverage or absence of defects. Perfetto timeout was retried successfully.",
+  "upstream_fetches": [
+    {
+      "path": "chromium-155-DEPS.txt",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/155.0.8059.85/DEPS?format=TEXT",
+      "sha256": "23ef1ed90785da130901961e4f4179b4fc10adac957eee5622d7e67fe4b82ec5",
+      "bytes": 198290
+    },
+    {
+      "path": "chromium-156-DEPS.txt",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/156.0.8078.48/DEPS?format=TEXT",
+      "sha256": "3535b3175635f9984c82a3f0c2a8e70f0ed2cfdb2a352f40446c9fddf2490703",
+      "bytes": 192396
+    },
+    {
+      "path": "webrtc-155-log.json",
+      "url": "https://webrtc.googlesource.com/src/+log/refs/branch-heads/8059?format=JSON&n=100",
+      "sha256": "bfbfc309ff7c9e82259bec45932b8ffa9f499b94ae10f63bf6410dc8a717ce0c",
+      "bytes": 200602
+    },
+    {
+      "path": "webrtc-156-log.json",
+      "url": "https://webrtc.googlesource.com/src/+log/refs/branch-heads/8078?format=JSON&n=100",
+      "sha256": "ccecacd7350b6f24e60cc17fc5f607057364ddf46081734cbfc1445a0f6646ec",
+      "bytes": 174821
+    },
+    {
+      "path": "webrtc-bug-574041825.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A574041825&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "7b12556b22ae3ff4569f2143eeda2f1be10f0a74f18368bab7b620db80ff22b3",
+      "bytes": 8
+    },
+    {
+      "path": "chromium-bug-574041825.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A574041825&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "703551f15d512f9d7ae4be49036543a380199e15d16f760c9fedf557ea473cb9",
+      "bytes": 22973
+    },
+    {
+      "path": "webrtc-bug-568945639.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A568945639&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "7b12556b22ae3ff4569f2143eeda2f1be10f0a74f18368bab7b620db80ff22b3",
+      "bytes": 8
+    },
+    {
+      "path": "chromium-bug-568945639.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A568945639&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "a2c4b7e34f838074506fcb0ed837f7e217dd85288278117135624a3aadf80f5f",
+      "bytes": 31158
+    },
+    {
+      "path": "webrtc-bug-561997899.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A561997899&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "7b12556b22ae3ff4569f2143eeda2f1be10f0a74f18368bab7b620db80ff22b3",
+      "bytes": 8
+    },
+    {
+      "path": "chromium-bug-561997899.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A561997899&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "5dde257c888eb3abce4b95add197f4439aa0cfa4bd9b1eef124172269802751d",
+      "bytes": 42314
+    },
+    {
+      "path": "webrtc-bug-565742177.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A565742177&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "c5dd085d38440be609ce7d09f5bac99e21234e2c263b1cfa16ba4543d7c2c570",
+      "bytes": 25950
+    },
+    {
+      "path": "chromium-bug-565742177.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A565742177&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "cce807c4e94b73ce765cc9391f7dd0acba623236478cb738db2d01b8fd369f6d",
+      "bytes": 4753
+    },
+    {
+      "path": "webrtc-bug-567160162.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A567160162&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "6f9a76e9dd77c999cda75e43d6152e4099376fceb8bdadc22c316107030b83dc",
+      "bytes": 34974
+    },
+    {
+      "path": "chromium-bug-567160162.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A567160162&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "4a09478d14565aedab5473a21630fdd0ad1577afded2b573fabfe39e4c8f6036",
+      "bytes": 4118
+    },
+    {
+      "path": "webrtc-bug-504551032.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A504551032&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "c988a288c6e9bf54ea6accf466cb4d554f94c5c68683679ce5dc52eaa4d9dbbf",
+      "bytes": 18425
+    },
+    {
+      "path": "chromium-bug-504551032.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A504551032&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "d853ba60fcec7ed285d217fc08db54711f9c72370d40bb6833c6778c1c46a762",
+      "bytes": 8250
+    },
+    {
+      "path": "webrtc-bug-502661101.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A502661101&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "f707649ffc49fe38e43c2ab44c44598e028d718a816db7da7bec097e223f2deb",
+      "bytes": 20189
+    },
+    {
+      "path": "chromium-bug-502661101.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A502661101&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "59d90dbcfc29da63a2eb7952d85e2940331e36bdbc4cc4beac44724f089d4c94",
+      "bytes": 4570
+    },
+    {
+      "path": "webrtc-bug-504620824.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A504620824&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "2699361310721e5e5e70fec24dbf3f4bd850e4c248a335e003da3518820f3720",
+      "bytes": 19342
+    },
+    {
+      "path": "chromium-bug-504620824.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A504620824&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "2064f8bab5e84f46d67dbeccd723a62409844891b139e11b780b8c4a344556c3",
+      "bytes": 4258
+    },
+    {
+      "path": "webrtc-bug-478942410.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A478942410&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "7b12556b22ae3ff4569f2143eeda2f1be10f0a74f18368bab7b620db80ff22b3",
+      "bytes": 8
+    },
+    {
+      "path": "chromium-bug-478942410.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A478942410&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "sha256": "006c3f21473b645dd945abbaafa9ac99a67d1c2cdae500be10a083c3d2ac4c52",
+      "bytes": 15081
+    },
+    {
+      "path": "releases-october.json",
+      "url": "https://chromereleases.googleblog.com/feeds/posts/default?alt=json&max-results=100&published-min=2026-10-01T00:00:00Z&published-max=2026-10-25T00:00:00Z",
+      "sha256": "09647dd08d565822ad823a1bb282aaf597efb2a553ade098b12cb728d4a387d3",
+      "bytes": 1567693
+    },
+    {
+      "path": "src-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "5bd86a2f17a35dfc986b87d058f511e45805bd1d"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "src-third_party-boringssl-src-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "ebd832c3924065de594ffda62b376aeb2e4f61a9"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "src-third_party-crc32c-src-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "2bbb3be42e20a0e6c0f7b39dc07dc863d9ffbc07"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "src-third_party-libjpeg_turbo-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "640f254ad0fa03f6b1f29f89b7dd9366f2f6e533"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "src-third_party-libsrtp-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "cd5d177bf1fde755ddb4c7f0d9ff7693f8b49e5e"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "src-third_party-libvpx-source-libvpx-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "d2413e2ca11039724ca33bb4d661ca2c94cb501e"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "src-third_party-libyuv-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "2dd4257364d39c38d79465c4ddc4b93137fe729b"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "src-third_party-perfetto-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "d3b1841f171c17161cb4faa1489052a09d8545d9"
+      },
+      "error": "The read operation timed out"
+    },
+    {
+      "path": "opus-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "55513e81d8f606bd75d0ff773d2144e5f2a732f5"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "abseil-cpp-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "a1b9918b18364077b32a820862c63e14c1edb70b"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "rnnoise-osv.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "91ef401f4c3536c6de999ac609262691ec888c4c"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "webrtc-bug-1513170.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A1513170&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "query": null,
+      "sha256": "7b12556b22ae3ff4569f2143eeda2f1be10f0a74f18368bab7b620db80ff22b3",
+      "bytes": 8
+    },
+    {
+      "path": "chromium-bug-1513170.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A1513170&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "query": null,
+      "sha256": "ab39438e93a97cf8a0ad8b808791a580b2bc1bbe5590df825893624c1396fab1",
+      "bytes": 41242
+    },
+    {
+      "path": "webrtc-bug-CVE-2024-5493.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3ACVE-2024-5493&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "query": null,
+      "sha256": "7b12556b22ae3ff4569f2143eeda2f1be10f0a74f18368bab7b620db80ff22b3",
+      "bytes": 8
+    },
+    {
+      "path": "chromium-bug-CVE-2024-5493.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3ACVE-2024-5493&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "query": null,
+      "sha256": "7b12556b22ae3ff4569f2143eeda2f1be10f0a74f18368bab7b620db80ff22b3",
+      "bytes": 8
+    },
+    {
+      "path": "webrtc-bug-567088927.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A567088927&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "query": null,
+      "sha256": "9a1416e555f1cb9f53c70cc18873e19ea620a4329b7a81106f3c428b8c48bbb9",
+      "bytes": 34833
+    },
+    {
+      "path": "chromium-bug-567088927.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A567088927&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "query": null,
+      "sha256": "86ebdfcc95e01536d06a8e3d616821d1d4bff4c676fd1ff7c600d223da6d86f0",
+      "bytes": 4113
+    },
+    {
+      "path": "releases-may2024.json",
+      "url": "https://chromereleases.googleblog.com/feeds/posts/default?alt=json&max-results=100&published-min=2024-05-01T00:00:00Z&published-max=2024-06-01T00:00:00Z",
+      "query": null,
+      "sha256": "fb87aa51f0489f88612180de6fe57877ab41c2cf6e821baa355fddc85ea93041",
+      "bytes": 365546
+    },
+    {
+      "path": "webrtc-bug-339877165.json",
+      "url": "https://webrtc-review.googlesource.com/changes/?q=message%3A339877165&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "query": null,
+      "sha256": "7b12556b22ae3ff4569f2143eeda2f1be10f0a74f18368bab7b620db80ff22b3",
+      "bytes": 8
+    },
+    {
+      "path": "chromium-bug-339877165.json",
+      "url": "https://chromium-review.googlesource.com/changes/?q=message%3A339877165&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES",
+      "query": null,
+      "sha256": "49e7494ea6a8541f0a33145614f2f1ba94d6bd1da400d57a9400c848a7f5c008",
+      "bytes": 30131
+    },
+    {
+      "path": "perfetto-osv-retry.json",
+      "url": "https://api.osv.dev/v1/query",
+      "query": {
+        "commit": "d3b1841f171c17161cb4faa1489052a09d8545d9"
+      },
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    {
+      "path": "boringssl-security.html",
+      "url": "https://boringssl.googlesource.com/boringssl/+/HEAD/SECURITY.md",
+      "query": null,
+      "sha256": "1700636449e5913cbf081b73abceace6df768de188556c21633ad0b5779ac370",
+      "bytes": 6159
+    },
+    {
+      "path": "libsrtp-security.json",
+      "url": "https://api.github.com/repos/cisco/libsrtp/security-advisories",
+      "query": null,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "opus-security.json",
+      "url": "https://api.github.com/repos/xiph/opus/security-advisories",
+      "query": null,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "abseil-security.json",
+      "url": "https://api.github.com/repos/abseil/abseil-cpp/security-advisories",
+      "query": null,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "jpeg-security.json",
+      "url": "https://api.github.com/repos/libjpeg-turbo/libjpeg-turbo/security-advisories",
+      "query": null,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "cpu-features-security.json",
+      "url": "https://api.github.com/repos/google/cpu_features/security-advisories",
+      "query": null,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "path": "perfetto-security.json",
+      "url": "https://api.github.com/repos/google/perfetto/security-advisories",
+      "query": null,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    }
+  ],
+  "evidence": {
+    "Intermediate/M0Closeout20261024/Mac-sources.json": "1cdb34cabce66d655f2e448628dda7d633b22c55131782df98f2b99ff991291c",
+    "Intermediate/M0Closeout20261024/Android-sources.json": "5202cb0ef8f030b23b4803ac9df71d8ac942f2aa2b46ccdb0dcd744d5e93ffdc",
+    "Intermediate/M0Closeout20261024/IOS-sources.json": "47391158fb6ad4563e73f4ba30d8bb46cf7c906eec85afacb452df51b5b3d769",
+    "Intermediate/M0Closeout20261024/IOSSimulator-sources.json": "f8c87192199fded73fdc777ad1ecdd35d31e681967771c165481828ca21369d4",
+    "Intermediate/M0Closeout20261024/upstream/history-fetch.json": "bab8073ea48b26d1f8c6eb5978c4909d977ac9be402c3104a3734ae6111ab97b",
+    "tools/audit_native_sources.py": "23f9806bdbc2e232431505e5a28a82fc616ca4b1ddad1e3cbfdc0c25f90e8355"
+  },
+  "remaining_acceptance": [
+    "Independent-host reproduction under SR-006/SR-007",
+    "Physical iPhone startup remains deferred under SR-007",
+    "Final artifact/app distribution notices under SR-902",
+    "Recheck changed inputs and current advisories before untrusted network acceptance or release"
+  ]
+}
