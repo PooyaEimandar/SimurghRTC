@@ -5,6 +5,7 @@
 - **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-002 build profiles, SR-003 dependency/ABI review and headless Server feasibility, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
 - **Integrated and locally tested:** the isolated M155 backend on Mac, Android and the iOS simulator. Android Direct-only/Full packages pass lifecycle, local codecs, capture and mixer checks; both simulator profiles pass lifecycle/local codecs. Fresh repeat builds pass on all four ARM64 targets, including iOS device; both rebuilt device libraries pass C API link checks. The packaged Mac dedicated Server passes factory, HTTP and cleanup checks in both modes. The dated source/advisory review resolves the known dependency findings. SR-006/SR-007 and the remaining SR-008 acceptance depend on independent-host reproduction and deferred physical iOS startup.
 - **Still to prove:** real connections, network media, signed physical iOS behavior and broader platform/release coverage. See [M0 validation](docs/M0_VALIDATION.md) for exact test scope; the current dependencies are not a qualified release baseline.
+- **Local M1 work started:** SR-101 adds asynchronous factory/peer ownership, nonblocking close and owner-aware callbacks. SDP/ICE and real connections remain open. See [native peer ownership](docs/NATIVE_PEERS.md).
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
 
@@ -80,7 +81,7 @@ A preview describes what is included; it does not mean production-ready. Set dat
 
 ## 4. Milestones, epics, issues
 
-SR-001 is **Complete (API v1 and executable lifecycle examples)**, SR-002 is **Complete (available Mac profile/package checks)** and SR-003 is **Complete (review with tracked release blockers)**; SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; SR-008 is **In progress**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
+SR-001 is **Complete (API v1 and executable lifecycle examples)**, SR-002 is **Complete (available Mac profile/package checks)** and SR-003 is **Complete (review with tracked release blockers)**; SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; SR-008 and SR-101 are **In progress**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
 
 ### M0 Foundation and feasibility
 
@@ -189,6 +190,8 @@ Native Unreal clients exchange application data with an Unreal server.
 #### E03 Connections and DataChannels
 
 ##### SR-101 — Implement native PeerConnection ownership (P0)
+
+**In progress, 2026-10-24.** The [ownership layer](docs/NATIVE_PEERS.md) runs native factory/peer creation and destruction on a dedicated worker. It adds nonblocking close, owner/world cleanup, bounded admission and game-thread completion delivery. All 14 Unreal tests pass in the Full-profile Mac Editor and packaged app; the package audit confirms one libwebrtc archive. SDP/ICE, early-candidate handling, network connection flows and mobile validation of this new path remain open. This is controlled local feature work; it does not close M0's external acceptance gates.
 
 Implement the private libwebrtc backend for clients and servers. Own its factory and threads, handle SDP/ICE, and route callbacks without using destroyed objects.
 
@@ -817,7 +820,7 @@ The available test machine is a Mac. Android dependency builds use the pinned Li
 | Milestone | Epics | Issues | Status |
 |---|---|---|---|
 | [M0 Foundation and feasibility](#m0-foundation-and-feasibility) | E01–E02 | SR-001–SR-008 | In progress |
-| [M1 Direct Unreal data](#m1-direct-unreal-data) | E03–E04 | SR-101–SR-107 | Planned |
+| [M1 Direct Unreal data](#m1-direct-unreal-data) | E03–E04 | SR-101–SR-107 | In progress locally; M0 acceptance open |
 | [M2 Direct Unreal media](#m2-direct-unreal-media) | E05–E06 | SR-201–SR-208 | Planned |
 | [M3 Janus provider parity](#m3-janus-provider-parity) | E07–E08 | SR-301–SR-306 | Planned |
 | [M4 Shared demo suite](#m4-shared-demo-suite) | E09–E10 | SR-401–SR-406 | Planned |

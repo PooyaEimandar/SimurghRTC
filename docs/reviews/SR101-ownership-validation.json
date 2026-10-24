@@ -1,0 +1,402 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "issue": "SR-101",
+  "status": "ownership_slice_validated_on_Mac_full_profile",
+  "base_commit": "4fdf3e715f576d8a903adcd9b91974474f8145f5",
+  "engine": {
+    "version": "5.8.3",
+    "revision": "dc88db5c3775843bdebcebfa473ceb22c4d5109f",
+    "status": " M Engine/Platforms/HTML5/Build/Scripts/PrepareMediaStreamingTest.py\n?? Engine/Platforms/HTML5/Build/Scripts/BrowserLiveMediaTest.js\n?? Engine/Platforms/HTML5/Tests/Media/BrowserLiveMediaTest.cpp\n",
+    "input_check": {
+      "changed_paths": [
+        "Engine/Platforms/HTML5/Build/Scripts/PrepareMediaStreamingTest.py",
+        "Engine/Platforms/HTML5/Build/Scripts/BrowserLiveMediaTest.js",
+        "Engine/Platforms/HTML5/Tests/Media/BrowserLiveMediaTest.cpp"
+      ],
+      "mac_response_and_dependency_files_checked": 942,
+      "matches": [],
+      "note": "These unrelated HTML5 test/script edits appeared during the Game build. This task did not edit them. They are absent from the Mac response/dependency files; the engine revision is unchanged."
+    }
+  },
+  "platform": "Mac",
+  "architecture": "arm64",
+  "profile": "full",
+  "configuration": "Development",
+  "toolchain": {
+    "xcode": "Xcode 27.1\nBuild version 27A9275",
+    "mac_sdk": "27.0",
+    "os": "27.0.1"
+  },
+  "native_artifact": {
+    "manifest_sha256": "a1b95e2fed5426c1a77e2c35db31cb601cd1c8f86d506163bc36bb955902c646",
+    "archive_sha256": "f886f94cca58b50f8aac0132090e64efbe8767532fb14fb7a65e60a71e01814a",
+    "archive_bytes": 17820448,
+    "apple_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+    "android_lock_sha256": "b02a73f9a8301c4e9a1c54b81f4285bfb533a6379ec18f66f1522b8ce1dc9ae3",
+    "native_sources_or_pins_changed": false
+  },
+  "results": {
+    "editor": {
+      "passed": true,
+      "succeeded": 14,
+      "failed": 0,
+      "warnings": 0,
+      "report": "Intermediate/SR101Ownership20261024c/UnrealTests/index.json",
+      "report_sha256": "bff60337db4d00772c890c97b2a5a6da7896db87a0b3729da4bea717c8d62dec",
+      "tests": [
+        "SimurghRTC.Contract.Cancellation",
+        "SimurghRTC.Contract.ClientMedia",
+        "SimurghRTC.Contract.Completion",
+        "SimurghRTC.Contract.DisconnectAndReuse",
+        "SimurghRTC.Contract.FrameBoundaries",
+        "SimurghRTC.Contract.PendingFailureSurvivesGC",
+        "SimurghRTC.Contract.ProfileAndReflection",
+        "SimurghRTC.Contract.ReentrantTeardown",
+        "SimurghRTC.Contract.Validation",
+        "SimurghRTC.Native.AsyncCapacity",
+        "SimurghRTC.Native.AsyncModuleLifecycle",
+        "SimurghRTC.Native.AsyncOwnership",
+        "SimurghRTC.Native.FactoryLifetime",
+        "SimurghRTC.Native.MediaCodecs"
+      ]
+    },
+    "packaged_game": {
+      "passed": true,
+      "succeeded": 14,
+      "failed": 0,
+      "warnings": 0,
+      "report": "Intermediate/SR101Ownership20261024c/PackagedTests/index.json",
+      "report_sha256": "4afacfbb75807670d55fc8f9935734389ae7b1416088c5e6dd05459858c8ab6e",
+      "tests": [
+        "SimurghRTC.Contract.Cancellation",
+        "SimurghRTC.Contract.ClientMedia",
+        "SimurghRTC.Contract.Completion",
+        "SimurghRTC.Contract.DisconnectAndReuse",
+        "SimurghRTC.Contract.FrameBoundaries",
+        "SimurghRTC.Contract.PendingFailureSurvivesGC",
+        "SimurghRTC.Contract.ProfileAndReflection",
+        "SimurghRTC.Contract.ReentrantTeardown",
+        "SimurghRTC.Contract.Validation",
+        "SimurghRTC.Native.AsyncCapacity",
+        "SimurghRTC.Native.AsyncModuleLifecycle",
+        "SimurghRTC.Native.AsyncOwnership",
+        "SimurghRTC.Native.FactoryLifetime",
+        "SimurghRTC.Native.MediaCodecs"
+      ]
+    },
+    "tooling": {
+      "passed": true,
+      "tests": 151,
+      "records": "Intermediate/SR101Ownership20261024c/source-checks.json"
+    },
+    "profile_policy": {
+      "passed": true
+    },
+    "media_fixtures": {
+      "passed": true
+    },
+    "package_link_audit": {
+      "passed": true,
+      "method": "audit_profile_package.check_modules plus ARM64 and native/package UUID checks",
+      "modules": [
+        "SimurghRTCCore",
+        "SimurghRTCDirect",
+        "SimurghRTCJanus",
+        "SimurghRTCJanusExtensions",
+        "SimurghRTCMedia",
+        "SimurghRTCNative"
+      ],
+      "libwebrtc_archives": 1,
+      "uuid": "688EA277-5546-3FBA-9EE0-4B12E5F8E29F",
+      "map_sha256": "0d59bc30f270980356d7b3cf3410d7f9888372b75e3da09fce8137c4f7f1b30f",
+      "uht_manifest_sha256": "4d4d6b67da10ce501b8319d37823f1021dff468ec43df20861271f63538ac7c6",
+      "executable": "LocalBuilds/SR101Ownership20261024c/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+      "executable_sha256": "dd037759a7cde38666916b7ce20b3b76c522e59ce563df02a418be8ba0dbb60d",
+      "executable_bytes": 281667520
+    }
+  },
+  "accepted_commands": {
+    "editor": {
+      "path": "Intermediate/SR101Ownership20261024c/editor-command.json",
+      "sha256": "f6f519161395c790557769c18af14de119d045a9f2e8fd96ac232c622dce3b8e",
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-architecture=arm64",
+        "-NoUBA",
+        "-MaxParallelActions=6"
+      ]
+    },
+    "editor-finalize": {
+      "path": "Intermediate/SR101Ownership20261024c/editor-finalize-command.json",
+      "sha256": "7ab5251e34ba8b52bb0ad81a6da485fc9634fe3301ded0ee9d5c7ab4c036179f",
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "-Mode=ApplePostBuildSync",
+        "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Intermediate/Build/Mac/arm64/UnrealEditor/Development/PostBuildSync_ContractHostEditor.json",
+        "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/XmlConfigCache.bin"
+      ]
+    },
+    "editor-metadata": {
+      "path": "Intermediate/SR101Ownership20261024c/editor-metadata-command.json",
+      "sha256": "59d077815c16a4a17ba2aae2ba92c093297e58e443dbee9b85ed3d5ec01d4636",
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-architecture=arm64",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-ActionTypeFilter=WriteMetadata"
+      ]
+    },
+    "tests": {
+      "path": "Intermediate/SR101Ownership20261024c/tests-command.json",
+      "sha256": "22b082bc45b989ffd42615e05783b56346fc31914ef7afd6ae510a924299f419",
+      "command": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Binaries/Mac/UnrealEditor-Cmd",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "-unattended",
+        "-NullRHI",
+        "-nosplash",
+        "-nosound",
+        "-ExecCmds=Automation RunTests SimurghRTC.",
+        "-TestExit=Automation Test Queue Empty",
+        "-ReportExportPath=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR101Ownership20261024c/UnrealTests"
+      ]
+    },
+    "game-nodbg": {
+      "path": "Intermediate/SR101Ownership20261024c/game-nodbg-command.json",
+      "sha256": "6775d134766ed681918e74f791a0d63884abb92f793aaf57987c7ba3104d626e",
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHost",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-architecture=arm64",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-NoDebugInfo",
+        "-MapFile"
+      ]
+    },
+    "game-finalize": {
+      "path": "Intermediate/SR101Ownership20261024c/game-finalize-command.json",
+      "sha256": "d957e381926e96aa904d43791ab210ff154f5327b3ca17f5cca8697e245ec803",
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "-Mode=ApplePostBuildSync",
+        "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/Mac/arm64/ContractHost/Development/PostBuildSync_ContractHost.json",
+        "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/XmlConfigCache.bin"
+      ]
+    },
+    "game-metadata": {
+      "path": "Intermediate/SR101Ownership20261024c/game-metadata-command.json",
+      "sha256": "d185b64fbdc7fa7c1eb1b2d7654cbe424719b9eb95af8a3ea4d32a221eabf8d3",
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHost",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-architecture=arm64",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-NoDebugInfo",
+        "-MapFile",
+        "-ActionTypeFilter=WriteMetadata"
+      ]
+    },
+    "cook": {
+      "path": "Intermediate/SR101Ownership20261024c/cook-command.json",
+      "sha256": "24e16793a306069b3e8a01204b1d43591315e90f19710b7333281555eb7983cd",
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+        "BuildCookRun",
+        "-WaitForUATMutex",
+        "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "-noP4",
+        "-platform=Mac",
+        "-clientarchitecture=arm64",
+        "-editorarchitecture=arm64",
+        "-clientconfig=Development",
+        "-skipbuild",
+        "-nocompileeditor",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-package",
+        "-map=/Engine/Maps/Entry",
+        "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Content/Examples",
+        "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+        "-unattended",
+        "-utf8output"
+      ]
+    },
+    "packaged-tests-saved": {
+      "path": "Intermediate/SR101Ownership20261024c/packaged-tests-saved-command.json",
+      "sha256": "948082a0eaf0d1867e3b2cafdef18ce7ee329c8cfa02dcbd3a481e12b523ba23",
+      "command": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+        "-unattended",
+        "-NullRHI",
+        "-nosplash",
+        "-nosound",
+        "-stdout",
+        "-FullStdOutLogOutput",
+        "-ExecCmds=Automation RunTests SimurghRTC.",
+        "-TestExit=Automation Test Queue Empty",
+        "-ReportExportPath=/Users/pooyaeimandar/Library/Containers/com.YourCompany.ContractHost/Data/Library/Application Support/Epic/ContractHost/Saved/Automation/Reports/SR101Ownership20261024c"
+      ]
+    }
+  },
+  "source_inputs": {
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCCoreModule.cpp": "54e64cc97160f6d237037d564d7bc26f0541eae1507da375f70e98d1f114eb75",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCOperation.cpp": "3b192bcc01281f00e5303aaaa4ef832d78d3450d293e476f83f303eac8271f71",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCSession.cpp": "54b3b4345f29a55bbb390c7533b22004e2eeacaed756e0cf10b4227b60368e17",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCTypes.cpp": "859ad601b0d57d703dcb9df42c828c37c6d40db0e6324086bb339ea622a5c89b",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/Tests/SimurghRTCContractTests.cpp": "77df3e66a62b2c9229f9d6d374108ebc84696ad15fc52ada93d8407179f317a7",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCOperation.h": "bd3ca0042f8710c06b643ea3dceb2477deadfaae405ffbc62723821b491aa53d",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCSession.h": "7ac1ac419c132be887f23d376c3be590e9635d2b3af1787501bb3bff39eab629",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCTypes.h": "7cc0f48a5572eb6857a9ba7f62f0f3ff5ce6afaa9db6f4b52dffb41e0a7d7c59",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/SimurghRTCCore.Build.cs": "0f6719b50907aec789454bf70b29cba6950ce2250f6c170e953b0e4aca2cdb91",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Private/SimurghRTCDirectModule.cpp": "49908757fa2c6351d7a2c38964d406c82f51cf1a97115d25733e853b4874cba4",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/SimurghRTCDirect.Build.cs": "a643cfd45c0ff50feb260f32295a6d60949e0fa034c24a691b7062b53e7f7025",
+    "Plugins/SimurghRTC/Source/SimurghRTCJanus/Private/SimurghRTCJanusModule.cpp": "56dea817a0fef5809267770a0d39a6b570a013f3a45d1a26977d2318c79d01af",
+    "Plugins/SimurghRTC/Source/SimurghRTCJanus/SimurghRTCJanus.Build.cs": "0438e2d6ddfebf59603c09aef573cb94b6fdf7abbd21334663ec8d3de20056eb",
+    "Plugins/SimurghRTC/Source/SimurghRTCJanusExtensions/Private/SimurghRTCJanusExtensionsModule.cpp": "506edc27d46ff56e9068a7ea445622c38ab25dacb36e608e93a258ba9cf88b75",
+    "Plugins/SimurghRTC/Source/SimurghRTCJanusExtensions/Private/SimurghRTCJanusOperation.cpp": "cc4cbc831edf5d1b77573c7c8bdb7e4f7a4362af79503cba6d2a85e6fd9b0958",
+    "Plugins/SimurghRTC/Source/SimurghRTCJanusExtensions/Public/SimurghRTCJanusOperation.h": "5a1b57c05fb6d7695d67dcd9bebd125d97548e498005529aeae52e28ccd3dd6f",
+    "Plugins/SimurghRTC/Source/SimurghRTCJanusExtensions/SimurghRTCJanusExtensions.Build.cs": "9133f0947236ea3ba23c4698f110aed973670d5c25927529fa33af7e0ab6a599",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCMediaModule.cpp": "71667f046ac767aab896b342ff70a9b353d0673efac426b60ed6c42393ab263e",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCMediaOperation.cpp": "86ba75c74f532858b07a6ce25cdd74fc2992e6ed51656d69ecd68684f0f45421",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCProbeSoundWave.h": "678789b4354dbe4597fcfb22a23199f0997e6270dbaad3d88c9db7295a41f274",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/Tests/SimurghRTCMediaContractTests.cpp": "8c25306a5857961a3937b8993f1ed2a49eac0bf4d4b169189fc05f85915651b1",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Public/SimurghRTCMediaOperation.h": "02be4db4b57ea4edcb9c1c586d0feb6808e9f1bfec0dc85f323773814b09c043",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/SimurghRTCMedia.Build.cs": "b8118aff079a589ca0cecc13b5e5c15effcf59bcdcb32f195daa64a815373c1e",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/NativeBackend.inputs.json": "b1ba3ec90504c50f3eaf1e589bfdde6dc8c09689094f7e2a68600ad23bcf86d2",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/Fixtures/SimurghRTCMediaFixtureV1.h": "23118d0cc3de4cbf1d66160dcbb561f3a7d758173f73395e73c9acde260704e0",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeMediaProbe.cpp": "892293aaaa168243e2fc36a95b138dba670b79ad2cbce5e79275c8481d15e98b",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeModule.cpp": "aab61da76664f626c678f1b096bbc713f36b97748fbc5b5c9540ffa0833bc306",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativePeerService.cpp": "60ac64f4065d56f1237d0163cdeda27ef67ac4e006b2ecbc78308a7ae40097ac",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativePeerService.h": "a5db4b32a0cfad15c7c81b6785f7d793e36233e9f28b978a799fa9db9e186164",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeRuntime.cpp": "7716b81c0a5ae6abb4f09599a2911c3f8a0adea8495ad54656993cc2daf9a1bd",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/Tests/SimurghRTCNativePeerTests.cpp": "c685660e80836f4189421de8827320f918b0e7fe1d73ea04d65633ca1be468a1",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/Tests/SimurghRTCNativeTests.cpp": "69e1cbc4d381336fc600035dfce7f4f9e33b7dd5b5686ce9e4827d0e8a5fdd32",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativeMediaProbe.h": "45a20dad076c5b6c05bdd437dcc74c864776bfa3974eb8f31a14c151e789a26f",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativePeer.h": "5158912e3fed9ddc5f64134657f6d71b38f868e32ac2f98bdab18bc298b90e48",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativeRuntime.h": "2364f7852e3dca3a60c319313d3a3d83faa2ecbaeed412da515817d9ea2d9513",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/SimurghRTCNative.Build.cs": "5ec27718575444822c7e9ab7b4340102c4f9720f10e27d6f7386c42a9ce851fd",
+    "Plugins/SimurghRTC/Source/SimurghRTCServer/Private/SimurghRTCServerModule.cpp": "298990ee875f1b9e2958b2b8f5fb2338806ce8750d10ed576bdc2128b06157b0",
+    "Plugins/SimurghRTC/Source/SimurghRTCServer/SimurghRTCServer.Build.cs": "a4f88fc2ed291bf37a39804b30c270e176b2618102ef7cc3e86aa4356963ed80",
+    "Samples/ContractHost/Source/ContractHost/ContractExtensionExample.cpp": "d8bbd05a9952b798a34d3e770398ebc9d46bf651395140d62e0dc1999b06164f",
+    "Samples/ContractHost/Source/ContractHost/ContractHost.Build.cs": "76707e2dfaf80de68e0a8e1e7079a134be241ef17c88606e521d16af25fe0837",
+    "Samples/ContractHost/Source/ContractHost/ContractHost.cpp": "315103ff3afdc28575814329e9ebbe84ffeedd13fb2d656f5ebdbc9adf399108",
+    "Samples/ContractHost/Source/ContractHost/ContractHostClientProbe.cpp": "2b6a7d57f162b22abae1570cc0af6a9541f024f19a6d8d504471dab4c65f45bb",
+    "Samples/ContractHost/Source/ContractHost/ContractHostClientProbe.h": "e60a90d3760aa1ab296015bfd08aaf2a6afb9ff62b535eb8a3521b09bab07a41",
+    "Samples/ContractHost/Source/ContractHost/ContractLifecycleExample.cpp": "c9d66d0d40d7aece75cb854aba83be01b7e2c4044cfabd4316219cf743df0e7e",
+    "Samples/ContractHost/Source/ContractHost/ContractLifecycleProbe.cpp": "a124b05590752f455d7282a6835160767a8c7bcab8b19cf63a71eaaf035a7f0f",
+    "Samples/ContractHost/Source/ContractHost/ContractLifecycleProbe.h": "c3d23b305ee5dd7d22d99f3768efa91cf69df5261a9eb6fc01b313e273391660",
+    "Samples/ContractHost/Source/ContractHost/Public/ContractExtensionExample.h": "60f8abf7051626c52fdfb5b7050cda08ede03801cc825ff066f5460b7256ddbd",
+    "Samples/ContractHost/Source/ContractHost/Public/ContractLifecycleExample.h": "4362cd9c3de01801c2119a258e39b4721283ad9eebeee9d56bf24a4198027ac2",
+    "Samples/ContractHost/Source/ContractHost.Target.cs": "bcaf84eb3e4f4207b18fc445b3a894cc19c2b5ae96d2b5211a653d5fbe4795b5",
+    "Samples/ContractHost/Source/ContractHostEditor/ContractExamplesCommandlet.cpp": "d0ff23ab16f78fcda6b864529872e80e36d8e696d79685827ea7555ce660761a",
+    "Samples/ContractHost/Source/ContractHostEditor/ContractExamplesCommandlet.h": "3e5866bf05ba3739c72f89f302977db2673dcedf8307f87a84cdf322198456ff",
+    "Samples/ContractHost/Source/ContractHostEditor/ContractHostEditor.Build.cs": "a2bf42b786f05ce481cf51a4cf2b06c2e8e54651cd6a05ce51cec6c145ed51f2",
+    "Samples/ContractHost/Source/ContractHostEditor.Target.cs": "8674853c960fbc4e004ca033e23a6462e9f91f13fab4d0d417b445a5908167a3",
+    "Samples/ContractHost/Source/ContractHostServer.Target.cs": "da9165c9654976089829d78f86692466bedf29b46eb86e41e0b8bac17249b16f",
+    "Samples/ContractHost/Config/DefaultEngine.ini": "5f29d4a21277f8b2955fb8d11616ddb592d3975de259a093963747a32541a7dd",
+    "Samples/ContractHost/Config/DefaultGame.ini": "dcf26219ac1194061596f1e31f284aaa5cc69ff21d52317419a7725be9f21351",
+    "Config/Profiles.json": "09fafebbfc1d6475637c8ad0858114c546e73310d51f992ae21596bebf10a4a5"
+  },
+  "evidence_sha256": {
+    "Intermediate/SR101Ownership20261024c/PackagedTests/index.json": "4afacfbb75807670d55fc8f9935734389ae7b1416088c5e6dd05459858c8ab6e",
+    "Intermediate/SR101Ownership20261024c/UnrealTests/index.json": "bff60337db4d00772c890c97b2a5a6da7896db87a0b3729da4bea717c8d62dec",
+    "Intermediate/SR101Ownership20261024c/cook-command.json": "24e16793a306069b3e8a01204b1d43591315e90f19710b7333281555eb7983cd",
+    "Intermediate/SR101Ownership20261024c/cook.log": "a33e0342dcc1328966c3fc7c7331d9a9c89800363c61958bf6ba2e0ab808bfd0",
+    "Intermediate/SR101Ownership20261024c/editor-command.json": "f6f519161395c790557769c18af14de119d045a9f2e8fd96ac232c622dce3b8e",
+    "Intermediate/SR101Ownership20261024c/editor-finalize-command.json": "7ab5251e34ba8b52bb0ad81a6da485fc9634fe3301ded0ee9d5c7ab4c036179f",
+    "Intermediate/SR101Ownership20261024c/editor-finalize.log": "17cb3f0e6d71844c5fad38399e48a55bad0f53b687c0fba94644c7532ac67299",
+    "Intermediate/SR101Ownership20261024c/editor-metadata-command.json": "59d077815c16a4a17ba2aae2ba92c093297e58e443dbee9b85ed3d5ec01d4636",
+    "Intermediate/SR101Ownership20261024c/editor-metadata.log": "e19595077cc115c2ff051ef438b3aa35ddf87a4fd3c4a2b317517b162a6d9d1d",
+    "Intermediate/SR101Ownership20261024c/editor-runtime.log": "68751598df3547629e809d53e79f9e03390ecacd87458958ab6a101a5cb91a5c",
+    "Intermediate/SR101Ownership20261024c/editor.log": "6650594105afe4da93e0b26b52e746e74f6f131e9bacaceb8e4c4c7839d7ad10",
+    "Intermediate/SR101Ownership20261024c/engine-input-check.json": "509443aa9a8357d5fd78fa720ce9233551b807c515c8da2ed13b6af31055ad85",
+    "Intermediate/SR101Ownership20261024c/game-command.json": "10d814963627a8c4210a18a468ec955815b6d540ecec34f9c6a2a60fe1ed2cf8",
+    "Intermediate/SR101Ownership20261024c/game-finalize-command.json": "d957e381926e96aa904d43791ab210ff154f5327b3ca17f5cca8697e245ec803",
+    "Intermediate/SR101Ownership20261024c/game-finalize.log": "a27ef8d704c88cd8020ce021f914e61f319152a3fc41d6b87fb66204d7dafb6c",
+    "Intermediate/SR101Ownership20261024c/game-metadata-command.json": "d185b64fbdc7fa7c1eb1b2d7654cbe424719b9eb95af8a3ea4d32a221eabf8d3",
+    "Intermediate/SR101Ownership20261024c/game-metadata.log": "bc2261d5dd4cbd877a9b86f16a3ff80b0b65fef31a7618e5ccca9a64752197ff",
+    "Intermediate/SR101Ownership20261024c/game-nodbg-command.json": "6775d134766ed681918e74f791a0d63884abb92f793aaf57987c7ba3104d626e",
+    "Intermediate/SR101Ownership20261024c/game-nodbg.log": "43f34453c421dfaecfe45d9dea3b5a8a4ace8e0a3d56dcb782e8f68e232d9331",
+    "Intermediate/SR101Ownership20261024c/game.log": "8a300c723e71b9b893319cb8655dd233e78107e789f2c1972c560e1470be4a08",
+    "Intermediate/SR101Ownership20261024c/packaged-tests-command.json": "adf1afca7c3acc8585d54b8806666237581eb7cd652888bbbf409ecf15a22cb7",
+    "Intermediate/SR101Ownership20261024c/packaged-tests-saved-command.json": "948082a0eaf0d1867e3b2cafdef18ce7ee329c8cfa02dcbd3a481e12b523ba23",
+    "Intermediate/SR101Ownership20261024c/packaged-tests-saved.log": "5900e393f10fdaeb91caaac49dac2278bb124ad1475e371c245e7e92331fef7a",
+    "Intermediate/SR101Ownership20261024c/packaged-tests.log": "8b5327dda7a8658bc3059b25dca0779ff2a5822b429ce7ed3dbe00d2f1642d2b",
+    "Intermediate/SR101Ownership20261024c/record_validation.py": "68373ad3b596d0f55e7fa1311b46f3598dcb3162cde1ebf2f13ba41936475bf1",
+    "Intermediate/SR101Ownership20261024c/run_build.py": "6c046d71b92e4937702090ba839a87d4c29b14f3ec0b6efa37e715a72f5b5155",
+    "Intermediate/SR101Ownership20261024c/source-check-0.log": "58a40f3f57c31f7243fb049562753864cce06d748470b105b7991ecc442a53d0",
+    "Intermediate/SR101Ownership20261024c/source-check-1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Intermediate/SR101Ownership20261024c/source-check-2.log": "93b3c97d1ca937f001c0c8803dca0c28d33755cb6b928c894f16ad128bad9046",
+    "Intermediate/SR101Ownership20261024c/source-check-3.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Intermediate/SR101Ownership20261024c/source-checks.json": "5abfd1077f9e9f1c9bad9b679349df89b6250683b2ac859a8f412c4d2c406e38",
+    "Intermediate/SR101Ownership20261024c/tests-command.json": "22b082bc45b989ffd42615e05783b56346fc31914ef7afd6ae510a924299f419",
+    "Intermediate/SR101Ownership20261024c/tests.log": "ac48c4f72edde527a1c9b06c75b2ef6099cbabc412c1e2f798c727ae91e5180a"
+  },
+  "initial_attempts": [
+    {
+      "path": "Intermediate/SR101Ownership20261024c/packaged-tests-command.json",
+      "outcome": "tests_passed_report_export_blocked",
+      "notes": "All 14 tests reported success in stdout, but the signed Mac app sandbox prevented writing JSON outside its Saved directory. The accepted rerun writes inside Saved and retains a copy of the JSON report."
+    },
+    {
+      "path": "Intermediate/SR101Ownership20261024",
+      "outcome": "superseded",
+      "notes": "Compiled; standalone Xcode finalization recovered the known recursive-build issue. Initial automation reported an abstract UObject test fixture error; final tests use UGameInstance and include the ready-but-undelivered cancellation cases."
+    },
+    {
+      "path": "Intermediate/SR101Ownership20261024c/game-command.json",
+      "outcome": "interrupted",
+      "notes": "Debug-symbol Game compilation stopped before completion. UBT returned zero after SIGINT; only game-nodbg is accepted as the final Game build."
+    }
+  ],
+  "not_tested": [
+    "SDP or ICE",
+    "network connections or DataChannels",
+    "network media",
+    "Android/iOS asynchronous peer packages",
+    "Windows/Linux backend",
+    "independent-host reproduction",
+    "physical iOS startup (deferred by user)"
+  ]
+}

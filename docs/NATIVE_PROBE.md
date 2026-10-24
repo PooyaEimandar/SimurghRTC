@@ -8,7 +8,7 @@ The packaged Mac ARM64 Server passed both factory modes and both occupied-port c
 
 `SimurghRTCNative` owns the Unreal adapter. It calls the separately built library through six private C entry points. WebRTC C++ types, allocations, threads and reference counts stay inside that library. The public client API and Blueprint nodes are unchanged.
 
-The runtime owns network, worker and signaling threads. Shutdown closes the peer, releases the factory and audio dependencies, joins the threads and releases its shared SSL initialization lease. Calls and destruction occur on the game thread. Loading the module alone starts no threads or listeners.
+The runtime owns network, worker and signaling threads. Shutdown closes the peer, releases the factory and audio dependencies, joins the threads and releases its shared SSL initialization lease. This synchronous probe makes its calls on the game thread. The separate [asynchronous ownership layer](NATIVE_PEERS.md) moves native creation and teardown off the game thread for future providers. Loading the module alone starts no threads or listeners.
 
 | Mode | Factory dependencies | What the probe establishes |
 |---|---|---|

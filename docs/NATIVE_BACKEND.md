@@ -4,7 +4,7 @@ WebRTC **M155** is integrated into the Unreal 5.8.3 plugin. Packaged Mac/Android
 
 The backend builds its own WebRTC, BoringSSL, Opus and VPX. Unreal calls a small private C interface. Factory handles stay inside the backend; Unreal owns the buffers used to copy decoded video and PCM. No WebRTC C++ types or allocations cross that boundary.
 
-The public C++ and Blueprint API is unchanged. Real connections remain M1 work.
+The public C++ and Blueprint API is unchanged. M1 has started with [asynchronous native peer ownership](NATIVE_PEERS.md); real connections remain unfinished.
 
 ## Build Apple libraries
 

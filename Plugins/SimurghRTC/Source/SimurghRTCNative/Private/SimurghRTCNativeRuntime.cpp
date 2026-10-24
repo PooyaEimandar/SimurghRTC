@@ -1,5 +1,6 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "SimurghRTCNativeRuntime.h"
+#include "HAL/PlatformTLS.h"
 #if SIMURGHRTC_WITH_WEBRTC
 #include "simurgh_rtc_abi.h"
 #endif
@@ -11,10 +12,10 @@ class FNativeRuntime::FImpl
 public:
 #if SIMURGHRTC_WITH_WEBRTC
     SR_Runtime* Handle = nullptr;
-    ~FImpl() { check(IsInGameThread()); SimurghRTC_DestroyV1(Handle); }
+    ~FImpl() { SimurghRTC_DestroyV1(Handle); }
 #endif
 };
-FNativeRuntime::FNativeRuntime() = default;
+FNativeRuntime::FNativeRuntime() : OwnerThreadId(FPlatformTLS::GetCurrentThreadId()) {}
 FNativeRuntime::~FNativeRuntime() { Stop(); }
 bool FNativeRuntime::IsSupported() { return SIMURGHRTC_WITH_WEBRTC != 0; }
 FString FNativeRuntime::GetBackendVersion()
@@ -35,7 +36,7 @@ FString FNativeRuntime::GetMobileArtifactSHA256()
 }
 bool FNativeRuntime::Start(ENativeFactoryMode Mode, FString& OutError)
 {
-    check(IsInGameThread());
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId());
     OutError.Reset();
     if (Impl) { OutError = TEXT("Factory is already started; stop it before restarting."); return false; }
     if (Mode != ENativeFactoryMode::DataOnly && Mode != ENativeFactoryMode::BuiltinMedia)
@@ -54,7 +55,7 @@ bool FNativeRuntime::Start(ENativeFactoryMode Mode, FString& OutError)
 }
 bool FNativeRuntime::CreateProbePeerConnection(FString& OutError)
 {
-    check(IsInGameThread());
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId());
     OutError.Reset();
     if (!Impl) { OutError = TEXT("Start the factory before creating a probe peer."); return false; }
 #if SIMURGHRTC_WITH_WEBRTC
@@ -68,7 +69,7 @@ bool FNativeRuntime::CreateProbePeerConnection(FString& OutError)
 }
 FNativeFactoryDiagnostics FNativeRuntime::GetDiagnostics() const
 {
-    check(IsInGameThread());
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId());
     FNativeFactoryDiagnostics Result;
 #if SIMURGHRTC_WITH_WEBRTC
     if (!Impl) return Result;
@@ -84,5 +85,5 @@ FNativeFactoryDiagnostics FNativeRuntime::GetDiagnostics() const
 #endif
     return Result;
 }
-void FNativeRuntime::Stop() { check(IsInGameThread()); Impl.Reset(); }
+void FNativeRuntime::Stop() { check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId()); Impl.Reset(); }
 }

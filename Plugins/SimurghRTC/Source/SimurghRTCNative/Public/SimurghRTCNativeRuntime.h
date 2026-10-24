@@ -18,7 +18,7 @@ struct FNativeFactoryDiagnostics
     TArray<FString> VideoCodecs;
 };
 
-/** Internal plugin integration surface. All calls/destruction must occur on the game thread. */
+/** Internal synchronous adapter. All calls/destruction must use the thread that constructed it. */
 class SIMURGHRTCNATIVE_API FNativeRuntime final
 {
 public:
@@ -38,6 +38,7 @@ public:
     void Stop();
 
 private:
+    const uint32 OwnerThreadId;
     class FImpl;
     TUniquePtr<FImpl> Impl;
 };

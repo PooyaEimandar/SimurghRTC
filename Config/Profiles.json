@@ -18,6 +18,10 @@
         "Core",
         "SimurghRTCCore"
       ],
+      "private_dependencies": [
+        "CoreUObject",
+        "Engine"
+      ],
       "desktop_third_party_dependencies": []
     },
     "SimurghRTCDirect": {

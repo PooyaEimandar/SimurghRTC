@@ -10,6 +10,7 @@ public class SimurghRTCNative : SimurghRTCModuleRules
     public SimurghRTCNative(ReadOnlyTargetRules Target) : base(Target)
     {
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "SimurghRTCCore" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine" });
         bool IsSimulator = Target.Platform == UnrealTargetPlatform.IOS && Target.Architecture == UnrealArch.IOSSimulator;
         bool Supported = (Target.Platform == UnrealTargetPlatform.Mac || Target.Platform == UnrealTargetPlatform.Android
             || Target.Platform == UnrealTargetPlatform.IOS) && (Target.Architecture == UnrealArch.Arm64 || IsSimulator);
