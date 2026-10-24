@@ -28,7 +28,13 @@
       "dependencies": [
         "Core",
         "SimurghRTCCore",
-        "SimurghRTCNative"
+        "SimurghRTCNative",
+        "Json"
+      ],
+      "private_dependencies": [
+        "CoreUObject",
+        "Engine",
+        "HTTP"
       ]
     },
     "SimurghRTCMedia": {
@@ -58,7 +64,9 @@
       ],
       "private_dependencies": [
         "HTTPServer",
-        "Json"
+        "Json",
+        "CoreUObject",
+        "Engine"
       ],
       "platforms": [
         "Win64",

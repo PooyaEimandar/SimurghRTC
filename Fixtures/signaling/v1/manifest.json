@@ -1,11 +1,12 @@
 {
   "fixture_version": 1,
-  "protocol_status": "draft-unimplemented",
+  "protocol_status": "implemented-local-v1",
   "janus_commit": "0a24110ae55a172c4293749b763dbb66a138f9ec",
   "files": {
     "data-answer.sdp": "a63fc6c50b9b5b4fd888a7163fe8408db20f47d5c9fefa169c32d29d2f54d08a",
     "data-offer.sdp": "2ae5965774a818813e136955ef8035ffc570efa3ea7a943aecd5ceb7dd11bed3",
-    "direct-session.json": "ebadfd24dbcd3de464101a3a886f308f35f0cf24d617f8854bbe259a95380ff0",
+    "direct-http.json": "151a65bebb86e284955aabec8ae43fdfd2d4bbd88f396bccb2a3fa8fe934ab7e",
+    "direct-session.json": "efcfde422d70b7f38205da9c8fd755e193a209946d0db6de58dcc75a6c9ee971",
     "errors.json": "13382afada58e1e13719faf0446562674b58d7f4c7a304240e132c318b817456",
     "janus-jsep.json": "61f21c0a81f7dda2424d187f78669fc7c047f58be4b0e1c812be463dcd60fdd1",
     "janus-videoroom.json": "d5f4ffb48a40c2d81dad7f94e8a210cbdb157530dce8b7dad6e562e922956d29"

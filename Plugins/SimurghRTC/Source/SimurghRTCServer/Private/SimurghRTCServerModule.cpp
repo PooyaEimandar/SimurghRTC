@@ -17,6 +17,7 @@
 #include "Serialization/JsonSerializer.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSimurghRTCProbe, Log, All);
+namespace SimurghRTC { void ShutdownDirectServers(); }
 
 namespace
 {
@@ -32,8 +33,10 @@ struct FProbeHttpState
 class FSimurghRTCServerModule final : public IModuleInterface
 {
 public:
+    bool SupportsDynamicReloading() override { return false; }
     void StartupModule() override
     {
+        DirectExitHandle = FCoreDelegates::OnEnginePreExit.AddStatic(&SimurghRTC::ShutdownDirectServers);
         if (!FParse::Param(FCommandLine::Get(), TEXT("SimurghRTCProbe"))) return;
         InitHandle = FCoreDelegates::OnFEngineLoopInitComplete.AddRaw(this, &FSimurghRTCServerModule::StartProbe);
         ExitHandle = FCoreDelegates::OnEnginePreExit.AddRaw(this, &FSimurghRTCServerModule::StopProbe);
@@ -41,6 +44,8 @@ public:
 
     void ShutdownModule() override
     {
+        FCoreDelegates::OnEnginePreExit.Remove(DirectExitHandle);
+        SimurghRTC::ShutdownDirectServers();
         FCoreDelegates::OnFEngineLoopInitComplete.Remove(InitHandle);
         FCoreDelegates::OnEnginePreExit.Remove(ExitHandle);
         StopProbe();
@@ -179,6 +184,7 @@ private:
     TSharedPtr<FProbeHttpState> HttpState;
     TArray<FString> PreviousOverrides;
     FDelegateHandle InitHandle;
+    FDelegateHandle DirectExitHandle;
     FDelegateHandle ExitHandle;
     FTSTicker::FDelegateHandle TickHandle;
     double Deadline = 0;

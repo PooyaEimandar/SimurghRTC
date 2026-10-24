@@ -1,0 +1,58 @@
+{
+  "fixture_version": 1,
+  "protocol_status": "implemented-local-v1",
+  "endpoint": {
+    "method": "POST",
+    "path": "/simurghrtc/v1/signal",
+    "content_type": "application/json",
+    "authorization": "Bearer <credential supplied at runtime>"
+  },
+  "event_examples": [
+    {
+      "event_id": 1,
+      "type": "ice",
+      "body": {
+        "revision": 1,
+        "candidate": "candidate:1 1 UDP 2122260223 192.0.2.20 50002 typ host",
+        "sdp_mid": "0",
+        "sdp_mline_index": 0,
+        "username_fragment": "fixtureServer"
+      }
+    },
+    {
+      "event_id": 2,
+      "type": "ice",
+      "body": {
+        "revision": 1,
+        "completed": true
+      }
+    },
+    {
+      "event_id": 3,
+      "type": "connection",
+      "body": {
+        "state": "connected"
+      }
+    },
+    {
+      "event_id": 4,
+      "type": "error",
+      "body": {
+        "code": "NativeError"
+      }
+    }
+  ],
+  "error_response": {
+    "protocol": "simurghrtc.direct",
+    "version": 1,
+    "type": "result",
+    "request_id": "poll-v1",
+    "sequence": 2,
+    "session_id": "11111111-1111-4111-8111-111111111111",
+    "status": "error",
+    "body": {
+      "code": "OutOfOrder"
+    }
+  },
+  "note": "Documentation addresses and credentials are placeholders. Events illustrate shapes, not a live transcript."
+}

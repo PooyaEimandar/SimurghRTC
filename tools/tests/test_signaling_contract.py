@@ -1,4 +1,4 @@
-"""Offline protocol scenarios; these never claim that Unreal signaling is implemented."""
+"""Offline protocol scenarios; live HTTP/native coverage is recorded separately."""
 import copy
 import json
 from pathlib import Path
@@ -96,11 +96,21 @@ class DirectContractTests(unittest.TestCase):
         self.assertEqual(len(self.model.pending_ice), contract.MAX_ICE)
 
     def test_replay_capacity_never_evicts_and_reexecutes_old_requests(self):
-        for _ in range(contract.MAX_REPLAY - 1):
+        for _ in range(contract.MAX_REPLAY):
             self.model.apply(self.request('poll', {'after_event': 0}))
         self.failure(self.request('poll', {'after_event': 0}), 'ResourceLimit')
-        self.assertEqual(len(self.model.replay), contract.MAX_REPLAY)
+        self.assertEqual(len(self.model.replay), contract.MAX_REPLAY + 1)
         self.assertEqual(self.model.apply(self.trace['steps'][0]['request']), self.trace['steps'][0]['response'])
+
+    def test_close_bypasses_capacity_and_unknown_last_sequence(self):
+        first_poll = self.request('poll', {'after_event': 0})
+        self.model.apply(first_poll)
+        for _ in range(contract.MAX_REPLAY - 1): self.model.apply(self.request('poll', {'after_event': 0}))
+        close = self.request('close', {}, sequence=0)
+        result = self.model.apply(close)
+        self.assertEqual(result['body']['state'], 'closed')
+        self.assertEqual(self.model.apply(close), result)
+        self.failure(dict(first_poll, sequence=self.model.next_sequence), 'SessionClosed')
 
     def test_poll_cursor_and_close_cleanup(self):
         self.model.apply(self.request('offer', self.trace['steps'][2]['request']['body']))

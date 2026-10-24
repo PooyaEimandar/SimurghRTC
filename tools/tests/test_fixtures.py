@@ -71,7 +71,7 @@ class MediaFixtureTests(unittest.TestCase):
         root = ROOT / 'Fixtures/signaling/v1'
         manifest = json.loads((root / 'manifest.json').read_text())
         self.assertEqual(manifest['fixture_version'], 1)
-        self.assertEqual(manifest['protocol_status'], 'draft-unimplemented')
+        self.assertEqual(manifest['protocol_status'], 'implemented-local-v1')
         self.assertEqual(set(manifest['files']), {p.name for p in root.iterdir() if p.name != 'manifest.json'})
         for name, digest in manifest['files'].items():
             self.assertEqual(hashlib.sha256((root / name).read_bytes()).hexdigest(), digest)

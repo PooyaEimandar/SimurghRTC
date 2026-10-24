@@ -45,7 +45,7 @@ def validate_sdp(sdp):
     text(sdp, MAX_SDP_BYTES)
     lines = sdp.replace('\r\n', '')
     require(sdp.startswith('v=0\r\n') and sdp.endswith('\r\n') and '\n' not in lines and '\r' not in lines)
-    # Only framing/limits here. libwebrtc must parse SDP when SR-101/102 implement transport.
+    # Only framing/limits here. the live native peer performs full SDP parsing.
 
 
 def validate_request(request):
@@ -74,7 +74,7 @@ def validate_request(request):
         text(body['identity'], 128)
     elif kind == 'offer':
         exact(body, ['revision', 'sdp'])
-        integer(body['revision'], 1, 1)  # Only initial offer in this draft.
+        integer(body['revision'], 1, 1)  # Only the initial offer is supported.
         validate_sdp(body['sdp'])
     elif kind == 'ice':
         require(type(body) is dict)
@@ -97,12 +97,13 @@ def validate_request(request):
 
 
 class DirectFixtureModel:
-    """Bounded draft request semantics. Accepted means recorded, never RTC connected."""
+    """Bounded offline request semantics. Accepted means recorded, never RTC connected."""
     def __init__(self, session_id=SESSION):
         self.session_id = session_id
         self.state = 'new'
         self.next_sequence = 0
         self.replay = {}
+        self.create_id = None
         self.pending_ice = []
         self.applied_ice = []
         self.ice_complete = False
@@ -116,12 +117,14 @@ class DirectFixtureModel:
             prior, result = self.replay[request_id]
             require(prior == encoded, 'RequestConflict')
             return copy.deepcopy(result)
-        require(len(self.replay) < MAX_REPLAY, 'ResourceLimit')
-        require(request['sequence'] == self.next_sequence, 'OutOfOrder')
         kind, body = request['type'], request['body']
+        if kind != 'close':
+            require(len(self.replay) - int(self.create_id in self.replay) < MAX_REPLAY, 'ResourceLimit')
+            require(request['sequence'] == self.next_sequence, 'OutOfOrder')
         if kind == 'create':
             require(self.state == 'new', 'InvalidState')
             self.state = 'open'
+            self.create_id = request_id
             result = {'state': self.state}
         else:
             require(request['session_id'] == self.session_id and self.state != 'new', 'SessionNotFound')
@@ -147,6 +150,8 @@ class DirectFixtureModel:
                 self.pending_ice.clear()
                 self.applied_ice.clear()
                 self.events.clear()
+                # Close invalidates outstanding results, while create and close retries stay idempotent.
+                self.replay = {self.create_id: self.replay[self.create_id]}
                 result = {'state': self.state}
         response = {'protocol': PROTOCOL, 'version': 1, 'type': 'result', 'request_id': request_id,
                     'sequence': request['sequence'], 'session_id': self.session_id, 'status': 'accepted', 'body': result}

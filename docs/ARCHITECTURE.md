@@ -1,6 +1,6 @@
 # SimurghRTC Architecture
 
-This is the planned design for the UE 5.8.3 plugin. The API skeleton, build profiles and local native/media tests exist. Real connections and provider services are still pending. See [M0 results](M0_VALIDATION.md) for the tested scope.
+This is the design for the UE 5.8.3 plugin. Build profiles, local native/media probes and the internal Direct HTTP provider exist. The shared application API and Janus provider still need integration. See [Direct signaling](DIRECT_SIGNALING.md) and [M0 results](M0_VALIDATION.md) for the tested scope.
 
 ## One native backend and two service providers
 
@@ -22,7 +22,7 @@ flowchart TB
     Native --> Media[UE audio, capture and texture integration]
 ```
 
-SR-005 supplies [versioned signaling examples and an offline model](SIGNALING_V1.md), plus [pinned local Janus/TURN fixtures](FIXTURES.md). The Direct examples remain a draft for SR-102; Janus correlation examples target the pinned multistream release. Live service control/relay tests are independent of the unfinished Unreal provider transport.
+SR-005 supplies [versioned signaling examples and an offline model](SIGNALING_V1.md), plus [pinned local Janus/TURN fixtures](FIXTURES.md). SR-102 implements Direct v1 with Unreal HTTPServer and HTTP. Janus correlation examples target the pinned multistream release; their service control/relay tests are independent of the pending Unreal Janus provider.
 
 Signaling controls connection establishment. Media/data traffic travels over the negotiated WebRTC connection, potentially through TURN. It does not travel through the signaling HTTP service.
 

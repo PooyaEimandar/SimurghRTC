@@ -251,8 +251,12 @@ public:
         else if (Phase == 3 && bTimedOut)
         {
             Test->TestFalse(TEXT("Expired request did not set local SDP"), Peer->GetSnapshot().Transport.bLocalDescriptionSet);
-            Test->TestTrue(TEXT("Offer accepted after timeout"), Peer->Signal({}, [this](const FNativeSignalResult&) { ++Unexpected; }, Error));
-            Peer->Close(); Phase = 4;
+            TSharedPtr<int32> Capture = MakeShared<int32>(1); TWeakPtr<int32> WeakCapture = Capture;
+            Peer->SetEventHandler([this, Capture](const FNativeTransportEvent&) { ++Unexpected; });
+            Test->TestTrue(TEXT("Offer accepted after timeout"), Peer->Signal({}, [this, Capture](const FNativeSignalResult&) { ++Unexpected; }, Error));
+            Capture.Reset(); Peer->Close();
+            Test->TestFalse(TEXT("Close releases provider callback captures before the next tick"), WeakCapture.IsValid());
+            Phase = 4;
         }
         else if (Phase == 4 && Service->GetPendingPeerCount() == 0)
         {

@@ -141,6 +141,13 @@ void FNativePeerService::Close(const TSharedRef<FNativePeerSharedState, ESPMode:
         State->Snapshot.State = ENativePeerState::Closing;
         State->Snapshot.Diagnostics = {};
     }
+    // Provider modules can close during shutdown, before another game tick runs.
+    // Release their callback captures synchronously on this thread; native teardown stays asynchronous.
+    for (const auto& Entry : Entries) if (Entry->State == State)
+    {
+        Entry->OnOpened = nullptr; Entry->Operations.Reset(); Entry->PendingSdp = 0; Entry->OnEvent.Reset();
+        break;
+    }
     Enqueue({ECommand::Close, State});
 }
 

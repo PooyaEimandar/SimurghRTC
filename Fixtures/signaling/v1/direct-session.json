@@ -1,6 +1,6 @@
 {
   "fixture_version": 1,
-  "protocol_status": "draft-unimplemented",
+  "protocol_status": "implemented-local-v1",
   "steps": [
     {
       "request": {

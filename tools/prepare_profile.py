@@ -33,7 +33,7 @@ def documents(profile: str) -> tuple[dict, dict]:
     descriptor = {
         'FileVersion': 3, 'Version': 1, 'VersionName': '0.1.0-m0',
         'FriendlyName': 'SimurghRTC',
-        'Description': 'Shared RTC contract, internal SDP/ICE transport and headless Server probe. Direct/Janus session signaling is not implemented.',
+        'Description': 'Shared RTC contract, internal Direct HTTP signaling and native peer transport. Public session integration and Janus signaling are pending.',
         'Category': 'Networking', 'CreatedBy': 'SimurghRTC contributors',
         'EngineVersion': policy['descriptor_engine_version'],
         'CanContainContent': False, 'IsBetaVersion': True,
@@ -99,6 +99,7 @@ def stage(profile: str, destination: Path, artifacts: list[Path] | None = None) 
                     if (Path(directory)/name).relative_to(content).as_posix() in rules
                     and rules[(Path(directory)/name).relative_to(content).as_posix()] not in manifest['modules']]
         shutil.copytree(content, destination/'Content', ignore=excluded)
+    shutil.copy2(ROOT/'Fixtures/signaling/v1/direct-session.json', destination/'Config/SimurghRTC-signaling-v1.json')
     project = json.loads((host/'ContractHost.uproject').read_text())
     project.pop('AdditionalPluginDirectories', None)
     (destination/'ContractHost.uproject').write_text(json.dumps(project, indent=2)+'\n')

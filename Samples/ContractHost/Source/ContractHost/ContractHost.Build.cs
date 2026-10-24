@@ -9,6 +9,15 @@ public class ContractHost : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         PrivateDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "Json", "SimurghRTCCore", "SimurghRTCNative" });
+        string ProfilePath = Path.Combine(Target.ProjectFile!.Directory.FullName, "Plugins/SimurghRTC/SimurghRTC.profile.json");
+        if (!File.Exists(ProfilePath)) ProfilePath = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../../../Plugins/SimurghRTC/SimurghRTC.profile.json"));
+        ExternalDependencies.Add(ProfilePath);
+        using FileStream ProfileStream = File.OpenRead(ProfilePath);
+        using JsonDocument Profile = JsonDocument.ParseAsync(ProfileStream).GetAwaiter().GetResult();
+        if (Profile.RootElement.GetProperty("with_direct").GetBoolean()) PrivateDependencyModuleNames.Add("SimurghRTCDirect");
+        bool DirectServer = Profile.RootElement.GetProperty("with_server").GetBoolean() && (Target.Type == TargetType.Server || Target.Type == TargetType.Editor);
+        if (DirectServer) PrivateDependencyModuleNames.AddRange(new string[] { "SimurghRTCServer", "HTTPServer" });
+        PrivateDefinitions.Add("CONTRACTHOST_WITH_DIRECT_SERVER=" + (DirectServer ? "1" : "0"));
         if (Target.Platform == UnrealTargetPlatform.IOS && Target.Architecture == UnrealArch.IOSSimulator)
         {
             string Support = ContractHostSimulatorSupport.Library(Target.ProjectFile!.Directory.FullName);
