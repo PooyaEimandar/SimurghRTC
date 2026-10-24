@@ -145,3 +145,7 @@ Each run completes three cycles: nine factories and nine peers, six explicit sto
 Keep the linker response/map alongside the report and verify that only the selected libwebrtc archive is linked. For Android, inspect final ELF load-segment alignment as well as the ARM64-only APK. The harness records Development package sizes. These are initial measurements, not Shipping delivery sizes or the incremental cost of RTC; those require matching RTC-off/on builds described in [Mobile clients](MOBILE_CLIENTS.md).
 
 For simulator evidence, also record the isolated codec inputs, selected HTTP/2 support archive, Xcode/SDK versions, and the engine revision. Compare the native executable's UUID with the packaged executable's UUID to tie the link map to the app that ran. Verify Janus is absent in Direct-only and present in Full. Keep earlier reports attached to their original dependency manifests.
+
+## SDP/ICE connections
+
+Use `tools/run_mobile_probe.py --probe signaling --pairs 8` with a freshly packaged sample and its staged native artifact. This checks real local connections and teardown in both factory modes, including early and duplicate ICE. See [native peers](NATIVE_PEERS.md#packaged-connection-probe) for commands and the exact scope. A successful factory or codec probe alone does not establish a connection.

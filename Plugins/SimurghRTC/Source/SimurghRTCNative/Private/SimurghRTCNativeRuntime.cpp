@@ -54,13 +54,15 @@ bool FNativeRuntime::Start(ENativeFactoryMode Mode, FString& OutError)
     return false;
 #endif
 }
-bool FNativeRuntime::CreateProbePeerConnection(FString& OutError)
+bool FNativeRuntime::CreateProbePeerConnection(FString& OutError, bool bLoopbackOnly)
 {
     check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId());
     OutError.Reset();
     if (!Impl) { OutError = TEXT("Start the factory before creating a probe peer."); return false; }
 #if SIMURGHRTC_WITH_WEBRTC
     char Error[1024]{};
+    if (bLoopbackOnly && SimurghRTC_EnableLoopbackProbeV1(Impl->Handle))
+    { OutError = TEXT("Loopback probe mode must be enabled before peer creation."); return false; }
     if (SimurghRTC_CreatePeerV1(Impl->Handle, Error, sizeof(Error)))
     { OutError = UTF8_TO_TCHAR(Error); return false; }
     return true;
@@ -133,6 +135,13 @@ bool FNativeRuntime::PollSignal(FNativeTransportEvent& OutEvent)
     T.bRemoteIceComplete = Native.transport.remote_ice_complete != 0;
     T.bDataTransportOpen = Native.transport.data_transport_open != 0;
     T.RemoteIceQueued = Native.transport.remote_ice_queued; T.RemoteIceApplied = Native.transport.remote_ice_applied;
+    T.IceState = Native.transport.ice_state; T.DtlsState = Native.transport.dtls_state; T.SelectedProtocol = Native.transport.selected_protocol;
+    T.LocalUdpCandidates = Native.transport.local_udp_candidates; T.LocalTcpCandidates = Native.transport.local_tcp_candidates;
+    T.CandidateErrors = Native.transport.candidate_errors; T.LastCandidateError = Native.transport.last_candidate_error;
+    T.StatsSamples = Native.transport.stats_samples; T.StatsAgeMs = Native.transport.stats_age_ms;
+    T.CandidatePairs = Native.transport.candidate_pairs; T.SucceededPairs = Native.transport.succeeded_pairs; T.FailedPairs = Native.transport.failed_pairs;
+    T.StunRequestsSent = Native.transport.stun_requests_sent; T.StunResponsesReceived = Native.transport.stun_responses_received;
+    T.PacketsDiscardedOnSend = Native.transport.packets_discarded_on_send;
     OutEvent.Type = static_cast<ENativeSignalEvent>(Native.type);
     if (OutEvent.Type == ENativeSignalEvent::None) return true;
     auto& Result = OutEvent.Result;

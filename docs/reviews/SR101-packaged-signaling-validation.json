@@ -1,0 +1,516 @@
+{
+  "schema": 1,
+  "issue": "SR-101",
+  "recorded_at": "2026-10-24T14:00:42.046808+00:00",
+  "base_commit": "c46dc094fd20a58a2183d0e680524084d1e79592",
+  "engine_version": "5.8.3",
+  "scope": "Local SDP/ICE with real loopback ICE/DTLS/SCTP; no cross-process provider, application payloads, or network media.",
+  "artifacts": {
+    "Mac": {
+      "manifest_sha256": "7993c1a1aa8be8aa89265496f357aca2c73c432bb5c400b84c00b6ed40ec7bff",
+      "archive_sha256": "c12500a608f2fde6d30e454c1e0415a93f1c46b3339a991f2444d5731a636bea",
+      "archive_bytes": 17871704,
+      "exports": [
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ]
+    },
+    "Android": {
+      "manifest_sha256": "0d2fa039c4697bc667daddb72dd64ce6990a61090c222e771c4017d368ae6861",
+      "archive_sha256": "fed9e803f91b776fdb9170cf9c18c879fde4a8766a8a5223bb6fcd82b2d172f2",
+      "archive_bytes": 28196026,
+      "exports": [
+        "SimurghRTC_CreatePeerV1",
+        "SimurghRTC_CreateV1",
+        "SimurghRTC_DestroyV1",
+        "SimurghRTC_DiagnosticsV1",
+        "SimurghRTC_EnableLoopbackProbeV1",
+        "SimurghRTC_MediaProbeV1",
+        "SimurghRTC_NativeVersionV1",
+        "SimurghRTC_PollEventV1",
+        "SimurghRTC_SignalV1"
+      ]
+    },
+    "IOSSimulator": {
+      "manifest_sha256": "58d044fa21919f9c65981c82198240b193c17255ef77d8a36cfd02e04706de5d",
+      "archive_sha256": "d52f2264ac44521c7b047fddd43320a5200d380a09cb24a6bb35684a280c1081",
+      "archive_bytes": 17382256,
+      "exports": [
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ]
+    },
+    "IOS": {
+      "manifest_sha256": "719f11112e8c65d2c98f144febeadc2b903a3ec5c7bf4efbe18b529114090ef3",
+      "archive_sha256": "3d2da93624dfe7d4d153309bdf1f92214db1420c95f90aebbb09f18649708b06",
+      "archive_bytes": 17310688,
+      "exports": [
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ]
+    }
+  },
+  "native_checks": {
+    "Mac": {
+      "passed": true,
+      "runtime_validation": "passed",
+      "result_sha256": "d365397a65b7a0af839f1f5856fa49dcfa7af73a9ecc9b83e3221333ae5971ca"
+    },
+    "Android": {
+      "passed": true,
+      "runtime_validation": "passed",
+      "result_sha256": "a820e0e6ae64fbddac6c41dfc3d77590cebcfe0fc3c4b56c69343f3c297b250b"
+    },
+    "IOSSimulator": {
+      "passed": true,
+      "runtime_validation": "passed",
+      "result_sha256": "e1bdbdef1c612d79d6c590f6c28f61d25c92f461bedf1f6553b277111dc3fe09"
+    },
+    "IOS": {
+      "passed": true,
+      "runtime_validation": "not_run",
+      "result_sha256": "0064a13f60c0296245e5455e4ebbb75f2c129fdd192b1f23fa6adc91a2506005"
+    },
+    "loopback-native-mac": {
+      "passed": true,
+      "connected_pairs": 4,
+      "result_sha256": "8ad43820aaf72d7f65edda6d2fd0c95ae3112bdce9ffc7ece2d58813ddd2a0ac"
+    },
+    "loopback-native-android": {
+      "passed": true,
+      "connected_pairs": 4,
+      "result_sha256": "da4c8030376723d084830a4eaec82a0c6486c8cfd75a9374e024b0ec3d2fd688"
+    },
+    "loopback-native-simulator": {
+      "passed": true,
+      "connected_pairs": 4,
+      "result_sha256": "da4c8030376723d084830a4eaec82a0c6486c8cfd75a9374e024b0ec3d2fd688"
+    },
+    "loopback-repeats": {
+      "passed": true,
+      "connected_pairs": 32,
+      "result_sha256": "b7acfac4d31d0ef1bed1c9a6458d0545d89cd2607426935d4ca5e97fcab35e68"
+    }
+  },
+  "packaged_checks": {
+    "Server": {
+      "passed": true,
+      "profile": "server",
+      "platform": "Mac",
+      "server_build": true,
+      "simulator_build": false,
+      "with_janus": false,
+      "pairs": 8,
+      "modes": [
+        "data",
+        "media"
+      ],
+      "delivery": [
+        "early_both",
+        "early_offer",
+        "trickle"
+      ],
+      "elapsed_seconds": 2.9552609995007515,
+      "teardown_complete": true,
+      "callbacks_on_game_thread": true,
+      "app_stopped": true,
+      "artifact_manifest_sha256": "7993c1a1aa8be8aa89265496f357aca2c73c432bb5c400b84c00b6ed40ec7bff",
+      "result_sha256": "d485451a0e927dcf5c1e18b47aa1038f4b31c59a54411a9aebb0710666b859b5",
+      "package_audit": {
+        "schema": 1,
+        "passed": true,
+        "profile": "server",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17871704,
+          "manifest_sha256": "7993c1a1aa8be8aa89265496f357aca2c73c432bb5c400b84c00b6ed40ec7bff",
+          "runtime_validation": "unverified"
+        },
+        "archive_sha256": "c12500a608f2fde6d30e454c1e0415a93f1c46b3339a991f2444d5731a636bea",
+        "archive_exports": [
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "webrtc_link_inputs": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+        ],
+        "link_response_sha256": "53d0d3af0c3fbbdd5a09db21f67d1231cf74c4781d801a3882166c41afd823aa",
+        "editor_link_inputs": false,
+        "janus_link_inputs": false,
+        "unreal_media_presentation_module": false,
+        "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+        "executable_sha256": "973ba467708c003490052bd06e3726e6f95e12b4bc5503608471dde8971ed624",
+        "executable_bytes": 283780304,
+        "built_executable_sha256": "feae9c76f94c8cd2e83d4f33a14cc7c9ebf72abb13e2533b08318b63bdde957d",
+        "built_and_staged_uuid": "239989DC-CF85-39F6-BC13-FD454871B083",
+        "bundle_file_bytes": 383107178,
+        "shipping_size_baseline": false,
+        "rtc_size_delta_measured": false,
+        "code_signature_valid": true
+      }
+    },
+    "direct-android": {
+      "passed": true,
+      "profile": "direct-only",
+      "platform": "Android",
+      "server_build": false,
+      "simulator_build": false,
+      "with_janus": false,
+      "pairs": 8,
+      "modes": [
+        "data",
+        "media"
+      ],
+      "delivery": [
+        "early_both",
+        "early_offer",
+        "trickle"
+      ],
+      "elapsed_seconds": 3.821956143990974,
+      "teardown_complete": true,
+      "callbacks_on_game_thread": true,
+      "app_stopped": true,
+      "artifact_manifest_sha256": "0d2fa039c4697bc667daddb72dd64ce6990a61090c222e771c4017d368ae6861",
+      "result_sha256": "d86ca55decc9cb0c5436d80aeb1d7549470658a08ad02b0625982189888a341f",
+      "package_audit": {
+        "passed": true,
+        "profile": "direct",
+        "platform": "Android",
+        "artifact_manifest_sha256": "0d2fa039c4697bc667daddb72dd64ce6990a61090c222e771c4017d368ae6861",
+        "apk_sha256": "5accab9e41190d821394c52ce826ab66c2fc665289888612ea770b268f415a3d",
+        "apk_bytes": 105683307,
+        "apk_abis": [
+          "arm64-v8a"
+        ],
+        "packaged_elf_sha256": "b97b0f633e8660198a1de4545332c5fe76168de7ae60818354f8cf2244036c23",
+        "packaged_elf_bytes": 177327728,
+        "build_id": "bff82a443f3cc4caec557c75d1dbc921cbe8136b",
+        "minimum_load_alignment": 16384,
+        "webrtc_archive_objects": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Plugins/SimurghRTC/ThirdParty/WebRTC/Android/arm64/Lib/libwebrtc.a(isolated.o)"
+        ],
+        "with_janus": false,
+        "link_response_sha256": "6c083bd84e29e3a62672163b41b5d711ec9619f99fe26bfa4d9062458905db8f",
+        "link_map_sha256": "838dd30a57d0d1057b22404276a3464ce49211d1a8b8571139230b10bfec2db0"
+      },
+      "device_model": "SM-S938B"
+    },
+    "direct-iossimulator": {
+      "passed": true,
+      "profile": "direct-only",
+      "platform": "IOS",
+      "server_build": false,
+      "simulator_build": true,
+      "with_janus": false,
+      "pairs": 8,
+      "modes": [
+        "data",
+        "media"
+      ],
+      "delivery": [
+        "early_both",
+        "early_offer",
+        "trickle"
+      ],
+      "elapsed_seconds": 2.9359963312745094,
+      "teardown_complete": true,
+      "callbacks_on_game_thread": true,
+      "app_stopped": true,
+      "artifact_manifest_sha256": "58d044fa21919f9c65981c82198240b193c17255ef77d8a36cfd02e04706de5d",
+      "result_sha256": "8b3ee5c621be9cd0d8f3d8ea63da96d177d11b2128c05f11fee994044d471ee2",
+      "package_audit": {
+        "passed": true,
+        "built_and_packaged_uuid": "9D0AD6C9-2E08-3FE8-A707-1046259105DF",
+        "code_signature_valid": true,
+        "profile": "direct",
+        "platform": "IOSSimulator",
+        "webrtc_link_inputs": [
+          "\"/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Plugins/SimurghRTC/ThirdParty/WebRTC/IOSSimulator/arm64/Lib/libwebrtc.a\""
+        ],
+        "http2_objects_resolved_from": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Build/IOSSimulator/libnghttp2.a"
+        ],
+        "link_response_sha256": "933cfab9ce8731fe482230174d4e6e25fd6bc76dbe797972faa9aaec53f83c5c",
+        "link_map_sha256": "326861daaf042b1cbda01defec85b71fac0d08027e57d484cec98c6e9ad9abb3",
+        "executable_sha256": "be87a33755447d40989afac5c0be47386345c30ec5bedf0a0b0b020f0b7165fb",
+        "artifact_manifest_sha256": "58d044fa21919f9c65981c82198240b193c17255ef77d8a36cfd02e04706de5d"
+      },
+      "runtime": {
+        "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+        "name": "iOS 27.0",
+        "version": "27.0",
+        "buildversion": "24A434",
+        "supportedArchitectures": [
+          "arm64"
+        ]
+      }
+    },
+    "full-android": {
+      "passed": true,
+      "profile": "full",
+      "platform": "Android",
+      "server_build": false,
+      "simulator_build": false,
+      "with_janus": true,
+      "pairs": 8,
+      "modes": [
+        "data",
+        "media"
+      ],
+      "delivery": [
+        "early_both",
+        "early_offer",
+        "trickle"
+      ],
+      "elapsed_seconds": 3.7954355719994055,
+      "teardown_complete": true,
+      "callbacks_on_game_thread": true,
+      "app_stopped": true,
+      "artifact_manifest_sha256": "0d2fa039c4697bc667daddb72dd64ce6990a61090c222e771c4017d368ae6861",
+      "result_sha256": "9fb94cd6ca4634592b8aa9ceffe8870a9b3f720ca79d0185af3bead120c26789",
+      "package_audit": {
+        "passed": true,
+        "profile": "full",
+        "platform": "Android",
+        "artifact_manifest_sha256": "0d2fa039c4697bc667daddb72dd64ce6990a61090c222e771c4017d368ae6861",
+        "apk_sha256": "e05fb05e455165dd102c9567e5c0b4d52a4fdebd0ed0f2b28ab111cd81a3921c",
+        "apk_bytes": 105691122,
+        "apk_abis": [
+          "arm64-v8a"
+        ],
+        "packaged_elf_sha256": "f6acbb10e34675c4ddac7c98c6018d70500c42f7fdd6edbd2c6c306cfcf45019",
+        "packaged_elf_bytes": 177333296,
+        "build_id": "315e366d62518022ceae821626f11aa7d751b796",
+        "minimum_load_alignment": 16384,
+        "webrtc_archive_objects": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Plugins/SimurghRTC/ThirdParty/WebRTC/Android/arm64/Lib/libwebrtc.a(isolated.o)"
+        ],
+        "with_janus": true,
+        "link_response_sha256": "e6b6ba4f7cac1c763aecef8f3f3adf02d6bc6bd8b7284c0609c81a5814bfaeca",
+        "link_map_sha256": "88633c9d9550ccf39ca3570b79a3f5aabd11bb5159ab206f00870462bd9d67d3"
+      },
+      "device_model": "SM-S938B"
+    },
+    "full-iossimulator": {
+      "passed": true,
+      "profile": "full",
+      "platform": "IOS",
+      "server_build": false,
+      "simulator_build": true,
+      "with_janus": true,
+      "pairs": 8,
+      "modes": [
+        "data",
+        "media"
+      ],
+      "delivery": [
+        "early_both",
+        "early_offer",
+        "trickle"
+      ],
+      "elapsed_seconds": 2.905503038316965,
+      "teardown_complete": true,
+      "callbacks_on_game_thread": true,
+      "app_stopped": true,
+      "artifact_manifest_sha256": "58d044fa21919f9c65981c82198240b193c17255ef77d8a36cfd02e04706de5d",
+      "result_sha256": "2bf1254c21f34a6ae56a270e32fba5b5ed706d3c4cd30bc33ac34fd0d7afef8c",
+      "package_audit": {
+        "passed": true,
+        "built_and_packaged_uuid": "3A9968D0-94B9-331B-9A4C-C5D005B94978",
+        "code_signature_valid": true,
+        "profile": "full",
+        "platform": "IOSSimulator",
+        "webrtc_link_inputs": [
+          "\"/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Plugins/SimurghRTC/ThirdParty/WebRTC/IOSSimulator/arm64/Lib/libwebrtc.a\""
+        ],
+        "http2_objects_resolved_from": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Build/IOSSimulator/libnghttp2.a"
+        ],
+        "link_response_sha256": "858b4b38cfae3542fed395772b481ead144583e261a59ee68403634ce7ea8656",
+        "link_map_sha256": "17eb17cd50a9db0945fe88acdf2e11500314c751bbebc1f7d4c857d545088a01",
+        "executable_sha256": "11c5b3190a2b0b1c3b8a2336c04122a684127c454b58356e962c54b8ecd2bd71",
+        "artifact_manifest_sha256": "58d044fa21919f9c65981c82198240b193c17255ef77d8a36cfd02e04706de5d"
+      },
+      "runtime": {
+        "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+        "name": "iOS 27.0",
+        "version": "27.0",
+        "buildversion": "24A434",
+        "supportedArchitectures": [
+          "arm64"
+        ]
+      }
+    }
+  },
+  "source_sha256": {
+    "Config/NativeBackend/exports.txt": "77ca4ae5b39e3c6083234b48e0ec15a2ba858c92787ec19290c7bc4d8e2cc96f",
+    "Config/NativeBackend/runtime.cc": "4b125272cd9c44d4d62987720e8d72453e25c9a027d9e767624227bc6a34af1b",
+    "Config/NativeBackend/signaling.cc": "42ace977e2eda70d05fd1aab6f9df7e259f32919b2043fc284cf8087877a344d",
+    "Config/NativeBackend/signaling.h": "38260ae79f1d816a071b34378446a3eab2a205a4da16a9a8f374d205b102225b",
+    "Config/NativeBackend/simurgh_rtc_abi.h": "c8d27d786c68fab712109a72787ec99d5839b289dba131bea7e53d11419d435c",
+    "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/NativeBackend.inputs.json": "12b741cc2b69725efc7bcedf4e7f32d675529a453a48a6e920a7d34f9e0a9ebf",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeModule.cpp": "8ce8256309e246acbc12cf4e14f6f50ad99138264aef62b277e16f732268aa9c",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativePeerService.cpp": "f87f7e6068850b264fc686a9bfcc3558e603f175035217992ebb812d4be5ee00",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativePeerService.h": "ddd893541538caa60f0ea931d8066da261985cd40c3b3f3db4abd6ed6050a63e",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeRuntime.cpp": "4dbfe8e30ed43d128183bc8efc2e0afc97664552704b759a0c46395184d05a56",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/Tests/SimurghRTCNativeSignalingTests.cpp": "fd25730af0338f2478fdc11c2eef66d45da150fbd6948deeea3e1c1897e2bb2f",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativePeer.h": "1fce05c11609bfc13b14eb5395b2cf28cf6156db11bc7461b901d518a78a1ab5",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativeRuntime.h": "043b604466c9542ab23a0f354a7cdb5e0781452f18994bc56f56369d04df6dbe",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativeSignaling.h": "c4a6a5d7a834fde1777693bbeaa29f36c40c77daee66a21e95c2449d7ef95053",
+    "Samples/ContractHost/Source/ContractHost/ContractHost.cpp": "f1d2d8afe09333d8a685c6e3b3a3c6f9ab15f6efa80af113bf3b5534f57313ad",
+    "tools/run_mobile_probe.py": "915c77665ee166b76b12adb8768c08a0837efbbf8ca36e73b8dd679385ae9fe4",
+    "tools/run_native_signaling_probe.py": "046a9b8cb01eadc4578d9108ea96045f8f424994ef33a4c6eb57e65ed317b477",
+    "Samples/ContractHost/Source/ContractHost/ContractSignalingProbe.cpp": "df296e3f7ee79ad64b6c54527f1deb419bff6d54fc275fa43b49171c900197e7",
+    "Samples/ContractHost/Source/ContractHost/ContractSignalingProbe.h": "c80f99fd91f112951b12692e02791346818c8855eceb4d699b5960310b635d94",
+    "tools/run_signaling_probe.py": "602879bcd37069ad17256db6a3aef7c310e17839ab1991151703388fda6b33f5",
+    "tools/tests/test_signaling_probe.py": "dfdcc7e93e3cc53815572d544ab598735fc3a94ab9db94371be0722a95ae3003"
+  },
+  "unreal_tests": {
+    "passed": 17,
+    "failed": 0,
+    "warnings": 0,
+    "report_sha256": "5eba172b7c53bfe7d4ce71619ef1f7694e3f031eefc55ecdfee3e2c78417e76c",
+    "profile": "full",
+    "target": "Mac Editor"
+  },
+  "python_tests": {
+    "passed": 157,
+    "log_sha256": "9cde491d46244a97ed81f391dc89e61c7757f0b9e73c8617ec6fa44044569985"
+  },
+  "investigation": {
+    "findings": [
+      "Failed interface-based runs stop during ICE, before DTLS; requests are sent without responses.",
+      "A standalone UDP control without WebRTC also fails to receive packets sent to this Mac's own Wi-Fi address (6/6), while loopback succeeds (3/3).",
+      "Delayed diagnostic logging observed STUN response delays over 13 seconds and UDP would-block errors.",
+      "The exact host OS/network-policy cause is not established; host network settings were not changed."
+    ],
+    "probe_change": "Explicit loopback probe mode; normal peer creation and its network interfaces are unchanged.",
+    "udp_control_source_sha256": "d1d5cce1470bfe1b1e3deac25f250ed21a22cd60140fabce32ff5b5808d0befb",
+    "udp_control_log_sha256": "2eb2a2630485ec53e742cad6b6cd90d82751c92c2efb2ab76c2ecc3b6d965d85",
+    "failed_native_reports": {
+      "native-signaling-b": "6474d1dca2b3db5c25935a2f4b372648146df844946b42356db43e0c7280966a",
+      "native-signaling-c": "03eec3e4dcb538b82f65d8e62f7f535235461d16a0c98c5b24cbd1090a260d2a",
+      "native-signaling-simulator": "d0ce95c133fb1097653686e1e366896bcd596c6a164be687b0de2a3e08d491b0"
+    },
+    "timing_variations": [
+      {
+        "case": "without-mismatch",
+        "attempt": 0,
+        "exit_code": 1,
+        "log_sha256": "8af1e4b5284dc0cc2b84e7e71c0e4c42fab82e2a440a87811fca3634f0dc519f",
+        "failed_before_dtls": true
+      },
+      {
+        "case": "without-mismatch",
+        "attempt": 1,
+        "exit_code": 1,
+        "log_sha256": "152e325f8fff40bf68806da2c5999849bd14dd152dc8cfa30881fba953fba4fe",
+        "failed_before_dtls": true
+      },
+      {
+        "case": "without-mismatch-2",
+        "attempt": 0,
+        "exit_code": 1,
+        "log_sha256": "95ff330514e9f78a50f29088f86d1a66a20f2e32f2791f029a9b6a18c060bf81",
+        "failed_before_dtls": true
+      },
+      {
+        "case": "without-mismatch-2",
+        "attempt": 1,
+        "exit_code": 1,
+        "log_sha256": "fc3bc481a8ce15ffbaf1ab5df82155dd3f56d924332d060e05be572536121dfb",
+        "failed_before_dtls": true
+      },
+      {
+        "case": "unchanged-sequence",
+        "attempt": 0,
+        "exit_code": 1,
+        "log_sha256": "ed854514751938cb75b87fa2f0f20b4baa14c1fec802ea3b1f1cd940e2833135",
+        "failed_before_dtls": true
+      },
+      {
+        "case": "unchanged-sequence",
+        "attempt": 1,
+        "exit_code": 1,
+        "log_sha256": "3dd0822c3e4620b9e8dbbbb003ca0db317c5c22bd1d7296678bfdc734859c73e",
+        "failed_before_dtls": true
+      }
+    ],
+    "late_diagnostic": {
+      "trace_enabled_after_stall": true,
+      "passed": true,
+      "stun_response_rtt_us_max": 13135837,
+      "stun_responses_over_1s": 11,
+      "udp_send_errors": {
+        "35": 13
+      },
+      "received_stun_requests": 693,
+      "received_stun_responses": 13
+    },
+    "initial_diagnostic_repeats": {
+      "pairs": 128,
+      "passed": true,
+      "scope": "Earlier diagnostic-only executable; not final artifact acceptance."
+    },
+    "detailed_logs": "Kept locally under Intermediate; not published because native trace logs may contain session credentials."
+  },
+  "staged_inputs_match": true,
+  "retained_failed_attempts": [
+    {
+      "target": "Server",
+      "error": "Expected one saved Server report for this run.",
+      "result_sha256": "b695810f6c74319fef63f2f8533799e8800930aad0d516a1e387ea2bbeda4cc4",
+      "resolution": "Runner saves the report inside the signed Server app container; same executable then passed all eight pairs."
+    }
+  ],
+  "server_launch_note": "The minimal host disables default engine plugins and cannot start its gameplay NetDriver, as already recorded in M0. UE logs Listen/NetDriverCreateFailure on map load; the separate WebRTC probe completes all eight pairs. This does not validate Unreal gameplay replication.",
+  "engine_revision": "ab5f9a9cba8be69142251db5953c11de5562dc5e",
+  "engine_preexisting_changes": [
+    " M Engine/Platforms/HTML5/Build/Scripts/TestWebBrowserBridge.js",
+    " M Engine/Platforms/HTML5/Plugins/Runtime/WebBrowserWidget/Source/HTML5WebBrowser/HTML5WebBrowser.Build.cs",
+    " M Engine/Platforms/HTML5/Plugins/Runtime/WebBrowserWidget/Source/HTML5WebBrowser/Private/Bridge/BrowserWebView.ts",
+    " M Engine/Platforms/HTML5/Plugins/Runtime/WebBrowserWidget/Source/HTML5WebBrowser/Private/Bridge/library_html5_webbrowser.js",
+    "?? Engine/Platforms/HTML5/Programs/HTML5BrowserService/"
+  ],
+  "limits": [
+    "Same-host incremental artifacts; this is not a new repeat-build qualification.",
+    "Mac Server validated on macOS 27.0.1. Existing Dawn minimum-OS link warnings leave older macOS compatibility unverified.",
+    "Physical iOS remains deferred. Simulator success does not establish physical iPhone behavior.",
+    "Default-interface host UDP-to-self remains environment-dependent; remote endpoint/NAT/TURN acceptance is separate."
+  ]
+}

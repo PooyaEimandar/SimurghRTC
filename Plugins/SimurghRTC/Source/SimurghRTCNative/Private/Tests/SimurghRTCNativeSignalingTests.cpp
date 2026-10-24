@@ -27,7 +27,7 @@ public:
             FString Error;
             const auto Mode = Round < 2 ? ENativeFactoryMode::DataOnly : ENativeFactoryMode::BuiltinMedia;
             auto Opened = [this](const FNativePeerSnapshot& S) { if (S.State != ENativePeerState::Ready) Fail(S.Error); else ++Ready; };
-            A = Service->Open(Owner.Get(), Mode, Opened, Error); B = Service->Open(Owner.Get(), Mode, Opened, Error);
+            A = Service->Open(Owner.Get(), Mode, Opened, Error, true); B = Service->Open(Owner.Get(), Mode, Opened, Error, true);
             if (!A || !B) { Fail(Error); return true; }
             A->SetEventHandler([this](const FNativeTransportEvent& Event) { Forward(Event, B, 0); });
             B->SetEventHandler([this](const FNativeTransportEvent& Event) { Forward(Event, A, 1); });
@@ -71,11 +71,13 @@ public:
         {
             const auto SA = A->GetSnapshot().Transport, SB = B->GetSnapshot().Transport;
             if (SA.Connection != ENativeConnectionState::Connected || SB.Connection != ENativeConnectionState::Connected
-                || !SA.bDataTransportOpen || !SB.bDataTransportOpen || !SA.bRemoteIceComplete || !SB.bRemoteIceComplete) return false;
+                || !SA.bDataTransportOpen || !SB.bDataTransportOpen || !SA.bRemoteIceComplete || !SB.bRemoteIceComplete
+                || SA.DtlsState != 3 || SB.DtlsState != 3 || !SA.SelectedProtocol || !SB.SelectedProtocol) return false;
             Test->TestEqual(TEXT("A early queue drained"), SA.RemoteIceQueued, 0u);
             Test->TestEqual(TEXT("B early queue drained"), SB.RemoteIceQueued, 0u);
             Test->TestEqual(TEXT("A applied each unique candidate"), SA.RemoteIceApplied, Early[1]);
             Test->TestEqual(TEXT("B applied each unique candidate"), SB.RemoteIceApplied, Early[0]);
+            Test->TestTrue(TEXT("Fresh transport diagnostics"), SA.StatsSamples > 0 && SB.StatsSamples > 0 && SA.StatsAgeMs < 1000 && SB.StatsAgeMs < 1000);
             Test->AddInfo(FString::Printf(TEXT("Local pair %d: ICE connected, DTLS/SCTP open; early candidates %u/%u"), Round, Early[0], Early[1]));
             A->Close(); B->Close(); Phase = 7;
         }

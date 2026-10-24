@@ -104,7 +104,7 @@ bool FNativePeerService::StartWorker(FString& OutError)
 }
 
 FNativePeer::FHandle FNativePeerService::Open(UObject* Owner, ENativeFactoryMode Mode,
-    FNativePeerOpened OnOpened, FString& OutError)
+    FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe)
 {
     check(IsInGameThread());
     OutError.Reset();
@@ -128,7 +128,7 @@ FNativePeer::FHandle FNativePeerService::Open(UObject* Owner, ENativeFactoryMode
     Entry->World = Owner->GetWorld();
     Entry->OnOpened = MoveTemp(OnOpened);
     Entries.Add(Entry);
-    Enqueue({ECommand::Open, State, Mode});
+    Enqueue({ECommand::Open, State, Mode, bLoopbackProbe});
     return Peer;
 }
 
@@ -322,7 +322,7 @@ uint32 FNativePeerService::Run()
             }
             auto Runtime = MakeUnique<FNativeRuntime>();
             FString Error;
-            const bool bReady = Runtime->Start(Command.Mode, Error) && Runtime->CreateProbePeerConnection(Error);
+            const bool bReady = Runtime->Start(Command.Mode, Error) && Runtime->CreateProbePeerConnection(Error, Command.bLoopbackProbe);
             const auto Diagnostics = bReady ? Runtime->GetDiagnostics() : FNativeFactoryDiagnostics{};
             if (!bReady) Runtime.Reset();
             bool bCancelled;

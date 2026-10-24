@@ -6,10 +6,11 @@
 #include <string.h>
 #include <time.h>
 #define CHECK(x) do { if (!(x)) { fprintf(stderr,"FAIL line %d: %s\n",__LINE__,#x); exit(1); } } while(0)
+static int loopback_only = 1;
 typedef struct Peer {
   struct SR_Runtime* runtime;
   uint64_t next, done;
-  int queued;
+  int queued, fatal;
   SR_TransportState state;
   SR_SignalEvent* event;
   SR_SignalEvent* ice[32];
@@ -21,7 +22,9 @@ static void pause_ms(void) { struct timespec t={0,1000000}; nanosleep(&t,NULL); 
 static void open_peer(Peer* p,int media) {
   memset(p,0,sizeof(*p)); char error[1024];
   CHECK(!SimurghRTC_CreateV1(media,&p->runtime,error,sizeof(error)));
+  if(loopback_only) CHECK(!SimurghRTC_EnableLoopbackProbeV1(p->runtime));
   CHECK(!SimurghRTC_CreatePeerV1(p->runtime,error,sizeof(error)));
+  CHECK(SimurghRTC_EnableLoopbackProbeV1(p->runtime));
   p->event=calloc(1,sizeof(*p->event)); CHECK(p->event);
   p->event->size=sizeof(*p->event); p->event->abi_version=SR_ABI_VERSION;
 }
@@ -38,14 +41,22 @@ static void submit(Peer* p,SR_SignalRequest q,int expected) {
   if(code!=expected) fprintf(stderr,"action %d code %d expected %d: %s\n",q.action,code,expected,error);
   CHECK(code==expected);
 }
+static void diagnostics(const Peer* p) {
+  const SR_TransportState* s=&p->state;
+  fprintf(stderr,"transport: connection=%d ice=%d dtls=%d protocol=%d sctp=%d local=%u/%u queued=%u applied=%u pairs=%u succeeded=%u failed=%u requests=%llu responses=%llu discards=%llu stats=%u age_ms=%u\n",
+    s->connection,s->ice_state,s->dtls_state,s->selected_protocol,s->data_transport_open,
+    s->local_udp_candidates,s->local_tcp_candidates,s->remote_ice_queued,s->remote_ice_applied,
+    s->candidate_pairs,s->succeeded_pairs,s->failed_pairs,(unsigned long long)s->stun_requests_sent,
+    (unsigned long long)s->stun_responses_received,(unsigned long long)s->packets_discarded_on_send,s->stats_samples,s->stats_age_ms);
+}
 static void poll(Peer* p) {
   for(int n=0;n<32;n++) {
     CHECK(!SimurghRTC_PollEventV1(p->runtime,p->event));
     SR_SignalEvent* e=p->event; p->state=e->transport;
     if(e->type==SR_EVENT_NONE) break;
     if(e->type==SR_FATAL_ERROR || (e->type==SR_OPERATION_COMPLETE && e->error_code))
-      fprintf(stderr,"event failure: %s\n",e->error);
-    CHECK(e->type!=SR_FATAL_ERROR);
+      { fprintf(stderr,"event failure: %s\n",e->error); diagnostics(p); }
+    if(e->type==SR_FATAL_ERROR) { p->fatal=1; break; }
     if(e->type==SR_OPERATION_COMPLETE) {
       CHECK(e->error_code==SR_OK); p->done=e->operation_id; p->queued=e->queued;
       if(e->sdp_type) strcpy(p->sdp,e->text);
@@ -131,11 +142,17 @@ static void pair(int media,int iteration) {
   double limit=now()+15;
   while(now()<limit) {
     poll(a); poll(b);
+    if(a->fatal || b->fatal) break;
     if(a->state.connection==SR_CONNECTION_CONNECTED && b->state.connection==SR_CONNECTION_CONNECTED
-      && a->state.data_transport_open && b->state.data_transport_open) break;
+      && a->state.data_transport_open && b->state.data_transport_open
+      && a->state.dtls_state==3 && b->state.dtls_state==3 && a->state.selected_protocol && b->state.selected_protocol) break;
     pause_ms();
   }
+  fprintf(stderr,"pair: mode=%d iteration=%d\n",media,iteration); diagnostics(a); diagnostics(b);
+  CHECK(!a->fatal && !b->fatal);
   CHECK(a->state.connection==SR_CONNECTION_CONNECTED && b->state.connection==SR_CONNECTION_CONNECTED);
+  CHECK(a->state.dtls_state==3 && b->state.dtls_state==3);
+  CHECK(a->state.selected_protocol && b->state.selected_protocol);
   CHECK(a->state.data_transport_open && b->state.data_transport_open);
   CHECK(!a->state.remote_ice_queued && !b->state.remote_ice_queued);
   CHECK(a->state.remote_ice_applied==b->ice_count && b->state.remote_ice_applied==a->ice_count);
@@ -150,6 +167,11 @@ static void bounds(void) {
   Peer *p=calloc(1,sizeof(Peer)); CHECK(p); open_peer(p,0);
   SR_SignalRequest q=request(p,SR_ADD_ICE); q.text="candidate:1 1 UDP 2122260223 127.0.0.1 10000 typ host";
   q.text_bytes=(uint32_t)strlen(q.text); q.sdp_mid="0"; q.sdp_mid_bytes=1;
+  if(loopback_only) {
+    const char* local=q.text; q.text="candidate:external 1 UDP 2122260223 192.0.2.1 10000 typ host";
+    q.text_bytes=(uint32_t)strlen(q.text); submit(p,q,SR_INVALID_ARGUMENT);
+    q.text=local; q.text_bytes=(uint32_t)strlen(q.text);
+  }
   q.size--; submit(p,q,SR_INVALID_ARGUMENT); q.size++;
   q.text_bytes=SR_MAX_ICE_BYTES+1; submit(p,q,SR_INVALID_ARGUMENT); q.text_bytes=(uint32_t)strlen(q.text);
   for(int i=0;i<32;i++) {
@@ -166,7 +188,10 @@ static void bounds(void) {
   CHECK(p->event->type==SR_FATAL_ERROR && p->event->error_code==SR_RESOURCE_EXHAUSTED);
   close_peer(p); free(p);
 }
-int main(void) {
+int main(int argc, char** argv) {
+  CHECK(argc==1 || (argc==2 && strcmp(argv[1],"--host-interface")==0));
+  loopback_only=argc==1;
+  CHECK(SimurghRTC_EnableLoopbackProbeV1(NULL));
   bounds(); for(int media=0;media<2;media++) for(int i=0;i<2;i++) pair(media,i);
   puts("PASS: four real local pairs, early ICE, deduplication, bounds, malformed SDP and teardown"); return 0;
 }

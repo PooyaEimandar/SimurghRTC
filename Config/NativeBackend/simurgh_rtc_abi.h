@@ -37,6 +37,8 @@ typedef struct SR_MediaOutput {
 } SR_MediaOutput;
 // Return zero on success. Error text, when provided, is UTF-8 and NUL-terminated.
 SR_NATIVE_EXPORT int SimurghRTC_CreateV1(int media, struct SR_Runtime** out, char* error, uint32_t capacity);
+// Explicit local-test mode, enabled only before peer creation. Normal runtimes use network interfaces.
+SR_NATIVE_EXPORT int SimurghRTC_EnableLoopbackProbeV1(struct SR_Runtime* runtime);
 SR_NATIVE_EXPORT int SimurghRTC_CreatePeerV1(struct SR_Runtime* runtime, char* error, uint32_t capacity);
 SR_NATIVE_EXPORT int SimurghRTC_DiagnosticsV1(struct SR_Runtime* runtime, SR_Diagnostics* out);
 SR_NATIVE_EXPORT void SimurghRTC_DestroyV1(struct SR_Runtime* runtime);
@@ -72,6 +74,12 @@ typedef struct SR_TransportState {
   int32_t connection, local_description_set, remote_description_set;
   int32_t local_ice_complete, remote_ice_complete, data_transport_open;
   uint32_t remote_ice_queued, remote_ice_applied;
+  // Redacted diagnostics. ICE: new/checking/connected/completed/failed/disconnected/closed = 0..6.
+  // DTLS: unknown/new/connecting/connected/closed/failed = 0..5. Protocol: none/UDP/TCP/other = 0..3.
+  int32_t ice_state, dtls_state, selected_protocol;
+  uint32_t local_udp_candidates, local_tcp_candidates, candidate_errors, last_candidate_error;
+  uint32_t stats_samples, stats_age_ms, candidate_pairs, succeeded_pairs, failed_pairs;
+  uint64_t stun_requests_sent, stun_responses_received, packets_discarded_on_send;
 } SR_TransportState;
 typedef struct SR_SignalEvent {
   uint32_t size, abi_version;

@@ -10,14 +10,15 @@ import mobile_artifacts as a
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(artifact, output):
+def run(artifact, output, host_interface=False):
     identity = native_artifacts.validate(artifact)
     a.require(identity['platform'] == 'Mac', 'This local signaling runner requires a Mac ARM64 artifact.')
     a.require(not output.exists(), 'Choose a fresh evidence directory.')
     output.mkdir(parents=True)
     source = ROOT / 'Fixtures/native/signaling.c'
     record = {'passed': False, 'artifact': identity, 'fixture_sha256': a.digest(source),
-              'scope': 'standalone local ICE/DTLS/SCTP; no remote service or application payloads', 'commands': []}
+              'scope': 'standalone local ICE/DTLS/SCTP; no remote service or application payloads',
+              'loopback_only': not host_interface, 'commands': []}
     def command(args):
         args = list(map(str, args))
         result = subprocess.run(args, capture_output=True, text=True, timeout=120)
@@ -39,7 +40,7 @@ def run(artifact, output):
         command(['xcrun', 'clang++', '-target', triple, '-isysroot', sdk, obj,
                  artifact / 'Lib/libwebrtc.a', *frameworks, '-o', executable])
         command(['codesign', '--force', '--sign', '-', executable])
-        log = command([executable])
+        log = command([executable, *(["--host-interface"] if host_interface else [])])
         a.require('PASS: four real local pairs' in log and log.count('DTLS/SCTP=open') == 4, 'Incomplete connection evidence.')
         a.require(a.digest(source) == record['fixture_sha256'], 'Fixture changed during the run.')
         a.require(command(['xcrun', 'lipo', '-archs', executable]).strip() == 'arm64', 'ARM64 consumer required.')
@@ -55,7 +56,8 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--artifact', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument("--host-interface", action="store_true", help="Use normal interfaces instead of the reproducible loopback fixture.")
     args = p.parse_args()
-    result = run(args.artifact.resolve(), args.output.resolve())
+    result = run(args.artifact.resolve(), args.output.resolve(), args.host_interface)
     print(json.dumps({'passed': result['passed'], 'error': result.get('error')}))
     raise SystemExit(0 if result['passed'] else 1)

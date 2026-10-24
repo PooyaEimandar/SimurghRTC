@@ -34,7 +34,7 @@ public:
     static FString GetMobileArtifactSHA256();
     bool Start(ENativeFactoryMode Mode, FString& OutError);
     // Creates an idle, encrypted-by-default Unified Plan peer. No offer, ICE gathering or remote connection.
-    bool CreateProbePeerConnection(FString& OutError);
+    bool CreateProbePeerConnection(FString& OutError, bool bLoopbackOnly = false);
     FNativeFactoryDiagnostics GetDiagnostics() const;
     bool Signal(uint64 Id, const FNativeSignalRequest& Request, FNativeSignalResult& OutFailure);
     bool PollSignal(FNativeTransportEvent& OutEvent);

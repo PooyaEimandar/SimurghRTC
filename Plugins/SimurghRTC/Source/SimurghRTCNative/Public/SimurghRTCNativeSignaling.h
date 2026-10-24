@@ -29,6 +29,11 @@ struct FNativeTransportSnapshot
     bool bDataTransportOpen = false;
     uint32 RemoteIceQueued = 0;
     uint32 RemoteIceApplied = 0;
+    // Redacted native diagnostics; enum values are documented in the native peer guide.
+    int32 IceState = 0, DtlsState = 0, SelectedProtocol = 0;
+    uint32 LocalUdpCandidates = 0, LocalTcpCandidates = 0, CandidateErrors = 0, LastCandidateError = 0;
+    uint32 StatsSamples = 0, StatsAgeMs = 0, CandidatePairs = 0, SucceededPairs = 0, FailedPairs = 0;
+    uint64 StunRequestsSent = 0, StunResponsesReceived = 0, PacketsDiscardedOnSend = 0;
 };
 struct FNativeSignalRequest
 {

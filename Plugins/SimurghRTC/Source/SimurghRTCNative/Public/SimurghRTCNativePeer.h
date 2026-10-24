@@ -39,9 +39,10 @@ public:
      * Otherwise OnOpened runs once on a later game tick with Ready or Failed, while owner/handle live.
      * Close (including cancellation before readiness) suppresses any undelivered callback.
      * This creates no SDP, gathers no ICE and sends no network traffic.
+     * bLoopbackProbe is only for in-process fixtures; it restricts candidates to loopback.
      */
     static FHandle Open(UObject* LifetimeOwner, ENativeFactoryMode Mode,
-        FNativePeerOpened OnOpened, FString& OutError);
+        FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe = false);
 
     ~FNativePeer();
     FNativePeer(const FNativePeer&) = delete;

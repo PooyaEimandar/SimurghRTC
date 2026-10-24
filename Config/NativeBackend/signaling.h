@@ -8,6 +8,7 @@
 #include <set>
 #include <string>
 #include "api/peer_connection_interface.h"
+#include "api/stats/rtc_stats_report.h"
 
 namespace sr {
 // All methods and callbacks run on the native signaling thread. Asynchronous
@@ -19,6 +20,7 @@ class Signaling final : public webrtc::PeerConnectionObserver,
  public:
   void Attach(webrtc::PeerConnectionInterface* peer) { peer_ = peer; }
   void Shutdown();
+  void EnableLoopbackProbe() { loopback_probe_ = true; }
   int Submit(const SR_SignalRequest& request, char* error, uint32_t capacity);
   void Poll(SR_SignalEvent& out);
   bool Active(uint64_t id) const;
@@ -34,6 +36,9 @@ class Signaling final : public webrtc::PeerConnectionObserver,
   void OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state) override;
   void OnIceCandidate(const webrtc::IceCandidate* candidate) override;
   void OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState state) override;
+  void OnStandardizedIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state) override;
+  void OnIceCandidateError(const std::string&, int, const std::string&, int code, const std::string&) override;
+  void Stats(const webrtc::RTCStatsReport& report);
   void OnStateChange() override;
   void OnMessage(const webrtc::DataBuffer&) override {} // Public DataChannel I/O is SR-103.
 
@@ -49,7 +54,9 @@ class Signaling final : public webrtc::PeerConnectionObserver,
   void Push(Event event);
   void ApplyIce(uint64_t id, std::unique_ptr<webrtc::IceCandidate> candidate, bool was_queued);
   void RefreshRemoteCompletion();
-  bool stopped_ = false, failed_ = false, end_ice_ = false;
+  bool loopback_probe_ = false;
+  bool stopped_ = false, failed_ = false, end_ice_ = false, stats_pending_ = false;
+  Clock::time_point stats_requested_{}, stats_received_{};
   uint64_t last_id_ = 0, sdp_id_ = 0;
   uint32_t local_ice_count_ = 0, applying_ice_ = 0;
   webrtc::PeerConnectionInterface* peer_ = nullptr;

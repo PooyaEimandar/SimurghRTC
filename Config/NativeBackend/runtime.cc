@@ -107,6 +107,17 @@ extern "C" int SimurghRTC_CreateV1(int media, SR_Runtime** out, char* error, uin
   r.diagnostics.factory_ready = 1; r.diagnostics.dummy_audio = !!r.audio; r.diagnostics.audio_processing = !!r.apm;
   *out = runtime.release(); return 0;
 }
+extern "C" int SimurghRTC_EnableLoopbackProbeV1(SR_Runtime* r) {
+  if (!r || r->owner != std::this_thread::get_id() || !r->factory || r->peer) return 1;
+  r->signaling->BlockingCall([&] {
+    webrtc::PeerConnectionFactoryInterface::Options options;
+    options.disable_network_monitor = true;
+    options.network_ignore_mask = ~webrtc::ADAPTER_TYPE_LOOPBACK;
+    r->factory->SetOptions(options);
+    r->observer->EnableLoopbackProbe();
+  });
+  return 0;
+}
 extern "C" int SimurghRTC_CreatePeerV1(SR_Runtime* r, char* error, uint32_t capacity) {
   if (error && capacity) error[0] = 0;
   if (!r || r->owner != std::this_thread::get_id() || !r->factory) return Fail(error, capacity, "Invalid runtime/thread.");

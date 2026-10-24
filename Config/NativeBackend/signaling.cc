@@ -3,9 +3,12 @@
 #include <cstdio>
 #include <cstring>
 #include "api/make_ref_counted.h"
+#include "rtc_base/ip_address.h"
 #include "api/set_local_description_observer_interface.h"
 #include "api/set_remote_description_observer_interface.h"
 #include "pc/session_description.h"
+#include "api/stats/rtc_stats_collector_callback.h"
+#include "api/stats/rtcstats_objects.h"
 
 namespace sr {
 namespace {
@@ -17,6 +20,13 @@ bool Text(const char* data, uint32_t length, uint32_t maximum) {
   return length <= maximum && (!length || (data && !std::memchr(data, 0, length)));
 }
 std::string Copy(const char* data, uint32_t length) { return length ? std::string(data, length) : std::string(); }
+class StatsObserver : public webrtc::RTCStatsCollectorCallback {
+ public:
+  explicit StatsObserver(std::shared_ptr<Signaling> owner) : owner_(std::move(owner)) {}
+  void OnStatsDelivered(const webrtc::scoped_refptr<const webrtc::RTCStatsReport>& report) override { owner_->Stats(*report); }
+ private:
+  std::shared_ptr<Signaling> owner_;
+};
 class LocalObserver : public webrtc::SetLocalDescriptionObserverInterface {
  public:
   LocalObserver(std::shared_ptr<Signaling> owner, uint64_t id, int type, std::string sdp)
@@ -60,6 +70,7 @@ void Signaling::Push(Event event) {
 void Signaling::Fatal(int code, const std::string& error) {
   if (stopped_ || failed_) return;
   failed_ = true; state_.connection = SR_CONNECTION_FAILED;
+  if (state_.stats_samples) state_.stats_age_ms = static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - stats_received_).count());
   pending_.clear(); sdp_id_ = 0; early_ice_.clear(); state_.remote_ice_queued = 0;
   events_.clear(); Event event; event.type = SR_FATAL_ERROR; event.code = code; event.error = error; event.state = state_;
   events_.push_back(std::move(event));
@@ -73,6 +84,13 @@ void Signaling::Complete(uint64_t id, int code, const std::string& error, int ty
 void Signaling::Poll(SR_SignalEvent& out) {
   for (const auto& entry : pending_) if (Clock::now() >= entry.second) {
     Fatal(SR_TIMED_OUT, "Native signaling operation timed out."); break;
+  }
+  if (state_.stats_samples) state_.stats_age_ms = static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - stats_received_).count());
+  if (!stopped_ && !failed_ && peer_ && state_.local_description_set && !stats_pending_
+      && Clock::now() - stats_requested_ >= std::chrono::milliseconds(250)) {
+    stats_requested_ = Clock::now(); stats_pending_ = true;
+    const auto callback = webrtc::make_ref_counted<StatsObserver>(shared_from_this());
+    peer_->GetStats(callback.get());  // GetStats retains shared ownership.
   }
   out.type = SR_EVENT_NONE; out.transport = state_;
   if (events_.empty()) return;
@@ -132,6 +150,8 @@ int Signaling::Submit(const SR_SignalRequest& q, char* error, uint32_t capacity)
     candidate = webrtc::IceCandidate::Create(mid, q.sdp_mline_index, text);
     if (!candidate) return Reject(SR_INVALID_ARGUMENT, error, capacity, "ICE candidate could not be parsed.");
     auto value = candidate->candidate();
+    if (loopback_probe_ && !webrtc::IPIsLoopback(value.address().ipaddr()))
+      return Reject(SR_INVALID_ARGUMENT, error, capacity, "Loopback probes only accept loopback candidates.");
     if (!ufrag.empty()) {
       if (!value.username().empty() && value.username() != ufrag)
         return Reject(SR_INVALID_ARGUMENT, error, capacity, "Candidate username fragments differ.");
@@ -249,6 +269,9 @@ void Signaling::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheri
 }
 void Signaling::OnIceCandidate(const webrtc::IceCandidate* candidate) {
   if (stopped_ || failed_) return;
+  if (loopback_probe_ && !webrtc::IPIsLoopback(candidate->candidate().address().ipaddr())) return;
+  if (candidate->candidate().protocol() == "udp") ++state_.local_udp_candidates;
+  if (candidate->candidate().protocol() == "tcp") ++state_.local_tcp_candidates;
   Event event; event.type = SR_LOCAL_ICE; event.text = candidate->ToString();
   event.mid = candidate->sdp_mid(); event.mline = candidate->sdp_mline_index(); event.ufrag = candidate->candidate().username();
   if (++local_ice_count_ >= SR_MAX_REMOTE_ICE || event.text.size() > SR_MAX_ICE_BYTES
@@ -257,14 +280,50 @@ void Signaling::OnIceCandidate(const webrtc::IceCandidate* candidate) {
   }
   Push(std::move(event));
 }
+void Signaling::OnStandardizedIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state) {
+  if (stopped_ || failed_) return;
+  state_.ice_state = static_cast<int32_t>(state);
+}
+void Signaling::OnIceCandidateError(const std::string&, int, const std::string&, int code, const std::string&) {
+  if (stopped_ || failed_) return;
+  ++state_.candidate_errors; state_.last_candidate_error = static_cast<uint32_t>(code);
+}
+void Signaling::Stats(const webrtc::RTCStatsReport& report) {
+  if (stopped_ || failed_) return;
+  stats_pending_ = false; stats_received_ = Clock::now(); ++state_.stats_samples; state_.stats_age_ms = 0;
+  state_.candidate_pairs = state_.succeeded_pairs = state_.failed_pairs = 0;
+  state_.stun_requests_sent = state_.stun_responses_received = state_.packets_discarded_on_send = 0;
+  state_.selected_protocol = 0; state_.dtls_state = 0;
+  for (const auto* pair : report.GetStatsOfType<webrtc::RTCIceCandidatePairStats>()) {
+    ++state_.candidate_pairs;
+    if (pair->state == "succeeded") ++state_.succeeded_pairs;
+    if (pair->state == "failed") ++state_.failed_pairs;
+    state_.stun_requests_sent += pair->requests_sent.value_or(0);
+    state_.stun_responses_received += pair->responses_received.value_or(0);
+    state_.packets_discarded_on_send += pair->packets_discarded_on_send.value_or(0);
+  }
+  for (const auto* transport : report.GetStatsOfType<webrtc::RTCTransportStats>()) {
+    const auto dtls = transport->dtls_state.value_or("");
+    state_.dtls_state = dtls == "new" ? 1 : dtls == "connecting" ? 2 : dtls == "connected" ? 3 : dtls == "closed" ? 4 : dtls == "failed" ? 5 : 0;
+    if (transport->selected_candidate_pair_id) {
+      const auto* pair = report.GetAs<webrtc::RTCIceCandidatePairStats>(*transport->selected_candidate_pair_id);
+      const auto* candidate = pair && pair->local_candidate_id ? report.GetAs<webrtc::RTCLocalIceCandidateStats>(*pair->local_candidate_id) : nullptr;
+      if (candidate) { const auto protocol = candidate->protocol.value_or(""); state_.selected_protocol = protocol == "udp" ? 1 : protocol == "tcp" ? 2 : 3; }
+    }
+  }
+}
 void Signaling::OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState state) {
+  if (stopped_ || failed_ || !peer_) return;
   using State = webrtc::PeerConnectionInterface::PeerConnectionState;
   switch (state) {
     case State::kNew: state_.connection = SR_CONNECTION_NEW; break;
     case State::kConnecting: state_.connection = SR_CONNECTION_CONNECTING; break;
     case State::kConnected: state_.connection = SR_CONNECTION_CONNECTED; break;
     case State::kDisconnected: state_.connection = SR_CONNECTION_DISCONNECTED; break;
-    case State::kFailed: Fatal(SR_NATIVE_ERROR, "PeerConnection failed."); return;
+    case State::kFailed:
+      state_.ice_state = static_cast<int32_t>(peer_->ice_connection_state());
+      Fatal(SR_NATIVE_ERROR, state_.ice_state == webrtc::PeerConnectionInterface::kIceConnectionFailed
+          ? "PeerConnection failed during ICE connectivity checks." : "PeerConnection failed after ICE setup; inspect transport diagnostics."); return;
     case State::kClosed: state_.connection = SR_CONNECTION_CLOSED; break;
   }
   Event event; event.type = SR_CONNECTION_CHANGED; Push(std::move(event));

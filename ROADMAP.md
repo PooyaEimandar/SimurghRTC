@@ -5,7 +5,7 @@
 - **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-002 build profiles, SR-003 dependency/ABI review and headless Server feasibility, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
 - **Integrated and locally tested:** the isolated M155 backend on Mac, Android and the iOS simulator. Android Direct-only/Full packages pass lifecycle, local codecs, capture and mixer checks; both simulator profiles pass lifecycle/local codecs. Fresh repeat builds pass on all four ARM64 targets, including iOS device; both rebuilt device libraries pass C API link checks. The packaged Mac dedicated Server passes factory, HTTP and cleanup checks in both modes. The dated source/advisory review resolves the known dependency findings. SR-006/SR-007 and the remaining SR-008 acceptance depend on independent-host reproduction and deferred physical iOS startup.
 - **Still to prove:** remote/provider connections, network media, signed physical iOS behavior and broader platform/release coverage. See [M0 validation](docs/M0_VALIDATION.md) for exact test scope; the current dependencies are not a qualified release baseline.
-- **Local M1 work started:** SR-101 adds asynchronous peers, SDP/ICE exchange and bounded early-candidate handling. Real local ICE/DTLS/SCTP connections pass on Mac. Direct HTTP signaling and application DataChannels are next. See [native peers](docs/NATIVE_PEERS.md).
+- **Local M1 connections validated:** SR-101 provides asynchronous peers, SDP/ICE exchange and bounded early-candidate handling. Packaged local connections pass on the dedicated Mac Server, Android and the iOS simulator. Direct HTTP signaling and application DataChannels are next. See [native peers](docs/NATIVE_PEERS.md).
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
 
@@ -81,7 +81,7 @@ A preview describes what is included; it does not mean production-ready. Set dat
 
 ## 4. Milestones, epics, issues
 
-SR-001 is **Complete (API v1 and executable lifecycle examples)**, SR-002 is **Complete (available Mac profile/package checks)** and SR-003 is **Complete (review with tracked release blockers)**; SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; SR-008 and SR-101 are **In progress**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
+SR-001 is **Complete (API v1 and executable lifecycle examples)**, SR-002 is **Complete (available Mac profile/package checks)** and SR-003 is **Complete (review with tracked release blockers)**; SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; SR-008 is **In progress**; SR-101 is **Complete (local native ownership and SDP/ICE)**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
 
 ### M0 Foundation and feasibility
 
@@ -191,7 +191,9 @@ Native Unreal clients exchange application data with an Unreal server.
 
 ##### SR-101 — Implement native PeerConnection ownership (P0)
 
-**In progress, 2026-10-24.** The [native peer layer](docs/NATIVE_PEERS.md) now exchanges offers, answers and trickled ICE on its worker. It queues early candidates, handles duplicates and completion, enforces request limits/deadlines, and suppresses callbacks after close or owner loss. All 17 Full-profile Mac Editor and packaged tests pass, including four real local ICE/DTLS/SCTP pairs in both factory modes. An intermittent initial negotiation failure remains a tracked reliability follow-up; the unchanged library subsequently passed 48 consecutive pairs. The updated bridge builds for all four ARM64 targets. Mobile and dedicated Server connection validation remain open; Direct HTTP signaling and application messages are SR-102/SR-103. This controlled local work does not close M0's external acceptance gates.
+**Complete for local native ownership and SDP/ICE, 2026-10-24.** The [native peer layer](docs/NATIVE_PEERS.md) exchanges offers, answers and trickled ICE on its worker. It handles early candidates, duplicates, limits, cancellation and teardown without late UObject callbacks. The final bridge passes all 17 Full-profile Mac Editor tests and 40 packaged connections: eight on the dedicated Server and eight per Direct-only/Full profile on Android and the iOS simulator. All four ARM64 libraries build; the iOS device consumer links.
+
+The intermittent failure was narrowed to this Mac's interface-to-self UDP path; a separate UDP control failed there too. Tests now explicitly use loopback, while normal connections keep their default interfaces. The exact host networking cause remains open. See the [validation record](docs/reviews/SR101-packaged-signaling-validation.json). Cross-process Direct HTTP signaling and application messages are SR-102/SR-103; M1 and M0's external acceptance gates remain open.
 
 Implement the private libwebrtc backend for clients and servers. Own its factory and threads, handle SDP/ICE, and route callbacks without using destroyed objects.
 

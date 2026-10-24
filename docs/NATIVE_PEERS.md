@@ -72,9 +72,23 @@ Only module shutdown waits for the worker. It stops delivery, closes all peers, 
 
 `FNativeRuntime` remains available for synchronous test harnesses. Call and destroy it on its creating thread. Direct C consumers must poll events during signaling and destroy a runtime after a fatal error.
 
+## Diagnose a connection
+
+Each transport snapshot includes numeric ICE and DTLS states, the selected UDP/TCP protocol, candidate counts, and recent STUN request/response counts. Statistics refresh at most four times per second. `StatsAgeMs` tells you how old the last sample is. These fields contain no SDP, network addresses, or credentials.
+
+- ICE: 0 new, 1 checking, 2 connected, 3 completed, 4 failed, 5 disconnected, 6 closed.
+- DTLS: 0 unknown, 1 new, 2 connecting, 3 connected, 4 closed, 5 failed.
+- Selected protocol: 0 none, 1 UDP, 2 TCP, 3 other.
+
+A failed ICE check with requests but no responses points to connectivity or STUN handling before DTLS. It does not by itself identify the cause. Keep the failed result; reconnecting successfully is not proof that the original problem is fixed.
+
+The 2026-10-24 investigation reproduced failures during ICE, before DTLS. A separate UDP test without WebRTC also failed to receive packets sent to this Mac's own Wi-Fi address in six attempts; loopback succeeded in all three control attempts. A diagnostic run observed STUN response delays above 13 seconds. This points to a host networking problem, but its exact OS or network-policy cause is still unknown.
+
+Local fixtures now explicitly use loopback. Normal plugin connections keep their default network interfaces, and no host network settings were changed. This makes the local ownership/signaling tests reproducible; remote connectivity still needs separate acceptance tests.
+
 ## Validate
 
-The standalone fixture connects four local pairs, two in each factory mode. Both peers must reach ICE Connected and open the private DTLS/SCTP channel. It deliberately sends candidates and completion before SDP, checks duplicates, rejects malformed/stale candidates, tests overflow, and closes peers with work pending. It uses local host candidates with no STUN/TURN service.
+The standalone fixture connects four local pairs, two in each factory mode. Both peers must reach ICE Connected and open the private DTLS/SCTP channel. It deliberately sends candidates and completion before SDP, checks duplicates, rejects malformed/stale candidates, tests overflow, and closes peers with work pending. It uses explicit loopback candidates and real local sockets, with no STUN/TURN service. Add `--host-interface` to the runner to check normal network interfaces instead.
 
 ```sh
 python3 tools/run_native_signaling_probe.py \
@@ -98,8 +112,43 @@ REPORT="$HOME/Library/Containers/com.YourCompany.ContractHost/Data/Library/Appli
 
 Set `APP` to the packaged `ContractHost.app/Contents/MacOS/ContractHost`. The default Mac sample is sandboxed, so reports must be inside its Saved directory. If you change its bundle ID, use the Saved path in the runtime log. Verify the JSON test count and results; exit status alone is insufficient.
 
-On 2026-10-24, all **17 tests passed** in the Full-profile Unreal 5.8.3 Mac Editor and packaged Development app, with no test warnings. Each connection test established four local pairs across the two factory modes. The standalone fixture passed too; an unchanged native executable also passed 48 consecutive pairs. All four updated ARM64 libraries build, and the iOS device consumer links.
+### Verified on 2026-10-24
 
-An initial Editor negotiation and one standalone run failed intermittently. Subsequent runs passed, including diagnostic repeats, but the cause was not established. This remains a reliability follow-up; these results do not claim that startup is failure-free.
+The final bridge passed these Unreal 5.8.3 packaged probes. Every pair completed SDP/ICE, opened DTLS/SCTP, and closed cleanly.
 
-The [signaling validation record](reviews/SR101-signaling-validation.json) retains passing and failed attempts, artifact identities and source hashes. It distinguishes the final library from a temporary diagnostic build. The [earlier ownership record](reviews/SR101-ownership-validation.json) covers the previous bridge. Mobile packages, network media, remote endpoints and physical iOS acceptance need their own checks; a local pair in one Unreal process does not establish those results.
+| Target | Profile | Connected pairs |
+|---|---|---|
+| Mac dedicated Server | Server | 8/8 |
+| Galaxy S25 Ultra | Direct-only | 8/8 |
+| Galaxy S25 Ultra | Full | 8/8 |
+| iOS 27.0 ARM64 simulator | Direct-only | 8/8 |
+| iOS 27.0 ARM64 simulator | Full | 8/8 |
+
+All **17 Full-profile Mac Editor tests passed**, with no test warnings, and all **157 Python tests passed**. The final native fixtures passed on Mac, Android and the simulator, plus 32 additional Mac pairs. All four ARM64 libraries build; the iOS device consumer links but has not run on a physical iPhone.
+
+The [packaged validation record](reviews/SR101-packaged-signaling-validation.json) records artifacts, package audits, source hashes and the investigation above. It also retains a Server runner failure caused by saving outside the app sandbox; the same executable passed after correcting the report location. These are incremental builds on the available host, not a new repeat-build qualification.
+
+The [earlier signaling record](reviews/SR101-signaling-validation.json) includes Mac Editor and packaged-app checks of the preceding bridge; the [ownership record](reviews/SR101-ownership-validation.json) covers its earlier lifecycle work. Local pairs do not establish remote connectivity, network media, TURN or physical iOS acceptance. The Mac interface-to-self issue remains an environment follow-up.
+
+## Packaged connection probe
+
+Build the sample with a current native artifact. The opt-in `-SimurghRTCSignalingProbe` works in Development Android, iOS simulator, and dedicated Server packages. It uses loopback candidates, alternates data-only and media-capable factories, and cycles through early ICE on both peers, early offer ICE, and trickled delivery. Each candidate is delivered twice. Success requires both peers to connect, open the private SCTP channel, drain their ICE queues, finish every operation, and close.
+
+Use the mobile runner after following [Mobile probe](MOBILE_PROBE.md):
+
+```sh
+python3 tools/run_mobile_probe.py --probe signaling --pairs 8 \
+  --platform Android --project "$PROJECT" --app "$APK" \
+  --device "$SERIAL" --output Intermediate/AndroidSignaling
+```
+
+For the simulator, use `--platform IOSSimulator`, its UDID, and the packaged `.app`. For a dedicated Mac Server:
+
+```sh
+python3 tools/run_signaling_probe.py --project "$PROJECT" \
+  --executable "$SERVER" --pairs 8 --output Intermediate/ServerSignaling
+```
+
+Use fresh output directories. Reports are correlated with a new run UUID, the launched process, and the staged artifact. The runner retains failures and stops its app. There is no automatic retry. The internal `bLoopbackProbe` option is opt-in; normal peer creation retains the default network interfaces. The native probe rejects non-loopback candidates. These are local pairs within each process; they do not test cross-device signaling, TURN, application messages, or network media.
+
+The Server runner expects the executable inside the packaged `.app`. It stores the app's report in its own macOS container, where sandboxed builds can write, and includes the validated report in the output directory's `result.json`.

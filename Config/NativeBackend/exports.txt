@@ -6,3 +6,4 @@ _SimurghRTC_MediaProbeV1
 _SimurghRTC_NativeVersionV1
 _SimurghRTC_SignalV1
 _SimurghRTC_PollEventV1
+_SimurghRTC_EnableLoopbackProbeV1

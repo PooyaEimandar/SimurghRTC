@@ -110,10 +110,10 @@ def simulator_launch_pid(log, app_id):
     return int(matches[0])
 
 
-def read_simulator_report(container, run_id):
+def read_simulator_report(container, run_id, prefix="client"):
     # Unreal logs through Apple's unified log on iOS, not necessarily stdout.
     # Read only this app's saved report, selected by the new run's UUID.
-    matches = list(container.rglob('client-probe-' + run_id + '.json'))
+    matches = list(container.rglob(prefix + '-probe-' + run_id + '.json'))
     require(len(matches) <= 1, 'Duplicate saved simulator reports for this run ID.')
     if not matches:
         return None
@@ -131,27 +131,31 @@ def process_alive(pid):
         return False
 
 
-def read_android_media_chunks(log, run_id):
-    marker = 'SIMURGHRTC_MEDIA_CHUNK ' + run_id + ' '
+def read_android_chunks(log, run_id, kind="MEDIA", maximum=16):
+    marker = "SIMURGHRTC_" + kind + "_CHUNK " + run_id + " "
     chunks, total = {}, None
     for line in log.splitlines():
         if marker not in line:
             continue
         match = re.fullmatch(r'([0-9]+)/([0-9]+) (.*)', line.split(marker, 1)[1])
-        require(match is not None, 'Malformed Android media report chunk.')
+        require(match is not None, 'Malformed Android report chunk.')
         index, count, payload = int(match[1]), int(match[2]), match[3]
-        require(1 <= index <= count <= 16 and len(payload) <= 640, 'Invalid Android media chunk bounds.')
-        require(total in (None, count) and index not in chunks, 'Conflicting or duplicate Android media chunks.')
+        require(1 <= index <= count <= maximum and len(payload) <= 640, 'Invalid Android chunk bounds.')
+        require(total in (None, count) and index not in chunks, 'Conflicting or duplicate Android chunks.')
         total, chunks[index] = count, payload
     if total is None or len(chunks) != total:
         return None
     try:
         report = json.loads(''.join(chunks[index] for index in range(1, total + 1)))
     except json.JSONDecodeError:
-        raise ValueError('Truncated or invalid Android media report.') from None
+        raise ValueError('Truncated or invalid Android report.') from None
     require(isinstance(report, dict) and report.get('run_id') == run_id,
-            'Android media report does not match this run.')
+            'Android report does not match this run.')
     return report
+
+
+def read_android_media_chunks(log, run_id):
+    return read_android_chunks(log, run_id)
 
 
 def android_package_sizes(app):
@@ -190,9 +194,11 @@ def main():
     parser.add_argument('--aapt', type=Path, default=Path.home() / 'Library/Android/sdk/build-tools/36.0.0/aapt2')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--timeout', type=float, default=180)
-    parser.add_argument('--probe', choices=['lifecycle', 'media'], default='lifecycle',
+    parser.add_argument('--probe', choices=['lifecycle', 'media', 'signaling'], default='lifecycle',
                         help='Android media additionally checks render-target capture and silent mixer playback.')
+    parser.add_argument('--pairs', type=int, default=8, help='Signaling probe connection pairs (2–32).')
     args = parser.parse_args()
+    require(2 <= args.pairs <= 32, 'Use 2–32 signaling pairs.')
     require(args.probe != 'media' or args.platform == 'Android',
             'The mobile render/mixer harness currently supports physical Android devices.')
     require(math.isfinite(args.timeout) and 5 <= args.timeout <= 600, 'Use a timeout from 5 to 600 seconds.')
@@ -231,6 +237,9 @@ def main():
         if args.probe == 'media':
             options = ['-SimurghRTCMediaProbe', '-SimurghRTCMediaRunId=' + run_id,
                        '-unattended', '-stdout', '-FullStdOutLogOutput']
+        if args.probe == 'signaling':
+            options = ['-SimurghRTCSignalingProbe', '-SimurghRTCSignalingRunId=' + run_id,
+                       '-SimurghRTCSignalingPairs=' + str(args.pairs), '-nosound', '-unattended', '-stdout', '-FullStdOutLogOutput']
         if simulator:
             options += ['-nullrhi', '-sm5']  # Matches the probe's headless platform metadata.
         if args.platform == 'Android':
@@ -330,14 +339,14 @@ def main():
             if args.platform == 'Android':
                 console.write_text(command(adb + ['logcat', '-d', '-v', 'brief', '--pid=' + str(pid)]).stdout)
             log = console.read_text(errors='replace') if console.exists() else ''
-            report = read_report(log, run_id, 'SIMURGHRTC_MEDIA_REPORT ' if args.probe == 'media' else MARKER)
-            if report is None and args.platform == 'Android' and args.probe == 'media':
-                report = read_android_media_chunks(log, run_id)
+            report = read_report(log, run_id, {'media': 'SIMURGHRTC_MEDIA_REPORT ', 'signaling': 'SIMURGHRTC_SIGNALING_REPORT '}.get(args.probe, MARKER))
+            if report is None and args.platform == 'Android' and args.probe in ('media', 'signaling'):
+                report = read_android_chunks(log, run_id, args.probe.upper(), 128 if args.probe == 'signaling' else 16)
                 if report is not None:
                     record['report_source'] = 'android-log-chunks'
                     (output / 'probe.json').write_text(json.dumps(report, indent=2) + '\n')
             if report is None and simulator_container:
-                report = read_simulator_report(simulator_container, run_id)
+                report = read_simulator_report(simulator_container, run_id, "signaling" if args.probe == "signaling" else "client")
                 if report is not None:
                     record['report_source'] = 'simulator-app-container'
                     (output / 'probe.json').write_text(json.dumps(report, indent=2) + '\n')
@@ -356,6 +365,10 @@ def main():
             from run_media_probe import validate_report as validate_media
             validate_media(report, run_id, pid, False, artifact_sha256=identity['manifest_sha256'])
             require('SIMURGHRTC_MEDIA_PROBE_PASSED' in log, 'Missing media completion marker.')
+        elif args.probe == 'signaling':
+            from run_signaling_probe import validate_report as validate_signaling
+            validate_signaling(report, run_id, 'IOS' if simulator else args.platform, identity['manifest_sha256'],
+                               config['with_janus'], simulator=simulator, pairs=args.pairs)
         else:
             validate_report(report, run_id, 'IOS' if simulator else args.platform, identity['manifest_sha256'],
                             config['with_janus'], simulator=simulator,

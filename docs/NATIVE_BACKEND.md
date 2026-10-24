@@ -100,7 +100,7 @@ The client probe creates and closes nine PeerConnections, then encodes and decod
 
 The separate [Unreal media probe](MEDIA_PROBE.md) checks texture upload, render-target readback and audio-mixer consumption. Pass `--native-artifact` to `tools/run_media_probe.py` to require the replacement library's identity in its report.
 
-Eight C entry points are exported, including signaling submission and event polling. Internal RTC and codec symbols are local to the native object. The codec set remains software VP8/VP9 and builtin audio; H.264, AV1 and hardware capture are excluded from this M0 build. License inputs travel with each artifact; final publication notices remain SR-902 work.
+Nine C entry points are exported, including signaling, event polling, and an explicit loopback-only probe switch. Normal peer creation does not enable that switch. Internal RTC and codec symbols are local to the native object. The codec set remains software VP8/VP9 and builtin audio; H.264, AV1 and hardware capture are excluded from this M0 build. License inputs travel with each artifact; final publication notices remain SR-902 work.
 
 ## Changing pinned inputs
 
