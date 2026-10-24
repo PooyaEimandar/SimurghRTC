@@ -59,7 +59,7 @@ def build(work, output, ndk_cache, jobs, build_name=None, fresh=False):
         ndk = ndk_install / 'android-ndk-r27c'
         a.require('Pkg.Revision = ' + spec['ndk'] in (ndk / 'source.properties').read_text(),'NDK revision mismatch.')
         source = work / 'src'; probe = source / 'simurgh_probe'; probe.mkdir(exist_ok=True)
-        for name in ('BUILD.gn','runtime.cc','media.cc','simurgh_rtc_abi.h'): shutil.copy2(CONFIG / name,probe / name)
+        for name in ('BUILD.gn','runtime.cc','media.cc','signaling.cc','signaling.h','simurgh_rtc_abi.h'): shutil.copy2(CONFIG / name,probe / name)
         (source / 'build/config/gclient_args.gni').write_text('android_ndk_version = "2@30.0.16248370"\ngenerate_location_tags = true\n')
         args = (CONFIG / 'Android.gn').read_text() + 'android_ndk_root = ' + json.dumps(str(ndk)) + '\n'
         (build / 'args.gn').write_text(args)

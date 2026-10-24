@@ -1,43 +1,92 @@
-# Asynchronous native peer ownership
+# Native peers and signaling
 
-SR-101 is in progress. The plugin can create and close an idle native PeerConnection on a dedicated worker. SDP, ICE exchange and network connections are still unfinished. The shared session API continues to return `NotImplemented` for connection attempts.
+SR-101 adds an internal PeerConnection handle with asynchronous SDP/ICE exchange. It can connect two local peers using the isolated M155 backend. The shared C++/Blueprint session API still returns `NotImplemented` for connection attempts; Direct HTTP signaling and application DataChannels come next in SR-102/SR-103.
 
-`FNativePeer` is an internal integration handle for future Direct/Janus providers. It does not change API v1 or add Blueprint nodes. The existing M0 factory and media probes keep their synchronous test paths.
+`FNativePeer` is for plugin providers and tests. It does not change API v1 or add Blueprint nodes. The M0 factory and media probes keep their synchronous paths.
 
-## Lifetime rules
+## Open and close
 
 Call `FNativePeer::Open` on Unreal's game thread with a live UObject owner, a factory mode and an optional completion callback. Keep the returned handle. Invalid input, an unavailable backend or exhausted capacity returns a null handle and an error immediately.
 
-An accepted request creates the factory and peer on one native worker. Its completion runs on a later game tick with `Ready` or `Failed`. **Ready means a local peer exists**, not that it has connected to another endpoint. The callback receives copied diagnostics; it never receives a native pointer.
+An accepted open creates the factory and peer on one native worker. Its callback runs on a later game tick with `Ready` or `Failed`. **Ready means the local peer exists.** Check `GetSnapshot().Transport.Connection` for the network connection state.
 
-Call `Close` from `EndPlay` or your owner's shutdown method, then release the handle. Close returns without waiting for WebRTC. It suppresses an undelivered completion and changes the state to `Closing`; `Closed` confirms that native teardown has finished. Calling Close again is safe. Dropping the last handle also requests close. The service detects lost UObject owners each tick and closes peers when their world is cleaned up.
+Call `Close` from `EndPlay` or your owner's shutdown method, then release the handle. Close returns without waiting for WebRTC. It cancels undelivered operation callbacks and transport events; `Closed` confirms native teardown. Repeated close is safe. Dropping the last handle, losing the UObject owner or cleaning up its world also closes the peer.
 
-Use the handle, including its destructor, only on the game thread. The module retains no strong reference to its UObject owner or handle. Completion captures are destroyed on the game thread. Avoid capturing owners strongly in callbacks when they should be allowed to disappear.
+Use the handle, including its destructor, on the game thread. The service holds weak references to the owner and handle. Avoid strong captures that keep either alive. Callbacks and their captures are released on the game thread.
 
-## Worker and shutdown
+## Exchange SDP and ICE
 
-The first accepted peer starts one worker. All factory/peer operations and destruction stay on that same OS thread, as required by the native C interface. WebRTC still owns its internal signaling, network and media threads. At most 64 peer lifetimes can be pending; closing peers keep their slots until teardown is acknowledged and the registry is cleaned on a game tick.
+After opening both peers:
 
-Only module shutdown waits for the worker. It stops callback delivery, closes every peer, drains the command queue and joins the thread before unloading. Normal peer close and world cleanup do not wait. Release integration handles before unloading their module.
+1. Register each peer's event handler with `SetEventHandler`.
+2. Submit `CreateOffer` to the first peer. Its result contains SDP after the local description has been set.
+3. Submit that SDP to the other peer as `SetRemote` with type `Offer`.
+4. Submit `CreateAnswer` there, then pass the answer back as `SetRemote` with type `Answer`.
+5. Throughout negotiation, forward `LocalIce` events as `AddIce` requests and `LocalIceComplete` as `EndIce`.
 
-The synchronous `FNativeRuntime` adapter remains available for local probes. Its calls and destruction must use the thread that constructed it. Applications should use the asynchronous handle when normal gameplay must continue during teardown.
+For example, this submits an offer request to an already opened peer:
 
-## Validation
+```cpp
+SimurghRTC::FNativeSignalRequest Request;
+Request.Action = SimurghRTC::ENativeSignalAction::CreateOffer;
+FString Error;
+const bool bAccepted = Peer->Signal(MoveTemp(Request),
+    [](const SimurghRTC::FNativeSignalResult& Result)
+    {
+        // Runs on the game thread. Check IsSuccess(), then send Result.Sdp
+        // to the other peer through your signaling provider.
+    }, Error);
+```
 
-Validated on **2026-10-24**, using Unreal 5.8.3, the Full profile and the accepted Mac ARM64 M155 artifact:
+`Signal` returning false means no callback was scheduled. An accepted operation completes later, unless close or owner loss cancels delivery. Check `Result.Error` and `Message`; malformed SDP and wrong negotiation order fail explicitly. Operation IDs correlate results internally.
 
-| Check | Result |
+The offer creates a private, reliable channel named `simurghrtc-negotiation`. This supplies a data media section and lets the tests verify DTLS/SCTP startup. It has no application send/receive API. The builtin-media factory can negotiate this transport too; these tests do not send audio or video.
+
+Only the initial offer/answer exchange is supported. Close and open a fresh peer to reconnect. Renegotiation, ICE restart, glare handling and a network session timeout belong to later provider work.
+
+## Early candidates and limits
+
+ICE may arrive before the remote description. The backend copies and queues it, returning a successful result with `bQueued=true`. Once remote SDP is accepted, it checks each candidate's MID, media index and optional username fragment before applying it. `RemoteIceQueued` and `RemoteIceApplied` show progress.
+
+Repeated candidates are idempotent. An end marker can arrive early too. New candidates after the marker are rejected. A queued candidate that later fails validation causes `FatalError`; the Unreal worker releases that native runtime and fails outstanding operations. The caller must close the failed handle before opening its replacement.
+
+| Limit | Value |
 |---|---|
-| Unreal Editor automation | 14 tests passed; no test warnings |
-| Packaged Development Mac app | The same 14 tests passed; no test warnings |
-| Source and fixture checks | 151 Python tests, profile policy and media fixtures passed |
-| Package link and UHT audit | Expected modules, one libwebrtc archive, no Editor example generator; native and packaged executable IDs match |
+| SDP | 128 KiB of UTF-8, CRLF terminated |
+| Candidate / MID / username fragment | 2 KiB / 32 bytes / 256 bytes |
+| Remote trickle ICE | 32 unique entries, including the optional end marker |
+| Pending signaling operations | 64 per peer; one SDP operation at a time |
+| Events | 64 at each native/game-thread boundary; overflow fails the peer |
+| Operation deadline | Default 30 seconds; allowed range 1–300,000 ms, including worker queue time |
+| Live or closing peers | 64 per service |
 
-The [validation record](reviews/SR101-ownership-validation.json) retains commands, reports, source/artifact hashes and engine state. Unrelated HTML5 test edits appeared in the shared engine checkout during the Game build; none were Mac build inputs, and this task did not change them.
+An early-ICE acknowledgement confirms storage, not application. Its operation deadline ends at that acknowledgement. These limits govern the internal transport; they do not implement the versioned HTTP protocol described in [Signaling v1](SIGNALING_V1.md).
 
-Follow [Building](BUILDING.md) to stage a fresh project and run Unreal automation. The `SimurghRTC.Native.Async*` tests exercise actual M155 factories and peers, with a test gate that can hold the worker to check cancellation without timing guesses. They cover data/media overlap, repeated close, handle loss, UObject collection, world cleanup, bounded admission, reopening, callback reentrancy and shutdown drain.
+## Threads and shutdown
 
-For a packaged Mac check, follow the [Game build and packaging steps](LIFECYCLE_EXAMPLES.md#package-the-examples), then run the app's executable with:
+The first open starts one worker. All C-interface calls and destruction stay on that worker, while WebRTC owns its internal signaling/network/media threads. Requests and events cross the boundary as copied values; no native pointer or WebRTC object reaches game callbacks.
+
+The worker checks active signaling every 10 ms and bounds each batch of commands/events. Callback delivery rechecks owner and handle lifetime before every call, including when an earlier callback closes a peer or shuts down the service.
+
+Only module shutdown waits for the worker. It stops delivery, closes all peers, drains commands and joins before unloading. Normal close and world cleanup do not wait. Release integration handles before unloading their module.
+
+`FNativeRuntime` remains available for synchronous test harnesses. Call and destroy it on its creating thread. Direct C consumers must poll events during signaling and destroy a runtime after a fatal error.
+
+## Validate
+
+The standalone fixture connects four local pairs, two in each factory mode. Both peers must reach ICE Connected and open the private DTLS/SCTP channel. It deliberately sends candidates and completion before SDP, checks duplicates, rejects malformed/stale candidates, tests overflow, and closes peers with work pending. It uses local host candidates with no STUN/TURN service.
+
+```sh
+python3 tools/run_native_signaling_probe.py \
+  --artifact LocalBuilds/Artifacts/M155-Mac \
+  --output Intermediate/NativeSignaling
+```
+
+Use a freshly built artifact and a new evidence directory. This runner needs permission to open local sockets.
+
+Follow [Building](BUILDING.md) to stage an Unreal project and run `SimurghRTC.` automation. The new `Native.LocalConnections`, `Native.SignalingFailure` and `Native.SignalingCancellation` tests exercise real peers, early ICE, failure cleanup, bounded requests, deadlines and owner loss. Existing ownership, lifecycle and codec tests run alongside them.
+
+For a packaged Mac check, follow the [packaging steps](LIFECYCLE_EXAMPLES.md#package-the-examples), then run:
 
 ```sh
 REPORT="$HOME/Library/Containers/com.YourCompany.ContractHost/Data/Library/Application Support/Epic/ContractHost/Saved/Automation/Reports/SR101"
@@ -47,6 +96,10 @@ REPORT="$HOME/Library/Containers/com.YourCompany.ContractHost/Data/Library/Appli
   -ReportExportPath="$REPORT"
 ```
 
-Set `APP` to the packaged `ContractHost.app/Contents/MacOS/ContractHost`. The default Mac sample is sandboxed, so write reports beneath its own Saved directory. If you change its bundle ID, use the Saved path shown in the runtime log. Check the JSON test report, including the number of tests performed; process exit alone does not establish a pass.
+Set `APP` to the packaged `ContractHost.app/Contents/MacOS/ContractHost`. The default Mac sample is sandboxed, so reports must be inside its Saved directory. If you change its bundle ID, use the Saved path in the runtime log. Verify the JSON test count and results; exit status alone is insufficient.
 
-Mobile package validation of this new asynchronous path remains open. Earlier M0 package results cover the synchronous probes. M0's independent-host and deferred physical iOS checks also remain open.
+On 2026-10-24, all **17 tests passed** in the Full-profile Unreal 5.8.3 Mac Editor and packaged Development app, with no test warnings. Each connection test established four local pairs across the two factory modes. The standalone fixture passed too; an unchanged native executable also passed 48 consecutive pairs. All four updated ARM64 libraries build, and the iOS device consumer links.
+
+An initial Editor negotiation and one standalone run failed intermittently. Subsequent runs passed, including diagnostic repeats, but the cause was not established. This remains a reliability follow-up; these results do not claim that startup is failure-free.
+
+The [signaling validation record](reviews/SR101-signaling-validation.json) retains passing and failed attempts, artifact identities and source hashes. It distinguishes the final library from a temporary diagnostic build. The [earlier ownership record](reviews/SR101-ownership-validation.json) covers the previous bridge. Mobile packages, network media, remote endpoints and physical iOS acceptance need their own checks; a local pair in one Unreal process does not establish those results.

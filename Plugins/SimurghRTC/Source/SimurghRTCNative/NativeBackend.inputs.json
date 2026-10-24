@@ -1,17 +1,19 @@
 {
-  "abi_header_sha256": "3744d1c5f4aa87166748dba4acd71331efdee42f6115d89b3c3fcd72554f293f",
+  "abi_header_sha256": "8f8a900a9107cfd28263f2ccd6c46b4fcdb9088856437dfd0b023db87b7b1afa",
   "android_source_lock_sha256": "b02a73f9a8301c4e9a1c54b81f4285bfb533a6379ec18f66f1522b8ce1dc9ae3",
   "bridge_sources": {
     "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
-    "BUILD.gn": "51f5a3f2966a1d856179df954baab8b2d4921bfb1060bdf992c186afe1bc5fb2",
+    "BUILD.gn": "da4d7a403a1441b3ff417888559d6399660f172561390554cb13313213f0895e",
     "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
     "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
     "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
     "abi_test.c": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b",
-    "exports.txt": "33ef2225593da2c82cbb5e16720f86701cdc191c35235a500d0969ae2e1f6015",
+    "exports.txt": "15c3e98c1641e0b5af013d2c7b3bb515dffc002f08792b0d33d604eabdc2a1cf",
     "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
-    "runtime.cc": "de264c699750f059f38ebd2c5dae3e1187a37452a9f5ce8ee5fbc4c3469bc0cb",
-    "simurgh_rtc_abi.h": "3744d1c5f4aa87166748dba4acd71331efdee42f6115d89b3c3fcd72554f293f"
+    "runtime.cc": "4f275b5b19dbca00522f673cab0f2bd872a742a0eb5e1d42812bc69642d547d9",
+    "signaling.cc": "c5b3bfbf9ea98b70ccde536ebfcce033b95c7c2a9ec23c59da6e7e18eac7219a",
+    "signaling.h": "40a999f145e2f8c27522b892eec496747363e8d69cad25f8ccf4b73c2abf6fd9",
+    "simurgh_rtc_abi.h": "8f8a900a9107cfd28263f2ccd6c46b4fcdb9088856437dfd0b023db87b7b1afa"
   },
   "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
   "source_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d"

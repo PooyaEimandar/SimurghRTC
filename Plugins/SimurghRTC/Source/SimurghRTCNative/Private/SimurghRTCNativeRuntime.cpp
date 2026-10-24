@@ -12,6 +12,7 @@ class FNativeRuntime::FImpl
 public:
 #if SIMURGHRTC_WITH_WEBRTC
     SR_Runtime* Handle = nullptr;
+    TUniquePtr<SR_SignalEvent> SignalEvent;
     ~FImpl() { SimurghRTC_DestroyV1(Handle); }
 #endif
 };
@@ -84,6 +85,71 @@ FNativeFactoryDiagnostics FNativeRuntime::GetDiagnostics() const
     FString(UTF8_TO_TCHAR(Native.video_codecs)).ParseIntoArray(Result.VideoCodecs, TEXT(";"), true);
 #endif
     return Result;
+}
+bool FNativeRuntime::Signal(uint64 Id, const FNativeSignalRequest& Request, FNativeSignalResult& OutFailure)
+{
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId());
+    OutFailure = {}; OutFailure.OperationId = Id;
+#if SIMURGHRTC_WITH_WEBRTC
+    if (Impl)
+    {
+        FTCHARToUTF8 Text(*(Request.Action == ENativeSignalAction::AddIce ? Request.Ice.Candidate : Request.Sdp));
+        FTCHARToUTF8 Mid(*Request.Ice.Mid), Ufrag(*Request.Ice.UsernameFragment);
+        SR_SignalRequest Native{};
+        Native.size = sizeof(Native); Native.abi_version = SR_ABI_VERSION; Native.operation_id = Id;
+        Native.action = static_cast<int32>(Request.Action); Native.sdp_type = static_cast<int32>(Request.SdpType);
+        Native.timeout_ms = Request.TimeoutMs; Native.sdp_mline_index = Request.Ice.MLineIndex;
+        Native.text = Text.Get(); Native.text_bytes = Text.Length();
+        Native.sdp_mid = Mid.Get(); Native.sdp_mid_bytes = Mid.Length();
+        Native.username_fragment = Ufrag.Get(); Native.username_fragment_bytes = Ufrag.Length();
+        char Error[1024]{};
+        const int Code = SimurghRTC_SignalV1(Impl->Handle, &Native, Error, sizeof(Error));
+        if (!Code) return true;
+        OutFailure.Error = static_cast<ENativeSignalError>(Code); OutFailure.Message = UTF8_TO_TCHAR(Error);
+        return false;
+    }
+#endif
+    OutFailure.Error = ENativeSignalError::InvalidState; OutFailure.Message = TEXT("Native peer is unavailable.");
+    return false;
+}
+bool FNativeRuntime::PollSignal(FNativeTransportEvent& OutEvent)
+{
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId());
+    OutEvent = {};
+#if SIMURGHRTC_WITH_WEBRTC
+    if (!Impl) return false;
+    if (!Impl->SignalEvent)
+    {
+        Impl->SignalEvent = MakeUnique<SR_SignalEvent>();
+        Impl->SignalEvent->size = sizeof(SR_SignalEvent); Impl->SignalEvent->abi_version = SR_ABI_VERSION;
+    }
+    auto& Native = *Impl->SignalEvent;
+    if (SimurghRTC_PollEventV1(Impl->Handle, &Native)) return false;
+    auto& T = OutEvent.Transport;
+    T.Connection = static_cast<ENativeConnectionState>(Native.transport.connection);
+    T.bLocalDescriptionSet = Native.transport.local_description_set != 0;
+    T.bRemoteDescriptionSet = Native.transport.remote_description_set != 0;
+    T.bLocalIceComplete = Native.transport.local_ice_complete != 0;
+    T.bRemoteIceComplete = Native.transport.remote_ice_complete != 0;
+    T.bDataTransportOpen = Native.transport.data_transport_open != 0;
+    T.RemoteIceQueued = Native.transport.remote_ice_queued; T.RemoteIceApplied = Native.transport.remote_ice_applied;
+    OutEvent.Type = static_cast<ENativeSignalEvent>(Native.type);
+    if (OutEvent.Type == ENativeSignalEvent::None) return true;
+    auto& Result = OutEvent.Result;
+    Result.OperationId = Native.operation_id; Result.Error = static_cast<ENativeSignalError>(Native.error_code);
+    Result.Message = UTF8_TO_TCHAR(Native.error); Result.bQueued = Native.queued != 0;
+    Result.SdpType = static_cast<ENativeSdpType>(Native.sdp_type);
+    if (Result.SdpType != ENativeSdpType::None) Result.Sdp = UTF8_TO_TCHAR(Native.text);
+    if (OutEvent.Type == ENativeSignalEvent::LocalIce)
+    {
+        OutEvent.Ice.Candidate = UTF8_TO_TCHAR(Native.text); OutEvent.Ice.Mid = UTF8_TO_TCHAR(Native.sdp_mid);
+        OutEvent.Ice.UsernameFragment = UTF8_TO_TCHAR(Native.username_fragment);
+        OutEvent.Ice.MLineIndex = Native.sdp_mline_index;
+    }
+    return true;
+#else
+    return false;
+#endif
 }
 void FNativeRuntime::Stop() { check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId()); Impl.Reset(); }
 }

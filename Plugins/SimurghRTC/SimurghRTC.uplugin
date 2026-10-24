@@ -3,7 +3,7 @@
   "Version": 1,
   "VersionName": "0.1.0-m0",
   "FriendlyName": "SimurghRTC",
-  "Description": "Shared RTC contract, desktop native factory and headless Server probe. RTC signaling is not implemented.",
+  "Description": "Shared RTC contract, internal SDP/ICE transport and headless Server probe. Direct/Janus session signaling is not implemented.",
   "Category": "Networking",
   "CreatedBy": "SimurghRTC contributors",
   "EngineVersion": "5.8.0",

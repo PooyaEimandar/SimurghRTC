@@ -18,7 +18,7 @@ The inventory now also checks engine archives against Epic's `Commit.gitdeps.xml
 
 ## Packaged M155 integration
 
-The plugin now uses a private C interface to separately built M155, BoringSSL, Opus and VPX. Mac, Android, iOS device and iOS simulator ARM64 exports are built from pinned inputs. Only six C entry points remain externally visible.
+The plugin now uses a private C interface to separately built M155, BoringSSL, Opus and VPX. Mac, Android, iOS device and iOS simulator ARM64 exports are built from pinned inputs. The M0 bridge exposed six C entry points. SR-101 adds two for SDP/ICE submission and event polling; WebRTC C++ symbols remain isolated.
 
 Packaged Mac Direct-only and Android Direct-only/Full pass lifecycle, local codecs, render-target capture and silent audio-mixer checks. Both iOS simulator profiles pass lifecycle and local codecs without graphics/audio devices. Link audits select one isolated WebRTC archive per package. The iOS device library is built but not device-tested. The packaged Mac dedicated Server also passes builtin-media and data-only factory startup, real loopback HTTP responses and occupied-port cleanup in both modes. Its [snapshot](reviews/SR008-M155-server-validation.json) records the exact artifact and executable.
 

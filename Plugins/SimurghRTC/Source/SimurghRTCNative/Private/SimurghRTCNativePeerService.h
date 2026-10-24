@@ -17,6 +17,7 @@ struct FNativePeerSharedState
     FCriticalSection Mutex;
     FNativePeerSnapshot Snapshot;
     uint64 Id = 0;
+    TArray<FNativeTransportEvent> Events;
 };
 
 /** Game-thread service; only Run and its native runtime map execute on the worker. */
@@ -29,6 +30,9 @@ public:
     ~FNativePeerService();
     FNativePeer::FHandle Open(UObject* Owner, ENativeFactoryMode Mode, FNativePeerOpened OnOpened, FString& OutError);
     void Close(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State);
+    bool Signal(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State,
+        FNativeSignalRequest Request, FNativeSignalCompleted OnComplete, FString& OutError);
+    void SetEventHandler(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State, FNativeTransportChanged OnEvent);
     void Tick();
     void CloseWorld(UWorld* World);
     // Only module shutdown/tests wait for native teardown. Normal Close never waits.
@@ -48,8 +52,12 @@ private:
         TWeakObjectPtr<UObject> Owner;
         TWeakObjectPtr<UWorld> World;
         FNativePeerOpened OnOpened;
+        TMap<uint64, FNativeSignalCompleted> Operations;
+        TSharedPtr<FNativeTransportChanged> OnEvent;
+        uint64 NextOperation = 1;
+        uint64 PendingSdp = 0;
     };
-    enum class ECommand : uint8 { Open, Close, Shutdown
+    enum class ECommand : uint8 { Open, Close, Shutdown, Signal
 #if WITH_DEV_AUTOMATION_TESTS
         , TestGate
 #endif
@@ -59,6 +67,9 @@ private:
         ECommand Type = ECommand::Shutdown;
         TSharedPtr<FNativePeerSharedState, ESPMode::ThreadSafe> State;
         ENativeFactoryMode Mode = ENativeFactoryMode::DataOnly;
+        FNativeSignalRequest Request;
+        uint64 OperationId = 0;
+        double Deadline = 0;
 #if WITH_DEV_AUTOMATION_TESTS
         FEvent* Entered = nullptr;
         FEvent* Release = nullptr;

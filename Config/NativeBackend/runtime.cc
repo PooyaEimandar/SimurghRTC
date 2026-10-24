@@ -1,5 +1,6 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "simurgh_rtc_abi.h"
+#include "signaling.h"
 #include <cstdio>
 #include <mutex>
 #include <thread>
@@ -25,13 +26,6 @@ int Fail(char* error, uint32_t capacity, const char* text) {
   if (error && capacity) std::snprintf(error, capacity, "%s", text);
   return 1;
 }
-class Observer final : public webrtc::PeerConnectionObserver {
- public:
-  void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState) override {}
-  void OnDataChannel(webrtc::scoped_refptr<webrtc::DataChannelInterface>) override {}
-  void OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState) override {}
-  void OnIceCandidate(const webrtc::IceCandidate*) override {}
-};
 class DummyAudio : public webrtc::webrtc_impl::AudioDeviceModuleDefault<webrtc::AudioDeviceModule> {};
 }
 struct SR_Runtime {
@@ -41,11 +35,12 @@ struct SR_Runtime {
   webrtc::scoped_refptr<webrtc::AudioDeviceModule> audio;
   webrtc::scoped_refptr<webrtc::AudioProcessing> apm;
   webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory;
-  Observer observer;
+  std::shared_ptr<sr::Signaling> observer = std::make_shared<sr::Signaling>();
   webrtc::scoped_refptr<webrtc::PeerConnectionInterface> peer;
   SR_Diagnostics diagnostics{};
   ~SR_Runtime() {
     if (signaling_started) signaling->BlockingCall([&] {
+      observer->Shutdown();
       if (peer) peer->Close();
       peer = nullptr; factory = nullptr;
     });
@@ -119,9 +114,9 @@ extern "C" int SimurghRTC_CreatePeerV1(SR_Runtime* r, char* error, uint32_t capa
   r->signaling->BlockingCall([&] {
     webrtc::PeerConnectionInterface::RTCConfiguration config;
     config.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
-    webrtc::PeerConnectionDependencies deps(&r->observer);
+    webrtc::PeerConnectionDependencies deps(r->observer.get());
     auto created = r->factory->CreatePeerConnectionOrError(config, std::move(deps));
-    if (created.ok()) r->peer = created.MoveValue();
+    if (created.ok()) { r->peer = created.MoveValue(); r->observer->Attach(r->peer.get()); }
     else Fail(error, capacity, created.error().message());
   });
   r->diagnostics.peer_ready = !!r->peer;
@@ -133,6 +128,18 @@ extern "C" int SimurghRTC_DiagnosticsV1(SR_Runtime* r, SR_Diagnostics* out) {
   *out = r->diagnostics; return 0;
 }
 extern "C" void SimurghRTC_DestroyV1(SR_Runtime* r) { delete r; }
+extern "C" int SimurghRTC_SignalV1(SR_Runtime* r, const SR_SignalRequest* request, char* error, uint32_t capacity) {
+  if (!r || r->owner != std::this_thread::get_id() || !r->peer || !request
+      || request->size != sizeof(*request) || request->abi_version != SR_ABI_VERSION) {
+    Fail(error, capacity, "Invalid signaling runtime, thread or ABI."); return SR_INVALID_ARGUMENT;
+  }
+  return r->signaling->BlockingCall([&] { return r->observer->Submit(*request, error, capacity); });
+}
+extern "C" int SimurghRTC_PollEventV1(SR_Runtime* r, SR_SignalEvent* event) {
+  if (!r || r->owner != std::this_thread::get_id() || !r->peer || !event
+      || event->size != sizeof(*event) || event->abi_version != SR_ABI_VERSION) return SR_INVALID_ARGUMENT;
+  r->signaling->BlockingCall([&] { r->observer->Poll(*event); }); return SR_OK;
+}
 extern "C" const char* SimurghRTC_NativeVersionV1(int component) {
   if (component == 0) return OpenSSL_version(OPENSSL_VERSION);
   if (component == 1) return opus_get_version_string();

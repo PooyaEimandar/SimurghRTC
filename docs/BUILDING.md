@@ -35,7 +35,7 @@ PROJECT="$PWD/LocalBuilds/Full/ContractHost.uproject"
   -ReportExportPath="$PWD/Intermediate/Reports/Full"
 ```
 
-The sample uses the Full profile. Its tests cover API validation, completion, cancellation, teardown, garbage collection, frame bounds, profile selection, native factory/peer lifetimes and local video/audio codecs. The [asynchronous ownership tests](NATIVE_PEERS.md) also check worker teardown, owner/world cleanup and bounded admission. Check the report for failures; process exit alone is not enough.
+The sample uses the Full profile. Its tests cover API validation, completion, cancellation, teardown, garbage collection, frame bounds, profile selection, native factory/peer lifetimes and local video/audio codecs. The [native peer tests](NATIVE_PEERS.md) also check real local SDP/ICE connections, early candidates, signaling failures, deadlines, worker teardown and owner/world cleanup. Local connection tests need socket access. Check the report for failures; process exit alone is not enough.
 
 For executable C++ and Blueprint graphs, including packaged runs, follow [Lifecycle examples](LIFECYCLE_EXAMPLES.md).
 
@@ -87,7 +87,7 @@ All plugin modules below live under `Plugins/SimurghRTC/Source/`.
 | Location | Purpose |
 |---|---|
 | `SimurghRTCCore` | Shared C++/Blueprint types, session API and operation lifecycle |
-| `SimurghRTCNative` | Private libwebrtc adapter, asynchronous peer ownership and local codec tests |
+| `SimurghRTCNative` | Private libwebrtc adapter, asynchronous peers, SDP/ICE exchange and local codec tests |
 | `SimurghRTCDirect` | Placeholder for Direct signaling |
 | `SimurghRTCMedia` | Optional client media API and texture/audio tests |
 | `SimurghRTCServer` | Headless HTTP test endpoint for Editor/Server targets |

@@ -4,7 +4,9 @@ WebRTC **M155** is integrated into the Unreal 5.8.3 plugin. Packaged Mac/Android
 
 The backend builds its own WebRTC, BoringSSL, Opus and VPX. Unreal calls a small private C interface. Factory handles stay inside the backend; Unreal owns the buffers used to copy decoded video and PCM. No WebRTC C++ types or allocations cross that boundary.
 
-The public C++ and Blueprint API is unchanged. M1 has started with [asynchronous native peer ownership](NATIVE_PEERS.md); real connections remain unfinished.
+The public C++ and Blueprint API is unchanged. M1 adds [asynchronous peers and SDP/ICE exchange](NATIVE_PEERS.md), with real local connection tests. Direct/Janus session providers remain unfinished.
+
+The SR-101 bridge adds signaling functions and changes the artifact input pin. Rebuild all selected platform artifacts before staging current sources. Earlier M0 package and repeat-build records describe the earlier bridge; they remain historical evidence.
 
 ## Build Apple libraries
 
@@ -98,7 +100,7 @@ The client probe creates and closes nine PeerConnections, then encodes and decod
 
 The separate [Unreal media probe](MEDIA_PROBE.md) checks texture upload, render-target readback and audio-mixer consumption. Pass `--native-artifact` to `tools/run_media_probe.py` to require the replacement library's identity in its report.
 
-Only six C entry points are exported. Internal RTC and codec symbols are local to the native object. The codec set remains software VP8/VP9 and builtin audio; H.264, AV1 and hardware capture are excluded from this M0 build. License inputs travel with each artifact; final publication notices remain SR-902 work.
+Eight C entry points are exported, including signaling submission and event polling. Internal RTC and codec symbols are local to the native object. The codec set remains software VP8/VP9 and builtin audio; H.264, AV1 and hardware capture are excluded from this M0 build. License inputs travel with each artifact; final publication notices remain SR-902 work.
 
 ## Changing pinned inputs
 

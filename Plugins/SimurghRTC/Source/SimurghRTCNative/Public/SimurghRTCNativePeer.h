@@ -17,6 +17,7 @@ struct FNativePeerSnapshot
 {
     ENativePeerState State = ENativePeerState::Opening;
     FNativeFactoryDiagnostics Diagnostics;
+    FNativeTransportSnapshot Transport;
     FString Error;
 };
 
@@ -47,6 +48,11 @@ public:
     FNativePeer& operator=(const FNativePeer&) = delete;
 
     FNativePeerSnapshot GetSnapshot() const;
+    // Accepted operations finish on a later game tick. False means no callback was scheduled.
+    // Close/owner loss suppresses pending callbacks and events. One SDP operation at a time;
+    // at most 64 operations/events and 32 remote ICE entries (including completion).
+    bool Signal(FNativeSignalRequest Request, FNativeSignalCompleted OnComplete, FString& OutError);
+    void SetEventHandler(FNativeTransportChanged OnEvent);
     // Idempotent and nonblocking: Closed is published after native teardown finishes.
     void Close();
 

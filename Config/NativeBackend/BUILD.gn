@@ -3,7 +3,7 @@ import("//webrtc.gni")
 rtc_static_library("probe") {
   complete_static_lib = true
   suppressed_configs = [ "//build/config/compiler:thin_archive" ]
-  sources = [ "runtime.cc", "media.cc", "simurgh_rtc_abi.h" ]
+  sources = [ "runtime.cc", "media.cc", "signaling.cc", "signaling.h", "simurgh_rtc_abi.h" ]
   deps = [
     "//third_party/boringssl", "//third_party/opus", "//third_party/libvpx",
     "//api:create_peerconnection_factory", "//api:create_modular_peer_connection_factory",

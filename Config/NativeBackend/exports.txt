@@ -4,3 +4,5 @@ _SimurghRTC_DiagnosticsV1
 _SimurghRTC_DestroyV1
 _SimurghRTC_MediaProbeV1
 _SimurghRTC_NativeVersionV1
+_SimurghRTC_SignalV1
+_SimurghRTC_PollEventV1
