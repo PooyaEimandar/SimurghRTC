@@ -28,6 +28,8 @@ A successful `OpenChannel` returns a local handle in `Connecting`. Native creati
 
 The Server receives addressed callbacks through `FDirectServerConfig::OnChannelEvent(SessionId, Event)`. Its channel methods also take `SessionId`. Each peer has its own local handles; do not send a client's handle to the Server. The sample probe provides a bounded echo queue. The provider does not echo automatically.
 
+For concurrent clients, private echoes and authorized room fan-out, see [Server sessions and routing](SERVER_ROUTING.md).
+
 ## Ordering and reliability
 
 | Option | Meaning |

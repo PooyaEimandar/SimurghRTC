@@ -1,6 +1,7 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "ContractDirectProbe.h"
 #include "ContractDataScenario.h"
+#include "ContractConcurrentScenario.h"
 #include "Containers/Ticker.h"
 #include "Engine/GameInstance.h"
 #include "HAL/FileManager.h"
@@ -44,16 +45,19 @@ public:
     int32 Requested = 4, Index = 0, Port = 18779, CallbackCount = 0, CallbacksAtOwnerLoss = 0;
     double Started = 0, StepStarted = 0, StopAt = 0;
     bool bServer = false, bStopping = false, bGameThread = true, bOwnerLost = false, bClosing = false;
+    FString CredentialsFile; int32 ConcurrentRole = 0; bool bReplacement = false;
     TArray<TSharedPtr<FJsonValue>> Rows;
     TSharedPtr<FJsonObject> Row;
 #if SIMURGHRTC_WITH_DIRECT
     TSharedPtr<FDirectClient> Client;
     TUniquePtr<FContractDataScenario> Data;
+    TUniquePtr<FContractConcurrentClient> ConcurrentClient;
 #endif
 #if CONTRACTHOST_WITH_DIRECT_SERVER
     TSharedPtr<FDirectServer> Server;
+    TUniquePtr<FContractConcurrentServer> ConcurrentServer;
     TSharedPtr<IHttpRouter> Router;
-    FHttpRouteHandle Health, ShutdownRoute;
+    FHttpRouteHandle Health, ShutdownRoute, ConcurrentRoute;
     TArray<FString> PreviousOverrides;
     bool bOwnsHttp = false, bOverrides = false;
     struct FEcho { FString Session; FSimurghRTCDataMessage Message; };
@@ -66,12 +70,13 @@ public:
     {
         FCoreDelegates::GetOnPostEngineInit().Remove(Init); FTSTicker::GetCoreTicker().RemoveTicker(Ticker);
 #if SIMURGHRTC_WITH_DIRECT
-        Data.Reset(); if (Client) Client->Close(); Client.Reset();
+        ConcurrentClient.Reset(); Data.Reset(); if (Client) Client->Close(); Client.Reset();
 #endif
 #if CONTRACTHOST_WITH_DIRECT_SERVER
-        if (Server) Server->Stop(); Server.Reset();
+        if (Server) Server->Stop(); Server.Reset(); ConcurrentServer.Reset();
         if (Router && Health) Router->UnbindRoute(Health);
         if (Router && ShutdownRoute) Router->UnbindRoute(ShutdownRoute);
+        if (Router && ConcurrentRoute) Router->UnbindRoute(ConcurrentRoute);
         Router.Reset(); Health.Reset(); ShutdownRoute.Reset();
         if (bOwnsHttp && FHttpServerModule::IsAvailable()) FHttpServerModule::Get().StopAllListeners();
         if (bOverrides && GConfig) GConfig->SetArray(TEXT("HTTPServer.Listeners"), TEXT("ListenerOverrides"), PreviousOverrides, GEngineIni);
@@ -103,13 +108,16 @@ public:
         J->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString()); J->SetStringField(TEXT("platform"), FPlatformProperties::IniPlatformName());
         J->SetStringField(TEXT("artifact_manifest_sha256"), FNativeRuntime::GetMobileArtifactSHA256());
         J->SetStringField(TEXT("native_backend"), FNativeRuntime::GetBackendVersion());
-        J->SetBoolField(TEXT("loopback_only"), true); J->SetBoolField(TEXT("network_media_tested"), false); J->SetBoolField(TEXT("application_messages_tested"), Scenario == TEXT("data"));
+        J->SetBoolField(TEXT("loopback_only"), true); J->SetBoolField(TEXT("network_media_tested"), false); J->SetBoolField(TEXT("application_messages_tested"), (Scenario == TEXT("data") || Scenario == TEXT("concurrent")));
         return J;
     }
 #if CONTRACTHOST_WITH_DIRECT_SERVER
     TSharedRef<FJsonObject> ServerReport()
     {
         auto J = Metadata(); const auto S = Server ? Server->GetSnapshot() : FDirectServerSnapshot{};
+        J->SetNumberField(TEXT("connected_sessions"), S.ConnectedSessions); J->SetNumberField(TEXT("peak_live_peers"), S.PeakLivePeers);
+        J->SetNumberField(TEXT("peak_connected_sessions"), S.PeakConnectedSessions); J->SetNumberField(TEXT("records"), S.Records);
+        if (ConcurrentServer) J->SetObjectField(TEXT("concurrent"),ConcurrentServer->Report());
         J->SetBoolField(TEXT("running"), S.bRunning); J->SetNumberField(TEXT("live_peers"), S.LivePeers);
         J->SetNumberField(TEXT("created"), S.Created); J->SetNumberField(TEXT("connected"), S.Connected);
         J->SetNumberField(TEXT("closed"), S.Closed); J->SetNumberField(TEXT("expired"), S.Expired);
@@ -165,8 +173,29 @@ public:
             else if (A.BearerToken == Token + TEXT("-other")) { Result.Principal = TEXT("other-user"); Result.bAllowCreate = true; }
             return Result;
         };
+        if (Scenario == TEXT("concurrent"))
+        {
+            ConcurrentServer = MakeUnique<FContractConcurrentServer>([this](const FString& Why) { Fail(Why); });
+            if (!ConcurrentServer->Configure(Config,CredentialsFile)) { Fail(TEXT("Invalid concurrent credentials.")); return false; }
+        }
         Server = FDirectServer::Bind(Owner.Get(), Router.ToSharedRef(), MoveTemp(Config), Error);
         if (!Server) return false;
+        if (ConcurrentServer)
+        {
+            ConcurrentServer->Attach(Server);
+            ConcurrentRoute = Router->BindRoute(FHttpPath(TEXT("/simurghrtc/probe/concurrent")), EHttpServerRequestVerbs::VERB_POST,
+                FHttpRequestHandler::CreateLambda([this](const FHttpServerRequest& Request, const FHttpResultCallback& Complete)
+                {
+                    const auto* A = Request.Headers.Find(TEXT("authorization"));
+                    if (!A || A->Num()!=1 || (*A)[0] != TEXT("Bearer ") + Token)
+                    { Complete(FHttpServerResponse::Error(static_cast<EHttpServerResponseCodes>(401))); return true; }
+                    TSharedPtr<FJsonObject> Body; FString Why, Action;
+                    if (!Direct::ParseJson(Request.Body,Body,Why) || !Body->TryGetStringField(TEXT("action"),Action) || !ConcurrentServer->Command(Action))
+                    { Complete(FHttpServerResponse::Error(static_cast<EHttpServerResponseCodes>(409))); return true; }
+                    Complete(FHttpServerResponse::Ok()); return true;
+                }));
+            if (!ConcurrentRoute) { Fail(TEXT("Concurrent control route failed.")); return false; }
+        }
         Health = Router->BindRoute(FHttpPath(TEXT("/simurghrtc/probe/direct")), EHttpServerRequestVerbs::VERB_GET,
             FHttpRequestHandler::CreateLambda([this](const FHttpServerRequest&, const FHttpResultCallback& Complete)
             { Complete(FHttpServerResponse::Create(Direct::Write(ServerReport()), TEXT("application/json"))); return true; }));
@@ -194,6 +223,14 @@ public:
         if (!Saved) UE_LOG(LogSimurghRTCDirectProbe, Error, TEXT("Could not save Direct probe report."));
         FPlatformMisc::RequestExitWithStatus(false, Error.IsEmpty() && Saved ? 0 : 5);
     }
+    bool SaveConcurrentProgress(TSharedRef<FJsonObject> ProgressData)
+    {
+        auto J = Metadata(); J->SetObjectField(TEXT("concurrent"),ProgressData); J->SetBoolField(TEXT("passed"),Error.IsEmpty());
+        const FString Directory = FPaths::ProjectSavedDir() / TEXT("SimurghRTC"); IFileManager::Get().MakeDirectory(*Directory,true);
+        const FString Json = Direct::Write(J);
+        const bool Saved = FFileHelper::SaveStringToFile(Json,*(Directory / (TEXT("concurrent-progress-") + RunId + TEXT(".json"))));
+        UE_LOG(LogSimurghRTCDirectProbe,Display,TEXT("SIMURGHRTC_CONCURRENT_PROGRESS %s"),*Json); return Saved;
+    }
     bool Tick(float)
     {
         check(IsInGameThread());
@@ -209,7 +246,7 @@ public:
                 if (R.IsError()) { Fail(TEXT("Server echo send failed.")); break; }
                 EchoBytes -= M.Bytes.Num() + M.Text.Len() * sizeof(TCHAR); Echoes.RemoveAt(0); ++EchoSent;
             }
-            if (!bStopping && FPlatformTime::Seconds() - Started > 180) { Fail(TEXT("Server probe deadline expired.")); bStopping = true; StopAt = FPlatformTime::Seconds(); if (Server) Server->Stop(); }
+            if (!bStopping && FPlatformTime::Seconds() - Started > (Scenario == TEXT("concurrent") ? 600 : 180)) { Fail(TEXT("Server probe deadline expired.")); bStopping = true; StopAt = FPlatformTime::Seconds(); if (Server) Server->Stop(); }
             if (!Error.IsEmpty()) { if (Server) Server->Stop(); Report(ServerReport()); return false; }
             if (bStopping && (Server->GetSnapshot().LivePeers == 0 || FPlatformTime::Seconds() - StopAt > 10))
             {
@@ -219,15 +256,36 @@ public:
             return true;
         }
 #endif
-        if (FPlatformTime::Seconds() - Started > Requested * 30 + 20) Fail(TEXT("Client probe deadline expired."));
+        if (FPlatformTime::Seconds() - Started > (Scenario == TEXT("concurrent") ? 540 : Requested * 30 + 20)) Fail(TEXT("Client probe deadline expired."));
         if (!Client && Error.IsEmpty())
         {
             StepStarted = FPlatformTime::Seconds(); bClosing = false;
             FDirectClientConfig Config; Config.Endpoint = Endpoint; Config.BearerToken = Token; Config.Identity = Scenario == TEXT("denied") ? TEXT("deny") : TEXT("probe-client");
             Config.Purpose = Index % 2 ? TEXT("call") : TEXT("data"); Config.bAllowLoopbackHttp = true; Config.bLoopbackProbe = true;
+            if (Scenario == TEXT("concurrent")) { Config.Identity = TEXT("shared-identity"); Config.Purpose = TEXT("text-room"); }
             Config.bEarlyIceProbe = Index % 3 == 0; Config.RequestTimeoutSeconds = Scenario == TEXT("data") ? 2 : 0.5; Config.ConnectTimeoutSeconds = Scenario == TEXT("data") ? 20 : 10;
+            if (Scenario == TEXT("concurrent")) { Config.RequestTimeoutSeconds = 3; Config.ConnectTimeoutSeconds = 60; }
             Client = FDirectClient::Connect(Owner.Get(), MoveTemp(Config), [this](const FDirectClientSnapshot&) { bGameThread &= IsInGameThread(); ++CallbackCount; }, Error);
             if (!Client) Fail(TEXT("Direct client creation failed."));
+        }
+        if (Scenario == TEXT("concurrent") && Client)
+        {
+            const auto S = Client->GetSnapshot();
+            if (S.State == EDirectClientState::Connected && !ConcurrentClient)
+                ConcurrentClient = MakeUnique<FContractConcurrentClient>(Client.ToSharedRef(),ConcurrentRole,bReplacement,
+                    [this](TSharedRef<FJsonObject> ProgressData) { return SaveConcurrentProgress(ProgressData); });
+            if (ConcurrentClient && S.State == EDirectClientState::Connected) ConcurrentClient->Tick();
+            bool Finished = false;
+            if (ConcurrentClient) { Finished = ConcurrentClient->Finished(S); if (!ConcurrentClient->Error.IsEmpty()) Fail(ConcurrentClient->Error); }
+            else if (S.State == EDirectClientState::Failed) Fail(S.Error);
+            if (Finished || !Error.IsEmpty())
+            {
+                auto J = Metadata(); J->SetStringField(TEXT("scenario"),Scenario);
+                if (ConcurrentClient) J->SetObjectField(TEXT("concurrent"),ConcurrentClient->Report());
+                J->SetBoolField(TEXT("native_closed"),S.bNativeClosed); J->SetBoolField(TEXT("remote_closed"),S.bRemoteClosed);
+                J->SetStringField(TEXT("close_reason"),S.Error); Report(J); return false;
+            }
+            return true;
         }
         if (Client)
         {
@@ -303,7 +361,10 @@ void FContractDirectProbe::Startup()
     FParse::Value(FCommandLine::Get(), TEXT("SimurghRTCDirectPairs="), Impl->Requested);
     FParse::Value(FCommandLine::Get(), TEXT("SimurghRTCDirectScenario="), Impl->Scenario);
     FParse::Value(FCommandLine::Get(), TEXT("SimurghRTCDirectExpectedError="), Impl->ExpectedError);
-    if (!FGuid::ParseExact(Impl->RunId, EGuidFormats::DigitsWithHyphens, Id) || Impl->Port < 1024 || Impl->Port > 65535
+    FParse::Value(FCommandLine::Get(),TEXT("SimurghRTCConcurrentCredentials="),Impl->CredentialsFile);
+    FParse::Value(FCommandLine::Get(),TEXT("SimurghRTCConcurrentRole="),Impl->ConcurrentRole);
+    Impl->bReplacement = FParse::Param(FCommandLine::Get(),TEXT("SimurghRTCConcurrentReplacement"));
+    if (Impl->ConcurrentRole < 0 || Impl->ConcurrentRole > 3 || !FGuid::ParseExact(Impl->RunId, EGuidFormats::DigitsWithHyphens, Id) || Impl->Port < 1024 || Impl->Port > 65535
         || Impl->Requested < 1 || Impl->Requested > 16 || !FFileHelper::LoadFileToString(Impl->Token, *TokenFile))
     { UE_LOG(LogSimurghRTCDirectProbe, Error, TEXT("Invalid Direct probe arguments or unreadable token file.")); Impl.Reset(); return; }
     Impl->Token.TrimStartAndEndInline();

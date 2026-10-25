@@ -12,6 +12,8 @@ Include `SimurghRTCDirectServer.h` from the Server module. Call `FDirectServer::
 
 The admission callback receives the bearer credential on every request. Return the same principal for the same authenticated user, and explicitly allow or reject new sessions. The create request's identity/purpose fields are metadata; they do not authenticate anyone. Session IDs alone grant no access.
 
+[Server sessions and routing](SERVER_ROUTING.md) explains per-principal capacity, lifecycle events, private echoes and authorized message fan-out.
+
 The host owns listener startup, bind address and shutdown. The provider installs one route and removes only that route when stopped; it does not stop another service's HTTP listeners. Call `Stop` during owner shutdown. Native cleanup is asynchronous; `GetSnapshot().LivePeers == 0` confirms it has finished.
 
 ## Client ownership

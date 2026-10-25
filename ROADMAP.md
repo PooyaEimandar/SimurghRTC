@@ -5,7 +5,7 @@
 - **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-002 build profiles, SR-003 dependency/ABI review and headless Server feasibility, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
 - **Integrated and locally tested:** the isolated M155 backend on Mac, Android and the iOS simulator. Android Direct-only/Full packages pass lifecycle, local codecs, capture and mixer checks; both simulator profiles pass lifecycle/local codecs. Fresh repeat builds pass on all four ARM64 targets, including iOS device; both rebuilt device libraries pass C API link checks. The packaged Mac dedicated Server passes factory, HTTP and cleanup checks in both modes. The dated source/advisory review resolves the known dependency findings. SR-006/SR-007 and the remaining SR-008 acceptance depend on independent-host reproduction and deferred physical iOS startup.
 - **Still to prove:** cross-device and Janus connections, network media, signed physical iOS behavior and broader platform/release coverage. See [M0 validation](docs/M0_VALIDATION.md) for exact test scope; the current dependencies are not a qualified release baseline.
-- **Local M1 signaling and DataChannels validated:** SR-101 provides asynchronous peers and SDP/ICE on Mac Server, Android and the iOS simulator. SR-102 adds Direct HTTP signaling between separate packaged Mac client and Server processes, with retries, admission and cleanup. SR-103 adds text/binary DataChannels, reliability options, message limits and backpressure, with packaged Mac round trips. See [DataChannels](docs/DATA_CHANNELS.md).
+- **Local M1 signaling, DataChannels and concurrent Server routing validated:** SR-101 provides asynchronous peers and SDP/ICE on Mac Server, Android and the iOS simulator. SR-102 adds Direct HTTP signaling between separate packaged Mac client and Server processes. SR-103 adds text/binary DataChannels, reliability options, message limits and backpressure. SR-104 validates four simultaneous Mac clients, authorized routing, reconnect and cleanup. See [Server sessions](docs/SERVER_ROUTING.md). Shared session integration is next (SR-105).
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
 
@@ -81,7 +81,7 @@ A preview describes what is included; it does not mean production-ready. Set dat
 
 ## 4. Milestones, epics, issues
 
-SR-001 is **Complete (API v1 and executable lifecycle examples)**, SR-002 is **Complete (available Mac profile/package checks)** and SR-003 is **Complete (review with tracked release blockers)**; SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; SR-008 is **In progress**; SR-101 is **Complete (local native ownership and SDP/ICE)** and SR-102 is **Complete (local Direct HTTP v1)**; SR-103 is **Complete (local DataChannels)**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
+SR-001 is **Complete (API v1 and executable lifecycle examples)**, SR-002 is **Complete (available Mac profile/package checks)** and SR-003 is **Complete (review with tracked release blockers)**; SR-006 and SR-007 are **In progress**; SR-004 is **Complete (available Mac feasibility)** and SR-005 is **Complete (versioned fixtures and local validation)**; SR-008 is **In progress**; SR-101 is **Complete (local native ownership and SDP/ICE)** and SR-102 is **Complete (local Direct HTTP v1)**; SR-103 is **Complete (local DataChannels)** and SR-104 is **Complete (local concurrent Server routing)**; all other issues remain **Planned**. Each issue explains the work and how to verify it. Priorities appear beside issue titles. The [demo matrix](docs/DEMO_MATRIX.md) tracks the requested examples.
 
 ### M0 Foundation and feasibility
 
@@ -217,7 +217,7 @@ Define a versioned UE HTTPServer protocol for creating sessions, exchanging offe
 
 **Complete for local Mac validation, 2026-10-25.** The isolated M155 bridge and internal native/Direct providers support copied text/binary payloads, channel lifecycle, six ordering/reliability combinations, negotiated limits and bounded queues. Four separate-process connections between packaged Unreal 5.8.3 Mac ARM64 Full client and dedicated Server passed 292 exact round trips across 24 channels, queue saturation/retry, and native teardown. All 20 Unreal and 166 Python tests pass. The native fixture also checks a lower 32 KiB message limit and receive-overflow failure. See the [guide](docs/DATA_CHANNELS.md) and [validation record](docs/reviews/SR103-data-channel-validation.json).
 
-The shared session/Blueprint facade remains SR-105. Mobile needs rebuilt artifacts and package checks for this bridge; packet-loss/expiry behavior, cross-device and NAT/TURN acceptance remain open. Next is SR-104's concurrent Server sessions and addressed routing.
+The shared session/Blueprint facade remains SR-105. Mobile needs rebuilt artifacts and package checks for this bridge; packet-loss/expiry behavior, cross-device and NAT/TURN acceptance remain open. Concurrent Server routing is covered by SR-104 below.
 
 Expose text/binary messages, channel lifecycle, ordering/reliability options, negotiated message limits and buffered-amount/backpressure events. Define who owns each byte buffer and what happens when a send cannot be accepted.
 
@@ -230,6 +230,10 @@ Expose text/binary messages, channel lifecycle, ordering/reliability options, ne
 #### E04 Unreal server and client integration
 
 ##### SR-104 — Implement the Unreal server endpoint (P0)
+
+**Complete for local Mac validation, 2026-10-25.** The internal Server provider now exposes session lifecycle/inspection, per-principal limits, private echoes and authorized addressed fan-out. Four separate packaged Unreal 5.8.3 Mac ARM64 clients connected concurrently to the dedicated Server. Text-room and binary routing passed with no unexpected messages; cross-room sends, foreign handles and stale addresses were rejected. Closing a session during authorization, killing a client, idle cleanup and fresh-session reconnect all passed. All five sessions released their native peers, with no records left after shutdown.
+
+All 20 Unreal and 171 Python tests pass; the existing 292-message packaged DataChannel regression also passes. See the [guide](docs/SERVER_ROUTING.md) and [validation record](docs/reviews/SR104-concurrent-server-validation.json). Shared C++/Blueprint integration is next in SR-105/SR-106; mobile, cross-device and NAT/TURN acceptance remain open.
 
 Add the plugin server runtime and a sample Server target. Give each client its own session, addressed data callbacks and echo handler. Add a small test that distributes text-room messages to the appropriate sessions.
 

@@ -19,11 +19,34 @@ struct FDirectAdmissionResult
     FString Principal; // Stable authenticated identity; empty rejects the request.
     bool bAllowCreate = false;
 };
+enum class EDirectServerSessionState : uint8 { Connecting, Connected, Closing, Closed, Failed };
+struct FDirectSessionInfo
+{
+    FString SessionId, Principal, Identity, Purpose;
+    EDirectServerSessionState State = EDirectServerSessionState::Connecting;
+    bool bNativeClosed = false;
+};
+struct FDirectChannelAddress
+{
+    FString SessionId;
+    FSimurghRTCChannelHandle Channel;
+};
+struct FDirectRouteResult
+{
+    FDirectChannelAddress Destination;
+    FSimurghRTCError Error; // Success means copied for sending, not delivered.
+};
 struct FDirectServerConfig
 {
     TFunction<FDirectAdmissionResult(const FDirectAdmissionRequest&)> Admit;
     TFunction<void(const FString& SessionId, const FNativeChannelEvent&)> OnChannelEvent;
+    TFunction<void(const FDirectSessionInfo&)> OnSessionChanged;
+    // Cross-session routing is denied without this policy. Principal is authenticated;
+    // Identity/Purpose are client metadata. Self-echo does not require this callback.
+    TFunction<bool(const FDirectSessionInfo& Source, const FDirectSessionInfo& Destination,
+        ESimurghRTCMessageKind Kind)> CanRoute;
     int32 MaxSessions = 16;
+    int32 MaxSessionsPerPrincipal = 4;
     double IdleSeconds = 30;
     double ReplaySeconds = 30;
     bool bLoopbackProbe = false; // Explicit same-host tests only.
@@ -32,6 +55,8 @@ struct FDirectServerSnapshot
 {
     int32 LivePeers = 0, Records = 0, Created = 0, Connected = 0, Closed = 0, Expired = 0;
     int32 Replays = 0, Rejected = 0, EarlyIce = 0;
+    int32 ConnectedSessions = 0, PeakLivePeers = 0, PeakConnectedSessions = 0;
+    int32 RoutedRecipients = 0, RejectedRecipients = 0;
     bool bRunning = false;
     FNativeTransportSnapshot LastConnectedTransport;
     TArray<FString> ConnectedSessionIds, ClosedSessionIds; // Most recent 64; no credentials.
@@ -55,6 +80,15 @@ public:
     FSimurghRTCError SendBytes(const FString& SessionId, FSimurghRTCChannelHandle Channel, const TArray<uint8>& Bytes);
 
     FDirectServerSnapshot GetSnapshot() const;
+    FSimurghRTCError GetSessionInfo(const FString& SessionId, FDirectSessionInfo& Out) const;
+    TArray<FDirectSessionInfo> GetSessions(bool bIncludeClosed = false) const;
+    FSimurghRTCError CloseSession(const FString& SessionId);
+    // Bounded fan-out (1–32 distinct addresses). Invalid input/source rejects the
+    // entire request. Otherwise inspect each result; accepted recipients are not
+    // rolled back if another recipient is denied/full/closed. Retry only failures.
+    FSimurghRTCError RouteMessage(const FDirectChannelAddress& Source, const FSimurghRTCDataMessage& Message,
+        const TArray<FDirectChannelAddress>& Destinations, TArray<FDirectRouteResult>& OutResults);
+    FSimurghRTCError EchoMessage(const FString& SessionId, const FSimurghRTCDataMessage& Message);
 private:
     class FImpl;
     explicit FDirectServer(TSharedRef<FImpl> InImpl);

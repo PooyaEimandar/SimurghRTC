@@ -20,7 +20,8 @@ bool bServersStopping = false;
 struct FReplay { FString Digest, Response; double Until = 0; int32 Bytes = 0; };
 struct FDirectSession
 {
-    FString Id, Principal, CreateId, CreateDigest, CreateResponse;
+    FString Id, Principal, Identity, Purpose, CreateId, CreateDigest, CreateResponse;
+    int32 LastReportedState = -1; bool bReportedNativeClosed = false;
     FString State = TEXT("open");
     FNativePeer::FHandle Peer;
     TArray<FNativeSignalRequest> Commands;
@@ -64,7 +65,7 @@ public:
     ~FImpl() { Stop(); FTSTicker::GetCoreTicker().RemoveTicker(Ticker); }
     void Stop() override
     {
-        check(IsInGameThread()); Snapshot.bRunning = false; Config.OnChannelEvent = {};
+        check(IsInGameThread()); Snapshot.bRunning = false; Config.OnChannelEvent = {}; Config.OnSessionChanged = {}; Config.CanRoute = {};
         if (Router && Route) Router->UnbindRoute(Route);
         Route.Reset(); Router.Reset();
         for (auto& Entry : Sessions) Close(*Entry.Value);
@@ -103,13 +104,29 @@ public:
         Session.Events.Add(MakeShared<FJsonValueObject>(Value)); Session.State = TEXT("failed");
         Session.Commands.Reset(); if (Session.Peer) Session.Peer->Close();
     }
+    FDirectSessionInfo Info(const FDirectSession& S) const
+    {
+        FDirectSessionInfo I; I.SessionId = S.Id; I.Principal = S.Principal; I.Identity = S.Identity; I.Purpose = S.Purpose;
+        I.bNativeClosed = !S.Peer || S.Peer->GetSnapshot().State == ENativePeerState::Closed;
+        I.State = S.State == TEXT("closed") ? (I.bNativeClosed ? EDirectServerSessionState::Closed : EDirectServerSessionState::Closing)
+            : S.State == TEXT("failed") ? EDirectServerSessionState::Failed
+            : S.bConnected ? EDirectServerSessionState::Connected : EDirectServerSessionState::Connecting;
+        return I;
+    }
+    FNativePeer::FHandle DataPeer(const FString& Id) const
+    {
+        const auto S = Sessions.FindRef(Id);
+        if (!Snapshot.bRunning || !Owner.IsValid() || !S || S->State == TEXT("closed") || S->State == TEXT("failed")) return {};
+        return S->Peer;
+    }
     bool Tick(float)
     {
         check(IsInGameThread());
         if (!Owner.IsValid()) Stop();
         const double Now = FPlatformTime::Seconds();
         TArray<FString> Remove;
-        Snapshot.LivePeers = 0;
+        Snapshot.LivePeers = 0; Snapshot.ConnectedSessions = 0;
+        TArray<FDirectSessionInfo> Notifications;
         for (const auto& Entry : Sessions)
         {
             auto Session = Entry.Value;
@@ -138,6 +155,7 @@ public:
                                 auto Body = MakeShared<FJsonObject>(); Body->SetStringField(TEXT("state"), TEXT("connected"));
                                 Event(*Session, TEXT("connection"), Body);
                             }
+                            if (Session->bConnected && State.Transport.Connection == ENativeConnectionState::Connected) ++Snapshot.ConnectedSessions;
                             auto Commands = MoveTemp(Session->Commands); Session->Commands.Reset();
                             for (auto& Command : Commands)
                             {
@@ -166,10 +184,31 @@ public:
                     }
                 }
             }
+            const auto Current = Info(*Session);
+            if (Session->LastReportedState != int32(Current.State) || Session->bReportedNativeClosed != Current.bNativeClosed)
+            {
+                Session->LastReportedState = int32(Current.State); Session->bReportedNativeClosed = Current.bNativeClosed;
+                Notifications.Add(Current);
+            }
             if (Session->State == TEXT("closed") && !Session->Peer && (!Snapshot.bRunning || Now >= Session->RetainUntil)) Remove.Add(Entry.Key);
         }
         for (const auto& Id : Remove) Sessions.Remove(Id);
-        Snapshot.Records = Sessions.Num(); return true;
+        Snapshot.Records = Sessions.Num();
+        Snapshot.PeakLivePeers = FMath::Max(Snapshot.PeakLivePeers, Snapshot.LivePeers);
+        Snapshot.PeakConnectedSessions = FMath::Max(Snapshot.PeakConnectedSessions, Snapshot.ConnectedSessions);
+        // Dispatch after iterating the map: callbacks may close any session or stop the host.
+        for (const auto& Current : Notifications)
+        {
+            if (!Snapshot.bRunning || !Owner.IsValid()) break;
+            if (const auto S = Sessions.FindRef(Current.SessionId))
+            {
+                const auto NowInfo = Info(*S);
+                if (NowInfo.State != Current.State || NowInfo.bNativeClosed != Current.bNativeClosed) continue;
+            }
+            const auto Callback = Config.OnSessionChanged;
+            if (Callback) Callback(Current);
+        }
+        return true;
     }
     bool Handle(const FHttpServerRequest& Http, const FHttpResultCallback& Complete)
     {
@@ -200,10 +239,12 @@ public:
             }
             if (!Allowed.bAllowCreate) { Error(Request, TEXT("AdmissionRejected"), Complete); return true; }
             if (Request.Sequence != 0) { Error(Request, TEXT("OutOfOrder"), Complete); return true; }
-            int32 Live = 0; for (const auto& Entry : Sessions) if (Entry.Value->Peer) ++Live;
-            if (Live >= Config.MaxSessions || Sessions.Num() >= 64) { Error(Request, TEXT("ResourceLimit"), Complete); return true; }
+            int32 Live = 0, PrincipalLive = 0;
+            for (const auto& Entry : Sessions) if (Entry.Value->Peer)
+            { ++Live; if (Entry.Value->Principal == Allowed.Principal) ++PrincipalLive; }
+            if (Live >= Config.MaxSessions || PrincipalLive >= Config.MaxSessionsPerPrincipal || Sessions.Num() >= 64) { Error(Request, TEXT("ResourceLimit"), Complete); return true; }
             Session = MakeShared<FDirectSession>(); Session->Id = FGuid::NewGuid().ToString(EGuidFormats::DigitsWithHyphensLower);
-            Session->Principal = Allowed.Principal; Session->CreateId = Request.Id; Session->CreateDigest = Request.Digest;
+            Session->Principal = Allowed.Principal; Session->Identity = Admission.Identity; Session->Purpose = Admission.Purpose; Session->CreateId = Request.Id; Session->CreateDigest = Request.Digest;
             Session->Peer = FNativePeer::Open(Owner.Get(), Admission.Purpose == TEXT("call") ? ENativeFactoryMode::BuiltinMedia : ENativeFactoryMode::DataOnly, {}, Failure, Config.bLoopbackProbe);
             if (!Session->Peer) { Error(Request, TEXT("ResourceLimit"), Complete); return true; }
             TWeakPtr<FImpl> Weak = AsShared(); TWeakPtr<FDirectSession> WeakSession = Session;
@@ -301,43 +342,126 @@ FSimurghRTCError FDirectServer::OpenChannel(const FString& SessionId, const FSim
 {
     check(IsInGameThread());
     Out = {};
-    const auto Session = Impl->Sessions.FindRef(SessionId);
-    const auto Peer = Impl->Snapshot.bRunning && Impl->Owner.IsValid() && Session && Session->State != TEXT("closed") && Session->State != TEXT("failed") ? Session->Peer : nullptr;
+    const auto Peer = Impl->DataPeer(SessionId);
     return Peer ? Peer->OpenChannel(Options, Out) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
 }
 FSimurghRTCError FDirectServer::CloseChannel(const FString& SessionId, FSimurghRTCChannelHandle Channel)
 {
     check(IsInGameThread());
-    const auto Session = Impl->Sessions.FindRef(SessionId);
-    const auto Peer = Impl->Snapshot.bRunning && Impl->Owner.IsValid() && Session && Session->State != TEXT("closed") && Session->State != TEXT("failed") ? Session->Peer : nullptr;
+    const auto Peer = Impl->DataPeer(SessionId);
     return Peer ? Peer->CloseChannel(Channel) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
 }
 FSimurghRTCError FDirectServer::GetChannelInfo(const FString& SessionId, FSimurghRTCChannelHandle Channel, FNativeChannelSnapshot& Out) const
 {
     check(IsInGameThread());
     Out = {};
-    const auto Session = Impl->Sessions.FindRef(SessionId);
-    const auto Peer = Impl->Snapshot.bRunning && Impl->Owner.IsValid() && Session && Session->State != TEXT("closed") && Session->State != TEXT("failed") ? Session->Peer : nullptr;
+    const auto Peer = Impl->DataPeer(SessionId);
     return Peer ? Peer->GetChannelInfo(Channel, Out) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
 }
 FSimurghRTCError FDirectServer::SendText(const FString& SessionId, FSimurghRTCChannelHandle Channel, const FString& Text)
 {
     check(IsInGameThread());
-    const auto Session = Impl->Sessions.FindRef(SessionId);
-    const auto Peer = Impl->Snapshot.bRunning && Impl->Owner.IsValid() && Session && Session->State != TEXT("closed") && Session->State != TEXT("failed") ? Session->Peer : nullptr;
+    const auto Peer = Impl->DataPeer(SessionId);
     return Peer ? Peer->SendText(Channel, Text) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
 }
 FSimurghRTCError FDirectServer::SendBytes(const FString& SessionId, FSimurghRTCChannelHandle Channel, const TArray<uint8>& Bytes)
 {
     check(IsInGameThread());
-    const auto Session = Impl->Sessions.FindRef(SessionId);
-    const auto Peer = Impl->Snapshot.bRunning && Impl->Owner.IsValid() && Session && Session->State != TEXT("closed") && Session->State != TEXT("failed") ? Session->Peer : nullptr;
+    const auto Peer = Impl->DataPeer(SessionId);
     return Peer ? Peer->SendBytes(Channel, Bytes) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
+}
+FSimurghRTCError FDirectServer::GetSessionInfo(const FString& Id, FDirectSessionInfo& Out) const
+{
+    check(IsInGameThread()); Out = {};
+    const auto S = Impl->Sessions.FindRef(Id);
+    if (!S) return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Unknown Server session."));
+    Out = Impl->Info(*S); return {};
+}
+TArray<FDirectSessionInfo> FDirectServer::GetSessions(bool bIncludeClosed) const
+{
+    check(IsInGameThread()); TArray<FDirectSessionInfo> Out;
+    for (const auto& Pair : Impl->Sessions)
+    { auto I = Impl->Info(*Pair.Value); if (bIncludeClosed || !I.bNativeClosed) Out.Add(MoveTemp(I)); }
+    Out.Sort([](const auto& A, const auto& B) { return A.SessionId < B.SessionId; }); return Out;
+}
+FSimurghRTCError FDirectServer::CloseSession(const FString& Id)
+{
+    check(IsInGameThread()); const auto S = Impl->Sessions.FindRef(Id);
+    if (!S) return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Unknown Server session."));
+    Impl->Close(*S); return {};
+}
+FSimurghRTCError FDirectServer::EchoMessage(const FString& Id, const FSimurghRTCDataMessage& Message)
+{
+    TArray<FDirectRouteResult> Results;
+    const FDirectChannelAddress Address{Id, Message.Channel};
+    auto Error = RouteMessage(Address, Message, {Address}, Results);
+    return Error.IsError() ? Error : Results[0].Error;
+}
+FSimurghRTCError FDirectServer::RouteMessage(const FDirectChannelAddress& Source, const FSimurghRTCDataMessage& Message,
+    const TArray<FDirectChannelAddress>& Destinations, TArray<FDirectRouteResult>& OutResults)
+{
+    check(IsInGameThread()); OutResults.Reset();
+    auto Invalid = [] { return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid routed message or destination list.")); };
+    if (!Source.Channel.IsValid() || Message.Channel.Id != Source.Channel.Id || Destinations.IsEmpty() || Destinations.Num() > 32
+        || Message.Text.Len() > FNativeDataLimits::MessageBytes || Message.Bytes.Num() > FNativeDataLimits::MessageBytes) return Invalid();
+    if (Message.Kind == ESimurghRTCMessageKind::Text)
+    {
+        if (!Message.Bytes.IsEmpty()) return Invalid();
+        FTCHARToUTF8 Utf8(*Message.Text, Message.Text.Len()); FUTF8ToTCHAR Back(Utf8.Get(), Utf8.Length());
+        if (Utf8.Length() > FNativeDataLimits::MessageBytes || Back.Length() != Message.Text.Len()
+            || FMemory::Memcmp(Back.Get(), *Message.Text, Message.Text.Len() * sizeof(TCHAR)) != 0) return Invalid();
+    }
+    else if (Message.Kind != ESimurghRTCMessageKind::Binary || !Message.Text.IsEmpty()) return Invalid();
+    TSet<FString> Seen;
+    for (const auto& D : Destinations)
+    {
+        if (!Direct::SessionId(D.SessionId) || !D.Channel.IsValid()) return Invalid();
+        const FString Key = D.SessionId + TEXT(":") + D.Channel.Id.ToString();
+        if (Seen.Contains(Key)) return Invalid(); Seen.Add(Key);
+    }
+    const auto State = Impl; // Policy callbacks may release the public handle or stop the host.
+    const auto From = State->Sessions.FindRef(Source.SessionId);
+    auto SourcePeer = State->DataPeer(Source.SessionId); FNativeChannelSnapshot SourceChannel;
+    if (!From || !SourcePeer || !From->bConnected || SourcePeer->GetChannelInfo(Source.Channel, SourceChannel).IsError() || !SourceChannel.Info.bOpen)
+        return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Source session/channel is not connected."));
+    const auto FromInfo = State->Info(*From);
+    const auto Payload = Message; const auto Targets = Destinations; const auto Origin = Source;
+    for (const auto& Target : Targets)
+    {
+        FDirectRouteResult Result; Result.Destination = Target;
+        const auto To = State->Sessions.FindRef(Target.SessionId); auto Peer = State->DataPeer(Target.SessionId);
+        FNativeChannelSnapshot Channel;
+        SourcePeer = State->DataPeer(Origin.SessionId);
+        if (!SourcePeer || SourcePeer->GetChannelInfo(Origin.Channel, SourceChannel).IsError() || !SourceChannel.Info.bOpen
+            || !To || !To->bConnected || !Peer || Peer->GetChannelInfo(Target.Channel, Channel).IsError() || !Channel.Info.bOpen)
+            Result.Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Destination session/channel is not connected."));
+        else
+        {
+            bool Allowed = Origin.SessionId == Target.SessionId;
+            if (!Allowed)
+            {
+                const auto Policy = State->Config.CanRoute;
+                Allowed = Policy && Policy(FromInfo, State->Info(*To), Payload.Kind);
+            }
+            if (!Allowed) Result.Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::Unauthorized, TEXT("Message route is not authorized."));
+            else
+            {
+                SourcePeer = State->DataPeer(Origin.SessionId); Peer = State->DataPeer(Target.SessionId);
+                if (!SourcePeer || !Peer || SourcePeer->GetChannelInfo(Origin.Channel, SourceChannel).IsError() || !SourceChannel.Info.bOpen)
+                    Result.Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Route closed during authorization."));
+                else Result.Error = Payload.Kind == ESimurghRTCMessageKind::Text ? Peer->SendText(Target.Channel, Payload.Text) : Peer->SendBytes(Target.Channel, Payload.Bytes);
+            }
+        }
+        if (Result.Error.IsError()) ++State->Snapshot.RejectedRecipients; else ++State->Snapshot.RoutedRecipients;
+        OutResults.Add(MoveTemp(Result));
+    }
+    return {};
 }
 TSharedPtr<FDirectServer> FDirectServer::Bind(UObject* Owner, TSharedRef<IHttpRouter> Router, FDirectServerConfig Config, FString& Error)
 {
     check(IsInGameThread()); Error.Reset();
     if (bServersStopping || !IsValid(Owner) || !Config.Admit || Config.MaxSessions < 1 || Config.MaxSessions > 32
+        || Config.MaxSessionsPerPrincipal < 1 || Config.MaxSessionsPerPrincipal > 32
         || !FMath::IsFinite(Config.IdleSeconds) || Config.IdleSeconds < 1 || Config.IdleSeconds > 300
         || !FMath::IsFinite(Config.ReplaySeconds) || Config.ReplaySeconds < 1 || Config.ReplaySeconds > 300)
     { Error = TEXT("Invalid Direct Server configuration."); return {}; }

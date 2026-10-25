@@ -1,0 +1,436 @@
+{
+  "schema": 1,
+  "issue": "SR-104",
+  "recorded_at": "2026-10-25T10:40:58.421691+00:00",
+  "base_commit": "aae92e4be59dd5a40d0e9b367b861ab47480b7f2",
+  "status": "complete-local-concurrent-server",
+  "engine_version": "5.8.3",
+  "engine_revision": "ab5f9a9cba8be69142251db5953c11de5562dc5e",
+  "host": {
+    "os_version": "27.0.1",
+    "xcode": "Xcode 27.1\nBuild version 27A9275",
+    "mac_sdk": "27.0"
+  },
+  "scope": "Internal Direct Server provider; packaged Mac ARM64 Full Game clients and dedicated Server, loopback HTTP and ICE.",
+  "native_artifact": {
+    "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+    "platform": "Mac",
+    "architecture": "arm64",
+    "files": 7,
+    "objects": 1,
+    "archive_bytes": 17895536,
+    "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+    "runtime_validation": "unverified"
+  },
+  "native_artifact_changed": false,
+  "packages": {
+    "client": {
+      "schema": 1,
+      "passed": true,
+      "profile": "full",
+      "platform": "Mac",
+      "architecture": "arm64",
+      "artifact": {
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17895536,
+        "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "f970a6d3f93ba87dba9ba8cb7c936adb48548cfa18bd4b95d59e1c8f01f5daf4",
+      "archive_exports": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ],
+      "webrtc_link_inputs": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+      ],
+      "link_response_sha256": "b39f733e6e92312c9433f0890dea07237db2be5df5c58127479fd88cab2df257",
+      "editor_link_inputs": false,
+      "janus_link_inputs": true,
+      "unreal_media_presentation_module": true,
+      "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+      "executable_sha256": "ab076c1c8d0d45c697d2dca027e1481935c994208056379c7e0f5ab929744972",
+      "executable_bytes": 282228192,
+      "built_executable_sha256": "ab076c1c8d0d45c697d2dca027e1481935c994208056379c7e0f5ab929744972",
+      "built_and_staged_uuid": "8361958F-CD56-3B6A-B97D-9B0BA27EB6EE",
+      "bundle_file_bytes": 516766165,
+      "shipping_size_baseline": false,
+      "rtc_size_delta_measured": false,
+      "code_signature_valid": true
+    },
+    "server": {
+      "schema": 1,
+      "passed": true,
+      "profile": "server",
+      "platform": "Mac",
+      "architecture": "arm64",
+      "artifact": {
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17895536,
+        "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "f970a6d3f93ba87dba9ba8cb7c936adb48548cfa18bd4b95d59e1c8f01f5daf4",
+      "archive_exports": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ],
+      "webrtc_link_inputs": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+      ],
+      "link_response_sha256": "4121e5c6d32e5047507d6d9f445b19e66901fedafb3b457e7f1bdb5d230bbcf0",
+      "editor_link_inputs": false,
+      "janus_link_inputs": false,
+      "unreal_media_presentation_module": false,
+      "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+      "executable_sha256": "27ff69d132cb157247469e42f26af83a9ae877508d735687a3dfdea091afe17d",
+      "executable_bytes": 284284912,
+      "built_executable_sha256": "27ff69d132cb157247469e42f26af83a9ae877508d735687a3dfdea091afe17d",
+      "built_and_staged_uuid": "0749964D-8775-3FB5-B4F6-6516D02245B1",
+      "bundle_file_bytes": 383611798,
+      "shipping_size_baseline": false,
+      "rtc_size_delta_measured": false,
+      "code_signature_valid": true
+    }
+  },
+  "build_steps": [
+    {
+      "step": "final-client-editor",
+      "exit_code": 0,
+      "seconds": 63.06
+    },
+    {
+      "step": "final-client-editor-finalize",
+      "exit_code": 0,
+      "seconds": 55.77
+    },
+    {
+      "step": "final-client-editor-metadata",
+      "exit_code": 0,
+      "seconds": 93.75
+    },
+    {
+      "step": "final-client-tests",
+      "exit_code": 0,
+      "seconds": 29.75
+    },
+    {
+      "step": "final-client-game",
+      "exit_code": 0,
+      "seconds": 21.79
+    },
+    {
+      "step": "final-client-game-finalize",
+      "exit_code": 0,
+      "seconds": 24.56
+    },
+    {
+      "step": "final-client-game-metadata",
+      "exit_code": 0,
+      "seconds": 27.83
+    },
+    {
+      "step": "final-client-cook-game",
+      "exit_code": 0,
+      "seconds": 201.03
+    },
+    {
+      "step": "final-server-server",
+      "exit_code": 0,
+      "seconds": 124.21
+    },
+    {
+      "step": "final-server-server-finalize",
+      "exit_code": 0,
+      "seconds": 23.66
+    },
+    {
+      "step": "final-server-server-metadata",
+      "exit_code": 0,
+      "seconds": 13.56
+    },
+    {
+      "step": "final-server-editor",
+      "exit_code": 0,
+      "seconds": 33.94
+    },
+    {
+      "step": "final-server-editor-finalize",
+      "exit_code": 0,
+      "seconds": 16.66
+    },
+    {
+      "step": "final-server-editor-metadata",
+      "exit_code": 0,
+      "seconds": 22.22
+    },
+    {
+      "step": "final-server-cook-server",
+      "exit_code": 0,
+      "seconds": 58.75
+    }
+  ],
+  "engine_tracked_state_preserved": true,
+  "concurrency": {
+    "server_pid": 81375,
+    "overlap_client_pids": [
+      81402,
+      81403,
+      81404,
+      81478
+    ],
+    "peak_live_peers": 4,
+    "peak_connected_sessions": 4,
+    "per_principal_limit_checked_with_spare_global_capacity": true,
+    "http_isolation_checks": 4,
+    "clients": {
+      "delta": {
+        "pid": 81478,
+        "exit_code": -9,
+        "session_id": "d5eb6e0f-ad43-a7c5-b62f-978957afd847",
+        "phases": [
+          {
+            "phase": 1,
+            "received": 6,
+            "expected": 6,
+            "sealed": true
+          }
+        ],
+        "intentionally_killed": true,
+        "native_closed": null,
+        "remote_closed": null,
+        "close_reason": null
+      },
+      "beta": {
+        "pid": 81403,
+        "exit_code": 0,
+        "session_id": "75988fd8-684c-957b-00e8-0484ab096128",
+        "phases": [
+          {
+            "phase": 1,
+            "received": 7,
+            "expected": 7,
+            "sealed": true
+          }
+        ],
+        "intentionally_killed": false,
+        "native_closed": true,
+        "remote_closed": false,
+        "close_reason": "SessionClosed"
+      },
+      "alpha": {
+        "pid": 81402,
+        "exit_code": 0,
+        "session_id": "46285236-e242-96ac-ba4b-d39afa60db16",
+        "phases": [
+          {
+            "phase": 1,
+            "received": 7,
+            "expected": 7,
+            "sealed": true
+          },
+          {
+            "phase": 2,
+            "received": 5,
+            "expected": 5,
+            "sealed": true
+          }
+        ],
+        "intentionally_killed": false,
+        "native_closed": true,
+        "remote_closed": true,
+        "close_reason": ""
+      },
+      "gamma": {
+        "pid": 81404,
+        "exit_code": 0,
+        "session_id": "e8293be7-6944-a115-89d9-9492ec2de62d",
+        "phases": [
+          {
+            "phase": 1,
+            "received": 4,
+            "expected": 4,
+            "sealed": true
+          },
+          {
+            "phase": 2,
+            "received": 4,
+            "expected": 4,
+            "sealed": true
+          }
+        ],
+        "intentionally_killed": false,
+        "native_closed": true,
+        "remote_closed": true,
+        "close_reason": ""
+      },
+      "beta-rejoin": {
+        "pid": 81577,
+        "exit_code": 0,
+        "session_id": "cccad5a4-344e-b976-b783-bc95dbbf71f3",
+        "phases": [
+          {
+            "phase": 2,
+            "received": 6,
+            "expected": 6,
+            "sealed": true
+          }
+        ],
+        "intentionally_killed": false,
+        "native_closed": true,
+        "remote_closed": true,
+        "close_reason": ""
+      }
+    },
+    "server": {
+      "ready": 0,
+      "phase": 2,
+      "sealed": 3,
+      "native_closed": 5,
+      "isolation_checks": 9,
+      "callbacks_on_game_thread": true,
+      "phases": [
+        {
+          "phase": 1,
+          "clients": 4,
+          "echoes": 8,
+          "routed": 8,
+          "denied": 8,
+          "sealed_sessions": [
+            "75988fd8-684c-957b-00e8-0484ab096128",
+            "e8293be7-6944-a115-89d9-9492ec2de62d",
+            "46285236-e242-96ac-ba4b-d39afa60db16",
+            "d5eb6e0f-ad43-a7c5-b62f-978957afd847"
+          ]
+        },
+        {
+          "phase": 2,
+          "clients": 3,
+          "echoes": 6,
+          "routed": 3,
+          "denied": 6,
+          "sealed_sessions": [
+            "e8293be7-6944-a115-89d9-9492ec2de62d",
+            "46285236-e242-96ac-ba4b-d39afa60db16",
+            "cccad5a4-344e-b976-b783-bc95dbbf71f3"
+          ]
+        }
+      ],
+      "sessions": [
+        {
+          "session_id": "75988fd8-684c-957b-00e8-0484ab096128",
+          "principal": "beta",
+          "state": 3,
+          "native_closed": true
+        },
+        {
+          "session_id": "e8293be7-6944-a115-89d9-9492ec2de62d",
+          "principal": "gamma",
+          "state": 3,
+          "native_closed": true
+        },
+        {
+          "session_id": "46285236-e242-96ac-ba4b-d39afa60db16",
+          "principal": "alpha",
+          "state": 3,
+          "native_closed": true
+        },
+        {
+          "session_id": "d5eb6e0f-ad43-a7c5-b62f-978957afd847",
+          "principal": "delta",
+          "state": 3,
+          "native_closed": true
+        },
+        {
+          "session_id": "cccad5a4-344e-b976-b783-bc95dbbf71f3",
+          "principal": "beta",
+          "state": 3,
+          "native_closed": true
+        }
+      ]
+    },
+    "created": 5,
+    "closed": 5,
+    "expired": 1,
+    "final_live_peers": 0,
+    "final_records": 0,
+    "all_processes_stopped": true,
+    "secrets_removed": true,
+    "elapsed_seconds": 40.088
+  },
+  "data_regression": {
+    "passed": true,
+    "pairs": 4,
+    "exact_echoes": 292,
+    "channels": 24,
+    "final_live_peers": 0,
+    "all_processes_stopped": true,
+    "secrets_removed": true
+  },
+  "tests": {
+    "unreal_succeeded": 20,
+    "unreal_failed": 0,
+    "unreal_warnings": 0,
+    "python_succeeded": 171,
+    "python_command": "python3 -m unittest discover -s tools/tests -q",
+    "validator_followup": "The five new validator tests were rerun after refining progress and session-ID checks; all passed."
+  },
+  "source_sha256": {
+    "Plugins/SimurghRTC/Source/SimurghRTCServer/Public/SimurghRTCDirectServer.h": "c44402f8e80b4fffd939351be17250187cf42dbb2f58b378cd6dd4c8797d2efc",
+    "Plugins/SimurghRTC/Source/SimurghRTCServer/Private/SimurghRTCDirectServer.cpp": "c1d294e11b7ea4201853393fc50f936232abd3caafda019f6028a05f6d39a69d",
+    "Samples/ContractHost/Source/ContractHost/ContractDirectProbe.cpp": "776d0123e45ac252596d9efcbdab9bd5d37f403044e68e97fdedab8473e71e27",
+    "Samples/ContractHost/Source/ContractHost/ContractConcurrentScenario.h": "e03764a121297afea064f9325a92126081d03a08e0aba8916297b222f5eb7462",
+    "Samples/ContractHost/Source/ContractHost/ContractConcurrentScenario.cpp": "4b5666a9d98ceedd108b0a3d520b965dbe01d2059f441c15d20eaad709f9d334",
+    "tools/run_concurrent_probe.py": "d4fcc810d1dbcd3d2b304530e92edc346d649f11f8e80460d95d10028d06dfa0",
+    "tools/tests/test_concurrent_probe.py": "46ffdb0ee77a1804b175447b29879d21084c96cf6b6d1c348b1cc0651c006913"
+  },
+  "evidence_sha256": {
+    "pipeline-final.json": "e85bbc8311d9024129a45aa9171819b71357c5842d726edf35d5cd60f3068253",
+    "validation-final.json": "db2d2e734718fedb7fc5f3c04da855017209b48f2d4c91195dd38d8ac09e6b76",
+    "stage-final-client.json": "206df13773c32798e5a6432317dc4f65f41bce75097d74bb7ba8d58a2de57094",
+    "stage-final-server.json": "d751d89183b8a33ad605e635a511fffd8f1c76f8d2e097e2e5812fde767cfd38",
+    "final-client-tests-report/index.json": "1f18ca76726ce86011dcc71820b37385f68c9f14f3b72cfb8c139aac888fbb86",
+    "concurrent-final/result.json": "f6c4495c7aecc8d8384723cae21a1362f4fa8df17844eb948220415b870871fe",
+    "data-regression/result.json": "1804ce732fdd537307e167c135405fef4dfc5cc769dcb21af9e7766c4a5e737e"
+  },
+  "local_evidence": "Intermediate/SR10420261025",
+  "earlier_attempts": [
+    {
+      "reason": "Initial compile rejected two shadowed local names in the new sample; renamed before final staging.",
+      "log_sha256": "81dee6d03e6b5f2f1e4c9ed20a74e9ecc0cc105c22d77b6365e85276c2e8cde3"
+    }
+  ],
+  "limits": [
+    "Shared C++/Blueprint session integration remains SR-105/SR-106; this validates the internal providers.",
+    "Mac ARM64 Full Game and dedicated Server only. Android/iOS, Windows/Linux and cross-device acceptance are not established.",
+    "Controlled loopback traffic only; no network media, NAT/TURN, remote HTTPS or sustained-load qualification.",
+    "Existing engine Dawn linker warnings and minimal-host gameplay NetDriverCreateFailure remain unrelated to the HTTP/WebRTC probe.",
+    "M0 external dependency acceptance gates remain open."
+  ]
+}
