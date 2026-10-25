@@ -2,6 +2,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "SimurghRTCNativeSignaling.h"
+#include "SimurghRTCNativeData.h"
 class UObject;
 class IHttpRouter;
 
@@ -21,6 +22,7 @@ struct FDirectAdmissionResult
 struct FDirectServerConfig
 {
     TFunction<FDirectAdmissionResult(const FDirectAdmissionRequest&)> Admit;
+    TFunction<void(const FString& SessionId, const FNativeChannelEvent&)> OnChannelEvent;
     int32 MaxSessions = 16;
     double IdleSeconds = 30;
     double ReplaySeconds = 30;
@@ -46,6 +48,12 @@ public:
         FDirectServerConfig Config, FString& Error);
     ~FDirectServer();
     void Stop();
+    FSimurghRTCError OpenChannel(const FString& SessionId, const FSimurghRTCChannelOptions& Options, FSimurghRTCChannelHandle& Out);
+    FSimurghRTCError CloseChannel(const FString& SessionId, FSimurghRTCChannelHandle Channel);
+    FSimurghRTCError GetChannelInfo(const FString& SessionId, FSimurghRTCChannelHandle Channel, FNativeChannelSnapshot& Out) const;
+    FSimurghRTCError SendText(const FString& SessionId, FSimurghRTCChannelHandle Channel, const FString& Text);
+    FSimurghRTCError SendBytes(const FString& SessionId, FSimurghRTCChannelHandle Channel, const TArray<uint8>& Bytes);
+
     FDirectServerSnapshot GetSnapshot() const;
 private:
     class FImpl;

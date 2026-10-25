@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "SimurghRTCNativeSignaling.h"
+#include "SimurghRTCNativeData.h"
 
 namespace SimurghRTC
 {
@@ -38,6 +39,8 @@ public:
     FNativeFactoryDiagnostics GetDiagnostics() const;
     bool Signal(uint64 Id, const FNativeSignalRequest& Request, FNativeSignalResult& OutFailure);
     bool PollSignal(FNativeTransportEvent& OutEvent);
+    ESimurghRTCErrorCode Data(const FNativeDataRequest& Request, FNativeDataResult& Out);
+    bool PollData(FNativeDataResult& Out);
     void Stop();
 
 private:

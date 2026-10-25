@@ -127,6 +127,7 @@ FNativePeer::FHandle FNativePeerService::Open(UObject* Owner, ENativeFactoryMode
     Entry->Owner = Owner;
     Entry->World = Owner->GetWorld();
     Entry->OnOpened = MoveTemp(OnOpened);
+    Entry->Data = MakeUnique<FNativeDataGame>(State->Data);
     Entries.Add(Entry);
     Enqueue({ECommand::Open, State, Mode, bLoopbackProbe});
     return Peer;
@@ -146,6 +147,7 @@ void FNativePeerService::Close(const TSharedRef<FNativePeerSharedState, ESPMode:
     for (const auto& Entry : Entries) if (Entry->State == State)
     {
         Entry->OnOpened = nullptr; Entry->Operations.Reset(); Entry->PendingSdp = 0; Entry->OnEvent.Reset();
+        Entry->Data->Shutdown();
         break;
     }
     Enqueue({ECommand::Close, State});
@@ -208,6 +210,7 @@ void FNativePeerService::Tick()
         const auto Snapshot = ReadSnapshot(Entry->State.ToSharedRef());
         if (Snapshot.State == ENativePeerState::Ready || Snapshot.State == ENativePeerState::Failed)
         { auto Callback = MoveTemp(Entry->OnOpened); if (Callback) Callback(Snapshot); }
+        if (Live()) Entry->Data->Tick(Live);
         TArray<FNativeTransportEvent> Events;
         { FScopeLock Lock(&Entry->State->Mutex); Events = MoveTemp(Entry->State->Events); }
         for (const auto& Event : Events)
@@ -288,6 +291,7 @@ uint32 FNativePeerService::Run()
         TUniquePtr<FNativeRuntime> Runtime;
         TSharedPtr<FNativePeerSharedState, ESPMode::ThreadSafe> State;
         bool bSignaling = false;
+        TUniquePtr<FNativeDataWorker> Data;
     };
     TMap<uint64, FSlot> Runtimes;
     bool bPolling = false;
@@ -308,6 +312,12 @@ uint32 FNativePeerService::Run()
             { Runtimes.Remove(State->Id); PublishClosed(State); continue; }
             const auto Status = ReadSnapshot(State).State;
             if (Status == ENativePeerState::Closing || Status == ENativePeerState::Closed) continue;
+            if (Command.Type == ECommand::Data)
+            {
+                if (auto* Slot = Runtimes.Find(State->Id))
+                { Slot->bSignaling = true; Slot->Data->Submit(MoveTemp(Command.Data)); }
+                continue;
+            }
             if (Command.Type == ECommand::Signal)
             {
                 auto* Slot = Runtimes.Find(State->Id);
@@ -338,7 +348,12 @@ uint32 FNativePeerService::Run()
                 bCancelled = State->Snapshot.State == ENativePeerState::Closing;
                 if (!bCancelled)
                 {
-                    if (bReady) { FSlot Slot; Slot.Runtime = MoveTemp(Runtime); Slot.State = State; Runtimes.Add(State->Id, MoveTemp(Slot)); }
+                    if (bReady)
+                    {
+                        FSlot Slot; Slot.Runtime = MoveTemp(Runtime); Slot.State = State;
+                        Slot.Data = MakeUnique<FNativeDataWorker>(*Slot.Runtime, State->Data);
+                        Runtimes.Add(State->Id, MoveTemp(Slot));
+                    }
                     State->Snapshot.State = bReady ? ENativePeerState::Ready : ENativePeerState::Failed;
                     State->Snapshot.Error = MoveTemp(Error); State->Snapshot.Diagnostics = Diagnostics;
                 }
@@ -351,6 +366,13 @@ uint32 FNativePeerService::Run()
             auto& Slot = It.Value();
             if (!Slot.bSignaling) continue;
             bPolling = true;
+            if (!Slot.Data->Poll())
+            {
+                FNativeTransportEvent Event; Event.Type = ENativeSignalEvent::FatalError;
+                Event.Result.Error = ENativeSignalError::NativeError;
+                Event.Result.Message = TEXT("DataChannel send/receive failed or exceeded its queue bounds.");
+                PublishEvent(Slot.State.ToSharedRef(), MoveTemp(Event)); It.RemoveCurrent(); continue;
+            }
             for (int32 Count = 0; Count < 8; ++Count)
             {
                 FNativeTransportEvent Event;

@@ -343,6 +343,40 @@ FDirectClient::FDirectClient(TSharedRef<FImpl> InImpl) : Impl(MoveTemp(InImpl)) 
 FDirectClient::~FDirectClient() { Impl->Abort(); }
 void FDirectClient::Close() { Impl->Close(); }
 FDirectClientSnapshot FDirectClient::GetSnapshot() const { check(IsInGameThread()); return Impl->Snapshot; }
+void FDirectClient::SetChannelHandler(FNativeChannelChanged Handler)
+{ check(IsInGameThread()); if (Impl->Peer) Impl->Peer->SetChannelHandler(MoveTemp(Handler)); }
+FSimurghRTCError FDirectClient::OpenChannel(const FSimurghRTCChannelOptions& Options, FSimurghRTCChannelHandle& Out)
+{
+    check(IsInGameThread());
+    Out = {};
+    const auto Peer = Impl->Owner.IsValid() && Impl->Snapshot.State == EDirectClientState::Connected ? Impl->Peer : nullptr;
+    return Peer ? Peer->OpenChannel(Options, Out) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
+}
+FSimurghRTCError FDirectClient::CloseChannel(FSimurghRTCChannelHandle Channel)
+{
+    check(IsInGameThread());
+    const auto Peer = Impl->Owner.IsValid() && Impl->Snapshot.State == EDirectClientState::Connected ? Impl->Peer : nullptr;
+    return Peer ? Peer->CloseChannel(Channel) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
+}
+FSimurghRTCError FDirectClient::GetChannelInfo(FSimurghRTCChannelHandle Channel, FNativeChannelSnapshot& Out) const
+{
+    check(IsInGameThread());
+    Out = {};
+    const auto Peer = Impl->Owner.IsValid() && Impl->Snapshot.State == EDirectClientState::Connected ? Impl->Peer : nullptr;
+    return Peer ? Peer->GetChannelInfo(Channel, Out) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
+}
+FSimurghRTCError FDirectClient::SendText(FSimurghRTCChannelHandle Channel, const FString& Text)
+{
+    check(IsInGameThread());
+    const auto Peer = Impl->Owner.IsValid() && Impl->Snapshot.State == EDirectClientState::Connected ? Impl->Peer : nullptr;
+    return Peer ? Peer->SendText(Channel, Text) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
+}
+FSimurghRTCError FDirectClient::SendBytes(FSimurghRTCChannelHandle Channel, const TArray<uint8>& Bytes)
+{
+    check(IsInGameThread());
+    const auto Peer = Impl->Owner.IsValid() && Impl->Snapshot.State == EDirectClientState::Connected ? Impl->Peer : nullptr;
+    return Peer ? Peer->SendBytes(Channel, Bytes) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
+}
 TSharedPtr<FDirectClient> FDirectClient::Connect(UObject* Owner, FDirectClientConfig Config, FDirectClientChanged Changed, FString& Error)
 {
     check(IsInGameThread()); Error.Reset();

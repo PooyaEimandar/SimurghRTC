@@ -158,3 +158,13 @@ extern "C" const char* SimurghRTC_NativeVersionV1(int component) {
   if (component == 3) return "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d";
   return nullptr;
 }
+extern "C" int SimurghRTC_ChannelV1(SR_Runtime* r, const SR_ChannelRequest* request, SR_ChannelInfo* out) {
+  if (!r || r->owner != std::this_thread::get_id() || !r->peer || !request || !out
+      || request->size != sizeof(*request) || request->abi_version != SR_ABI_VERSION) return SR_INVALID_ARGUMENT;
+  return r->signaling->BlockingCall([&] { return r->observer->Channel(*request, *out); });
+}
+extern "C" int SimurghRTC_PollDataV1(SR_Runtime* r, SR_DataEvent* event) {
+  if (!r || r->owner != std::this_thread::get_id() || !r->peer || !event
+      || event->size != sizeof(*event) || event->abi_version != SR_ABI_VERSION) return SR_INVALID_ARGUMENT;
+  r->signaling->BlockingCall([&] { r->observer->PollData(*event); }); return SR_OK;
+}

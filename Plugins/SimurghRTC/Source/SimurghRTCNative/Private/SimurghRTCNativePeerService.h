@@ -6,6 +6,7 @@
 #include "HAL/Runnable.h"
 #include "HAL/RunnableThread.h"
 #include "UObject/WeakObjectPtrTemplates.h"
+#include "SimurghRTCNativeDataService.h"
 
 class FEvent;
 class UWorld;
@@ -18,6 +19,7 @@ struct FNativePeerSharedState
     FNativePeerSnapshot Snapshot;
     uint64 Id = 0;
     TArray<FNativeTransportEvent> Events;
+    TSharedRef<FNativeDataShared, ESPMode::ThreadSafe> Data = MakeShared<FNativeDataShared, ESPMode::ThreadSafe>();
 };
 
 /** Game-thread service; only Run and its native runtime map execute on the worker. */
@@ -33,6 +35,8 @@ public:
     bool Signal(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State,
         FNativeSignalRequest Request, FNativeSignalCompleted OnComplete, FString& OutError);
     void SetEventHandler(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State, FNativeTransportChanged OnEvent);
+    FNativeDataGame* Data(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State);
+    void SubmitData(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State, FNativeDataCommand Command);
     void Tick();
     void CloseWorld(UWorld* World);
     // Only module shutdown/tests wait for native teardown. Normal Close never waits.
@@ -56,8 +60,9 @@ private:
         TSharedPtr<FNativeTransportChanged> OnEvent;
         uint64 NextOperation = 1;
         uint64 PendingSdp = 0;
+        TUniquePtr<FNativeDataGame> Data;
     };
-    enum class ECommand : uint8 { Open, Close, Shutdown, Signal
+    enum class ECommand : uint8 { Open, Close, Shutdown, Signal, Data
 #if WITH_DEV_AUTOMATION_TESTS
         , TestGate
 #endif
@@ -71,6 +76,7 @@ private:
         FNativeSignalRequest Request;
         uint64 OperationId = 0;
         double Deadline = 0;
+        FNativeDataCommand Data;
 #if WITH_DEV_AUTOMATION_TESTS
         FEvent* Entered = nullptr;
         FEvent* Release = nullptr;

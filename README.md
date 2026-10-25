@@ -13,6 +13,7 @@ SimurghRTC is a C++ plugin for **Unreal Engine 5.8.3**. Its goal is to let an Un
 | Package and run the mobile lifecycle probe | [Mobile probe](docs/MOBILE_PROBE.md) |
 | Run the test data and local Janus/TURN setup | [Test fixtures](docs/FIXTURES.md) |
 | Connect separate Unreal client and Server processes | [Direct HTTP signaling](docs/DIRECT_SIGNALING.md) |
+| Exchange text and binary messages | [DataChannels](docs/DATA_CHANNELS.md) |
 | See what is finished and what comes next | [Roadmap](ROADMAP.md) |
 | Run the C++ and Blueprint lifecycle examples | [Lifecycle examples](docs/LIFECYCLE_EXAMPLES.md) |
 | Use or review the C++ and Blueprint API | [API contract](docs/API_CONTRACT.md) |

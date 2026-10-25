@@ -22,11 +22,11 @@ PATH = '/simurghrtc/v1/signal'
 MAX_BODY = 256 * 1024
 
 
-def validate_server(report, run_id, pid, manifest):
+def validate_server(report, run_id, pid, manifest, application_messages=False):
     expected = dict(schema=1, run_id=run_id, pid=pid, server_build=True, editor_build=False, with_janus=False,
                     arm64_build=True, platform='Mac', artifact_manifest_sha256=manifest,
                     native_backend='M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d', loopback_only=True,
-                    network_media_tested=False, application_messages_tested=False, passed=True, error='',
+                    network_media_tested=False, application_messages_tested=application_messages, passed=True, error='',
                     callbacks_on_game_thread=True, running=False, live_peers=0, teardown_complete=True)
     a.require(type(report) is dict, 'Missing Server report.')
     for key,value in expected.items():
@@ -45,12 +45,12 @@ def validate_server(report, run_id, pid, manifest):
                   and type(transport.get('stun_responses')) is int and transport['stun_responses']>0, 'Missing Server transport evidence.')
 
 
-def validate_client(report, run_id, pid, manifest, with_janus, pairs=4, scenario='connect', expected_error=''):
+def validate_client(report, run_id, pid, manifest, with_janus, pairs=4, scenario='connect', expected_error='', application_messages=False):
     a.require(isinstance(report, dict), 'Missing client report.')
     expected = dict(schema=1, run_id=run_id, pid=pid, server_build=False, editor_build=False,
                     arm64_build=True, platform='Mac', with_janus=with_janus,
                     artifact_manifest_sha256=manifest, native_backend='M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d',
-                    loopback_only=True, network_media_tested=False, application_messages_tested=False,
+                    loopback_only=True, network_media_tested=False, application_messages_tested=application_messages,
                     callbacks_on_game_thread=True, passed=True, error='', scenario=scenario,
                     expected_error=expected_error, requested_pairs=pairs, completed_pairs=pairs,
                     owner_callback_suppressed=True)

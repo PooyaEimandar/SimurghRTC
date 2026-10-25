@@ -1,5 +1,6 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "ContractDirectProbe.h"
+#include "ContractDataScenario.h"
 #include "Containers/Ticker.h"
 #include "Engine/GameInstance.h"
 #include "HAL/FileManager.h"
@@ -47,6 +48,7 @@ public:
     TSharedPtr<FJsonObject> Row;
 #if SIMURGHRTC_WITH_DIRECT
     TSharedPtr<FDirectClient> Client;
+    TUniquePtr<FContractDataScenario> Data;
 #endif
 #if CONTRACTHOST_WITH_DIRECT_SERVER
     TSharedPtr<FDirectServer> Server;
@@ -54,12 +56,17 @@ public:
     FHttpRouteHandle Health, ShutdownRoute;
     TArray<FString> PreviousOverrides;
     bool bOwnsHttp = false, bOverrides = false;
+    struct FEcho { FString Session; FSimurghRTCDataMessage Message; };
+    TArray<FEcho> Echoes;
+    TSet<FGuid> DataOpened, DataClosed;
+    int32 EchoBytes = 0, EchoReceived = 0, EchoSent = 0;
+
 #endif
     ~FImpl()
     {
         FCoreDelegates::GetOnPostEngineInit().Remove(Init); FTSTicker::GetCoreTicker().RemoveTicker(Ticker);
 #if SIMURGHRTC_WITH_DIRECT
-        if (Client) Client->Close(); Client.Reset();
+        Data.Reset(); if (Client) Client->Close(); Client.Reset();
 #endif
 #if CONTRACTHOST_WITH_DIRECT_SERVER
         if (Server) Server->Stop(); Server.Reset();
@@ -96,7 +103,7 @@ public:
         J->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString()); J->SetStringField(TEXT("platform"), FPlatformProperties::IniPlatformName());
         J->SetStringField(TEXT("artifact_manifest_sha256"), FNativeRuntime::GetMobileArtifactSHA256());
         J->SetStringField(TEXT("native_backend"), FNativeRuntime::GetBackendVersion());
-        J->SetBoolField(TEXT("loopback_only"), true); J->SetBoolField(TEXT("network_media_tested"), false); J->SetBoolField(TEXT("application_messages_tested"), false);
+        J->SetBoolField(TEXT("loopback_only"), true); J->SetBoolField(TEXT("network_media_tested"), false); J->SetBoolField(TEXT("application_messages_tested"), Scenario == TEXT("data"));
         return J;
     }
 #if CONTRACTHOST_WITH_DIRECT_SERVER
@@ -109,7 +116,14 @@ public:
         J->SetNumberField(TEXT("replays"), S.Replays); J->SetNumberField(TEXT("rejected"), S.Rejected); J->SetNumberField(TEXT("early_ice"), S.EarlyIce);
         auto Strings = [](const TArray<FString>& Source) { TArray<TSharedPtr<FJsonValue>> Out; for (const auto& Value : Source) Out.Add(MakeShared<FJsonValueString>(Value)); return Out; };
         J->SetArrayField(TEXT("connected_session_ids"), Strings(S.ConnectedSessionIds)); J->SetArrayField(TEXT("closed_session_ids"), Strings(S.ClosedSessionIds));
-        J->SetObjectField(TEXT("last_transport"), Transport(S.LastConnectedTransport)); return J;
+        J->SetObjectField(TEXT("last_transport"), Transport(S.LastConnectedTransport));
+        if (Scenario == TEXT("data"))
+        {
+            J->SetNumberField(TEXT("data_channels_opened"), DataOpened.Num()); J->SetNumberField(TEXT("data_channels_closed"), DataClosed.Num());
+            J->SetNumberField(TEXT("data_received"), EchoReceived); J->SetNumberField(TEXT("data_sent"), EchoSent);
+            J->SetNumberField(TEXT("echo_pending"), Echoes.Num());
+        }
+        return J;
     }
     bool StartServer()
     {
@@ -121,6 +135,29 @@ public:
         auto& Http = FHttpServerModule::Get(); bOwnsHttp = true; Http.StartAllListeners(); Router = Http.GetHttpRouter(Port, true);
         if (!Router) { Fail(TEXT("HTTP listener bind failed.")); return false; }
         FDirectServerConfig Config; Config.bLoopbackProbe = true; Config.IdleSeconds = 5; Config.ReplaySeconds = 30;
+        if (Scenario == TEXT("data")) Config.OnChannelEvent = [this](const FString& Session, const FNativeChannelEvent& Event)
+        {
+            bGameThread &= IsInGameThread();
+            const auto& C = Event.Channel;
+            if (Event.Type == ENativeDataEvent::Error) { Fail(TEXT("Server DataChannel error.")); return; }
+            if (Event.Type == ENativeDataEvent::Changed)
+            {
+                if (C.State == ENativeChannelState::Open)
+                {
+                    const int32 Mode = FCString::Atoi(*C.Info.Options.Label.Mid(6));
+                    const auto O = FContractDataScenario::Options(Mode);
+                    if (Mode < 0 || Mode > 5 || C.Info.Options.Label != O.Label || C.Info.Options.bOrdered != O.bOrdered
+                        || C.Info.Options.Reliability != O.Reliability || C.Info.Options.ReliabilityValue != O.ReliabilityValue
+                        || !C.bRemote || C.Info.MaximumMessageBytes != 65536) { Fail(TEXT("Server remote channel options differ.")); return; }
+                    DataOpened.Add(C.Info.Handle.Id);
+                }
+                if (C.State == ENativeChannelState::Closed) DataClosed.Add(C.Info.Handle.Id);
+            }
+            if (Event.Type != ENativeDataEvent::Message) return;
+            const int32 Bytes = Event.Message.Bytes.Num() + Event.Message.Text.Len() * sizeof(TCHAR);
+            if (Echoes.Num() >= 64 || EchoBytes + Bytes > 1048576) { Fail(TEXT("Probe echo queue exhausted.")); return; }
+            Echoes.Add({Session, Event.Message}); EchoBytes += Bytes; ++EchoReceived;
+        };
         Config.Admit = [this](const FDirectAdmissionRequest& A)
         {
             FDirectAdmissionResult Result;
@@ -163,6 +200,15 @@ public:
 #if CONTRACTHOST_WITH_DIRECT_SERVER
         if (bServer)
         {
+            // The sample echoes through a bounded queue; production Server has no automatic echo.
+            for (int32 I = 0; Server && I < 16 && !Echoes.IsEmpty(); ++I)
+            {
+                const auto& E = Echoes[0]; const auto& M = E.Message;
+                const auto R = M.Kind == ESimurghRTCMessageKind::Text ? Server->SendText(E.Session, M.Channel, M.Text) : Server->SendBytes(E.Session, M.Channel, M.Bytes);
+                if (R.Code == ESimurghRTCErrorCode::ResourceExhausted) break;
+                if (R.IsError()) { Fail(TEXT("Server echo send failed.")); break; }
+                EchoBytes -= M.Bytes.Num() + M.Text.Len() * sizeof(TCHAR); Echoes.RemoveAt(0); ++EchoSent;
+            }
             if (!bStopping && FPlatformTime::Seconds() - Started > 180) { Fail(TEXT("Server probe deadline expired.")); bStopping = true; StopAt = FPlatformTime::Seconds(); if (Server) Server->Stop(); }
             if (!Error.IsEmpty()) { if (Server) Server->Stop(); Report(ServerReport()); return false; }
             if (bStopping && (Server->GetSnapshot().LivePeers == 0 || FPlatformTime::Seconds() - StopAt > 10))
@@ -179,7 +225,7 @@ public:
             StepStarted = FPlatformTime::Seconds(); bClosing = false;
             FDirectClientConfig Config; Config.Endpoint = Endpoint; Config.BearerToken = Token; Config.Identity = Scenario == TEXT("denied") ? TEXT("deny") : TEXT("probe-client");
             Config.Purpose = Index % 2 ? TEXT("call") : TEXT("data"); Config.bAllowLoopbackHttp = true; Config.bLoopbackProbe = true;
-            Config.bEarlyIceProbe = Index % 3 == 0; Config.RequestTimeoutSeconds = 0.5; Config.ConnectTimeoutSeconds = 10;
+            Config.bEarlyIceProbe = Index % 3 == 0; Config.RequestTimeoutSeconds = Scenario == TEXT("data") ? 2 : 0.5; Config.ConnectTimeoutSeconds = Scenario == TEXT("data") ? 20 : 10;
             Client = FDirectClient::Connect(Owner.Get(), MoveTemp(Config), [this](const FDirectClientSnapshot&) { bGameThread &= IsInGameThread(); ++CallbackCount; }, Error);
             if (!Client) Fail(TEXT("Direct client creation failed."));
         }
@@ -194,10 +240,17 @@ public:
             }
             else if (!bClosing && S.State == EDirectClientState::Connected)
             {
+                if (Scenario == TEXT("data"))
+                {
+                    if (!Data) Data = MakeUnique<FContractDataScenario>(Client.ToSharedRef());
+                    if (!Data->Tick() && Error.IsEmpty()) return true;
+                    if (!Data->Error.IsEmpty()) Fail(Data->Error);
+                }
                 if (!ExpectedError.IsEmpty()) Fail(TEXT("Connected despite an expected failure."));
                 Row = MakeShared<FJsonObject>(); Row->SetNumberField(TEXT("index"), Index); Row->SetStringField(TEXT("session_id"), S.SessionId);
                 Row->SetStringField(TEXT("mode"), Index % 2 ? TEXT("media") : TEXT("data")); Row->SetBoolField(TEXT("early_ice"), Index % 3 == 0);
                 Row->SetObjectField(TEXT("transport"), Transport(S.Transport)); Row->SetNumberField(TEXT("requests"), S.AcceptedRequests); Row->SetNumberField(TEXT("retries"), S.Retries);
+                if (Data) { Row->SetObjectField(TEXT("data"), Data->Report()); Data.Reset(); }
                 bClosing = true; Client->Close();
             }
             if (S.State == EDirectClientState::Failed)

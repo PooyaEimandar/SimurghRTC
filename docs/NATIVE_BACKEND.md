@@ -4,7 +4,7 @@ WebRTC **M155** is integrated into the Unreal 5.8.3 plugin. Packaged Mac/Android
 
 The backend builds its own WebRTC, BoringSSL, Opus and VPX. Unreal calls a small private C interface. Factory handles stay inside the backend; Unreal owns the buffers used to copy decoded video and PCM. No WebRTC C++ types or allocations cross that boundary.
 
-The public C++ and Blueprint API is unchanged. M1 adds [asynchronous peers and SDP/ICE exchange](NATIVE_PEERS.md), with real local connection tests. Direct/Janus session providers remain unfinished.
+The public C++ and Blueprint API is unchanged. M1 bridge changes require new artifacts; the SR-103 DataChannel bridge is currently qualified on Mac ARM64 only. Earlier mobile results describe their recorded artifact versions. M1 adds [asynchronous peers and SDP/ICE exchange](NATIVE_PEERS.md), with real local connection tests. The internal [Direct HTTP provider](DIRECT_SIGNALING.md) and [DataChannels](DATA_CHANNELS.md) are available; shared session integration and Janus remain unfinished.
 
 The SR-101 bridge adds signaling functions and changes the artifact input pin. Rebuild all selected platform artifacts before staging current sources. Earlier M0 package and repeat-build records describe the earlier bridge; they remain historical evidence.
 

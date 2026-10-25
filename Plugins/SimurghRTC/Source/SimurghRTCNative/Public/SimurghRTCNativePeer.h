@@ -54,6 +54,15 @@ public:
     // at most 64 operations/events and 32 remote ICE entries (including completion).
     bool Signal(FNativeSignalRequest Request, FNativeSignalCompleted OnComplete, FString& OutError);
     void SetEventHandler(FNativeTransportChanged OnEvent);
+    // Application channels require a connected peer. Open returns a local Connecting handle;
+    // Changed/Error events report native completion. Send copies input into a bounded local
+    // queue before returning success; it never promises delivery. All methods are game-thread only.
+    FSimurghRTCError OpenChannel(const FSimurghRTCChannelOptions& Options, FSimurghRTCChannelHandle& Out);
+    FSimurghRTCError CloseChannel(FSimurghRTCChannelHandle Channel);
+    FSimurghRTCError GetChannelInfo(FSimurghRTCChannelHandle Channel, FNativeChannelSnapshot& Out) const;
+    FSimurghRTCError SendText(FSimurghRTCChannelHandle Channel, const FString& Text);
+    FSimurghRTCError SendBytes(FSimurghRTCChannelHandle Channel, const TArray<uint8>& Bytes);
+    void SetChannelHandler(FNativeChannelChanged OnChannel);
     // Idempotent and nonblocking: Closed is published after native teardown finishes.
     void Close();
 

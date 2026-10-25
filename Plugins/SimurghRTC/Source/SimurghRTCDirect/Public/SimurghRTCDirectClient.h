@@ -2,6 +2,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "SimurghRTCNativeSignaling.h"
+#include "SimurghRTCNativeData.h"
 class UObject;
 
 namespace SimurghRTC
@@ -41,6 +42,12 @@ public:
         FDirectClientChanged OnChanged, FString& Error);
     ~FDirectClient();
     void Close();
+    FSimurghRTCError OpenChannel(const FSimurghRTCChannelOptions& Options, FSimurghRTCChannelHandle& Out);
+    FSimurghRTCError CloseChannel(FSimurghRTCChannelHandle Channel);
+    FSimurghRTCError GetChannelInfo(FSimurghRTCChannelHandle Channel, FNativeChannelSnapshot& Out) const;
+    FSimurghRTCError SendText(FSimurghRTCChannelHandle Channel, const FString& Text);
+    FSimurghRTCError SendBytes(FSimurghRTCChannelHandle Channel, const TArray<uint8>& Bytes);
+    void SetChannelHandler(FNativeChannelChanged Handler);
     FDirectClientSnapshot GetSnapshot() const;
 private:
     class FImpl;

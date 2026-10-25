@@ -2,7 +2,7 @@
 
 Version **1** freezes the shared C++ and Blueprint surface for **Unreal Engine 5.8.3**. Applications can query `USimurghRTCSession::GetApiContractVersion()`. The [lifecycle examples](LIFECYCLE_EXAMPLES.md) execute local success, failure, cancellation and owner cleanup through both interfaces.
 
-This is an API contract, not a completed RTC implementation. `Connect` still returns `NotImplemented`. Channels, calls, rooms, device capture and shared media delivery also remain unimplemented. The separate [native probes](NATIVE_PROBE.md) test libwebrtc feasibility; they do not make the session API operational.
+This is an API contract, not a completed RTC implementation. `Connect` still returns `NotImplemented`. The shared session’s channels, calls, rooms, device capture and media delivery also remain unimplemented. Internal providers support [DataChannels](DATA_CHANNELS.md); SR-105 will connect them to this facade. The separate [native probes](NATIVE_PROBE.md) test libwebrtc feasibility; they do not make the session API operational.
 
 The SR-001 review fixes ownership, call topology, headless media, device discovery, cancellation and errors below. Public v1 names, parameter types, Blueprint pins, enum values and these lifecycle rules are compatibility commitments. Additive APIs are allowed; breaking changes require a new contract version and migration notes. Append enum values rather than reordering them. The earlier M0 draft had no compatibility guarantee.
 

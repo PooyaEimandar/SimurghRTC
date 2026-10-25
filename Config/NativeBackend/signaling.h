@@ -1,6 +1,7 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #pragma once
 #include "simurgh_rtc_abi.h"
+#include "data_channels.h"
 #include <chrono>
 #include <deque>
 #include <map>
@@ -18,7 +19,9 @@ class Signaling final : public webrtc::PeerConnectionObserver,
                         public webrtc::DataChannelObserver,
                         public std::enable_shared_from_this<Signaling> {
  public:
-  void Attach(webrtc::PeerConnectionInterface* peer) { peer_ = peer; }
+  void Attach(webrtc::PeerConnectionInterface* peer) { peer_ = peer; channels_.Attach(peer); }
+  int Channel(const SR_ChannelRequest& request, SR_ChannelInfo& out) { return channels_.Command(request, out); }
+  void PollData(SR_DataEvent& out) { channels_.Poll(out); }
   void Shutdown();
   void EnableLoopbackProbe() { loopback_probe_ = true; }
   int Submit(const SR_SignalRequest& request, char* error, uint32_t capacity);
@@ -40,7 +43,7 @@ class Signaling final : public webrtc::PeerConnectionObserver,
   void OnIceCandidateError(const std::string&, int, const std::string&, int code, const std::string&) override;
   void Stats(const webrtc::RTCStatsReport& report);
   void OnStateChange() override;
-  void OnMessage(const webrtc::DataBuffer&) override {} // Public DataChannel I/O is SR-103.
+  void OnMessage(const webrtc::DataBuffer&) override {} // Reserved bootstrap channel has no application payloads.
 
  private:
   struct Event {
@@ -61,6 +64,7 @@ class Signaling final : public webrtc::PeerConnectionObserver,
   uint32_t local_ice_count_ = 0, applying_ice_ = 0;
   webrtc::PeerConnectionInterface* peer_ = nullptr;
   webrtc::scoped_refptr<webrtc::DataChannelInterface> channel_;
+  Channels channels_;
   SR_TransportState state_{};
   std::map<uint64_t, Clock::time_point> pending_;
   std::deque<Event> events_;

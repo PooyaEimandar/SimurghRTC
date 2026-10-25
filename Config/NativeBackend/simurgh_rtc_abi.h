@@ -97,6 +97,47 @@ SR_NATIVE_EXPORT int SimurghRTC_SignalV1(struct SR_Runtime* runtime, const SR_Si
 // Zero succeeds; event.type == SR_EVENT_NONE means the queue is empty. Poll at
 // least every 10ms during negotiation to enforce deadlines and drain bounded events.
 SR_NATIVE_EXPORT int SimurghRTC_PollEventV1(struct SR_Runtime* runtime, SR_SignalEvent* event);
+
+// Additive application DataChannel API. IDs are local to one runtime, never SCTP SIDs.
+// Text is length-delimited UTF-8 (embedded NUL is allowed); binary is opaque.
+// Commands copy accepted input. Send success means local admission, not delivery.
+#define SR_MAX_CHANNELS 16
+#define SR_MAX_CHANNEL_RECORDS 64
+#define SR_MAX_CHANNEL_LABEL_BYTES 65535
+#define SR_MAX_MESSAGE_BYTES 65536
+#define SR_MAX_CHANNEL_BUFFER_BYTES 262144
+#define SR_MAX_DATA_EVENTS 64
+#define SR_MAX_DATA_EVENT_BYTES 1048576
+enum SR_ChannelAction { SR_CHANNEL_OPEN = 1, SR_CHANNEL_SEND, SR_CHANNEL_CLOSE, SR_CHANNEL_QUERY };
+enum SR_ChannelState { SR_CHANNEL_CONNECTING = 0, SR_CHANNEL_OPENED, SR_CHANNEL_CLOSING, SR_CHANNEL_CLOSED };
+enum SR_ChannelReliability { SR_RELIABLE = 0, SR_MAX_RETRANSMITS, SR_MAX_LIFETIME };
+enum SR_DataKind { SR_TEXT = 0, SR_BINARY };
+enum SR_DataEventType { SR_DATA_NONE = 0, SR_CHANNEL_CHANGED, SR_MESSAGE_RECEIVED, SR_DATA_FATAL };
+typedef struct SR_ChannelRequest {
+  uint32_t size, abi_version;
+  uint64_t channel_id;
+  int32_t action, kind, ordered, reliability, reliability_value;
+  const char* label; uint32_t label_bytes;
+  const uint8_t* data; uint32_t data_bytes;
+} SR_ChannelRequest;
+typedef struct SR_ChannelInfo {
+  uint64_t channel_id;
+  int32_t state, ordered, reliability, reliability_value, remote;
+  uint32_t maximum_message_bytes, negotiated_message_bytes; // Zero means unknown.
+  uint64_t buffered_bytes;
+  char label[SR_MAX_CHANNEL_LABEL_BYTES + 1];
+} SR_ChannelInfo;
+typedef struct SR_DataEvent {
+  uint32_t size, abi_version;
+  int32_t type, kind, error_code;
+  SR_ChannelInfo channel;
+  uint32_t data_bytes;
+  uint8_t data[SR_MAX_MESSAGE_BYTES];
+} SR_DataEvent;
+// Uses SR_SignalError codes. Oversized/invalid UTF-8 input is SR_INVALID_ARGUMENT;
+// unknown/closed channels are SR_INVALID_STATE; full queues are SR_RESOURCE_EXHAUSTED.
+SR_NATIVE_EXPORT int SimurghRTC_ChannelV1(struct SR_Runtime* runtime, const SR_ChannelRequest* request, SR_ChannelInfo* out);
+SR_NATIVE_EXPORT int SimurghRTC_PollDataV1(struct SR_Runtime* runtime, SR_DataEvent* event);
 #ifdef __cplusplus
 }
 #endif

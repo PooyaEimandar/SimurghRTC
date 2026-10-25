@@ -2,7 +2,7 @@
 
 SR-102 connects native peers in separate Unreal processes. The client uses Unreal's HTTP client; the Server uses HTTPServer. They exchange SDP and ICE through [protocol v1](SIGNALING_V1.md), then establish the private WebRTC DTLS/SCTP transport.
 
-This is an internal provider API. The shared `USimurghRTCSession` facade still returns `NotImplemented` for connection attempts until SR-105 integrates it. Application DataChannels are SR-103. These probes do not send application messages or network audio/video.
+This is an internal provider API. The shared `USimurghRTCSession` facade still returns `NotImplemented` for connection attempts until SR-105 integrates it. [DataChannels](DATA_CHANNELS.md) are available through SR-103. The original signaling-only probe below does not send application messages or network audio/video.
 
 On 2026-10-24, the packaged Mac ARM64 Full client and dedicated Server passed the separate-process probe: six connections across normal, lost-response and delayed-response cases; all 11 created sessions closed, with no peers left alive. Both native factory modes and early/trickled ICE passed. The fault cases below also passed. See the [validation record](reviews/SR102-direct-http-validation.json) for exact builds and results.
 

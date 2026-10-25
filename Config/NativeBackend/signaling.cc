@@ -58,6 +58,7 @@ class CreateObserver : public webrtc::CreateSessionDescriptionObserver {
 
 void Signaling::Shutdown() {
   stopped_ = true; peer_ = nullptr;
+  channels_.Shutdown();
   if (channel_) { channel_->UnregisterObserver(); channel_->Close(); channel_ = nullptr; }
   pending_.clear(); early_ice_.clear(); events_.clear(); seen_ice_.clear();
 }
@@ -82,6 +83,7 @@ void Signaling::Complete(uint64_t id, int code, const std::string& error, int ty
   event.error = error; event.sdp_type = type; event.text = std::move(text); event.queued = queued; Push(std::move(event));
 }
 void Signaling::Poll(SR_SignalEvent& out) {
+  if (channels_.Failed()) Fatal(SR_RESOURCE_EXHAUSTED, "Application channel receive failed or exceeded its bounds.");
   for (const auto& entry : pending_) if (Clock::now() >= entry.second) {
     Fatal(SR_TIMED_OUT, "Native signaling operation timed out."); break;
   }
@@ -169,7 +171,7 @@ int Signaling::Submit(const SR_SignalRequest& q, char* error, uint32_t capacity)
   if (sdp) sdp_id_ = q.operation_id;
   if (q.action == SR_CREATE_OFFER || q.action == SR_CREATE_ANSWER) {
     if (q.action == SR_CREATE_OFFER && !channel_) {
-      // Bootstrap a data m-section and validate DTLS/SCTP without exposing SR-103's application channel API.
+      // Keep a private bootstrap channel so application channels can open after negotiation.
       webrtc::DataChannelInit options;
       options.protocol = "simurghrtc-internal/1";
       auto channel = peer_->CreateDataChannelOrError("simurghrtc-negotiation", &options);
@@ -255,7 +257,9 @@ void Signaling::RefreshRemoteCompletion() {
   state_.remote_ice_complete = end_ice_ && state_.remote_description_set && early_ice_.empty() && !applying_ice_;
 }
 void Signaling::OnDataChannel(webrtc::scoped_refptr<webrtc::DataChannelInterface> channel) {
-  if (stopped_ || failed_ || channel_ || channel->label() != "simurghrtc-negotiation" || channel->protocol() != "simurghrtc-internal/1") { channel->Close(); return; }
+  if (stopped_ || failed_) { channel->Close(); return; }
+  if (channel->protocol() != "simurghrtc-internal/1") { channels_.Accept(std::move(channel)); return; }
+  if (channel_ || channel->label() != "simurghrtc-negotiation") { channel->Close(); return; }
   channel_ = std::move(channel); channel_->RegisterObserver(this); OnStateChange();
 }
 void Signaling::OnStateChange() {

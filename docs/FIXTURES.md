@@ -21,6 +21,8 @@ python3 tools/media_fixtures.py --output Intermediate/Fixtures/MediaV1
 
 Choose a new or empty output directory. The tool checks the saved hashes before writing anything.
 
+For native and packaged Unreal message round trips, use the [DataChannel fixtures](DATA_CHANNELS.md#run-the-checks). They do not need Janus or TURN.
+
 ## 2. Run local Janus and TURN
 
 Start Docker Engine and Compose, then run:

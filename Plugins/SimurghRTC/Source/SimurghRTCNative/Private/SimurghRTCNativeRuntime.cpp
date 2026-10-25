@@ -13,6 +13,7 @@ public:
 #if SIMURGHRTC_WITH_WEBRTC
     SR_Runtime* Handle = nullptr;
     TUniquePtr<SR_SignalEvent> SignalEvent;
+    TUniquePtr<SR_DataEvent> DataEvent;
     ~FImpl() { SimurghRTC_DestroyV1(Handle); }
 #endif
 };
@@ -155,6 +156,83 @@ bool FNativeRuntime::PollSignal(FNativeTransportEvent& OutEvent)
         OutEvent.Ice.UsernameFragment = UTF8_TO_TCHAR(Native.username_fragment);
         OutEvent.Ice.MLineIndex = Native.sdp_mline_index;
     }
+    return true;
+#else
+    return false;
+#endif
+}
+namespace
+{
+#if SIMURGHRTC_WITH_WEBRTC
+ESimurghRTCErrorCode DataError(int Code)
+{
+    switch (Code)
+    {
+    case SR_OK: return ESimurghRTCErrorCode::None;
+    case SR_INVALID_ARGUMENT: return ESimurghRTCErrorCode::InvalidArgument;
+    case SR_INVALID_STATE: return ESimurghRTCErrorCode::InvalidState;
+    case SR_RESOURCE_EXHAUSTED: return ESimurghRTCErrorCode::ResourceExhausted;
+    case SR_TIMED_OUT: return ESimurghRTCErrorCode::Timeout;
+    default: return ESimurghRTCErrorCode::InternalError;
+    }
+}
+void DataInfo(const SR_ChannelInfo& Native, FNativeDataResult& Out)
+{
+    Out.ChannelId = Native.channel_id;
+    auto& S = Out.Channel;
+    S.State = static_cast<ENativeChannelState>(Native.state);
+    S.bRemote = Native.remote != 0;
+    S.Info.bOpen = S.State == ENativeChannelState::Open;
+    S.Info.Options.Label = UTF8_TO_TCHAR(Native.label);
+    S.Info.Options.bOrdered = Native.ordered != 0;
+    S.Info.Options.Reliability = static_cast<ESimurghRTCReliability>(Native.reliability);
+    S.Info.Options.ReliabilityValue = Native.reliability_value;
+    S.Info.MaximumMessageBytes = Native.maximum_message_bytes;
+    S.NegotiatedMaximumMessageBytes = Native.negotiated_message_bytes;
+    S.Info.BufferedBytes = static_cast<int64>(Native.buffered_bytes);
+    S.bWritable = S.Info.bOpen && S.Info.MaximumMessageBytes > 0 && S.Info.BufferedBytes < FNativeDataLimits::ChannelBufferBytes;
+}
+#endif
+}
+ESimurghRTCErrorCode FNativeRuntime::Data(const FNativeDataRequest& Request, FNativeDataResult& Out)
+{
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId()); Out = {};
+#if SIMURGHRTC_WITH_WEBRTC
+    if (Impl)
+    {
+        FTCHARToUTF8 Label(*Request.Options.Label, Request.Options.Label.Len());
+        SR_ChannelRequest Q{}; Q.size = sizeof(Q); Q.abi_version = SR_ABI_VERSION;
+        Q.action = static_cast<int32>(Request.Action); Q.channel_id = Request.ChannelId;
+        Q.ordered = Request.Options.bOrdered; Q.reliability = static_cast<int32>(Request.Options.Reliability);
+        Q.reliability_value = Request.Options.ReliabilityValue;
+        Q.label = Label.Get(); Q.label_bytes = Label.Length();
+        Q.data = Request.Bytes.GetData(); Q.data_bytes = Request.Bytes.Num(); Q.kind = static_cast<int32>(Request.Kind);
+        auto Native = MakeUnique<SR_ChannelInfo>();
+        Out.Error = DataError(SimurghRTC_ChannelV1(Impl->Handle, &Q, Native.Get()));
+        DataInfo(*Native, Out); return Out.Error;
+    }
+#endif
+    return Out.Error = ESimurghRTCErrorCode::InvalidState;
+}
+bool FNativeRuntime::PollData(FNativeDataResult& Out)
+{
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId()); Out = {};
+#if SIMURGHRTC_WITH_WEBRTC
+    if (!Impl) return false;
+    if (!Impl->DataEvent)
+    {
+        Impl->DataEvent = MakeUnique<SR_DataEvent>();
+        Impl->DataEvent->size = sizeof(SR_DataEvent); Impl->DataEvent->abi_version = SR_ABI_VERSION;
+    }
+    auto& Native = *Impl->DataEvent;
+    if (SimurghRTC_PollDataV1(Impl->Handle, &Native)) return false;
+    Out.Type = static_cast<ENativeDataEvent>(Native.type);
+    if (Out.Type == ENativeDataEvent::None) return true;
+    Out.Error = DataError(Native.error_code);
+    if (Out.Type == ENativeDataEvent::Error) return true;
+    DataInfo(Native.channel, Out);
+    Out.Kind = static_cast<ESimurghRTCMessageKind>(Native.kind);
+    if (Out.Type == ENativeDataEvent::Message) Out.Bytes.Append(Native.data, Native.data_bytes);
     return true;
 #else
     return false;

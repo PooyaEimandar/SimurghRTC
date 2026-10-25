@@ -7,3 +7,5 @@ _SimurghRTC_NativeVersionV1
 _SimurghRTC_SignalV1
 _SimurghRTC_PollEventV1
 _SimurghRTC_EnableLoopbackProbeV1
+_SimurghRTC_ChannelV1
+_SimurghRTC_PollDataV1
