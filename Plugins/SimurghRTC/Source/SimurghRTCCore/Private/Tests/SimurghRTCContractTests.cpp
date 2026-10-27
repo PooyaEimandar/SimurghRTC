@@ -86,8 +86,10 @@ bool FSimurghRTCCompletionTest::RunTest(const FString&)
     TestEqual(TEXT("Activation does not complete inline"), Completions, 0);
     TickOperations();
     TestEqual(TEXT("Exactly one completion"), Completions, 1);
-    TestEqual(TEXT("No fabricated transport success"), Operation->GetResult().Error.Code, ESimurghRTCErrorCode::NotImplemented);
-    TestEqual(TEXT("Failed connection state"), Fixture.Session->GetState(), ESimurghRTCSessionState::Failed);
+    TestEqual(TEXT("Invalid Direct endpoint or unimplemented Janus fails explicitly"), Operation->GetResult().Error.Code,
+        SIMURGHRTC_WITH_DIRECT ? ESimurghRTCErrorCode::InvalidArgument : ESimurghRTCErrorCode::NotImplemented);
+    TestEqual(TEXT("Validation leaves state unchanged"), Fixture.Session->GetState(),
+        SIMURGHRTC_WITH_DIRECT ? ESimurghRTCSessionState::Idle : ESimurghRTCSessionState::Failed);
     TestEqual(TEXT("Session correlation"), Operation->GetResult().Error.SessionId, Fixture.Session->GetSessionId());
     TestEqual(TEXT("Operation correlation"), Operation->GetResult().Error.OperationId, Operation->GetOperationId());
     Operation->Activate();
@@ -178,7 +180,7 @@ bool FSimurghRTCProfileTest::RunTest(const FString&)
     TStrongObjectPtr<USimurghRTCOperation> DirectConnect(USimurghRTCOperation::Connect(Fixture.Session.Get(), DirectConfig));
     DirectConnect->Activate(); TickOperations();
     TestEqual(TEXT("Direct exclusion is enforced by the async API"), DirectConnect->GetResult().Error.Code,
-        SIMURGHRTC_WITH_DIRECT ? ESimurghRTCErrorCode::NotImplemented : ESimurghRTCErrorCode::BuildExcluded);
+        SIMURGHRTC_WITH_DIRECT ? ESimurghRTCErrorCode::InvalidArgument : ESimurghRTCErrorCode::BuildExcluded);
     for (const TCHAR* Name : {TEXT("Connect"), TEXT("Disconnect"), TEXT("OpenChannel"), TEXT("CloseChannel"), TEXT("Call"), TEXT("AcceptCall"), TEXT("RejectCall"), TEXT("HangUp"), TEXT("JoinTextRoom"), TEXT("LeaveTextRoom"), TEXT("SendRoomText"), TEXT("CreateGeneratedSource"), TEXT("AttachSource"), TEXT("ReplaceSource"), TEXT("SetSourceMuted"), TEXT("StopSource"), TEXT("DetachTrack"), TEXT("SetDecodedFrameDelivery"), TEXT("Cancel")})
     {
         const UFunction* Function = USimurghRTCOperation::StaticClass()->FindFunctionByName(Name);
@@ -231,7 +233,8 @@ bool FSimurghRTCDisconnectTest::RunTest(const FString&)
     TestTrue(TEXT("Disconnect succeeds"), Disconnect->GetResult().IsSuccess());
     TStrongObjectPtr<USimurghRTCOperation> Retry(USimurghRTCOperation::Connect(Fixture.Session.Get(), Fixture.Config()));
     Retry->Activate(); TickOperations();
-    TestEqual(TEXT("Reuse reaches the transport boundary"), Retry->GetResult().Error.Code, ESimurghRTCErrorCode::NotImplemented);
+    TestEqual(TEXT("Reuse reaches the provider boundary"), Retry->GetResult().Error.Code,
+        SIMURGHRTC_WITH_DIRECT ? ESimurghRTCErrorCode::InvalidArgument : ESimurghRTCErrorCode::NotImplemented);
     TStrongObjectPtr<USimurghRTCOperation> Dormant(USimurghRTCOperation::Disconnect(Fixture.Session.Get()));
     Dormant->OnCompletedNative.AddLambda([&](const FSimurghRTCOperationResult&) { AddError(TEXT("Callback after final shutdown")); });
     Fixture.Session->Shutdown(); Dormant->Activate(); TickOperations();

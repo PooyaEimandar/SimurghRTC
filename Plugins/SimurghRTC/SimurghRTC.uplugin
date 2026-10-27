@@ -3,7 +3,7 @@
   "Version": 1,
   "VersionName": "0.1.0-m0",
   "FriendlyName": "SimurghRTC",
-  "Description": "Shared RTC contract, internal Direct HTTP signaling and native peer transport. Public session integration and Janus signaling are pending.",
+  "Description": "Shared RTC sessions and Direct data channels with isolated native WebRTC. Janus signaling and network media are pending.",
   "Category": "Networking",
   "CreatedBy": "SimurghRTC contributors",
   "EngineVersion": "5.8.0",

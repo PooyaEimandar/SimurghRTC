@@ -2,10 +2,12 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "Containers/Ticker.h"
 #include "SimurghRTCTypes.h"
 #include "SimurghRTCSession.generated.h"
 
 class USimurghRTCOperation;
+namespace SimurghRTC { class ISessionTransport; }
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimurghRTCSessionStateEvent, ESimurghRTCSessionState, State);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimurghRTCDataEvent, const FSimurghRTCDataMessage&, Message);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimurghRTCChannelEvent, const FSimurghRTCChannelInfo&, Channel);
@@ -33,7 +35,7 @@ public:
     UFUNCTION(BlueprintPure, Category="SimurghRTC") FSimurghRTCStatistics GetStatistics() const { return {}; }
     UFUNCTION(BlueprintPure, Category="SimurghRTC") FSimurghRTCCallInfo GetCallInfo() const { return {}; }
     UFUNCTION(BlueprintCallable, Category="SimurghRTC") FSimurghRTCError GetChannelInfo(FSimurghRTCChannelHandle Channel, FSimurghRTCChannelInfo& Info) const;
-    // A successful send means accepted into a bounded queue, not delivery. No queue exists in M0.
+    // A successful send means copied into a bounded queue, not remote delivery.
     UFUNCTION(BlueprintCallable, Category="SimurghRTC") FSimurghRTCError SendText(FSimurghRTCChannelHandle Channel, const FString& Text);
     UFUNCTION(BlueprintCallable, Category="SimurghRTC") FSimurghRTCError SendBytes(FSimurghRTCChannelHandle Channel, const TArray<uint8>& Bytes);
     UFUNCTION(BlueprintCallable, Category="SimurghRTC|Frames") FSimurghRTCError PushAudioFrame(FSimurghRTCSourceHandle Source, const FSimurghRTCAudioFrame& Frame);
@@ -62,6 +64,14 @@ private:
     void HandleWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources);
     void SetState(ESimurghRTCSessionState NewState);
     FSimurghRTCError ChannelUnavailable(FSimurghRTCChannelHandle Channel) const;
+    bool TickTransport(float);
+    void ReleaseTransport();
+    FSimurghRTCError StartTransport(const FSimurghRTCSessionConfig& Config);
+    TSharedPtr<SimurghRTC::ISessionTransport> Transport;
+    FTSTicker::FDelegateHandle TransportTicker;
+    uint64 TransportGeneration = 0;
+    double OperationTimeoutSeconds = 30;
+    FSimurghRTCError TransportError;
     UPROPERTY(Transient) FGuid SessionId;
     UPROPERTY(Transient) ESimurghRTCSessionState State = ESimurghRTCSessionState::Idle;
     UPROPERTY(Transient) TArray<TObjectPtr<USimurghRTCOperation>> PendingOperations;

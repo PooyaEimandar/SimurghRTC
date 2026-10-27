@@ -2,7 +2,7 @@
 
 Version **1** freezes the shared C++ and Blueprint surface for **Unreal Engine 5.8.3**. Applications can query `USimurghRTCSession::GetApiContractVersion()`. The [lifecycle examples](LIFECYCLE_EXAMPLES.md) execute local success, failure, cancellation and owner cleanup through both interfaces.
 
-This is an API contract, not a completed RTC implementation. `Connect` still returns `NotImplemented`. The shared session’s channels, calls, rooms, device capture and media delivery also remain unimplemented. Internal providers support [DataChannels](DATA_CHANNELS.md); SR-105 will connect them to this facade. The separate [native probes](NATIVE_PROBE.md) test libwebrtc feasibility; they do not make the session API operational.
+Direct sessions now connect, open/close DataChannels, send text/binary messages and disconnect through this API. Start with [Shared sessions](SHARED_SESSIONS.md). Janus connections, calls, rooms, device capture and media delivery still return explicit implementation errors. Native media feasibility tests do not establish network media support.
 
 The SR-001 review fixes ownership, call topology, headless media, device discovery, cancellation and errors below. Public v1 names, parameter types, Blueprint pins, enum values and these lifecycle rules are compatibility commitments. Additive APIs are allowed; breaking changes require a new contract version and migration notes. Append enum values rather than reordering them. The earlier M0 draft had no compatibility guarantee.
 
@@ -30,6 +30,8 @@ Session events are `OnStateChanged`, `OnMessage`, `OnChannelChanged`, `OnTrackCh
 
 `FSimurghRTCSessionConfig` selects provider, purpose, endpoint, local identity, access token, ICE servers and timeout. Direct permits HTTP(S); Janus also permits WS(S). Insecure signaling needs explicit development opt-in. Endpoints require a host and cannot embed user credentials, fragments or whitespace. Credentials are transient and omitted from errors/logs. Operation completion releases its configuration copy. Application code and Blueprint literals must not embed production secrets.
 
+The current Direct adapter requires the full `/simurghrtc/v1/signal` URL, a local identity and an access token. HTTP is limited to explicitly enabled loopback development endpoints. Custom ICE servers and receive-only sessions return `NotImplemented`; they are not silently ignored. Purpose selects the server admission category, but does not implement calls or rooms.
+
 | Purpose | Direct Unreal | Janus |
 |---|---|---|
 | Echo | The plugin's Unreal endpoint is the remote peer | Janus EchoTest is the remote peer |
@@ -39,7 +41,7 @@ Session events are `OnStateChanged`, `OnMessage`, `OnChannelChanged`, `OnTrackCh
 
 Both providers use the same native libwebrtc adapter. Before Connect, `GetProvider` defaults to Direct if included, otherwise Janus. Provider selection happens at Connect; disconnect before changing it. No live PeerConnection migration is promised. Direct does not turn an ordinary Unreal dedicated server into a WebRTC endpoint, or add client-to-client calling implicitly. Janus VideoRoom/SFU operations are separate extensions, not the portable one-to-one `Call` operation. [Signaling v1](SIGNALING_V1.md) describes private provider messages.
 
-A session has at most one call. `Call` success means an active call and returns its opaque `CallId` and `PeerId`; progress arrives through `OnCallChanged` (`Dialing`, `Ringing`, `Active`, `Ended`). Incoming calls supply the identity needed by `AcceptCall`/`RejectCall`. `HangUp` ends the current call. `GetCallInfo` returns `None` with empty identities when no call exists. M0 never emits a call event or claims a live call.
+A session has at most one call. `Call` success means an active call and returns its opaque `CallId` and `PeerId`; progress arrives through `OnCallChanged` (`Dialing`, `Ringing`, `Active`, `Ended`). Incoming calls supply the identity needed by `AcceptCall`/`RejectCall`. `HangUp` ends the current call. `GetCallInfo` returns `None` with empty identities when no call exists. Call operations are not implemented yet.
 
 Rooms use opaque string IDs. Successful join/leave/send results identify `RoomId`; participant and text events carry explicit identities. A room is an application service, not an automatic multicast DataChannel. Common operations do not expose administrative Janus credentials.
 
@@ -55,22 +57,22 @@ For a live owner, exactly one of **On Success**, **On Failure** or **On Cancelle
 
 | Action | Result |
 |---|---|
-| `Disconnect` | Cancel other active operations, close local state, retain a reusable session. Repeated local disconnect succeeds. |
-| `Cancel` | Finish that operation with `Cancelled`. It does not shut down its owner. |
+| `Disconnect` | Cancel other active operations, wait for transport closure, retain a reusable session. Repeated local disconnect succeeds. |
+| `Cancel` | Finish that operation with `Cancelled`. A started Connect closes its attempt; a started Disconnect continues closing. |
 | `Shutdown` | Final local teardown: silently cancel active operations and permanently close the session. Repeat calls do nothing. |
 | Owner EndPlay / widget teardown | Call `Shutdown`; do not wait for a completion event. |
 | World cleanup / session destruction | Perform silent shutdown as a fallback. |
 | Activate a dormant proxy after shutdown | Settle it as cancelled without calling the former owner. |
 
-Current Connect goes `Idle/Closed/Failed → Connecting → Failed` and reports `NotImplemented`. Validation failures leave session state unchanged. Cancelling during `Connecting` returns to `Idle`; cancellation before execution leaves the prior state unchanged. Disconnect currently closes local state without network activity. `Connected` and `Closing` remain transport states for later milestones.
+Direct Connect goes `Idle/Closed/Failed → Connecting → Connected`, or `Failed` on a connection error. Validation failures leave session state unchanged. Cancelling during `Connecting` returns to `Idle`; cancellation before execution leaves the prior state unchanged. Disconnect moves through `Closing` to `Closed`. Cancelling its proxy cannot undo a close already sent. Reconnect keeps the facade's session GUID but creates a fresh PeerConnection, server session and channel handles.
 
-Future transport work must use weak UObject references when crossing threads, return to the game thread before callbacks, ignore stale callbacks after teardown, and enforce the configured deadline (1–300,000 ms, starting at activation). Other remote operations use the connected session's timeout. These are implementation requirements; M0 completes locally without a network wait.
+Transport callbacks use weak UObject references and return to the game thread. Shutdown removes listeners immediately; native cleanup continues without calling the former owner. Connect enforces the configured deadline (1–300,000 ms, starting at activation). Other remote operations use the connected session's timeout. A timeout settles the operation while remaining cleanup continues in the background.
 
 ## Channels, sources and sinks
 
-Handles belong to one session. Applications must not fabricate them or reuse them after close/stop. Later registries must reject unknown, foreign and stale handles. `IsValid()` currently means only that a GUID is present, not that its resource exists.
+Handles belong to one session. Applications must not fabricate them or reuse them after close/stop. Channel operations reject unknown, foreign and stale handles. `IsValid()` means only that a GUID is present, not that its resource exists. `OpenChannel` returns a handle only after the native channel opens and its message limit is known; cancelling a pending open closes its partial channel.
 
-Channel options separate ordering and reliability. `Reliable` requires a zero bound; `MaxRetransmits` takes a count and `MaxLifetime` takes milliseconds, both 0–65,535. Labels are limited to 65,535 UTF-8 bytes and cannot contain a null character. `MaximumMessageBytes == 0` means unknown, not unlimited. Send success will mean admission to a bounded local queue, not remote delivery. M0 rejects every send because no open channels exist.
+Channel options separate ordering and reliability. `Reliable` requires a zero bound; `MaxRetransmits` takes a count and `MaxLifetime` takes milliseconds, both 0–65,535. Labels are limited to 65,535 UTF-8 bytes and cannot contain a null character. `MaximumMessageBytes == 0` means unknown, not unlimited. Send success means a copied payload was admitted to a bounded local queue. It does not acknowledge remote delivery. Use `GetChannelInfo` and `OnChannelChanged` to observe buffer drain after `ResourceExhausted`; [DataChannels](DATA_CHANNELS.md) lists the limits.
 
 Track information distinguishes local and remote tracks with `bRemote`; `Source` identifies a local track's source and is empty for remote tracks. `OnTrackChanged` with `bAdded=true` adds or updates information, and `false` removes it.
 
@@ -100,9 +102,9 @@ The draft's common source/track operations moved to Core for headless use. Use `
 
 ## Capabilities, errors and extensions
 
-`FSimurghRTCCapability` separates `Compiled`, `Platform`, `Service` and `Negotiated`, each Unknown/Available/Unavailable. `IsAvailable()` requires all four to be Available. `DeviceCapture` denotes the optional client capture module; generated/headless media is separate. M0 reports compiled availability, unknown platform/negotiation and unavailable service support. Statistics have `bAvailable == false`; zeros are not measurements.
+`FSimurghRTCCapability` separates `Compiled`, `Platform`, `Service` and `Negotiated`, each Unknown/Available/Unavailable. `IsAvailable()` requires all four to be Available. Direct DataChannels report compiled/service availability when the adapter is included; platform and negotiation become Available after that session connects. Other features remain explicitly unavailable or unimplemented. `DeviceCapture` denotes the optional client capture module; generated/headless media is separate. Statistics have `bAvailable == false`; zeros are not measurements.
 
-Errors distinguish invalid input/state, build exclusion, unavailable platforms, unsupported services, missing negotiation, authorization, timeout, cancellation, pending implementation, exhausted resources, denied device permission and internal failure. `None` means success. Invalid payloads are rejected before resource use. Errors do not include raw provider messages or credentials. Runtime-specific failures remain reserved until transport/device implementation can exercise them.
+Errors distinguish invalid input/state, build exclusion, unavailable platforms, unsupported services, missing negotiation, authorization, timeout, cancellation, pending implementation, exhausted resources, denied device permission and internal failure. `None` means success. Invalid payloads are rejected before resource use. Errors do not include raw provider messages or credentials.
 
 `SimurghRTCJanusExtensions` contains `JoinVideoRoom` and its string-based room options. It is a reflected placeholder, not an implemented VideoRoom service. Janus-only classes are physically omitted from disabled profiles. The Core provider enum remains present so shared configuration can report `BuildExcluded`.
 

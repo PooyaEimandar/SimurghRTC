@@ -2,7 +2,7 @@
 
 Updated **2026-10-24**. M0 is still in progress. The isolated **WebRTC M155** backend runs inside packaged Unreal 5.8.3 clients on Mac, Android and the iOS simulator, plus a Mac dedicated Server. Android/iOS ARM64 libraries are built separately from pinned sources and tools. Fresh repeat builds match the accepted libraries on all four targets, including iOS device. The [source review](NATIVE_SOURCE_REVIEW.md) resolves the known dependency findings. Independent-host reproduction and deferred physical iOS acceptance still prevent M0 closure.
 
-The plugin has working local test probes, but the shared `Connect` API still returns `NotImplemented`. Real connections and network media are M1/M2 work.
+This page records M0 feasibility results and their original scope. M1 now adds real Direct connections and DataChannels through the [shared session API](SHARED_SESSIONS.md). Network media remains M2 work; these newer data features do not close M0's outstanding platform and reproduction gates.
 
 ## Current M155 results
 
@@ -180,7 +180,7 @@ The executable examples use `AContractLifecycleCpp` and the actual `BP_RtcLifecy
 | Full | DirectUnreal and Janus passed | DirectUnreal and Janus passed |
 | Direct-only | DirectUnreal passed | DirectUnreal passed |
 
-Each of these six runs executes both examples, checks operation/session IDs and ordered outcomes, verifies silent shutdown and actor destruction, waits for late callbacks, and requires process exit. Disconnect supplies local success; Connect deliberately reports `NotImplemented`. No network session or call is claimed.
+Each of these six historical runs executed both examples, checked operation/session IDs and ordered outcomes, verified silent shutdown and actor destruction, waited for late callbacks, and required process exit. Disconnect supplied local success; Connect deliberately reported `NotImplemented` at that revision. No network session or call was claimed. The current [lifecycle examples](LIFECYCLE_EXAMPLES.md) document the updated Direct validation result.
 
 Both profiles passed all **11 Unreal automation tests**, including pending null-session failures surviving garbage collection, disconnect/reuse, generated enum sentinel rejection, PCM/BGRA validation and honest device/source placeholders. **112 Python tests** passed. The same Blueprint asset was cooked into both packages; link maps include Janus only in Full and exclude the Editor-only generator from both games.
 
@@ -332,7 +332,7 @@ The connected Samsung is an SM-S938B. The connected iPhone X is an iPhone10,6 on
 | Minimum macOS target | 14.0, as selected by the installed UE toolchain |
 | Native RTC library linked by this plugin | Engine WebRTC **5414 / M109**, Release; explicit OpenSSL/Opus/VPX links |
 
-The [SR-003 inventory](reviews/SR003-inventory.json) retains the earlier archive hashes, local dependency versions and codec observations. The Mac archives in the source and installed engines are identical. `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` still describes the unavailable shared session service, not factory linkage. Android/iOS engine WebRTC branches are deliberately not selected; their separate dependency builds are recorded above, while device acceptance remains SR-006/SR-007 work. No engine source changes were introduced.
+The [SR-003 inventory](reviews/SR003-inventory.json) retains the earlier archive hashes, local dependency versions and codec observations. The Mac archives in the source and installed engines were identical. At that revision, `SIMURGHRTC_WITH_NATIVE_TRANSPORT=0` described the unavailable shared session service, not factory linkage. SR-105 now enables that flag for the Direct adapter. Android/iOS engine WebRTC branches are deliberately not selected; their separate dependency builds are recorded above, while device acceptance remains SR-006/SR-007 work. No engine source changes were introduced by those probes.
 
 ## Earlier evidence
 

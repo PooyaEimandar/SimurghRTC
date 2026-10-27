@@ -7,12 +7,12 @@ These examples teach the frozen [API v1 contract](API_CONTRACT.md) in Unreal **5
 | Step | Expected outcome |
 |---|---|
 | Create and retain a session; Disconnect | Local success, session Closed |
-| Connect with a valid configuration | Failure with `NotImplemented`, session Failed |
+| Connect with the fixture configuration | Direct: `InvalidArgument`, session stays Closed; Janus: `NotImplemented`, session Failed |
 | Start another Connect and cancel its proxy | One On Cancelled event |
 | Start another operation and call Shutdown | Cancelled result, no completion callback |
 | Destroy the actor with an operation pending | EndPlay shuts down immediately; no late completion |
 
-A successful local Disconnect does not mean a network connection worked. The examples deliberately expect Connect to fail at the unfinished transport boundary. Later connection demos belong to M1 and M3.
+A successful local Disconnect does not mean a network connection worked. The fixture deliberately uses an incomplete Direct endpoint and credential, or the unimplemented Janus provider. For a real Direct connection, use [Shared sessions](SHARED_SESSIONS.md). The packaged Blueprint data example remains SR-106 work.
 
 ## Open the examples
 

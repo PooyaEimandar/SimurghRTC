@@ -1,6 +1,6 @@
 # Native factory and headless Server probe
 
-This M0 probe runs the isolated **WebRTC M155** backend inside Unreal Engine **5.8.3**. It creates a factory and an idle PeerConnection, then exposes diagnostics through Unreal's **HTTPServer** on loopback. The shared session API still returns `NotImplemented` for Connect; this probe does not exchange signaling or network media.
+This M0 probe runs the isolated **WebRTC M155** backend inside Unreal Engine **5.8.3**. It creates a factory and an idle PeerConnection, then exposes diagnostics through Unreal's **HTTPServer** on loopback. This probe does not exchange signaling or network media. For real Direct connections and messages, use [Shared sessions](SHARED_SESSIONS.md).
 
 The packaged Mac ARM64 Server passed both factory modes and both occupied-port cases on **2026-10-22**. See the [Server validation snapshot](reviews/SR008-M155-server-validation.json) for artifact, executable and engine identities.
 

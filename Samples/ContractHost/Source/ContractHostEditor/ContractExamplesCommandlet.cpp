@@ -223,7 +223,7 @@ int32 UContractExamplesCommandlet::Main(const FString& Params)
     auto* Success = G.Outcome(Disconnect, TEXT("OnSuccess"), TEXT("Disconnect"), 1500, 0);
     G.Unexpected(Disconnect, TEXT("OnSuccess"), 1500, 260);
 
-    auto* Connect = G.Async(TEXT("Connect"), 2050, 0, TEXT("2. Valid request reports NotImplemented in M0"));
+    auto* Connect = G.Async(TEXT("Connect"), 2050, 0, TEXT("2. Invalid Direct endpoint / unavailable Janus fails explicitly"));
     G.Wire(Success, TEXT("then"), Connect, TEXT("execute"));
     auto* Failure = G.Outcome(Connect, TEXT("OnFailure"), TEXT("Connect"), 2500, 0);
     G.Unexpected(Connect, TEXT("OnFailure"), 2500, 260);

@@ -7,7 +7,7 @@
   "with_janus_extensions": true,
   "with_media": true,
   "with_server": true,
-  "native_transport": "internal-sdp-ice",
+  "native_transport": "shared-direct-data",
   "desktop_native_factory": "isolated-artifact-required",
   "mobile_native_factory": "external-artifact-required",
   "modules": [

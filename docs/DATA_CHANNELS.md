@@ -1,10 +1,12 @@
 # DataChannels
 
-SR-103 adds text and binary messages to the internal native and Direct providers. HTTP negotiates the connection; application messages travel over WebRTC's DTLS/SCTP transport. The shared `USimurghRTCSession` C++/Blueprint facade is still waiting for SR-105.
+SR-103 adds text and binary messages to the native and Direct providers. HTTP negotiates the connection; application messages travel over WebRTC's DTLS/SCTP transport. Applications can now use the shared `USimurghRTCSession` C++/Blueprint API; see [Shared sessions](SHARED_SESSIONS.md). This guide describes the underlying transport and its limits.
 
 On 2026-10-25, packaged Unreal 5.8.3 Mac ARM64 Full client and dedicated Server passed **292 exact round trips across 24 channels and four fresh connections**, including backpressure recovery and native teardown. All 20 Unreal and 166 Python tests pass. The [validation record](reviews/SR103-data-channel-validation.json) includes artifact/build hashes, scope and earlier failed attempts.
 
-## Use a channel
+## Use the internal provider
+
+The examples below use `FDirectClient`. For application code, prefer [Shared sessions](SHARED_SESSIONS.md), whose async OpenChannel completes after the native channel is open.
 
 Wait for the Direct client to reach `Connected`. Install a handler, open a channel, then wait for its `Open` event before sending. All provider calls and callbacks run on Unreal's game thread.
 
@@ -75,4 +77,4 @@ python3 tools/run_data_probe.py \
 
 Use separately packaged Mac ARM64 Game and dedicated Server apps with the same current artifact; see [building](BUILDING.md) and [Direct signaling](DIRECT_SIGNALING.md). The runner checks saved reports, executable and artifact hashes, distinct process IDs, exact message counts, channel closure and native cleanup. It removes temporary credentials and stops the processes it starts.
 
-The native fixture additionally tests a lower advertised 32 KiB limit, zero-lifetime configuration, a Server-originated channel and explicit receive-overflow failure. The Unreal fixture tests six ordering/reliability combinations, exact Unicode/binary echoes, empty and maximum-size messages, a 32-message ordered burst, rejected sends, copied inputs and queue recovery. These are controlled loopback tests. Packet-loss/expiry behavior, cross-device traffic, mobile packages and public C++/Blueprint session integration need separate acceptance.
+The native fixture additionally tests a lower advertised 32 KiB limit, zero-lifetime configuration, a Server-originated channel and explicit receive-overflow failure. The Unreal fixture tests six ordering/reliability combinations, exact Unicode/binary echoes, empty and maximum-size messages, a 32-message ordered burst, rejected sends, copied inputs and queue recovery. These are controlled loopback tests. Packet-loss/expiry behavior, cross-device traffic and mobile packages need separate acceptance. SR-105 adds shared C++ session checks; the packaged Blueprint data sample remains SR-106.

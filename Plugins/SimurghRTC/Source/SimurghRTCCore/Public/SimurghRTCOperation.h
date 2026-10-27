@@ -78,6 +78,11 @@ private:
     FName OperationName;
     ESimurghRTCFeature RequiredFeature = ESimurghRTCFeature::DataChannels;
     FSimurghRTCError ValidationError;
+    FSimurghRTCChannelOptions ChannelOptions;
+    FSimurghRTCChannelHandle PendingChannel;
+    double Deadline = 0;
+    uint64 TransportGeneration = 0;
+    bool bStarted = false;
     UPROPERTY(Transient) FSimurghRTCSessionConfig ConnectConfig;
     UPROPERTY(Transient) FSimurghRTCOperationResult Result;
     FTSTicker::FDelegateHandle TickHandle;

@@ -25,8 +25,8 @@ public abstract class SimurghRTCModuleRules : ModuleRules
         PublicDefinitions.Add("SIMURGHRTC_WITH_JANUS=" + (Janus ? "1" : "0"));
         PublicDefinitions.Add("SIMURGHRTC_WITH_JANUS_EXTENSIONS=" + (JanusExtensions ? "1" : "0"));
         PublicDefinitions.Add("SIMURGHRTC_WITH_MEDIA=" + (Media ? "1" : "0"));
-        // The M0 contract shell never claims a linked/usable native transport.
-        PublicDefinitions.Add("SIMURGHRTC_WITH_NATIVE_TRANSPORT=0");
+        // Adapter availability is a build property; GetCapability reports negotiated support.
+        PublicDefinitions.Add("SIMURGHRTC_WITH_NATIVE_TRANSPORT=" + (Direct ? "1" : "0"));
     }
 }
 

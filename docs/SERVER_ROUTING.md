@@ -1,6 +1,6 @@
 # Concurrent Server sessions
 
-SR-104 adds session inspection, per-user limits and addressed routing to the internal `FDirectServer` provider. Each connected client owns a separate PeerConnection and channel handles. The shared C++/Blueprint session API remains SR-105/SR-106 work.
+SR-104 adds session inspection, per-user limits and addressed routing to the internal `FDirectServer` provider. Each connected client owns a separate PeerConnection and channel handles. Clients now connect through the [shared session API](SHARED_SESSIONS.md); the Blueprint data sample remains SR-106 work.
 
 On 2026-10-25, four packaged Unreal 5.8.3 Mac ARM64 clients passed concurrent routing against the dedicated Server. Both traffic phases passed without unexpected messages; all five sessions, including the replacement, released their native peers. All 20 Unreal and 171 Python tests pass, along with the existing 292-message DataChannel regression. See the [validation record](reviews/SR104-concurrent-server-validation.json).
 

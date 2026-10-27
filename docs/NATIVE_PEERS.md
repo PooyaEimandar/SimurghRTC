@@ -1,6 +1,6 @@
 # Native peers and signaling
 
-SR-101 adds an internal PeerConnection handle with asynchronous SDP/ICE exchange. It can connect two local peers using the isolated M155 backend. The shared C++/Blueprint session API still returns `NotImplemented` for connection attempts; the [Direct HTTP provider](DIRECT_SIGNALING.md) negotiates peers internally, and [DataChannels](DATA_CHANNELS.md) are available internally through SR-103.
+SR-101 adds an internal PeerConnection handle with asynchronous SDP/ICE exchange. It can connect two local peers using the isolated M155 backend. Applications can use the [shared session API](SHARED_SESSIONS.md) to connect and send messages through the [Direct HTTP provider](DIRECT_SIGNALING.md). This guide covers the lower-level native probes.
 
 `FNativePeer` is for plugin providers and tests. It does not change API v1 or add Blueprint nodes. The M0 factory and media probes keep their synchronous paths.
 

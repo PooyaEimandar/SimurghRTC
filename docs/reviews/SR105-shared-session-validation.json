@@ -1,0 +1,2279 @@
+{
+  "schema": 1,
+  "issue": "SR-105",
+  "recorded_at": "2026-10-27T07:55:32.826809+00:00",
+  "base_commit": "90be01b027cae58c55340ac2a28de182029af5aa",
+  "status": "complete-local-shared-direct-sessions",
+  "engine_version": "5.8.3",
+  "engine_revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+  "host": {
+    "os_version": "27.0.1",
+    "xcode": "Xcode 27.1\nBuild version 27A9275",
+    "mac_sdk": "27.0"
+  },
+  "scope": "Shared Core C++ API; packaged Mac ARM64 Development Full Game clients and dedicated Server, loopback HTTP and ICE. Existing Blueprint lifecycle graphs also run; Blueprint data sample remains SR-106.",
+  "native_artifact": {
+    "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+    "platform": "Mac",
+    "architecture": "arm64",
+    "files": 7,
+    "objects": 1,
+    "archive_bytes": 17895536,
+    "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+    "runtime_validation": "unverified"
+  },
+  "native_artifact_changed": false,
+  "packages": {
+    "client": {
+      "schema": 1,
+      "passed": true,
+      "profile": "full",
+      "platform": "Mac",
+      "architecture": "arm64",
+      "artifact": {
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17895536,
+        "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "f970a6d3f93ba87dba9ba8cb7c936adb48548cfa18bd4b95d59e1c8f01f5daf4",
+      "archive_exports": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ],
+      "webrtc_link_inputs": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+      ],
+      "link_response_sha256": "57e425f6ee55219589d1c3ade3ec453858684ff103a69813f92bb6cbd1f685bc",
+      "editor_link_inputs": false,
+      "janus_link_inputs": true,
+      "unreal_media_presentation_module": true,
+      "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+      "executable_sha256": "9defaaa8417ddf1f0d5590aad542c41078633be54de90370efdf40c0246ab1d2",
+      "executable_bytes": 282392480,
+      "built_executable_sha256": "8466f05b27fa036320449599e0ef86732d47fe3c4649b3791bf0825f4390bd30",
+      "built_and_staged_uuid": "9F31AC6A-8482-306B-9A89-7BA5773A9923",
+      "bundle_file_bytes": 516931379,
+      "shipping_size_baseline": false,
+      "rtc_size_delta_measured": false,
+      "code_signature_valid": true
+    },
+    "server": {
+      "schema": 1,
+      "passed": true,
+      "profile": "server",
+      "platform": "Mac",
+      "architecture": "arm64",
+      "artifact": {
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17895536,
+        "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "f970a6d3f93ba87dba9ba8cb7c936adb48548cfa18bd4b95d59e1c8f01f5daf4",
+      "archive_exports": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ],
+      "webrtc_link_inputs": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+      ],
+      "link_response_sha256": "f4f429aafa872d73187bc0f87810d458ceee727d7692f8f2b689d35ce652f81a",
+      "editor_link_inputs": false,
+      "janus_link_inputs": false,
+      "unreal_media_presentation_module": false,
+      "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+      "executable_sha256": "afff805bfe60c60d661438c113f9e5fd432e57b9056c2da58a2324f10f4957d5",
+      "executable_bytes": 284473808,
+      "built_executable_sha256": "afff805bfe60c60d661438c113f9e5fd432e57b9056c2da58a2324f10f4957d5",
+      "built_and_staged_uuid": "095C577E-FB31-3109-A846-C9791DAE7179",
+      "bundle_file_bytes": 383800841,
+      "shipping_size_baseline": false,
+      "rtc_size_delta_measured": false,
+      "code_signature_valid": true
+    }
+  },
+  "build_steps": [
+    {
+      "step": "verified-client-editor",
+      "exit_code": 0,
+      "seconds": 61.35
+    },
+    {
+      "step": "verified-client-editor-finalize",
+      "exit_code": 0,
+      "seconds": 24.46
+    },
+    {
+      "step": "verified-client-editor-metadata",
+      "exit_code": 0,
+      "seconds": 39.35
+    },
+    {
+      "step": "verified-client-tests",
+      "exit_code": 0,
+      "seconds": 48.29
+    },
+    {
+      "step": "verified-client-game",
+      "exit_code": 0,
+      "seconds": 38.99
+    },
+    {
+      "step": "verified-client-game-finalize",
+      "exit_code": 0,
+      "seconds": 30.61
+    },
+    {
+      "step": "verified-client-game-metadata",
+      "exit_code": 0,
+      "seconds": 23.92
+    },
+    {
+      "step": "verified-client-cook-game",
+      "exit_code": 0,
+      "seconds": 153.07
+    },
+    {
+      "step": "verified-server-server",
+      "exit_code": 0,
+      "seconds": 46.97
+    },
+    {
+      "step": "verified-server-server-finalize",
+      "exit_code": 0,
+      "seconds": 25.67
+    },
+    {
+      "step": "verified-server-server-metadata",
+      "exit_code": 0,
+      "seconds": 53.39
+    },
+    {
+      "step": "verified-server-editor",
+      "exit_code": 0,
+      "seconds": 78.39
+    },
+    {
+      "step": "verified-server-editor-finalize",
+      "exit_code": 0,
+      "seconds": 30.18
+    },
+    {
+      "step": "verified-server-editor-metadata",
+      "exit_code": 0,
+      "seconds": 48.45
+    },
+    {
+      "step": "verified-server-cook-server",
+      "exit_code": 0,
+      "seconds": 106.11
+    },
+    {
+      "step": "gc-client-game",
+      "exit_code": 0,
+      "seconds": 1162.45
+    },
+    {
+      "step": "gc-client-game-finalize",
+      "exit_code": 0,
+      "seconds": 20.74
+    },
+    {
+      "step": "gc-client-game-metadata",
+      "exit_code": 0,
+      "seconds": 19.36
+    },
+    {
+      "step": "gc-client-cook-game",
+      "exit_code": 0,
+      "seconds": 98.95
+    },
+    {
+      "step": "lifecycle-client-cook-game",
+      "exit_code": 0,
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+        "BuildCookRun",
+        "-WaitForUATMutex",
+        "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "-noP4",
+        "-platform=Mac",
+        "-clientarchitecture=arm64",
+        "-clientconfig=Development",
+        "-package",
+        "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Content/Examples",
+        "-editorarchitecture=arm64",
+        "-skipbuild",
+        "-nocompileeditor",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-map=/Engine/Maps/Entry",
+        "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+        "-unattended",
+        "-utf8output"
+      ]
+    }
+  ],
+  "engine_tracked_state_preserved": true,
+  "staged_plugin_source_matches_repository": true,
+  "client_probe_source_matches_repository": true,
+  "server_client_only_fixture_differences": [
+    "Source/ContractHost/ContractSessionEndpoint.cpp",
+    "Source/ContractHost/ContractSessionProbe.cpp"
+  ],
+  "source_reuse_note": "After the full build/test pipeline, only the client GC fixture changed. The client was rebuilt and repackaged. The Server package retains the earlier unused client-fixture methods; its Server probe and all production plugin sources match the repository and are unchanged. Both staged input manifests are hashed below. A final client recook added the existing Blueprint examples. All executable bytes outside LC_CODE_SIGNATURE are identical; the final re-signed package passed a fourth shared-session run and both lifecycle provider cases.",
+  "repeat_client_package": {
+    "schema": 1,
+    "passed": true,
+    "profile": "full",
+    "platform": "Mac",
+    "architecture": "arm64",
+    "artifact": {
+      "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+      "platform": "Mac",
+      "architecture": "arm64",
+      "files": 7,
+      "objects": 1,
+      "archive_bytes": 17895536,
+      "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+      "runtime_validation": "unverified"
+    },
+    "archive_sha256": "f970a6d3f93ba87dba9ba8cb7c936adb48548cfa18bd4b95d59e1c8f01f5daf4",
+    "archive_exports": [
+      "_SimurghRTC_ChannelV1",
+      "_SimurghRTC_CreatePeerV1",
+      "_SimurghRTC_CreateV1",
+      "_SimurghRTC_DestroyV1",
+      "_SimurghRTC_DiagnosticsV1",
+      "_SimurghRTC_EnableLoopbackProbeV1",
+      "_SimurghRTC_MediaProbeV1",
+      "_SimurghRTC_NativeVersionV1",
+      "_SimurghRTC_PollDataV1",
+      "_SimurghRTC_PollEventV1",
+      "_SimurghRTC_SignalV1"
+    ],
+    "webrtc_link_inputs": [
+      "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+    ],
+    "link_response_sha256": "57e425f6ee55219589d1c3ade3ec453858684ff103a69813f92bb6cbd1f685bc",
+    "editor_link_inputs": false,
+    "janus_link_inputs": true,
+    "unreal_media_presentation_module": true,
+    "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+    "executable_sha256": "8466f05b27fa036320449599e0ef86732d47fe3c4649b3791bf0825f4390bd30",
+    "executable_bytes": 282392480,
+    "built_executable_sha256": "8466f05b27fa036320449599e0ef86732d47fe3c4649b3791bf0825f4390bd30",
+    "built_and_staged_uuid": "9F31AC6A-8482-306B-9A89-7BA5773A9923",
+    "bundle_file_bytes": 516930351,
+    "shipping_size_baseline": false,
+    "rtc_size_delta_measured": false,
+    "code_signature_valid": true
+  },
+  "recook_binary_identity": {
+    "passed": true,
+    "files": [
+      {
+        "path": "LocalBuilds/SR101Ownership20261024c/Binaries/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+        "sha256": "8466f05b27fa036320449599e0ef86732d47fe3c4649b3791bf0825f4390bd30",
+        "signature_offset": 281840976,
+        "signature_bytes": 551504,
+        "code_without_signature_sha256": "ce3feabb775b67fe97a04486ec8dfe663c3feb124f96b5e43fec6d647e00cb85"
+      },
+      {
+        "path": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+        "sha256": "9defaaa8417ddf1f0d5590aad542c41078633be54de90370efdf40c0246ab1d2",
+        "signature_offset": 281840976,
+        "signature_bytes": 551504,
+        "code_without_signature_sha256": "ce3feabb775b67fe97a04486ec8dfe663c3feb124f96b5e43fec6d647e00cb85"
+      }
+    ],
+    "note": "The recook staged the same executable and re-signed the application. Bytes outside LC_CODE_SIGNATURE are identical."
+  },
+  "shared_runs": [
+    {
+      "evidence": "session-gc-final-1/result.json",
+      "run_id": "f51d6180-7ad6-409c-9964-1ab0e583eedf",
+      "server_pid": 88126,
+      "overlap_client_pids": [
+        88130,
+        88131,
+        88132,
+        88133
+      ],
+      "client_executable_sha256": "8466f05b27fa036320449599e0ef86732d47fe3c4649b3791bf0825f4390bd30",
+      "peak_connected": 8,
+      "server": {
+        "created": 16,
+        "connected": 16,
+        "closed": 16,
+        "records": 0,
+        "live_peers": 0,
+        "data_sent": 29,
+        "data_received": 29,
+        "echo_pending": 0
+      },
+      "clients": {
+        "data-0": {
+          "scenario": "data",
+          "role": 0,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "9243a219-254c-3cf0-5239-659717c333b7",
+              "received": 9,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "4d36e846-0943-f0e5-8b43-f99894f404db",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88130,
+          "exit_code": 0,
+          "elapsed_seconds": 2.070264581590891
+        },
+        "data-1": {
+          "scenario": "data",
+          "role": 1,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "a2ee9ac1-ae4e-dce1-d910-61b1dd4a3109",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "1a990ed5-9447-f5ed-0edb-6081e7158ae5",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88131,
+          "exit_code": 0,
+          "elapsed_seconds": 2.181721832603216
+        },
+        "data-2": {
+          "scenario": "data",
+          "role": 2,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "cea830a0-6e43-ef59-80bb-ba9efeb1c1e7",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "0d749582-4548-bad4-7613-7584b3c2459b",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88132,
+          "exit_code": 0,
+          "elapsed_seconds": 2.183598916977644
+        },
+        "data-3": {
+          "scenario": "data",
+          "role": 3,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "f12577da-ec49-4b00-32e3-d497a44b8781",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "147167b7-5b46-6fe1-8ab1-739f1de4c5cb",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88133,
+          "exit_code": 0,
+          "elapsed_seconds": 2.0979330837726593
+        },
+        "cancel": {
+          "scenario": "cancel",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "3f346b71-bd42-7615-d952-31a51fdd1c76",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88227,
+          "exit_code": 0,
+          "elapsed_seconds": 0.4119945429265499
+        },
+        "disconnect-pending": {
+          "scenario": "disconnect-pending",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "4823174b-a744-0759-24f0-e598ee28b1ba",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 2,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88235,
+          "exit_code": 0,
+          "elapsed_seconds": 0.047606706619262695
+        },
+        "timeout": {
+          "scenario": "timeout",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "6e92343e-5541-9839-b358-20a1d3a25a8d",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 8,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88244,
+          "exit_code": 0,
+          "elapsed_seconds": 0.2621483765542507
+        },
+        "http-timeout": {
+          "scenario": "http-timeout",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "b5bcc68f-1041-9291-ee0a-c4ab11cba663",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 8,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88262,
+          "exit_code": 0,
+          "elapsed_seconds": 6.333406582474709
+        },
+        "reentrant": {
+          "scenario": "reentrant",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "61adbac2-d24c-5e4f-20d5-78b4c57a50e1",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 88318,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5806364566087723
+        },
+        "owner-loss": {
+          "scenario": "owner-loss",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "9092ee97-f847-1dba-4ed5-4c91d5c76f1c",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 88332,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5748867094516754
+        },
+        "world": {
+          "scenario": "world",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "9f383e41-3a4f-3da3-c0f5-8fa6e4a2bbd2",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 88345,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5988829992711544
+        },
+        "session-gc": {
+          "scenario": "session-gc",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "bbfeacb2-e64d-f813-8c38-95b2292f8298",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": true
+            }
+          ],
+          "pid": 88362,
+          "exit_code": 0,
+          "elapsed_seconds": 0.6012304574251175
+        }
+      },
+      "timeout_injected": true,
+      "http_timeout_injected": true,
+      "all_processes_stopped": true,
+      "secrets_removed": true,
+      "elapsed_seconds": 35.973
+    },
+    {
+      "evidence": "session-gc-final-2/result.json",
+      "run_id": "26ad6fd1-945a-4341-bf7a-7f25348854be",
+      "server_pid": 88440,
+      "overlap_client_pids": [
+        88455,
+        88456,
+        88457,
+        88458
+      ],
+      "client_executable_sha256": "8466f05b27fa036320449599e0ef86732d47fe3c4649b3791bf0825f4390bd30",
+      "peak_connected": 8,
+      "server": {
+        "created": 16,
+        "connected": 16,
+        "closed": 16,
+        "records": 0,
+        "live_peers": 0,
+        "data_sent": 29,
+        "data_received": 29,
+        "echo_pending": 0
+      },
+      "clients": {
+        "data-0": {
+          "scenario": "data",
+          "role": 0,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "118ea3e4-a845-95da-34cf-5c8ec943fa24",
+              "received": 9,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "3c7663f2-4242-bcd0-405c-399b67c72eb5",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88455,
+          "exit_code": 0,
+          "elapsed_seconds": 2.3487009182572365
+        },
+        "data-1": {
+          "scenario": "data",
+          "role": 1,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "30407d78-bc41-be21-2e5f-69a8a76b7265",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "ab10eaf1-6647-4c3d-9dec-eeb89433c934",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88456,
+          "exit_code": 0,
+          "elapsed_seconds": 2.5880184173583984
+        },
+        "data-2": {
+          "scenario": "data",
+          "role": 2,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "2d49b289-e64c-0dcb-78cc-19842e190578",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "1699bbbd-7b4d-43b7-8321-7aba404a0806",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88457,
+          "exit_code": 0,
+          "elapsed_seconds": 2.542981084436178
+        },
+        "data-3": {
+          "scenario": "data",
+          "role": 3,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "7dd34f99-8145-dc54-df5e-8ba694d50dff",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "895098f5-af4f-a9ee-11d0-579fef3593de",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88458,
+          "exit_code": 0,
+          "elapsed_seconds": 2.609136164188385
+        },
+        "cancel": {
+          "scenario": "cancel",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "12cc7c2e-a546-a73d-d2db-ceaa1d08d435",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88514,
+          "exit_code": 0,
+          "elapsed_seconds": 0.18151158094406128
+        },
+        "disconnect-pending": {
+          "scenario": "disconnect-pending",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "982b50be-ef4d-21aa-4588-47a3e9c2cb8d",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 2,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88534,
+          "exit_code": 0,
+          "elapsed_seconds": 0.2293071672320366
+        },
+        "timeout": {
+          "scenario": "timeout",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "d7ab436c-c546-85a9-8947-2990c72d710a",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 8,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88555,
+          "exit_code": 0,
+          "elapsed_seconds": 0.3170529566705227
+        },
+        "http-timeout": {
+          "scenario": "http-timeout",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "7581d757-094e-9d04-646b-ab9924194409",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 8,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88578,
+          "exit_code": 0,
+          "elapsed_seconds": 6.267827291041613
+        },
+        "reentrant": {
+          "scenario": "reentrant",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "37b45599-2640-ab50-88f5-6196f1f8da80",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 88629,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5781424604356289
+        },
+        "owner-loss": {
+          "scenario": "owner-loss",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "260c621e-d049-2a80-4f57-4380d0d61188",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 88642,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5815652944147587
+        },
+        "world": {
+          "scenario": "world",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "b53b9578-5f48-a341-7ca6-f1ad0b43ede4",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 88656,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5860622897744179
+        },
+        "session-gc": {
+          "scenario": "session-gc",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "2536283f-6e43-e7a7-5f8d-29b2ddbf708f",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": true
+            }
+          ],
+          "pid": 88673,
+          "exit_code": 0,
+          "elapsed_seconds": 0.6393403336405754
+        }
+      },
+      "timeout_injected": true,
+      "http_timeout_injected": true,
+      "all_processes_stopped": true,
+      "secrets_removed": true,
+      "elapsed_seconds": 30.84
+    },
+    {
+      "evidence": "session-gc-final-3/result.json",
+      "run_id": "9dd5f41d-724a-41f7-b1d0-2ec05addeb2e",
+      "server_pid": 88707,
+      "overlap_client_pids": [
+        88714,
+        88715,
+        88716,
+        88717
+      ],
+      "client_executable_sha256": "8466f05b27fa036320449599e0ef86732d47fe3c4649b3791bf0825f4390bd30",
+      "peak_connected": 8,
+      "server": {
+        "created": 16,
+        "connected": 16,
+        "closed": 16,
+        "records": 0,
+        "live_peers": 0,
+        "data_sent": 29,
+        "data_received": 29,
+        "echo_pending": 0
+      },
+      "clients": {
+        "data-0": {
+          "scenario": "data",
+          "role": 0,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "c995559f-c64b-50ef-3b96-5b8aff41c946",
+              "received": 9,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "785a4d66-bf4b-a15d-958b-fea86ae55dcb",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88714,
+          "exit_code": 0,
+          "elapsed_seconds": 2.3560346253216267
+        },
+        "data-1": {
+          "scenario": "data",
+          "role": 1,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "9d2d67fa-9c45-0425-af60-a3b1ff540d72",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "6dcd2aa8-4a4e-e16e-9595-c4a84e197ec9",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88715,
+          "exit_code": 0,
+          "elapsed_seconds": 2.321024540811777
+        },
+        "data-2": {
+          "scenario": "data",
+          "role": 2,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "65fa41cd-5242-08f0-f593-08a21adea4a2",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "06f22143-2549-43ee-1e91-748d056f70d3",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88716,
+          "exit_code": 0,
+          "elapsed_seconds": 1.938050415366888
+        },
+        "data-3": {
+          "scenario": "data",
+          "role": 3,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "a818ad90-7e41-1645-3271-0d9651027a64",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "86070b1b-374b-551b-81c0-6d80810f9404",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88717,
+          "exit_code": 0,
+          "elapsed_seconds": 2.7779389582574368
+        },
+        "cancel": {
+          "scenario": "cancel",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "5f2c1f51-5d4b-3178-ea71-0aaaacc2fd53",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88757,
+          "exit_code": 0,
+          "elapsed_seconds": 0.03646250069141388
+        },
+        "disconnect-pending": {
+          "scenario": "disconnect-pending",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "4ab74b71-264b-7c80-d976-5c8ff6bf8cb8",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 2,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88772,
+          "exit_code": 0,
+          "elapsed_seconds": 0.04796558618545532
+        },
+        "timeout": {
+          "scenario": "timeout",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "f233983c-fd4d-e91b-db15-fc875a9fc39e",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 8,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88782,
+          "exit_code": 0,
+          "elapsed_seconds": 0.23346341773867607
+        },
+        "http-timeout": {
+          "scenario": "http-timeout",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "bd027d03-e74c-cd53-e22a-449e0633340a",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 8,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 88797,
+          "exit_code": 0,
+          "elapsed_seconds": 6.459760915488005
+        },
+        "reentrant": {
+          "scenario": "reentrant",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "01d1b58c-f349-8fb1-acd5-ad8ed03b28b5",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 88886,
+          "exit_code": 0,
+          "elapsed_seconds": 0.6280080862343311
+        },
+        "owner-loss": {
+          "scenario": "owner-loss",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "82201fd9-ca47-233e-41e5-718692cebe1a",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 88892,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5675257481634617
+        },
+        "world": {
+          "scenario": "world",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "5e5144f7-0d4a-8694-613a-38ac08284359",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 88902,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5693502500653267
+        },
+        "session-gc": {
+          "scenario": "session-gc",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "98e530d5-394e-5b48-63ab-a7874dc54b7b",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": true
+            }
+          ],
+          "pid": 88908,
+          "exit_code": 0,
+          "elapsed_seconds": 0.588926374912262
+        }
+      },
+      "timeout_injected": true,
+      "http_timeout_injected": true,
+      "all_processes_stopped": true,
+      "secrets_removed": true,
+      "elapsed_seconds": 27.252
+    },
+    {
+      "evidence": "session-cooked-final/result.json",
+      "run_id": "4012a5fe-5a49-4891-a6dd-fd6297c3372b",
+      "server_pid": 90393,
+      "overlap_client_pids": [
+        90400,
+        90401,
+        90402,
+        90403
+      ],
+      "client_executable_sha256": "9defaaa8417ddf1f0d5590aad542c41078633be54de90370efdf40c0246ab1d2",
+      "peak_connected": 8,
+      "server": {
+        "created": 16,
+        "connected": 16,
+        "closed": 16,
+        "records": 0,
+        "live_peers": 0,
+        "data_sent": 29,
+        "data_received": 29,
+        "echo_pending": 0
+      },
+      "clients": {
+        "data-0": {
+          "scenario": "data",
+          "role": 0,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "98811126-7849-dcd7-4d5c-b6b0a53057d2",
+              "received": 9,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "c47a1c38-4c48-cb44-305e-5fa676ffba14",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 90400,
+          "exit_code": 0,
+          "elapsed_seconds": 3.906236331909895
+        },
+        "data-1": {
+          "scenario": "data",
+          "role": 1,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "a3f069eb-3542-ad73-2475-a483f5191958",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "0e0b43fc-b64a-ef66-2afd-e0be925d98e7",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 90401,
+          "exit_code": 0,
+          "elapsed_seconds": 3.8177197501063347
+        },
+        "data-2": {
+          "scenario": "data",
+          "role": 2,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "99a9c130-8945-3b8e-df7b-0fa093d7dd58",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "2e880092-5547-e763-82f3-5689e7432f5a",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 90402,
+          "exit_code": 0,
+          "elapsed_seconds": 3.379721499979496
+        },
+        "data-3": {
+          "scenario": "data",
+          "role": 3,
+          "transports_created": 3,
+          "native_closed": 3,
+          "remote_closed": 3,
+          "pending_cleanup": 0,
+          "isolation_checks": 6,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "9d39c626-a044-f96a-3b0f-c6b78a6cafb7",
+              "received": 4,
+              "unexpected": 0,
+              "operations": 8,
+              "completions": 8,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            },
+            {
+              "facade_id": "30b8330b-ce4f-876d-6ca4-01b19fdaf50d",
+              "received": 2,
+              "unexpected": 0,
+              "operations": 4,
+              "completions": 4,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 90403,
+          "exit_code": 0,
+          "elapsed_seconds": 3.8150765411555767
+        },
+        "cancel": {
+          "scenario": "cancel",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "1220cb16-dc4e-55e5-d6c3-bf9add0e01c2",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 90465,
+          "exit_code": 0,
+          "elapsed_seconds": 0.09247633442282677
+        },
+        "disconnect-pending": {
+          "scenario": "disconnect-pending",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "098dda76-da4a-f8db-8412-5b8388abf508",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 2,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 90487,
+          "exit_code": 0,
+          "elapsed_seconds": 0.11840558424592018
+        },
+        "timeout": {
+          "scenario": "timeout",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "04b227cf-264f-2d3a-6c93-6293a7925999",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 8,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 90492,
+          "exit_code": 0,
+          "elapsed_seconds": 0.26258520781993866
+        },
+        "http-timeout": {
+          "scenario": "http-timeout",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "b9c0b23d-7b48-7389-79e9-2a9f124ff04f",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 8,
+              "triggered": false,
+              "session_collected": false
+            }
+          ],
+          "pid": 90504,
+          "exit_code": 0,
+          "elapsed_seconds": 6.2446686662733555
+        },
+        "reentrant": {
+          "scenario": "reentrant",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "59f1ea9d-534e-cfe9-4ba4-2faf5f0b1f9f",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 1,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 0,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 90514,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5608110837638378
+        },
+        "owner-loss": {
+          "scenario": "owner-loss",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "0e691e5a-d245-35f4-7fb0-8ab81c1c4930",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 90520,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5770058333873749
+        },
+        "world": {
+          "scenario": "world",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "d2b4ce8d-b246-aa27-5d05-5a9dc72d2ad1",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": false
+            }
+          ],
+          "pid": 90525,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5980035439133644
+        },
+        "session-gc": {
+          "scenario": "session-gc",
+          "role": 0,
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "isolation_checks": 0,
+          "quiet_ticks": 8,
+          "clients": [
+            {
+              "facade_id": "3c99890f-7145-1b03-6475-67b3beba892a",
+              "received": 0,
+              "unexpected": 0,
+              "operations": 2,
+              "completions": 1,
+              "callbacks_on_game_thread": true,
+              "expected_empty": true,
+              "last_error": 9,
+              "triggered": true,
+              "session_collected": true
+            }
+          ],
+          "pid": 90534,
+          "exit_code": 0,
+          "elapsed_seconds": 0.5752978771924973
+        }
+      },
+      "timeout_injected": true,
+      "http_timeout_injected": true,
+      "all_processes_stopped": true,
+      "secrets_removed": true,
+      "elapsed_seconds": 30.348
+    }
+  ],
+  "shared_totals": {
+    "runs": 4,
+    "concurrent_sessions_per_run": 8,
+    "data_round_trips": 116,
+    "native_client_closures": 80,
+    "pending_cleanup": 0
+  },
+  "concurrent_regression": {
+    "passed": true,
+    "server": {
+      "schema": 1,
+      "run_id": "d45a42ae-a745-4d5b-b754-e7fc488e071c",
+      "pid": 88928,
+      "server_build": true,
+      "editor_build": false,
+      "with_janus": false,
+      "arm64_build": true,
+      "engine_version": "5.8.3-0+UE5",
+      "platform": "Mac",
+      "artifact_manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+      "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "loopback_only": true,
+      "network_media_tested": false,
+      "application_messages_tested": true,
+      "connected_sessions": 0,
+      "peak_live_peers": 4,
+      "peak_connected_sessions": 4,
+      "records": 0,
+      "concurrent": {
+        "ready": 0,
+        "phase": 2,
+        "sealed": 3,
+        "native_closed": 5,
+        "isolation_checks": 9,
+        "callbacks_on_game_thread": true,
+        "phases": [
+          {
+            "phase": 1,
+            "clients": 4,
+            "echoes": 8,
+            "routed": 8,
+            "denied": 8,
+            "sealed_sessions": [
+              "e1b17609-a84a-0059-f1fa-70a418c1b467",
+              "97deedf9-2549-e188-981e-feaef7eedd70",
+              "ab43b83c-9d4b-9260-64ab-b3a3ec007391",
+              "2d54fb99-f24c-6fdd-e730-118584b4223f"
+            ]
+          },
+          {
+            "phase": 2,
+            "clients": 3,
+            "echoes": 6,
+            "routed": 3,
+            "denied": 6,
+            "sealed_sessions": [
+              "97deedf9-2549-e188-981e-feaef7eedd70",
+              "7f09da4f-704d-b7ed-5aa8-0bbc34e868fc",
+              "e1b17609-a84a-0059-f1fa-70a418c1b467"
+            ]
+          }
+        ],
+        "sessions": [
+          {
+            "session_id": "e1b17609-a84a-0059-f1fa-70a418c1b467",
+            "principal": "gamma",
+            "state": 3,
+            "native_closed": true
+          },
+          {
+            "session_id": "97deedf9-2549-e188-981e-feaef7eedd70",
+            "principal": "alpha",
+            "state": 3,
+            "native_closed": true
+          },
+          {
+            "session_id": "2d54fb99-f24c-6fdd-e730-118584b4223f",
+            "principal": "beta",
+            "state": 3,
+            "native_closed": true
+          },
+          {
+            "session_id": "ab43b83c-9d4b-9260-64ab-b3a3ec007391",
+            "principal": "delta",
+            "state": 3,
+            "native_closed": true
+          },
+          {
+            "session_id": "7f09da4f-704d-b7ed-5aa8-0bbc34e868fc",
+            "principal": "beta",
+            "state": 3,
+            "native_closed": true
+          }
+        ]
+      },
+      "running": false,
+      "live_peers": 0,
+      "created": 5,
+      "connected": 5,
+      "closed": 5,
+      "expired": 1,
+      "replays": 0,
+      "rejected": 6,
+      "early_ice": 25,
+      "connected_session_ids": [
+        "e1b17609-a84a-0059-f1fa-70a418c1b467",
+        "97deedf9-2549-e188-981e-feaef7eedd70",
+        "2d54fb99-f24c-6fdd-e730-118584b4223f",
+        "ab43b83c-9d4b-9260-64ab-b3a3ec007391",
+        "7f09da4f-704d-b7ed-5aa8-0bbc34e868fc"
+      ],
+      "closed_session_ids": [
+        "2d54fb99-f24c-6fdd-e730-118584b4223f",
+        "ab43b83c-9d4b-9260-64ab-b3a3ec007391",
+        "e1b17609-a84a-0059-f1fa-70a418c1b467",
+        "97deedf9-2549-e188-981e-feaef7eedd70",
+        "7f09da4f-704d-b7ed-5aa8-0bbc34e868fc"
+      ],
+      "last_transport": {
+        "connection": 2,
+        "ice": 2,
+        "dtls": 3,
+        "protocol": 1,
+        "sctp_open": true,
+        "queued_ice": 0,
+        "applied_ice": 4,
+        "remote_end": true,
+        "stats_samples": 3,
+        "stun_responses": 5
+      },
+      "teardown_complete": true,
+      "passed": true,
+      "error": "",
+      "callbacks_on_game_thread": true,
+      "elapsed_seconds": 18.542994793504477
+    },
+    "all_processes_stopped": true,
+    "secrets_removed": true
+  },
+  "data_regression": {
+    "passed": true,
+    "pairs": 4,
+    "exact_echoes": 292,
+    "channels": 24,
+    "final_live_peers": 0,
+    "all_processes_stopped": true,
+    "secrets_removed": true
+  },
+  "blueprint_lifecycle": {
+    "DirectUnreal": {
+      "passed": true,
+      "exit_code": 0,
+      "report": {
+        "passed": true,
+        "schema": 2,
+        "api_contract_version": 1,
+        "run_id": "189b4655-3a4c-4239-b56a-b9db6cc369ec",
+        "pid": 90361,
+        "engine_version": "5.8.3-0+UE5",
+        "editor_build": false,
+        "with_janus": true,
+        "with_direct": true,
+        "with_media": true,
+        "with_janus_extensions": true,
+        "profile_checked": true,
+        "janus_blueprint": "passed",
+        "network_transport_tested": false,
+        "provider": "DirectUnreal",
+        "error": "",
+        "cpp": {
+          "passed": true,
+          "outcomes": [
+            "Disconnect",
+            "Connect",
+            "Cancel"
+          ],
+          "errors": [],
+          "end_play_checked": true
+        },
+        "blueprint": {
+          "passed": true,
+          "outcomes": [
+            "Disconnect",
+            "Connect",
+            "Cancel"
+          ],
+          "errors": [],
+          "end_play_checked": true
+        }
+      }
+    },
+    "Janus": {
+      "passed": true,
+      "exit_code": 0,
+      "report": {
+        "passed": true,
+        "schema": 2,
+        "api_contract_version": 1,
+        "run_id": "5e557c22-3594-40a7-bf02-fe2f9bfeebc7",
+        "pid": 90384,
+        "engine_version": "5.8.3-0+UE5",
+        "editor_build": false,
+        "with_janus": true,
+        "with_direct": true,
+        "with_media": true,
+        "with_janus_extensions": true,
+        "profile_checked": true,
+        "janus_blueprint": "passed",
+        "network_transport_tested": false,
+        "provider": "Janus",
+        "error": "",
+        "cpp": {
+          "passed": true,
+          "outcomes": [
+            "Disconnect",
+            "Connect",
+            "Cancel"
+          ],
+          "errors": [],
+          "end_play_checked": true
+        },
+        "blueprint": {
+          "passed": true,
+          "outcomes": [
+            "Disconnect",
+            "Connect",
+            "Cancel"
+          ],
+          "errors": [],
+          "end_play_checked": true
+        }
+      }
+    }
+  },
+  "tests": {
+    "unreal_succeeded": 27,
+    "unreal_failed": 0,
+    "unreal_warnings": 0,
+    "python_succeeded": 176,
+    "python_command": "python3 -m unittest discover -s tools/tests -q",
+    "added_coverage": [
+      "Deferred connection and channel completion",
+      "Cancellation owns only its active attempt",
+      "Disconnect during Connect waits for teardown",
+      "Operation deadline starts at activation",
+      "Owner and PIE-world cleanup suppress callbacks",
+      "Garbage collection during direct cancellation cannot collect the dispatch owner",
+      "Channel state cannot regress after an early native Open sample",
+      "OpenChannel waits for the negotiated message limit"
+    ]
+  },
+  "source_sha256": {
+    "Plugins/SimurghRTC/SimurghRTC.profile.json": "aa4c2b68e4c7f45bc6ec6448c353ae947f975325e2e1301d8ed07ea9ecec3821",
+    "Plugins/SimurghRTC/SimurghRTC.uplugin": "ba64ffb7d256348fcbc4d1cc3c4e35a75feb6b0719a4c47c1c31bfd2cdcc8e2f",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCCoreModule.cpp": "ad14a2b0aa99ddf61d7244c6ef6a51a470842b8539d5f093942202a98471e846",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCOperation.cpp": "e9bf4998a7dd0aec6adcb3fb135af9ce0ab37b15e5d350d66458179608a7f3d2",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCSession.cpp": "4a0673c67b28fb9678c0e94fd7bbff707f20fba98da195e169962231bd643175",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCSessionTransport.cpp": "4ae4fa8f36809de5ffe7a9503f09a8845629aa9227b0067e644b9f6078b38c8c",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/Tests/SimurghRTCContractTests.cpp": "f634db8cd40e0849203e68e07981aaad5c8711e48cd0a012463fc9f1107f1200",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/Tests/SimurghRTCSessionIntegrationTests.cpp": "a2d2fc6cfa2507035bcff7302f65b8970d8d9ba73d71be5a9c7cdb35afb6d738",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCOperation.h": "092783db2f4492a7c4707b7d1bfe7aca9bb7e246d01857a29f51aea10755d228",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCSession.h": "bd2a88d5847521545b24f0f46b1148fd0abf207a845ac412d638887c8a0d5047",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCSessionTransport.h": "1ee301ae1c9a3c4f48a7e1c667ea33541ae12b60d7eae1d423b73c88f01320fb",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/SimurghRTCCore.Build.cs": "295595c65fb6ddbdbb63b6a733c5699b491113e5f13cd9d8640ddf291611182a",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Private/SimurghRTCDirectClient.cpp": "cfbfbebb21015129ad7845b5551915bac28283ae0bda4b9f1bdeb6034778b0ff",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Private/SimurghRTCDirectModule.cpp": "6f83a0fd105215166123bdba11a44befc37cbcc6cef2beba5a5ab6339d585f8b",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Private/SimurghRTCDirectSessionTransport.cpp": "845fe47aa3fa833b378bfd693138e6388809d2b1e7bac7f604e80c45f8f6a3a8",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Public/SimurghRTCDirectClient.h": "15a9e131f5eae55a9cec15721628bb9880730a63d8b7d4cdb1af76775e593753",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeDataService.cpp": "b0a4784821051fbf5e2912f29942fd9b29bcce419adc46f562e721425390ddb8",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/Tests/SimurghRTCNativeDataTests.cpp": "b203a9f53487fad1b640e37670c2ee0eae62b2aa31adb8d2613164f052026e02",
+    "Samples/ContractHost/Source/ContractHost/ContractDirectProbe.cpp": "2e6f51f99dd107ddf1270771c055f8460971ecacc6fb77a0e5502fe7ff5b1cfe",
+    "Samples/ContractHost/Source/ContractHost/ContractHost.cpp": "1ad18f7cd39d6b84b0ffcf11726449d4cb55d6041a72843ea2a46db15178df7f",
+    "Samples/ContractHost/Source/ContractHost/ContractLifecycleExample.cpp": "652d619c085ec97481c92a0bf443f3cd70275b962480e507c5f1bf4adc45e053",
+    "Samples/ContractHost/Source/ContractHost/ContractSessionEndpoint.cpp": "8f016ad634a63074ddf98a98a614b2db58fd018b9722ce91fe8141dfa6522c2f",
+    "Samples/ContractHost/Source/ContractHost/ContractSessionProbe.cpp": "117eaf3d2cd7b430933c878f114800b08ef64a062ab281150dd1245fdadea73c",
+    "Samples/ContractHost/Source/ContractHost/ContractSessionProbe.h": "23a7344384832d1db23047469aa23c0cdd2b3a4c18e7cdb4660506a310aea371",
+    "Samples/ContractHost/Source/ContractHost/Public/ContractSessionEndpoint.h": "9a887bdb13bc60086f03885247115ed4cc413ac180720fc1ab819e3f3c9250fd",
+    "Samples/ContractHost/Source/ContractHostEditor/ContractExamplesCommandlet.cpp": "fec003de558bc9e11e682d2dccd2522acb14f79a37f2738aedbe73cc311198c9",
+    "tools/prepare_profile.py": "a213c96b9ae61011c77e193d02a1679430cb8d6590d0d957279e69478aa928c8",
+    "tools/run_session_probe.py": "52cd8f57eb877522f45942b605066dac7c97231a08a63161286d8dace80e4fb9",
+    "tools/tests/test_profiles.py": "cf943bd363e5b640db1f91b79bc8d016d727d6ba11076903ca8f9c9848dedd07",
+    "tools/tests/test_session_probe.py": "aabad182904e46d8251a35fafaeff1379b4d9c18deb5e83538da9eec72f4fb3d"
+  },
+  "evidence_sha256": {
+    "pipeline-verified.json": "6dc6abfa11762bddd5f31178556158de9ab11af13e89ac12594e64b4f3e8f263",
+    "pipeline-gc-client.json": "d861e8f256937f7efe50a3bff208590e650ab68c4bfc261ea8ecb88cc823455c",
+    "validation-gc.json": "83992cc15e78a7e3b0e5a73931381b1087300e05b939f444ba6468d26cacdb9c",
+    "stage-gc-client.json": "13a55c2937baacc33fc6affb824fffed4854c6a8d152bfdb66c04a5dfcb2d0a7",
+    "stage-verified-server.json": "df3b7d542d8b6beb798db53353ba0d54202fbb01b5c6a61fecb4aba780f24e3b",
+    "verified-client-tests-report/index.json": "fc521eaba08b4d949aab6efcd20e3a47f3cf24e3eb5a82deb4fdc7936aa7a07f",
+    "python-final.log": "a5de795d1dbd20f49fb1baf34a6ca77f60323ae8688d0ec86b5047ef9311b841",
+    "session-gc-final-1/result.json": "4ec26a171112f3b90da30cdd21047cb20bee5b2cc9430a42760dccf4d813a74c",
+    "session-gc-final-2/result.json": "8e9add06721e0160878d2d1ceee221f5986e243c9b328e41c7f0b9341f55f69c",
+    "session-gc-final-3/result.json": "0e1cf587fe206ee582103aaa7b8c3e5a649013673b99deecfc9ff523d361cfbb",
+    "session-cooked-final/result.json": "554a77561558fd87ac34364e4cbd60d2c0945e15ca9bfbb3ba69c93153c90ac9",
+    "concurrent-final/result.json": "6ce9bab9e53a6366f872dbc62a1f06d26f8c5d4ac5a01dbacd2a19fcad381a33",
+    "data-final/result.json": "32f232cf2281af44a5f2ff8a533c05b0b66502204051513440a79d424d5e0ffa",
+    "lifecycle-cooked-DirectUnreal/result.json": "4df6ff2edcf879650268ff1f9390d2ebb96f2312650690d4b44be92eb6453aae",
+    "lifecycle-cooked-Janus/result.json": "0cba8636034a22ed9a81fe73729f211e9745d0157fa0c32b41a8684fa2391f90",
+    "validation-lifecycle.json": "69de1534e39efc97f038ae467cda52562236453f2d7d45f4945a797b63587325",
+    "lifecycle-client-cook-game-command.json": "5be0e152b8667a64e087288b06298cd297367ee25503e2af4e5257695b404161",
+    "recook-binary-identity.json": "07176f00e1e6b6108f3bfb8ed7e76afb4a2126626856d4e43c8097f8d4c3e23e",
+    "audit-gc-client/package-audit.json": "ba3a61baafa56c3438269d0200de535b035a4c2f67623813ec989a7830a80e21",
+    "audit-lifecycle-client/package-audit.json": "b39df5355f2db371d3e40960e28a7db21357660e8d1370f92039e28388183e9c",
+    "audit-verified-server/package-audit.json": "9331de66bd07c0f33294c9a6281da674b02dcf2ebfa91e8454d526ccc4e90961"
+  },
+  "local_evidence": "Intermediate/SR10520261027",
+  "earlier_attempts": [
+    {
+      "evidence": "candidate-client-editor.log",
+      "sha256": "7bf9115e0c07fc9fb1ff757f668e587397b316440519563c6fd279a99afec62a",
+      "reason": "Two unqualified MakeError calls collided with Unreal lookup; qualified before the successful builds."
+    },
+    {
+      "evidence": "session-final/result.json",
+      "sha256": "32bd4fadf0567bdd88d876c99484e12dde7e5911504d464438da32d4ce54a17f",
+      "reason": "The initial fixture tried to instantiate abstract UObject. Replaced it with UGameInstance."
+    },
+    {
+      "evidence": "session-repair/result.json",
+      "sha256": "85afd76d36fe4547b9d28cafdc32ec1f75df3f0c490808e5e9f4c01ac715fea9",
+      "reason": "Concurrent clients exposed a rejected send after successful OpenChannel."
+    },
+    {
+      "evidence": "session-verified-2/result.json",
+      "sha256": "0df08c24b39fa50713e464cbc74e8048232a004b813aa4e6df01b5ea23e37b6a",
+      "reason": "The GC fixture incorrectly treated reference release as destruction. The final fixture releases its session outside callback dispatch and collects it while OpenChannel is pending, then checks for callbacks after actual collection."
+    },
+    {
+      "evidence": "session-checked/result.json",
+      "sha256": "6b432012e324f36f4686f521523c59374fa58abc1dd3b00276b75a4965449fbe",
+      "reason": "Diagnostic reproduction showed Connected session, successful channel query and known limit, but channel no longer Open. Older Connecting notifications could overwrite Open; the game-thread adapter now prevents backward state changes."
+    },
+    {
+      "evidence": "lifecycle-final-DirectUnreal/result.json",
+      "sha256": "d27d4037364ba8fbdb8dc69f11ad66dd27b68e2f8fa2c3792af53af535dc9718",
+      "reason": "The initial cook omitted the standalone Blueprint examples directory. Recooking with the documented -cookdir=Content/Examples argument fixed the packaged asset check; both C++/Blueprint provider cases then passed without code or asset changes."
+    }
+  ],
+  "limits": [
+    "Mac ARM64 Full Game and dedicated Server only; Android/iOS, Windows/Linux, remote HTTPS, cross-device and NAT/TURN acceptance remain open.",
+    "Blueprint nodes share the implementation; this run validates real data through C++ and retains the earlier C++/Blueprint local lifecycle checks. Packaged Blueprint data flows remain SR-106.",
+    "PIE cleanup is an automation test with a PIE world cleanup delegate; the packaged real-peer case destroys a Game world. No interactive PIE network run is claimed.",
+    "Janus connections, calls, rooms, custom ICE server configuration, receive-only sessions, media and measured statistics remain unimplemented.",
+    "No network media, sustained-load, physical iOS or Shipping app-size qualification. M0 external acceptance gates remain open.",
+    "Existing Dawn linker warnings and minimal-host gameplay NetDriverCreateFailure do not establish failures in these HTTP/WebRTC probes. No engine source edits were made."
+  ]
+}

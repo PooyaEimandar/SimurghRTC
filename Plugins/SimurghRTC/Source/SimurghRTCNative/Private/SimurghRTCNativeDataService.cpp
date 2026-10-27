@@ -126,6 +126,9 @@ void FNativeDataGame::Tick(TFunctionRef<bool()> Live)
         }
         else
         {
+            // Command results can sample Open before older queued Connecting events arrive.
+            // A channel never returns to an earlier lifecycle state.
+            if (uint8(Event.Channel.State) < uint8(C->Native.State)) continue;
             C->Native.State = Event.Channel.State; C->Native.Info.Options = Event.Channel.Info.Options;
             C->Native.bRemote = Event.Channel.bRemote;
             Event.Channel = Snapshot(*C); Notify(Event, Live);

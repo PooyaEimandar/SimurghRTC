@@ -29,7 +29,7 @@ class ProfileTests(unittest.TestCase):
                     self.assertEqual(set(expected), {p.name for p in (plugin / 'Source').iterdir()})
                     self.assertEqual(expected, [m['Name'] for m in descriptor['Modules']])
                     self.assertEqual(expected, manifest['modules'])
-                    self.assertEqual('internal-sdp-ice', manifest['native_transport'])
+                    self.assertEqual('shared-direct-data' if manifest['with_direct'] else 'internal-sdp-ice', manifest['native_transport'])
                     self.assertEqual('5.8.0', descriptor['EngineVersion'])
                     self.assertEqual('5.8.3', manifest['engine_version'])
                     host = json.loads((output / 'ContractHost.uproject').read_text())

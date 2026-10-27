@@ -12,8 +12,11 @@ void AContractLifecycleExample::RecordOutcome(FName Step, const FSimurghRTCOpera
 {
     const int32 Index = Outcomes.Num();
     const FName Steps[] = {TEXT("Disconnect"), TEXT("Connect"), TEXT("Cancel")};
-    const ESimurghRTCErrorCode Codes[] = {ESimurghRTCErrorCode::None, ESimurghRTCErrorCode::NotImplemented, ESimurghRTCErrorCode::Cancelled};
-    const ESimurghRTCSessionState States[] = {ESimurghRTCSessionState::Closed, ESimurghRTCSessionState::Failed, ESimurghRTCSessionState::Failed};
+    const bool Direct = Config.Provider == ESimurghRTCProvider::DirectUnreal;
+    const ESimurghRTCErrorCode Codes[] = {ESimurghRTCErrorCode::None,
+        Direct ? ESimurghRTCErrorCode::InvalidArgument : ESimurghRTCErrorCode::NotImplemented, ESimurghRTCErrorCode::Cancelled};
+    const auto FailedState = Direct ? ESimurghRTCSessionState::Closed : ESimurghRTCSessionState::Failed;
+    const ESimurghRTCSessionState States[] = {ESimurghRTCSessionState::Closed, FailedState, FailedState};
     if (Index >= 3 || Step != Steps[Index] || Result.Error.Code != Codes[Index]
         || !Session || Result.Error.SessionId != Session->GetSessionId() || !Result.Error.OperationId.IsValid()
         || OperationIds.Contains(Result.Error.OperationId) || (Index > 0 && Session->GetProvider() != Config.Provider)

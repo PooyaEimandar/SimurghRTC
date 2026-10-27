@@ -38,6 +38,7 @@ using FDirectClientChanged = TFunction<void(const FDirectClientSnapshot&)>;
 class SIMURGHRTCDIRECT_API FDirectClient final
 {
 public:
+    static FSimurghRTCError ValidateConfig(const FDirectClientConfig& Config);
     static TSharedPtr<FDirectClient> Connect(UObject* Owner, FDirectClientConfig Config,
         FDirectClientChanged OnChanged, FString& Error);
     ~FDirectClient();

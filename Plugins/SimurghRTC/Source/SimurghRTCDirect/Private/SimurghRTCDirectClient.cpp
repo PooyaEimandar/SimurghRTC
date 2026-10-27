@@ -377,14 +377,20 @@ FSimurghRTCError FDirectClient::SendBytes(FSimurghRTCChannelHandle Channel, cons
     const auto Peer = Impl->Owner.IsValid() && Impl->Snapshot.State == EDirectClientState::Connected ? Impl->Peer : nullptr;
     return Peer ? Peer->SendBytes(Channel, Bytes) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
 }
+FSimurghRTCError FDirectClient::ValidateConfig(const FDirectClientConfig& Config)
+{
+    for (TCHAR C : Config.Identity) if (C == 0) return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument,TEXT("Invalid Direct client identity."));
+    if (!EndpointValid(Config) || !TokenValid(Config.BearerToken) || Config.Identity.IsEmpty()
+        || Direct::Bytes(Config.Identity).Num() > 128 || (Config.Purpose != TEXT("data") && Config.Purpose != TEXT("call") && Config.Purpose != TEXT("text-room"))
+        || !FMath::IsFinite(Config.RequestTimeoutSeconds) || Config.RequestTimeoutSeconds < 0.1 || Config.RequestTimeoutSeconds > 10
+        || !FMath::IsFinite(Config.ConnectTimeoutSeconds) || Config.ConnectTimeoutSeconds < 0.1 || Config.ConnectTimeoutSeconds > 300)
+        return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument,TEXT("Direct requires a supported endpoint, identity, credential and timeout."));
+    return {};
+}
 TSharedPtr<FDirectClient> FDirectClient::Connect(UObject* Owner, FDirectClientConfig Config, FDirectClientChanged Changed, FString& Error)
 {
     check(IsInGameThread()); Error.Reset();
-    for (TCHAR C : Config.Identity) if (C == 0) { Error = TEXT("Invalid Direct client identity."); return {}; }
-    if (bShuttingDown || !IsValid(Owner) || !EndpointValid(Config) || !TokenValid(Config.BearerToken) || Config.Identity.IsEmpty()
-        || Direct::Bytes(Config.Identity).Num() > 128 || (Config.Purpose != TEXT("data") && Config.Purpose != TEXT("call") && Config.Purpose != TEXT("text-room"))
-        || !FMath::IsFinite(Config.RequestTimeoutSeconds) || Config.RequestTimeoutSeconds < 0.1 || Config.RequestTimeoutSeconds > 10
-        || !FMath::IsFinite(Config.ConnectTimeoutSeconds) || Config.ConnectTimeoutSeconds < 0.1 || Config.ConnectTimeoutSeconds > 60)
+    if (bShuttingDown || !IsValid(Owner) || ValidateConfig(Config).IsError())
     { Error = TEXT("Invalid Direct client configuration."); return {}; }
     Clients.RemoveAll([](const auto& Weak) { return !Weak.IsValid(); });
     if (Clients.Num() >= 32) { Error = TEXT("Direct client capacity reached."); return {}; }

@@ -108,7 +108,7 @@ public:
         J->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString()); J->SetStringField(TEXT("platform"), FPlatformProperties::IniPlatformName());
         J->SetStringField(TEXT("artifact_manifest_sha256"), FNativeRuntime::GetMobileArtifactSHA256());
         J->SetStringField(TEXT("native_backend"), FNativeRuntime::GetBackendVersion());
-        J->SetBoolField(TEXT("loopback_only"), true); J->SetBoolField(TEXT("network_media_tested"), false); J->SetBoolField(TEXT("application_messages_tested"), (Scenario == TEXT("data") || Scenario == TEXT("concurrent")));
+        J->SetBoolField(TEXT("loopback_only"), true); J->SetBoolField(TEXT("network_media_tested"), false); J->SetBoolField(TEXT("application_messages_tested"), (Scenario == TEXT("data") || Scenario == TEXT("concurrent") || Scenario == TEXT("shared")));
         return J;
     }
 #if CONTRACTHOST_WITH_DIRECT_SERVER
@@ -125,7 +125,7 @@ public:
         auto Strings = [](const TArray<FString>& Source) { TArray<TSharedPtr<FJsonValue>> Out; for (const auto& Value : Source) Out.Add(MakeShared<FJsonValueString>(Value)); return Out; };
         J->SetArrayField(TEXT("connected_session_ids"), Strings(S.ConnectedSessionIds)); J->SetArrayField(TEXT("closed_session_ids"), Strings(S.ClosedSessionIds));
         J->SetObjectField(TEXT("last_transport"), Transport(S.LastConnectedTransport));
-        if (Scenario == TEXT("data"))
+        if (Scenario == TEXT("data") || Scenario == TEXT("shared"))
         {
             J->SetNumberField(TEXT("data_channels_opened"), DataOpened.Num()); J->SetNumberField(TEXT("data_channels_closed"), DataClosed.Num());
             J->SetNumberField(TEXT("data_received"), EchoReceived); J->SetNumberField(TEXT("data_sent"), EchoSent);
@@ -143,7 +143,8 @@ public:
         auto& Http = FHttpServerModule::Get(); bOwnsHttp = true; Http.StartAllListeners(); Router = Http.GetHttpRouter(Port, true);
         if (!Router) { Fail(TEXT("HTTP listener bind failed.")); return false; }
         FDirectServerConfig Config; Config.bLoopbackProbe = true; Config.IdleSeconds = 5; Config.ReplaySeconds = 30;
-        if (Scenario == TEXT("data")) Config.OnChannelEvent = [this](const FString& Session, const FNativeChannelEvent& Event)
+        if (Scenario == TEXT("shared")) Config.MaxSessionsPerPrincipal = 16;
+        if (Scenario == TEXT("data") || Scenario == TEXT("shared")) Config.OnChannelEvent = [this](const FString& Session, const FNativeChannelEvent& Event)
         {
             bGameThread &= IsInGameThread();
             const auto& C = Event.Channel;
@@ -154,8 +155,11 @@ public:
                 {
                     const int32 Mode = FCString::Atoi(*C.Info.Options.Label.Mid(6));
                     const auto O = FContractDataScenario::Options(Mode);
-                    if (Mode < 0 || Mode > 5 || C.Info.Options.Label != O.Label || C.Info.Options.bOrdered != O.bOrdered
-                        || C.Info.Options.Reliability != O.Reliability || C.Info.Options.ReliabilityValue != O.ReliabilityValue
+                    const bool Valid = Scenario == TEXT("shared") ? C.Info.Options.Label == TEXT("sr105-main") && C.Info.Options.bOrdered
+                        && C.Info.Options.Reliability == ESimurghRTCReliability::Reliable && C.Info.Options.ReliabilityValue == 0
+                        : Mode >= 0 && Mode <= 5 && C.Info.Options.Label == O.Label && C.Info.Options.bOrdered == O.bOrdered
+                        && C.Info.Options.Reliability == O.Reliability && C.Info.Options.ReliabilityValue == O.ReliabilityValue;
+                    if (!Valid
                         || !C.bRemote || C.Info.MaximumMessageBytes != 65536) { Fail(TEXT("Server remote channel options differ.")); return; }
                     DataOpened.Add(C.Info.Handle.Id);
                 }
@@ -246,7 +250,7 @@ public:
                 if (R.IsError()) { Fail(TEXT("Server echo send failed.")); break; }
                 EchoBytes -= M.Bytes.Num() + M.Text.Len() * sizeof(TCHAR); Echoes.RemoveAt(0); ++EchoSent;
             }
-            if (!bStopping && FPlatformTime::Seconds() - Started > (Scenario == TEXT("concurrent") ? 600 : 180)) { Fail(TEXT("Server probe deadline expired.")); bStopping = true; StopAt = FPlatformTime::Seconds(); if (Server) Server->Stop(); }
+            if (!bStopping && FPlatformTime::Seconds() - Started > ((Scenario == TEXT("concurrent") || Scenario == TEXT("shared")) ? 600 : 180)) { Fail(TEXT("Server probe deadline expired.")); bStopping = true; StopAt = FPlatformTime::Seconds(); if (Server) Server->Stop(); }
             if (!Error.IsEmpty()) { if (Server) Server->Stop(); Report(ServerReport()); return false; }
             if (bStopping && (Server->GetSnapshot().LivePeers == 0 || FPlatformTime::Seconds() - StopAt > 10))
             {

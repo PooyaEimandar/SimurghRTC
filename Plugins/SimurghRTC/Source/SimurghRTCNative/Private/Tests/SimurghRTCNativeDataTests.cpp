@@ -36,4 +36,28 @@ bool FNativeDataAdmission::RunTest(const FString&)
     TestFalse(TEXT("Worker delivery disabled"), Shared->bActive);
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNativeDataStateOrder, "SimurghRTC.Native.DataStateNeverRegresses",
+    EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::EngineFilter)
+bool FNativeDataStateOrder::RunTest(const FString&)
+{
+    auto Shared = MakeShared<FNativeDataShared, ESPMode::ThreadSafe>(); FNativeDataGame Game(Shared);
+    FSimurghRTCChannelHandle Handle; FNativeDataCommand Command;
+    Game.Open({},Handle,Command);
+    FNativeChannelEvent Event; Event.Type = ENativeDataEvent::Changed;
+    Event.Channel.Info.Handle = Handle; Event.Channel.Info.MaximumMessageBytes = 65536;
+    Event.Channel.State = ENativeChannelState::Open;
+    Shared->Updates.Add(Handle.Id).Snapshot = Event.Channel; Shared->Events.Add(Event);
+    Game.Tick([] { return true; });
+    // The worker's Open command may observe Open before Poll delivers an older Connecting event.
+    Event.Channel.State = ENativeChannelState::Connecting; Shared->Events.Add(Event);
+    Game.Tick([] { return true; }); FNativeChannelSnapshot Snapshot; Game.Get(Handle,Snapshot);
+    TestEqual(TEXT("Stale Connecting cannot revoke Open"),Snapshot.State,ENativeChannelState::Open);
+    TestFalse(TEXT("Sending after successful open remains admitted"),Game.Send(Handle,{},ESimurghRTCMessageKind::Binary,Command).IsError());
+    Event.Channel.State = ENativeChannelState::Closed; Shared->Events.Add(Event); Game.Tick([] { return true; });
+    Event.Channel.State = ENativeChannelState::Open; Shared->Events.Add(Event); Game.Tick([] { return true; });
+    Game.Get(Handle,Snapshot);
+    TestEqual(TEXT("Stale Open cannot revive Closed"),Snapshot.State,ENativeChannelState::Closed);
+    TestEqual(TEXT("Closed channel still rejects sends"),Game.Send(Handle,{},ESimurghRTCMessageKind::Binary,Command).Code,ESimurghRTCErrorCode::InvalidState);
+    Game.Shutdown(); return true;
+}
 #endif
