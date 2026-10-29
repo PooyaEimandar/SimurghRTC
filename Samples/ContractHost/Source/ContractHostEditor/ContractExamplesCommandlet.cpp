@@ -24,6 +24,7 @@
 #include "UObject/SavePackage.h"
 
 IMPLEMENT_MODULE(FDefaultModuleImpl, ContractHostEditor);
+int32 GenerateContractDataExamples(const FString& Params);
 
 namespace
 {
@@ -124,6 +125,7 @@ UContractExamplesCommandlet::UContractExamplesCommandlet()
 }
 int32 UContractExamplesCommandlet::Main(const FString& Params)
 {
+    if (FParse::Param(*Params, TEXT("DataExamples"))) return GenerateContractDataExamples(Params);
     if (FParse::Param(*Params, TEXT("JanusExample")))
     {
         UClass* Extension = FindObject<UClass>(nullptr, TEXT("/Script/SimurghRTCJanusExtensions.SimurghRTCJanusOperation"));

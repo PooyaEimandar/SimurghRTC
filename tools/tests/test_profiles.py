@@ -45,6 +45,13 @@ class ProfileTests(unittest.TestCase):
                                          (output / janus).read_bytes())
                     else:
                         self.assertFalse((output / janus.parent).exists())
+                    for asset in ['BP_RtcData.uasset', 'Maps/RtcDataCpp.umap', 'Maps/RtcDataBlueprint.umap']:
+                        direct = Path('Content/Examples/Direct') / asset
+                        if 'SimurghRTCDirect' in expected:
+                            self.assertEqual((profiles.ROOT / 'Samples/ContractHost' / direct).read_bytes(),
+                                             (output / direct).read_bytes())
+                        else:
+                            self.assertFalse((output / direct).exists())
                     self.assertEqual('SimurghRTCJanusExtensions' in expected, manifest['with_janus_extensions'])
                     for module in expected:
                         build = (plugin / 'Source' / module / f'{module}.Build.cs').read_text()

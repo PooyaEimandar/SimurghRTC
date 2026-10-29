@@ -2,7 +2,7 @@
 
 Use `USimurghRTCSession` and `USimurghRTCOperation` to connect an Unreal client to the plugin's Unreal Server endpoint. SR-105 connects the frozen C++/Blueprint API to Direct HTTP signaling and native DataChannels. Applications need only the `SimurghRTCCore` module for these client operations.
 
-Connect, Disconnect, OpenChannel, CloseChannel, SendText and SendBytes are implemented. Janus connections, calls, rooms, media and statistics remain separate work. The Blueprint nodes use the same implementation; the first packaged Blueprint **data** sample is SR-106. The older [lifecycle graphs](LIFECYCLE_EXAMPLES.md) continue to test local success, failure and cleanup.
+Connect, Disconnect, OpenChannel, CloseChannel, SendText and SendBytes are implemented. Janus connections, calls, rooms, media and statistics remain separate work. The Blueprint nodes use the same implementation; [Data examples](DATA_EXAMPLES.md) provides matching Blueprint and C++ maps. The older [lifecycle graphs](LIFECYCLE_EXAMPLES.md) continue to test local success, failure and cleanup.
 
 ## Connect, then open a channel
 

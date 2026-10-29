@@ -2,7 +2,7 @@
 
 Version **1** freezes the shared C++ and Blueprint surface for **Unreal Engine 5.8.3**. Applications can query `USimurghRTCSession::GetApiContractVersion()`. The [lifecycle examples](LIFECYCLE_EXAMPLES.md) execute local success, failure, cancellation and owner cleanup through both interfaces.
 
-Direct sessions now connect, open/close DataChannels, send text/binary messages and disconnect through this API. Start with [Shared sessions](SHARED_SESSIONS.md). Janus connections, calls, rooms, device capture and media delivery still return explicit implementation errors. Native media feasibility tests do not establish network media support.
+Direct sessions now connect, open/close DataChannels, send text/binary messages and disconnect through this API. Start with [Shared sessions](SHARED_SESSIONS.md) or the [Blueprint and C++ data maps](DATA_EXAMPLES.md). Janus connections, calls, rooms, device capture and media delivery still return explicit implementation errors. Native media feasibility tests do not establish network media support.
 
 The SR-001 review fixes ownership, call topology, headless media, device discovery, cancellation and errors below. Public v1 names, parameter types, Blueprint pins, enum values and these lifecycle rules are compatibility commitments. Additive APIs are allowed; breaking changes require a new contract version and migration notes. Append enum values rather than reordering them. The earlier M0 draft had no compatibility guarantee.
 

@@ -1,0 +1,1201 @@
+{
+  "schema": 1,
+  "issue": "SR-106",
+  "validation_date": "2026-10-29",
+  "timezone": "Asia/Dubai",
+  "recorded_at_utc": "2026-10-29T03:16:37.380622+00:00",
+  "base_commit": "c9a9933bc778cdd88a0751abf6da66ea2bd4090c",
+  "status": "complete-local-packaged-blueprint-and-cpp-data-examples",
+  "engine_version": "5.8.3",
+  "engine_revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+  "scope": "Actual cooked Blueprint and C++ data-client maps in separate Mac ARM64 Development Full Game processes against a dedicated Unreal Server over explicit loopback HTTP/ICE.",
+  "host": {
+    "os_version": "27.0.1",
+    "xcode": "Xcode 27.1\nBuild version 27A9275",
+    "mac_sdk": "27.0"
+  },
+  "native_artifact": {
+    "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+    "platform": "Mac",
+    "architecture": "arm64",
+    "files": 7,
+    "objects": 1,
+    "archive_bytes": 17895536,
+    "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+    "runtime_validation": "unverified"
+  },
+  "native_archive_sha256": "f970a6d3f93ba87dba9ba8cb7c936adb48548cfa18bd4b95d59e1c8f01f5daf4",
+  "native_artifact_changed": false,
+  "plugin_runtime_source_changed": false,
+  "public_api_version": 1,
+  "packages": {
+    "client": {
+      "schema": 1,
+      "passed": true,
+      "profile": "full",
+      "platform": "Mac",
+      "architecture": "arm64",
+      "artifact": {
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17895536,
+        "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "f970a6d3f93ba87dba9ba8cb7c936adb48548cfa18bd4b95d59e1c8f01f5daf4",
+      "archive_exports": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ],
+      "webrtc_link_inputs": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+      ],
+      "link_response_sha256": "deceab2649c9e7900dcd40f75a2d6d29816f646c52bb4d8ff2b2281210ed69a6",
+      "editor_link_inputs": false,
+      "janus_link_inputs": true,
+      "unreal_media_presentation_module": true,
+      "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+      "executable_sha256": "61f1fa78a3911487041c3a8a2bd52ef925e5d6947a9f548e03556b6cc19e7b8e",
+      "executable_bytes": 282477056,
+      "built_executable_sha256": "4a783c60faef6b9005a43f69dcabafa5e5baff28c8a6fb24df6aff475c6ebb34",
+      "built_and_staged_uuid": "B4F6F8BC-ACD0-3EC2-BDBD-C674006511DA",
+      "bundle_file_bytes": 517017351,
+      "shipping_size_baseline": false,
+      "rtc_size_delta_measured": false,
+      "code_signature_valid": true,
+      "cooked_container_sha256": {
+        "ContractHost/Content/Paks/ContractHost-Mac.pak": "10d8a99a0c7b5e4a43b62624163e35498e7333d99399dff6334e8271636aa093",
+        "ContractHost/Content/Paks/ContractHost-Mac.ucas": "75e3553cdcc6477b448d94a117aed62090abf616a34d2158094589c1bce300ad",
+        "ContractHost/Content/Paks/ContractHost-Mac.utoc": "43b1f3be5605f266d4387743c728f9b5cb79d953b6b5c98bb8c73abbb946e25f",
+        "ContractHost/Content/Paks/global.ucas": "8a901917bd9779f2e3d0bda0e5a4d0ff512637dd8de20d79377c3ea0d2cb14d6",
+        "ContractHost/Content/Paks/global.utoc": "1dcbe556ab63d77250acab0c743e2a0ecfa1b48fc36e06935323be067f3dbd34",
+        "ContractHost.app/Contents/UE/ContractHost/Content/Paks/ContractHost-Mac.pak": "10d8a99a0c7b5e4a43b62624163e35498e7333d99399dff6334e8271636aa093",
+        "ContractHost.app/Contents/UE/ContractHost/Content/Paks/ContractHost-Mac.ucas": "75e3553cdcc6477b448d94a117aed62090abf616a34d2158094589c1bce300ad",
+        "ContractHost.app/Contents/UE/ContractHost/Content/Paks/ContractHost-Mac.utoc": "43b1f3be5605f266d4387743c728f9b5cb79d953b6b5c98bb8c73abbb946e25f",
+        "ContractHost.app/Contents/UE/ContractHost/Content/Paks/global.ucas": "8a901917bd9779f2e3d0bda0e5a4d0ff512637dd8de20d79377c3ea0d2cb14d6",
+        "ContractHost.app/Contents/UE/ContractHost/Content/Paks/global.utoc": "1dcbe556ab63d77250acab0c743e2a0ecfa1b48fc36e06935323be067f3dbd34"
+      }
+    },
+    "server": {
+      "schema": 1,
+      "passed": true,
+      "profile": "server",
+      "platform": "Mac",
+      "architecture": "arm64",
+      "artifact": {
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17895536,
+        "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "f970a6d3f93ba87dba9ba8cb7c936adb48548cfa18bd4b95d59e1c8f01f5daf4",
+      "archive_exports": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ],
+      "webrtc_link_inputs": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+      ],
+      "link_response_sha256": "cf98133fd9a654715b74d90926b267e47ea9f6a4f912a7b24bb8de2f3ac6d743",
+      "editor_link_inputs": false,
+      "janus_link_inputs": false,
+      "unreal_media_presentation_module": false,
+      "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+      "executable_sha256": "e1d7f7032c2acf85fa15cb8f9b3272b09593ff63743dc8c437aec6dd47ab1a11",
+      "executable_bytes": 284573744,
+      "built_executable_sha256": "5d0dbf8df0c611496d72d657255a1271235bcc722cba19fbc52d634dd7929a28",
+      "built_and_staged_uuid": "E1C36437-7081-3035-9FC6-5A7BBD7043F3",
+      "bundle_file_bytes": 383901753,
+      "shipping_size_baseline": false,
+      "rtc_size_delta_measured": false,
+      "code_signature_valid": true,
+      "cooked_container_sha256": {
+        "ContractHost/Content/Paks/ContractHost-MacServer.pak": "67bfe1d8a337698ef2637696e57a84806e67efd6e1656f4a2903741ea3b269df",
+        "ContractHost/Content/Paks/ContractHost-MacServer.ucas": "30e666ea4576f45e11130b20a3978be61e01a20b10837dbd23b6880c30bd30e2",
+        "ContractHost/Content/Paks/ContractHost-MacServer.utoc": "3ced6a9503fc421854a8f2399bd8f6d5cefa42e66d15fd3cc8a1c2d8eb1ae73b",
+        "ContractHost/Content/Paks/global.ucas": "a8fa40791331b0d1d5bddf55f5389e448678ad74a1eaf482a603ec3fc10a6c32",
+        "ContractHost/Content/Paks/global.utoc": "ac243139cd87239b6539b518c56fd7aef6940dbf29e0d410797667735556ea53",
+        "ContractHostServer.app/Contents/UE/ContractHost/Content/Paks/ContractHost-MacServer.pak": "67bfe1d8a337698ef2637696e57a84806e67efd6e1656f4a2903741ea3b269df",
+        "ContractHostServer.app/Contents/UE/ContractHost/Content/Paks/ContractHost-MacServer.ucas": "30e666ea4576f45e11130b20a3978be61e01a20b10837dbd23b6880c30bd30e2",
+        "ContractHostServer.app/Contents/UE/ContractHost/Content/Paks/ContractHost-MacServer.utoc": "3ced6a9503fc421854a8f2399bd8f6d5cefa42e66d15fd3cc8a1c2d8eb1ae73b",
+        "ContractHostServer.app/Contents/UE/ContractHost/Content/Paks/global.ucas": "a8fa40791331b0d1d5bddf55f5389e448678ad74a1eaf482a603ec3fc10a6c32",
+        "ContractHostServer.app/Contents/UE/ContractHost/Content/Paks/global.utoc": "ac243139cd87239b6539b518c56fd7aef6940dbf29e0d410797667735556ea53"
+      }
+    }
+  },
+  "build_steps": [
+    {
+      "step": "repeatable-client-editor",
+      "seconds": 10.508,
+      "exit_code": 0
+    },
+    {
+      "step": "repeatable-client-editor-finalize",
+      "seconds": 7.977,
+      "exit_code": 0
+    },
+    {
+      "step": "repeatable-client-editor-metadata",
+      "seconds": 6.153,
+      "exit_code": 0
+    },
+    {
+      "step": "repeatable-client-examples",
+      "seconds": 10.365,
+      "exit_code": 0
+    },
+    {
+      "step": "packaged-client-tests",
+      "seconds": 21.719,
+      "exit_code": 0
+    },
+    {
+      "step": "packaged-client-game",
+      "seconds": 120.115,
+      "exit_code": 0
+    },
+    {
+      "step": "packaged-client-game-finalize",
+      "seconds": 13.51,
+      "exit_code": 0
+    },
+    {
+      "step": "packaged-client-game-metadata",
+      "seconds": 6.138,
+      "exit_code": 0
+    },
+    {
+      "step": "packaged-client-cook-game",
+      "seconds": 33.418,
+      "exit_code": 0
+    },
+    {
+      "step": "verified-client-cook-game",
+      "seconds": 118.537,
+      "exit_code": 0
+    },
+    {
+      "step": "final-server-server",
+      "seconds": 14.706,
+      "exit_code": 0
+    },
+    {
+      "step": "final-server-server-finalize",
+      "seconds": 10.639,
+      "exit_code": 0
+    },
+    {
+      "step": "final-server-server-metadata",
+      "seconds": 14.369,
+      "exit_code": 0
+    },
+    {
+      "step": "final-server-editor",
+      "seconds": 19.737,
+      "exit_code": 0
+    },
+    {
+      "step": "final-server-editor-finalize",
+      "seconds": 8.03,
+      "exit_code": 0
+    },
+    {
+      "step": "final-server-editor-metadata",
+      "seconds": 7.249,
+      "exit_code": 0
+    },
+    {
+      "step": "final-server-cook-server",
+      "seconds": 30.174,
+      "exit_code": 0
+    },
+    {
+      "step": "repeat-check-client-examples",
+      "exit_code": 0
+    }
+  ],
+  "engine_tracked_state_preserved": true,
+  "staged_source_and_assets_match_repository": true,
+  "generated_assets": {
+    "BP_RtcData.uasset": {
+      "bytes": 287622,
+      "sha256": "10fa7a7f8bd825a1b2b05d7e4aa8d6af2f6edfeaf5c86da2979e23c8613a33b5"
+    },
+    "Maps/RtcDataCpp.umap": {
+      "bytes": 9587,
+      "sha256": "81d60d6444608b842281b2b81550f605b566d7071818c5accd0e34cf70c4f4ab"
+    },
+    "Maps/RtcDataBlueprint.umap": {
+      "bytes": 10517,
+      "sha256": "1e73793ddf8692a36d9de3b73283f412631a67e978c2bd0d7ec9224f22e451f5"
+    }
+  },
+  "package_source_reuse": "Only the Editor generator and generated client assets changed after Game/Server compilation. The client was recooked; Server entry-map content and all compiled runtime sources are unchanged. The final source snapshots are recorded separately from the build snapshots.",
+  "blueprint": {
+    "nodes": 90,
+    "compiler_errors": 0,
+    "compiler_warnings": 0,
+    "calls": [
+      "CreateSession",
+      "Connect",
+      "OpenChannel",
+      "GetChannelInfo",
+      "SendText",
+      "SendBytes",
+      "CloseChannel",
+      "Disconnect",
+      "Shutdown"
+    ],
+    "delegates": [
+      "OnMessage",
+      "OnChannelChanged",
+      "OnStateChanged"
+    ],
+    "parent_role": "Configuration, operation retention and outcome assertions only; the graph performs its own RTC operations and EndPlay shutdown.",
+    "reproducibility": "Source recipe is versioned; generated editor GUIDs and asset bytes are not promised to repeat."
+  },
+  "runs": [
+    {
+      "run_id": "7cf62b16-70d4-4e45-adc0-f9fda62416bb",
+      "elapsed_seconds": 40.378,
+      "cases": {
+        "cpp-messages": {
+          "run_id": "0688d19c-5894-4a6b-89f5-2f27f304fb23",
+          "pid": 50579,
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "session_id": "d5a27d3a-6b41-d17f-a2ca-9d820e3dbc2c",
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "operations": 4,
+          "completions": 4,
+          "sent": 2,
+          "received": 2,
+          "last_failure": 0,
+          "exact_payloads": true,
+          "channel_info_checked": true,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": false
+        },
+        "cpp-timeout": {
+          "run_id": "3c9dbaea-f074-4e01-920a-6f0d14f74633",
+          "pid": 50611,
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "session_id": "0004a1da-8144-55c7-07d5-c6889a139fd7",
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ],
+          "operations": 2,
+          "completions": 2,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 8,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "cpp-disconnect-pending": {
+          "run_id": "199b3995-0274-4c42-9078-fb851f905c35",
+          "pid": 50616,
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "session_id": "85b8ad18-ac45-981e-8110-e394d23684df",
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ],
+          "operations": 2,
+          "completions": 2,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 9,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "cpp-destroy-connect": {
+          "run_id": "9453d617-3481-4b04-a45c-82fdb3bac1ef",
+          "pid": 50620,
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "session_id": "11fa76c6-8143-5b4e-a01c-7889c9cb2378",
+          "outcomes": [],
+          "states": [
+            1
+          ],
+          "operations": 1,
+          "completions": 0,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 0,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "cpp-destroy-open": {
+          "run_id": "0ddf8873-2a44-4c89-8e89-702d4f273332",
+          "pid": 50633,
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "session_id": "95f6181c-3641-be55-24fd-c7a50d8caed4",
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ],
+          "operations": 2,
+          "completions": 1,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 0,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": false
+        },
+        "blueprint-messages": {
+          "run_id": "73c467fb-1f79-4f4d-9037-fe4b59da7e7f",
+          "pid": 50643,
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "session_id": "eaf09492-d84e-ac8e-ce1d-0697ec4b97cd",
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "operations": 4,
+          "completions": 4,
+          "sent": 2,
+          "received": 2,
+          "last_failure": 0,
+          "exact_payloads": true,
+          "channel_info_checked": true,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": false
+        },
+        "blueprint-timeout": {
+          "run_id": "a7c5a112-c183-447a-8a43-724b91b3b1f7",
+          "pid": 50646,
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "session_id": "a267628e-354f-68dd-7a6f-ae8468ad9ce3",
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ],
+          "operations": 2,
+          "completions": 2,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 8,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "blueprint-disconnect-pending": {
+          "run_id": "f5f515ad-a732-4090-98b1-f4bf86fa48b7",
+          "pid": 50657,
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "session_id": "e9be13b6-0247-8093-5a66-0f834d78aa4e",
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ],
+          "operations": 2,
+          "completions": 2,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 9,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "blueprint-destroy-connect": {
+          "run_id": "ecc7a594-4ede-4311-a32e-153bd1afd899",
+          "pid": 50666,
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "session_id": "2a1dc0ad-814a-a4bb-c30a-7bb9717c1f35",
+          "outcomes": [],
+          "states": [
+            1
+          ],
+          "operations": 1,
+          "completions": 0,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 0,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "blueprint-destroy-open": {
+          "run_id": "f71c032d-d206-4402-93f2-49276e50b3b0",
+          "pid": 50674,
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "session_id": "9df8671b-b643-7c30-17b2-e58212a252d3",
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ],
+          "operations": 2,
+          "completions": 1,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 0,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": false
+        }
+      },
+      "server": {
+        "pid": 50574,
+        "created": 4,
+        "connected": 4,
+        "closed": 4,
+        "records": 0,
+        "live_peers": 0,
+        "data_sent": 4,
+        "data_received": 4,
+        "echo_pending": 0,
+        "teardown_complete": true
+      },
+      "all_processes_stopped": true,
+      "secrets_removed": true
+    },
+    {
+      "run_id": "726a8f36-8d3d-4219-b879-00238a0f4f29",
+      "elapsed_seconds": 27.126,
+      "cases": {
+        "cpp-messages": {
+          "run_id": "6fa524c3-12d3-45bd-9ab0-058b9bd08f09",
+          "pid": 50699,
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "session_id": "015fde64-8d40-0c2e-3c40-00b975c79231",
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "operations": 4,
+          "completions": 4,
+          "sent": 2,
+          "received": 2,
+          "last_failure": 0,
+          "exact_payloads": true,
+          "channel_info_checked": true,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": false
+        },
+        "cpp-timeout": {
+          "run_id": "ac479542-81c4-4648-bb0a-a7ce9689bd80",
+          "pid": 50703,
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "session_id": "1222020b-654b-b6cb-78bf-be855240e83d",
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ],
+          "operations": 2,
+          "completions": 2,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 8,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "cpp-disconnect-pending": {
+          "run_id": "66ce8bdb-339d-419e-b4df-3c04867b90e3",
+          "pid": 50724,
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "session_id": "a79b5df4-984a-8b5b-694c-08a6b17133fc",
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ],
+          "operations": 2,
+          "completions": 2,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 9,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "cpp-destroy-connect": {
+          "run_id": "809b6adf-641b-430d-b319-8948118cec17",
+          "pid": 50729,
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "session_id": "8300be93-a94b-ae7e-ac72-1db35bcd40db",
+          "outcomes": [],
+          "states": [
+            1
+          ],
+          "operations": 1,
+          "completions": 0,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 0,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "cpp-destroy-open": {
+          "run_id": "d322e630-951a-49d6-8393-2089e7ee2486",
+          "pid": 50736,
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "session_id": "395a5356-b142-a4f6-e333-908e2fbc93a6",
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ],
+          "operations": 2,
+          "completions": 1,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 0,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": false
+        },
+        "blueprint-messages": {
+          "run_id": "5dc76b35-3102-408f-a0ec-17d0e482e3c7",
+          "pid": 50741,
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "session_id": "8f733fab-bd42-6d60-a36b-d3915ef55257",
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "operations": 4,
+          "completions": 4,
+          "sent": 2,
+          "received": 2,
+          "last_failure": 0,
+          "exact_payloads": true,
+          "channel_info_checked": true,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": false
+        },
+        "blueprint-timeout": {
+          "run_id": "ffb52d17-da51-4490-9d88-94f76d441d30",
+          "pid": 50750,
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "session_id": "93e4dd9d-db40-e90f-4f7f-b385bb0c4c58",
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ],
+          "operations": 2,
+          "completions": 2,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 8,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "blueprint-disconnect-pending": {
+          "run_id": "9ae0b676-b327-4eb8-8101-f6c3cefead3a",
+          "pid": 50755,
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "session_id": "bc733620-1342-446e-7f38-32aa36a20123",
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ],
+          "operations": 2,
+          "completions": 2,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 9,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "blueprint-destroy-connect": {
+          "run_id": "709d4d9b-1dd0-4402-9cbb-a1a7d0a205b8",
+          "pid": 50762,
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "session_id": "7cac8b14-bb4a-58d2-76fc-3f9da302e975",
+          "outcomes": [],
+          "states": [
+            1
+          ],
+          "operations": 1,
+          "completions": 0,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 0,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": true
+        },
+        "blueprint-destroy-open": {
+          "run_id": "e308e329-24ee-47f5-ae43-fdd573f0aaff",
+          "pid": 50767,
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "session_id": "87375b0d-a642-ad8f-b404-cf90282598c3",
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ],
+          "operations": 2,
+          "completions": 1,
+          "sent": 0,
+          "received": 0,
+          "last_failure": 0,
+          "exact_payloads": false,
+          "channel_info_checked": false,
+          "callbacks_on_game_thread": true,
+          "late_callbacks": 0,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "objects_collected": true,
+          "native_closed": 1,
+          "pending_cleanup": 0,
+          "quiet_ticks": 8,
+          "http_pending_verified": false
+        }
+      },
+      "server": {
+        "pid": 50695,
+        "created": 4,
+        "connected": 4,
+        "closed": 4,
+        "records": 0,
+        "live_peers": 0,
+        "data_sent": 4,
+        "data_received": 4,
+        "echo_pending": 0,
+        "teardown_complete": true
+      },
+      "all_processes_stopped": true,
+      "secrets_removed": true
+    }
+  ],
+  "totals": {
+    "packaged_cases": 20,
+    "implementations": 2,
+    "scenarios_per_implementation": 5,
+    "exact_round_trips": 8,
+    "native_client_closures": 20,
+    "late_callbacks": 0,
+    "pending_cleanup": 0
+  },
+  "shared_session_regression": {
+    "passed": true,
+    "concurrent_sessions": 8,
+    "exact_round_trips": 29,
+    "native_client_closures": 20,
+    "server": {
+      "created": 16,
+      "connected": 16,
+      "closed": 16,
+      "records": 0,
+      "live_peers": 0,
+      "data_received": 29,
+      "data_sent": 29
+    },
+    "all_processes_stopped": true,
+    "secrets_removed": true
+  },
+  "lifecycle_regressions": {
+    "DirectUnreal": {
+      "passed": true,
+      "report": {
+        "passed": true,
+        "schema": 2,
+        "api_contract_version": 1,
+        "run_id": "05445fd2-cb47-41f0-aefe-01f3327b7175",
+        "pid": 50913,
+        "engine_version": "5.8.3-0+UE5",
+        "editor_build": false,
+        "with_janus": true,
+        "with_direct": true,
+        "with_media": true,
+        "with_janus_extensions": true,
+        "profile_checked": true,
+        "janus_blueprint": "passed",
+        "network_transport_tested": false,
+        "provider": "DirectUnreal",
+        "error": "",
+        "cpp": {
+          "passed": true,
+          "outcomes": [
+            "Disconnect",
+            "Connect",
+            "Cancel"
+          ],
+          "errors": [],
+          "end_play_checked": true
+        },
+        "blueprint": {
+          "passed": true,
+          "outcomes": [
+            "Disconnect",
+            "Connect",
+            "Cancel"
+          ],
+          "errors": [],
+          "end_play_checked": true
+        }
+      }
+    },
+    "Janus": {
+      "passed": true,
+      "report": {
+        "passed": true,
+        "schema": 2,
+        "api_contract_version": 1,
+        "run_id": "258fb65d-26a8-4ce4-9ccb-6befaf76d905",
+        "pid": 50938,
+        "engine_version": "5.8.3-0+UE5",
+        "editor_build": false,
+        "with_janus": true,
+        "with_direct": true,
+        "with_media": true,
+        "with_janus_extensions": true,
+        "profile_checked": true,
+        "janus_blueprint": "passed",
+        "network_transport_tested": false,
+        "provider": "Janus",
+        "error": "",
+        "cpp": {
+          "passed": true,
+          "outcomes": [
+            "Disconnect",
+            "Connect",
+            "Cancel"
+          ],
+          "errors": [],
+          "end_play_checked": true
+        },
+        "blueprint": {
+          "passed": true,
+          "outcomes": [
+            "Disconnect",
+            "Connect",
+            "Cancel"
+          ],
+          "errors": [],
+          "end_play_checked": true
+        }
+      }
+    }
+  },
+  "tests": {
+    "unreal_succeeded": 27,
+    "unreal_failed": 0,
+    "unreal_warnings": 0,
+    "python_succeeded": 181,
+    "profile_tests_after_final_asset_generation": 6,
+    "new_python_tests": 5,
+    "negative_coverage": [
+      "Wrong actor/map/run identity",
+      "Missing exact messages or channel/state events",
+      "Missing pending-operation cancellation, EndPlay or GC",
+      "Late callbacks or native cleanup leaks",
+      "Timeout/cancellation incorrectly reported as success"
+    ]
+  },
+  "earlier_attempts": [
+    {
+      "evidence": "final-examples-1/result.json",
+      "sha256": "ec156c47afcce82eafbdf23cfa2c2edbf2240b1143fc18b8961e2cef94b09e4c",
+      "reason": "The first packaged run found duplicate map actors after regeneration. The generator now replaces actors by inspecting the inactive world persistent level directly, asserts exactly one actor per map, and clears graph nodes created while removing delegate bindings. Two subsequent generations retained the same node count before the corrected assets were cooked."
+    },
+    {
+      "evidence": "candidate-client-editor-command.json",
+      "sha256": "1b87e38acd81354a9aed3c546a4e0c13159af5f5945803047830e825b753c738",
+      "reason": "The generator iterated TObjectPtr nodes with auto*; corrected to UEdGraphNode*."
+    },
+    {
+      "evidence": "graphs-client-examples-command.json",
+      "sha256": "f27d576947d6dbc109dfc255c1f7cd7128b150c3f5dcedc1fe3b45e332e454bc",
+      "reason": "UHT exposes const GetChannelInfo as a pure node. Removed the two incorrect execution wires; subsequent Blueprint generation passed without compiler warnings/errors."
+    }
+  ],
+  "source_sha256": {
+    "Config/Profiles.json": "35c4f65e6117759e869efcc70a38220bd9ad1080427cabc4644e8852088b7028",
+    "Samples/ContractHost/Content/Examples/Direct/BP_RtcData.uasset": "10fa7a7f8bd825a1b2b05d7e4aa8d6af2f6edfeaf5c86da2979e23c8613a33b5",
+    "Samples/ContractHost/Content/Examples/Direct/Maps/RtcDataBlueprint.umap": "1e73793ddf8692a36d9de3b73283f412631a67e978c2bd0d7ec9224f22e451f5",
+    "Samples/ContractHost/Content/Examples/Direct/Maps/RtcDataCpp.umap": "81d60d6444608b842281b2b81550f605b566d7071818c5accd0e34cf70c4f4ab",
+    "Samples/ContractHost/Source/ContractHost/ContractDataExample.cpp": "4c4eb7fe6308dd0089b96b9752191f4c3583c024d11022569159cca643c6164c",
+    "Samples/ContractHost/Source/ContractHost/ContractDataExampleProbe.cpp": "d55ef45bd4129cc819620da32e980fda94b18f6f35a79954b9994b19164140de",
+    "Samples/ContractHost/Source/ContractHost/ContractDataExampleProbe.h": "e22172f765e33a10b053c7e1f109f5b171589248d32a85c84c2787dc0d529175",
+    "Samples/ContractHost/Source/ContractHost/ContractDirectProbe.cpp": "a25f4109187bf5e99676ccca515cd6f0b764a2219411b08e49e4c929c0b5791e",
+    "Samples/ContractHost/Source/ContractHost/ContractHost.cpp": "a1844f5eccabd0d4f011759d793dbd707c68527a6a8355656f9858ee3fa4e1c5",
+    "Samples/ContractHost/Source/ContractHost/Public/ContractDataExample.h": "3c9a27d095ac9f03b8701e61a731435f6c2c067cb0e3a941d6ba15918e571b54",
+    "Samples/ContractHost/Source/ContractHostEditor/ContractDataExamples.cpp": "cc9254de76fa1ee98dbf7709c65b4df7e52314c11b2f2284be59f0a3705cf725",
+    "Samples/ContractHost/Source/ContractHostEditor/ContractExamplesCommandlet.cpp": "b9f9d28a85d104fc76b016fa44c7242f9e96340d9dc969e350868d7f7d1a0192",
+    "tools/run_data_example_probe.py": "ceb05aa3cf995a4e3477cb27b9a9d08c1b1bb040d529a7212c22d05b303b4714",
+    "tools/tests/test_data_example_probe.py": "df9f6b3feaa0fca9e8252b5b55cbfa5254c68177da13a71f36a562fa7158e00c",
+    "tools/tests/test_profiles.py": "02673eee6795a530cc35d041fdf7d01eb1dccd52a52d7b01ee2aca16c531d71a"
+  },
+  "evidence_sha256": {
+    "validation-verified.json": "07deba373cfdc2b5bb313a09d1369a0a265109cf165d8c7054a0796f564434b7",
+    "generated-assets-verified.json": "a3bb5f274c971813cb0ab8effebfc043aa342d9265fe9e5588da897d52e73247",
+    "python-tests.log": "db921c80d25601b985bcfdb188b0ea2371b886422fa78d9973270a1b993406ba",
+    "profile-tests-verified.log": "e80d2f55a3b77ca4870c2393fa3d044f57a1604a640ec42e43e24c8f1b377aa2",
+    "packaged-client-tests-report/index.json": "a0f1b98b33d4e3bd8c2b326de2fb59e846718f72493d250d3e4c32706a68c8a3",
+    "pipeline-repeatable-client.json": "239ac2e62b8ae3330cf781265ed67ccc8e015c8fb5e42aa4664a386ec05c6fa2",
+    "repeatable-client-editor-command.json": "a7bf7564efcb1760ae8140dfb0e519398abdb28ccd5d439d83b9d57816bfc8b0",
+    "repeatable-client-editor-finalize-command.json": "286153073ba0e1b33b02ea7b4bef551d26a48d59e0180d316d14fb924fd389e2",
+    "repeatable-client-editor-metadata-command.json": "cef1977620b8a8931a00bf8b6b488154496b542971abf47a98afcdcdfcecbb24",
+    "repeatable-client-examples-command.json": "188e558595f5a3ffb036e4f9183702a23b576ee96872b8315b80539f2d595839",
+    "pipeline-packaged-client.json": "b8b8d7e2a653987a9666855354c64e5451705151c20f60c047f5e0fa50721f13",
+    "packaged-client-tests-command.json": "239996b3d14dfdb5f30d704960952e3bd94033135d8414a176eb7f8216b9ced2",
+    "packaged-client-game-command.json": "ffde7b31b7127564938dcf599560da8eada35551056395452cb64a0ebd65a28e",
+    "packaged-client-game-finalize-command.json": "3e1a0e90ce3b74b9e66115de3defd96e6311666d6cd09f808def305ebd47ad18",
+    "packaged-client-game-metadata-command.json": "79474c2c8973990f4c2c647e1ef708d0f20128b047715de7f6427550ddbd06cb",
+    "packaged-client-cook-game-command.json": "3b71b187614ed21537427c6672f54d6d3be262d699a4ccddaf72906c24bcb06c",
+    "pipeline-verified-client.json": "bd9037b43c71e855770c1a699aa626286e413c2a140367c0465895e9b400192f",
+    "verified-client-cook-game-command.json": "fa596806a2ae97cd5ca4abf5d96f6ee617c74cefdf5fae8b566e97a0c80086fa",
+    "pipeline-final-server.json": "1c5bbf4e65a7d40658626e55b6a2ebd3ea1974455fda9b7ba20a4df9539874de",
+    "final-server-server-command.json": "0938025d3e065a2b88476651f5c3c3292648ac255f7489de902c3e592bfa3f57",
+    "final-server-server-finalize-command.json": "9680cc680794f3060f219b5b4e8fdf778cbc292ae6219637ecf11f104dd63204",
+    "final-server-server-metadata-command.json": "72967ca7094fe99158a6c9c47b40df8076bfbf1c5c62c0eb0d9e27bb13ef5f75",
+    "final-server-editor-command.json": "15018950e78e46faa9a58373ff818621841bd5d8218cffcdd0a88943a8f03f01",
+    "final-server-editor-finalize-command.json": "64785caeaacb593f6d4a5b3ed820da78994a425db2baa5e13fbea00e15cc6081",
+    "final-server-editor-metadata-command.json": "798ad4b1a441eb8d685be2963d77e4c706d138496c139523f78345c39d93affb",
+    "final-server-cook-server-command.json": "a6c4a90e4d0bd5c2950c89207ae108afc2bb168b9d3c960f08f1c8cc7adcd213",
+    "repeat-check-client-examples-command.json": "5f6772e3263b368937f9de8d012e8a63ff21dbd91e0b532adb5404930d6ac79b",
+    "stage-verified-client.json": "4695ee6a8409c6027e0eae5631ccf8c3bdfc492d6ac2b1e570bd72b208bd77f2",
+    "stage-verified-server.json": "a24b63e4ff39db11f535a23871d0f0398d5d574a87051b6883b7d08d3b7d1fc3",
+    "stage-packaged-client.json": "e3368c74409c03e15737bae81a9e63c9ba18a3c9ed8c644f08234b1c79a13caf",
+    "stage-final-server.json": "ebe9f0dd5f3af6cd9dd866301c1ab803d2030de263ffbf139a35375ff1ba9d55",
+    "repeat-check-client-examples.log": "25d7a96e12fd8ba4136c4ad7a82a44b1d64d83c4beb04b803be02edeeb5d3e01",
+    "verified-examples-1/result.json": "4954fa446feea5bf8002fdf7fdee8a754adeba7d6cb2ec6ab6f6736d237ece1c",
+    "verified-examples-2/result.json": "6542d3d172c540a5fb1f7a4f4fd16956457ec3826cadd48d1f0a3a0a0c6b8478",
+    "verified-shared/result.json": "44271ed5fbcfbbb44f067b8916c0751fe8bbb6147815f7953e0281024259b112",
+    "verified-lifecycle-DirectUnreal/result.json": "3e24b177b3427bb4c439a6cd753782d12278266f51e2212e0b072adde9f2b93e",
+    "verified-lifecycle-Janus/result.json": "2c410e0f57dfc2e8aad7dda9fa89d42de5b0c729ec65b311bad66404896b5b37",
+    "audit-verified-client/package-audit.json": "e4c64da2cc55530fea683233baefd19ef14af322027d3d194772d795af84c9bb",
+    "audit-verified-server/package-audit.json": "4b4126b13159dec11813656d0a7bab9a0e86b9ce94e60fa88f81b4d7d12644b5"
+  },
+  "local_evidence": "Intermediate/SR10620261029",
+  "limits": [
+    "Mac ARM64 Full Development client and dedicated Server only. No mobile, Windows/Linux, Shipping-size, remote HTTPS or NAT/TURN acceptance is claimed.",
+    "This is a data-only sample. Janus, network media, UI demos and measured statistics remain separate work.",
+    "The HTTP fixture withholds create responses to verify timeout and pending-Connect teardown; it does not establish network-loss handling on mobile.",
+    "The sample expects an authorized echo service. The reference fixture supplies a bounded echo queue; production FDirectServer does not echo automatically.",
+    "Existing missing ACL compression-settings warnings occur during commandlet/cook startup. The Blueprint compiler itself reports zero errors/warnings. Minimal-host gameplay NetDriverCreateFailure is unrelated to the HTTP/WebRTC fixture.",
+    "M0 external acceptance gates remain open. M1 still needs SR-107 mobile Direct-data acceptance."
+  ]
+}

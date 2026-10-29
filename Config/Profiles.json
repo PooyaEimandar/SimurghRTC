@@ -3,7 +3,8 @@
   "engine_version": "5.8.3",
   "descriptor_engine_version": "5.8.0",
   "sample_content": {
-    "Examples/Janus": "SimurghRTCJanusExtensions"
+    "Examples/Janus": "SimurghRTCJanusExtensions",
+    "Examples/Direct": "SimurghRTCDirect"
   },
   "modules": {
     "SimurghRTCCore": {

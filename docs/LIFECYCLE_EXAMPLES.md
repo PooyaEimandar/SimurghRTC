@@ -12,7 +12,7 @@ These examples teach the frozen [API v1 contract](API_CONTRACT.md) in Unreal **5
 | Start another operation and call Shutdown | Cancelled result, no completion callback |
 | Destroy the actor with an operation pending | EndPlay shuts down immediately; no late completion |
 
-A successful local Disconnect does not mean a network connection worked. The fixture deliberately uses an incomplete Direct endpoint and credential, or the unimplemented Janus provider. For a real Direct connection, use [Shared sessions](SHARED_SESSIONS.md). The packaged Blueprint data example remains SR-106 work.
+A successful local Disconnect does not mean a network connection worked. The fixture deliberately uses an incomplete Direct endpoint and credential, or the unimplemented Janus provider. For real Direct connections and messages, start with the [C++ and Blueprint data maps](DATA_EXAMPLES.md) or [Shared sessions](SHARED_SESSIONS.md).
 
 ## Open the examples
 
