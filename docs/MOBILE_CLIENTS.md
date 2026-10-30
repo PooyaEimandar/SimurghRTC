@@ -1,6 +1,6 @@
 # SimurghRTC mobile clients
 
-**Status: packaged lifecycle, local-media and C++/Blueprint Direct-data checks pass on Android and the iOS simulator, including local verified HTTPS, forced TURN/UDP/TCP, explicit reconnect, controlled signaling/relay loss recovery and app background/resume. Broader mobile acceptance is in progress.** See [Native backend](NATIVE_BACKEND.md) for the current isolated M155 builds, [M0 results](M0_VALIDATION.md) for earlier package evidence, and [Mobile data](MOBILE_DATA.md) for SR-107. Physical iOS acceptance and Shipping size comparisons remain open.
+**Status: packaged lifecycle, local-media and C++/Blueprint Direct-data checks pass on Android and the iOS simulator. Broader mobile acceptance is in progress.** See [Mobile data](MOBILE_DATA.md) for HTTPS/TURN, reconnect, background/resume, channel options, limits and backpressure coverage. [Native backend](NATIVE_BACKEND.md) describes the isolated M155 builds; [M0 results](M0_VALIDATION.md) records earlier package evidence. Physical iOS acceptance and Shipping size comparisons remain open.
 
 ## Targets and dependency artifacts
 

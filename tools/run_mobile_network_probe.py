@@ -17,6 +17,7 @@ from run_direct_probe import request, wait_until, validate_server
 from run_mobile_data_example_probe import MobileClient
 from run_mobile_probe import read_report
 from run_signaling_probe import server_bundle_id
+from channel_validation import CHANNEL_SCENARIOS, channel_case, validate_remote_channel
 
 
 def validate_route(transport, protocol):
@@ -107,6 +108,7 @@ def background_connection(client, cid, dest, scenario, proxy, await_health, row)
 def run(args):
     recovery=getattr(args,'recovery',False)
     background=getattr(args,'background',False)
+    channels=getattr(args,'channels',False)
     output=args.output.resolve();a.require(not output.exists(),'Use a fresh evidence directory.');output.mkdir(parents=True)
     server=args.server_executable.resolve();project=args.server_project.resolve()
     artifact=a.validate(project/'Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64')
@@ -116,7 +118,7 @@ def run(args):
     certs=output/'certificates';cert_hashes=certificates(certs)
     result=dict(schema=1,passed=False,cases={},server_artifact=artifact,server_executable_sha256=a.digest(server),
                 certificate_sha256=cert_hashes,signaling='verified HTTPS to local TLS proxy; Unreal HTTPServer behind it',
-                turn_fixture=a.read_json(args.turn_fixture),physical_ios_tested=False,recovery_probes=recovery,background_probes=background)
+                turn_fixture=a.read_json(args.turn_fixture),physical_ios_tested=False,recovery_probes=recovery,background_probes=background,channel_probes=channels)
     simulator=None;client=None;started=time.monotonic()
     def sim(*command,check=True,timeout=120):
         r=subprocess.run(['xcrun','simctl',*map(str,command)],capture_output=True,text=True,timeout=timeout)
@@ -146,6 +148,9 @@ def run(args):
             if background:
                 cases=[(implementation,scenario,route,'trusted') for implementation in MAPS
                        for scenario,route in [('background-connected','direct'),('background-connected','udp'),('background-connect','direct')]]
+            if channels:
+                cases=[(implementation,scenario,'direct','trusted') for implementation in MAPS for scenario in CHANNEL_SCENARIOS]
+                cases += [(implementation,'channels-0','udp','trusted') for implementation in MAPS]
             for implementation,scenario,route,certificate in cases:
                 name='-'.join([implementation,scenario,route,certificate]);dest=output/name;dest.mkdir()
                 run_id=str(uuid.uuid4());cid=str(uuid.uuid4());token=secrets.token_urlsafe(32)
@@ -177,7 +182,8 @@ def run(args):
                     (dest/'server-command.json').write_text(json.dumps(command,indent=2)+'\n')
                     with (dest/'server.log').open('w') as stream:process=subprocess.Popen(command,stdout=stream,stderr=subprocess.STDOUT)
                     await_health(lambda h:h['running'])
-                    with HttpsProxy(port,certs/(certificate+'.pem'),certs/(certificate+'.key')) as proxy:
+                    with HttpsProxy(port,certs/(certificate+'.pem'),certs/(certificate+'.key'),
+                                    message_limit=32768 if scenario=='channels-small' else None) as proxy:
                         if scenario=='background-connect':proxy.set_hold(True)
                         gate=client.launch(cid,implementation,scenario,proxy.port,token+('-wrong' if scenario=='unauthorized' else ''),
                             https=True,ice=turn.config_for(transport=route) if route!='direct' else None,
@@ -191,6 +197,8 @@ def run(args):
                             platform='IOS' if client.simulator else 'Android',simulator=client.simulator,loopback=loopback)
                         a.require(report.get('https') is True and report.get('relay_only') is (route!='direct'),'Client network configuration differs.')
                         row['tls']=proxy.report()
+                        if scenario=='channels-small':
+                            a.require(proxy.sdp_requests>=1 and proxy.sdp_responses>=1,'Lower SDP limit was not negotiated in both directions.')
                         if scenario=='tls-rejected':
                             validate_tls_rejection(row['tls'])
                         else:a.require(proxy.requests>0 and proxy.tls_versions,'Missing HTTPS traffic.')
@@ -201,8 +209,10 @@ def run(args):
                     row['server_exit_code']=code
                     validate_server(report,run_id,process.pid,artifact['manifest_sha256'],application_messages=True,loopback=loopback)
                     a.require(code==0 and report['records']==report['echo_pending']==0,'Server cleanup incomplete.')
-                    expected=2 if recovery or scenario=='background-connected' else int(scenario in ('messages','background-connect'))
-                    a.require(report['created']==report['connected']==report['closed']==expected and report['data_received']==report['data_sent']==2*expected,'Server totals differ.')
+                    expected=2 if recovery or scenario=='background-connected' else int(channels or scenario in ('messages','background-connect'))
+                    messages=channel_case(scenario)['messages'] if channels else 2*expected
+                    a.require(report['created']==report['connected']==report['closed']==expected and report['data_received']==report['data_sent']==messages,'Server totals differ.')
+                    if channels:validate_remote_channel(report,scenario)
                     if route!='direct':validate_route(report['last_transport'],route)
                     with socket.socket() as sock:a.require(sock.connect_ex(('127.0.0.1',port))!=0,'Server listener remains open.')
                     row['passed']=True;print('PASS '+name,flush=True)
@@ -233,15 +243,16 @@ def run(args):
     return result
 
 
-def main(*, recovery=False, background=False):
-    parser=argparse.ArgumentParser(description='Validate packaged mobile app background/resume through actual OS lifecycle events.' if background else
+def main(*, recovery=False, background=False, channels=False):
+    parser=argparse.ArgumentParser(description='Validate packaged mobile DataChannel options, payload limits, ordering and backpressure.' if channels else
+                                  'Validate packaged mobile app background/resume through actual OS lifecycle events.' if background else
                                   'Validate packaged mobile reconnect and controlled HTTPS/TURN loss recovery.' if recovery else __doc__)
     for name in ('server-project','server-executable','client-project','app','output','turn-fixture'):parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--platform',choices=['Android','IOSSimulator'],required=True);parser.add_argument('--device',required=True)
     parser.add_argument('--listen-ip',default='127.0.0.1',help='Local Mac LAN IPv4 for physical Android; loopback for simulator.')
     parser.add_argument('--adb',type=Path,default=Path.home()/'Library/Android/sdk/platform-tools/adb')
     parser.add_argument('--aapt',type=Path,default=Path.home()/'Library/Android/sdk/build-tools/36.0.0/aapt')
-    args=parser.parse_args();args.recovery=recovery;args.background=background
+    args=parser.parse_args();args.recovery=recovery;args.background=background;args.channels=channels
     result=run(args);print(json.dumps(dict(passed=result['passed'],error=result.get('error'))))
     return 0 if result['passed'] else 1
 

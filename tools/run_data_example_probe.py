@@ -14,6 +14,7 @@ import mobile_artifacts as a
 from run_direct_probe import PATH, FaultProxy, request, wait_until, validate_server
 from run_mobile_probe import read_report
 from run_signaling_probe import server_bundle_id
+from channel_validation import CHANNEL_SCENARIOS, channel_case, validate_channels
 
 SCENARIOS = ('messages', 'timeout', 'disconnect-pending', 'destroy-connect', 'destroy-open')
 BACKGROUND_SCENARIOS = ('background-connected', 'background-connect')
@@ -23,9 +24,11 @@ MAPS = {'cpp': '/Game/Examples/Direct/Maps/RtcDataCpp', 'blueprint': '/Game/Exam
 
 def validate_example(report, run_id, pid, manifest, with_janus, implementation, scenario, *, platform='Mac', simulator=False, loopback=True):
     recovery = scenario in RECOVERY_SCENARIOS; background = scenario in BACKGROUND_SCENARIOS
+    channels = scenario in CHANNEL_SCENARIOS
+    basic_scenario = 'messages' if channels else scenario
     rounds = 2 if recovery or scenario=='background-connected' else 1
     connections = 2 if recovery or background else 1
-    a.require(implementation in MAPS and scenario in (*SCENARIOS, *RECOVERY_SCENARIOS, *BACKGROUND_SCENARIOS, 'unauthorized', 'tls-rejected'), 'Unknown data-example case.')
+    a.require(implementation in MAPS and scenario in (*SCENARIOS, *RECOVERY_SCENARIOS, *BACKGROUND_SCENARIOS, *CHANNEL_SCENARIOS, 'unauthorized', 'tls-rejected'), 'Unknown data-example case.')
     a.require(report.get('passed') is True, 'Data example failed: '+str(report.get('error', 'missing result')))
     expected = dict(schema=1, run_id=run_id, pid=pid, implementation=implementation, scenario=scenario,
                     map=MAPS[implementation], editor_build=False, server_build=False, arm64_build=True,
@@ -46,7 +49,7 @@ def validate_example(report, run_id, pid, manifest, with_janus, implementation, 
         a.require(type(report.get(key)) is int and report[key]>=0, 'Invalid counter: '+key)
     a.require(report['quiet_ticks']>=8 and report['remote_closed']<=connections, 'Missing quiet cleanup interval.')
     states=report.get('states')
-    expected_states={'background-connected':[1,2,1,2,3,4], 'background-connect':[1,1,2,3,4], 'reconnect':[1,2,3,4,1,2,3,4], 'signaling-loss':[1,2,5,1,2,3,4], 'relay-loss':[1,2,5,1,2,3,4], 'messages':[1,2,3,4], 'timeout':[1,5,3,4], 'unauthorized':[1,5,3,4], 'tls-rejected':[1,5,3,4], 'disconnect-pending':[1,3,4], 'destroy-connect':[1], 'destroy-open':[1,2]}[scenario]
+    expected_states={'background-connected':[1,2,1,2,3,4], 'background-connect':[1,1,2,3,4], 'reconnect':[1,2,3,4,1,2,3,4], 'signaling-loss':[1,2,5,1,2,3,4], 'relay-loss':[1,2,5,1,2,3,4], 'messages':[1,2,3,4], 'timeout':[1,5,3,4], 'unauthorized':[1,5,3,4], 'tls-rejected':[1,5,3,4], 'disconnect-pending':[1,3,4], 'destroy-connect':[1], 'destroy-open':[1,2]}[basic_scenario]
     a.require(type(states) is list and all(type(v) is int for v in states) and states==expected_states, 'Session state events differ.')
     pending=scenario.startswith('destroy-')
     a.require(report.get('pending_at_destruction') is pending and report.get('silent_cancelled') is pending, 'Pending owner cleanup differs.')
@@ -61,15 +64,16 @@ def validate_example(report, run_id, pid, manifest, with_janus, implementation, 
         'unauthorized': ['Connect:Failure','Disconnect:Success'], 'tls-rejected': ['Connect:Failure','Disconnect:Success'],
         'disconnect-pending': ['Connect:Cancelled','Disconnect:Success'],
         'destroy-connect': [], 'destroy-open': ['Connect:Success'],
-    }[scenario]
+    }[basic_scenario]
     a.require(report.get('outcomes')==outcomes and report['completions']==len(outcomes), 'Completion branches differ.')
     a.require(report['operations']==len(outcomes)+int(pending or scenario=='background-connect'), 'Pending or duplicate operation count differs.')
-    messages=scenario=='messages' or recovery or background
-    a.require(report['sent']==report['received']==(2*rounds if messages else 0), 'Message totals differ.')
+    messages=basic_scenario=='messages' or recovery or background
+    a.require(report['sent']==report['received']==(channel_case(scenario)['messages'] if channels else 2*rounds if messages else 0), 'Message totals differ.')
     a.require(report.get('exact_payloads') is messages and report.get('channel_info_checked') is messages, 'Payload or channel verification missing.')
     a.require(report['last_failure']==(8 if scenario=='timeout' else 7 if scenario=='unauthorized' else 11 if scenario=='tls-rejected' else 9 if scenario=='disconnect-pending' else 0), 'Structured error differs.')
     if messages:
         a.require(report['channel_events']>0 and report['open_events']>0 and report['remote_closed']>=1, 'Channel events or acknowledged close missing.')
+    if channels:validate_channels(report,scenario)
     if background:
         expected_background=dict(inactive_events=1,active_events=1,background_events=1,foreground_events=1,background_shutdown=True,
             background_pending=scenario=='background-connect',background_cancelled=scenario=='background-connect',

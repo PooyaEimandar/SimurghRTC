@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import secrets
+import re
 import signal
 import socket
 import ssl
@@ -35,11 +36,30 @@ def certificates(folder):
     return {p.name:a.digest(p) for p in folder.glob('*.pem')}
 
 
+def limit_sdp_messages(body, limit):
+    """Fixture-only SDP negotiation: lower each offer/answer's advertised SCTP limit."""
+    a.require(limit==32768, 'Only the lower 32 KiB fixture limit is supported.')
+    document=json.loads(body);count=0
+    def visit(value):
+        nonlocal count
+        if isinstance(value,dict):
+            for key,item in value.items():
+                if key=='sdp' and isinstance(item,str) and item.startswith('v=0\r\n'):
+                    value[key],changes=re.subn(r'(?m)^a=max-message-size:\d+\r$', 'a=max-message-size:'+str(limit)+'\r', item)
+                    a.require(changes==1,'Expected one SCTP limit in the fixture SDP.');count+=1
+                elif isinstance(item,(dict,list)):visit(item)
+        elif isinstance(value,list):
+            for item in value:visit(item)
+    visit(document)
+    return (json.dumps(document,separators=(',',':')).encode() if count else body),count
+
+
 class HttpsProxy:
-    def __init__(self, upstream, cert, key):
+    def __init__(self, upstream, cert, key, *, message_limit=None):
         self.upstream=upstream;self.requests=0;self.tls_failures=0;self.statuses=[];self.tls_versions=set()
         self.outage=threading.Event();self.dropped_requests=0
         self.hold_release=threading.Event();self.hold_release.set();self.held_requests=0
+        self.message_limit=message_limit;self.sdp_requests=0;self.sdp_responses=0
         context=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER);context.minimum_version=ssl.TLSVersion.TLSv1_2
         context.load_cert_chain(cert,key);outer=self
         class Server(ThreadingHTTPServer):
@@ -76,9 +96,13 @@ class HttpsProxy:
                     return
                 remote=http.client.HTTPConnection('127.0.0.1',outer.upstream,timeout=5)
                 try:
+                    if outer.message_limit:
+                        body,count=limit_sdp_messages(body,outer.message_limit);outer.sdp_requests+=count
                     remote.request('POST',PATH,body,{'Content-Type':'application/json','Authorization':self.headers.get('Authorization','')})
                     response=remote.getresponse();data=response.read(262145)
                     if len(data)>262144:raise ValueError('Oversized signaling response')
+                    if outer.message_limit and response.status==200:
+                        data,count=limit_sdp_messages(data,outer.message_limit);outer.sdp_responses+=count
                     outer.requests+=1;outer.statuses.append(response.status)
                     self.send_response(response.status);self.send_header('Content-Type','application/json')
                     self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
@@ -94,7 +118,8 @@ class HttpsProxy:
     def set_outage(self, enabled):
         if enabled:self.outage.set()
         else:self.outage.clear()
-    def report(self):return dict(requests=self.requests,dropped_requests=self.dropped_requests,held_requests=self.held_requests,tls_failures=self.tls_failures,statuses=self.statuses,tls_versions=sorted(self.tls_versions))
+    def report(self):return dict(requests=self.requests,dropped_requests=self.dropped_requests,held_requests=self.held_requests,tls_failures=self.tls_failures,statuses=self.statuses,tls_versions=sorted(self.tls_versions),
+                                message_limit=self.message_limit,sdp_requests=self.sdp_requests,sdp_responses=self.sdp_responses)
 
 
 class TurnFixture:

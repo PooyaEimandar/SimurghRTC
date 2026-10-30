@@ -64,6 +64,7 @@ public:
     struct FEcho { FString Session; FSimurghRTCDataMessage Message; };
     TArray<FEcho> Echoes;
     TSet<FGuid> DataOpened, DataClosed;
+    TArray<TSharedPtr<FJsonValue>> ChannelOptions;
     int32 EchoBytes = 0, EchoReceived = 0, EchoSent = 0;
 
 #endif
@@ -134,6 +135,7 @@ public:
             J->SetNumberField(TEXT("data_channels_opened"), DataOpened.Num()); J->SetNumberField(TEXT("data_channels_closed"), DataClosed.Num());
             J->SetNumberField(TEXT("data_received"), EchoReceived); J->SetNumberField(TEXT("data_sent"), EchoSent);
             J->SetNumberField(TEXT("echo_pending"), Echoes.Num());
+            J->SetArrayField(TEXT("channel_options"),ChannelOptions);
         }
         return J;
     }
@@ -161,14 +163,24 @@ public:
             {
                 if (C.State == ENativeChannelState::Open)
                 {
-                    const int32 Mode = FCString::Atoi(*C.Info.Options.Label.Mid(6));
-                    const auto O = FContractDataScenario::Options(Mode);
-                    const bool Valid = (Scenario == TEXT("shared") || Scenario == TEXT("example")) ? C.Info.Options.Label == (Scenario == TEXT("example") ? TEXT("rtc-example") : TEXT("sr105-main")) && C.Info.Options.bOrdered
+                    const bool Validation = Scenario == TEXT("example") && C.Info.Options.Label.StartsWith(TEXT("sr107-channels-"));
+                    const int32 Mode = FCString::Atoi(*C.Info.Options.Label.Mid(Validation ? 15 : 6));
+                    auto O = FContractDataScenario::Options(Mode);
+                    if (Validation) O.Label = FString::Printf(TEXT("sr107-channels-%d"),Mode);
+                    const bool Valid = !Validation && (Scenario == TEXT("shared") || Scenario == TEXT("example")) ? C.Info.Options.Label == (Scenario == TEXT("example") ? TEXT("rtc-example") : TEXT("sr105-main")) && C.Info.Options.bOrdered
                         && C.Info.Options.Reliability == ESimurghRTCReliability::Reliable && C.Info.Options.ReliabilityValue == 0
                         : Mode >= 0 && Mode <= 5 && C.Info.Options.Label == O.Label && C.Info.Options.bOrdered == O.bOrdered
                         && C.Info.Options.Reliability == O.Reliability && C.Info.Options.ReliabilityValue == O.ReliabilityValue;
                     if (!Valid
-                        || !C.bRemote || C.Info.MaximumMessageBytes != 65536) { Fail(TEXT("Server remote channel options differ.")); return; }
+                        || !C.bRemote || (C.Info.MaximumMessageBytes != 65536 && !(Validation && C.Info.MaximumMessageBytes == 32768))) { Fail(TEXT("Server remote channel options differ.")); return; }
+                    if (!DataOpened.Contains(C.Info.Handle.Id))
+                    {
+                        auto V = MakeShared<FJsonObject>(); V->SetStringField(TEXT("session_id"),Session);
+                        V->SetStringField(TEXT("label"),C.Info.Options.Label); V->SetBoolField(TEXT("ordered"),C.Info.Options.bOrdered);
+                        V->SetNumberField(TEXT("reliability"),int32(C.Info.Options.Reliability)); V->SetNumberField(TEXT("reliability_value"),C.Info.Options.ReliabilityValue);
+                        V->SetNumberField(TEXT("maximum_message_bytes"),C.Info.MaximumMessageBytes); V->SetBoolField(TEXT("remote"),C.bRemote);
+                        ChannelOptions.Add(MakeShared<FJsonValueObject>(V));
+                    }
                     DataOpened.Add(C.Info.Handle.Id);
                 }
                 if (C.State == ENativeChannelState::Closed) DataClosed.Add(C.Info.Handle.Id);

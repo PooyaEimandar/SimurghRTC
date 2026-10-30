@@ -215,12 +215,16 @@ int32 GenerateContractDataExamples(const FString& Params)
     auto* Info = G.SessionCall(TEXT("GetChannelInfo"),4950,220); G.Wire(G.Get(TEXT("Channel"),4750,350),TEXT("Channel"),Info,TEXT("Channel"));
     // UHT exposes this const query as pure; evaluate it after the channel variable is stored.
     auto* RecordInfo = G.Sample(TEXT("RecordChannelInfo"),5350,0); G.Then(KeepChannel,RecordInfo); G.Wire(Info,TEXT("ReturnValue"),RecordInfo,TEXT("Error")); G.Wire(Info,TEXT("Info"),RecordInfo,TEXT("Info"));
-    UEdGraphNode* Last = RecordInfo;
+    auto* ValidateChannel = G.Sample(TEXT("BeginChannelValidation"),5750,-400); G.Then(RecordInfo,ValidateChannel);
+    auto* Validation = G.Node<UK2Node_IfThenElse>(6150,-400,TEXT("Probe mode supplies bounded payloads; normal play sends the two example messages")); Validation->AllocateDefaultPins();
+    G.Then(ValidateChannel,Validation); G.Wire(ValidateChannel,TEXT("ReturnValue"),Validation,TEXT("Condition"));
+    UEdGraphNode* Last = nullptr;
     int32 X = 5800;
     for (const auto Kind : {TEXT("Text"),TEXT("Bytes")})
     {
         const FString Function = FString(TEXT("Send"))+Kind, Variable = FString(Kind)+TEXT("ToSend");
-        auto* Send = G.SessionCall(*Function,X,0); G.Then(Last,Send);
+        auto* Send = G.SessionCall(*Function,X,0);
+        if (Last) G.Then(Last,Send); else G.Wire(Validation,TEXT("else"),Send,TEXT("execute"));
         G.Wire(G.Get(TEXT("Channel"),X,250),TEXT("Channel"),Send,TEXT("Channel"));
         G.Wire(G.Get(*Variable,X,330),*Variable,Send,Kind);
         auto* Record = G.Sample(TEXT("RecordSend"),X+400,0); G.Then(Send,Record); G.Wire(Send,TEXT("ReturnValue"),Record,TEXT("Error")); Last = Record; X += 850;
@@ -228,9 +232,26 @@ int32 GenerateContractDataExamples(const FString& Params)
     auto* Received = G.Sample(TEXT("RecordMessage"),350,2000); G.Then(Message,Received); G.Wire(Message,TEXT("Message"),Received,TEXT("Message"));
     auto* Both = G.Node<UK2Node_IfThenElse>(750,2000,TEXT("Close only after both exact echoes arrive")); Both->AllocateDefaultPins();
     G.Then(Received,Both); G.Wire(Received,TEXT("ReturnValue"),Both,TEXT("Condition"));
-    auto* Close = G.Async(TEXT("CloseChannel"),1100,2000); G.Then(Both,Close);
+    G.Then(Both,G.Sample(TEXT("RequestCloseChannel"),1100,1800));
+    Y = 1500;
+    auto* CloseEvent = FKismetEditorUtilities::AddDefaultEventNode(BP,G.Graph,TEXT("RequestCloseChannel"),AContractDataExample::StaticClass(),Y);
+    auto* Close = G.Async(TEXT("CloseChannel"),1100,2000); G.Then(CloseEvent,Close);
     auto* Closed = G.Outcome(Close,TEXT("CloseChannel"),TEXT("Success"),1550,2000); G.Then(Closed,G.Sample(TEXT("RequestDisconnect"),1950,2000));
     G.FailureBranches(Close,TEXT("CloseChannel"),1550,2600);
+    Y = 9500;
+    auto* ValidationSend = FKismetEditorUtilities::AddDefaultEventNode(BP,G.Graph,TEXT("RequestValidationSend"),AContractDataExample::StaticClass(),Y);
+    auto* TextOrBytes = G.Node<UK2Node_IfThenElse>(400,9500,TEXT("Every validation payload uses the public Blueprint SendText or SendBytes node")); TextOrBytes->AllocateDefaultPins();
+    G.Then(ValidationSend,TextOrBytes); G.Wire(G.Get(TEXT("bValidationText"),0,9750),TEXT("bValidationText"),TextOrBytes,TEXT("Condition"));
+    for (const bool IsText : {true,false})
+    {
+        const TCHAR* Kind = IsText ? TEXT("Text") : TEXT("Bytes"); const int32 Row = IsText ? 9500 : 10200;
+        const FString Function = FString(TEXT("Send"))+Kind, Variable = FString(Kind)+TEXT("ToSend");
+        auto* Send = G.SessionCall(*Function,850,Row);
+        G.Wire(TextOrBytes,IsText ? TEXT("then") : TEXT("else"),Send,TEXT("execute"));
+        G.Wire(G.Get(TEXT("Channel"),600,Row+250),TEXT("Channel"),Send,TEXT("Channel"));
+        G.Wire(G.Get(*Variable,600,Row+330),*Variable,Send,Kind);
+        auto* Record = G.Sample(TEXT("RecordValidationSend"),1300,Row); G.Then(Send,Record); G.Wire(Send,TEXT("ReturnValue"),Record,TEXT("Error"));
+    }
     auto* ChannelRecord = G.Sample(TEXT("RecordChannelEvent"),400,3500); G.Then(ChannelEvent,ChannelRecord); G.Wire(ChannelEvent,TEXT("Channel"),ChannelRecord,TEXT("Info"));
     auto* StateRecord = G.Sample(TEXT("RecordStateEvent"),400,3900); G.Then(StateEvent,StateRecord); G.Wire(StateEvent,TEXT("State"),StateRecord,TEXT("State"));
     Y = 4500;

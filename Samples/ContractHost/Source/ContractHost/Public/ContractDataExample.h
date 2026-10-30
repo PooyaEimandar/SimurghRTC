@@ -7,12 +7,14 @@
 #include "SimurghRTCSession.h"
 #include "ContractDataExample.generated.h"
 
+class FContractChannelValidation;
 // Plain reporting state survives actor destruction without retaining any UObject.
 struct FContractDataExampleResult
 {
     FString Error, Scenario = TEXT("messages"), Implementation, ClassPath;
     FGuid SessionId;
     TArray<FGuid> ChannelIds;
+    TSharedPtr<FContractChannelValidation> ChannelValidation;
     TArray<int32> ConnectionErrors;
     int32 Round = 0, CompletedRounds = 0, StaleHandleChecks = 0;
     bool bRoundRecorded = false, bAwaitingFailure = false, bFailureObserved = false;
@@ -51,12 +53,20 @@ public:
     UPROPERTY(Transient, BlueprintReadWrite, Category="RTC Example") TObjectPtr<USimurghRTCOperation> PendingOperation;
     UPROPERTY(Transient, BlueprintReadWrite, Category="RTC Example") FSimurghRTCChannelHandle Channel;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="RTC Example") TObjectPtr<UApplicationLifecycleComponent> ApplicationLifecycle;
+    UPROPERTY(Transient, BlueprintReadOnly, Category="RTC Example") bool bValidationText = false;
 
     UFUNCTION(BlueprintCallable, Category="RTC Example") bool PrepareExample();
     UFUNCTION(BlueprintCallable, Category="RTC Example") void TrackOperation(USimurghRTCOperation* Operation);
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordOutcome(FName Step, FName Branch, const FSimurghRTCOperationResult& Result);
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordChannelInfo(const FSimurghRTCError& Error, const FSimurghRTCChannelInfo& Info);
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordSend(const FSimurghRTCError& Error);
+    UFUNCTION(BlueprintCallable, Category="RTC Example") bool BeginChannelValidation();
+    UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordValidationSend(const FSimurghRTCError& Error);
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="RTC Example") void RequestValidationSend();
+    virtual void RequestValidationSend_Implementation();
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="RTC Example") void RequestCloseChannel();
+    virtual void RequestCloseChannel_Implementation();
+    void TickChannelValidation();
     UFUNCTION(BlueprintCallable, Category="RTC Example") bool RecordMessage(const FSimurghRTCDataMessage& Message);
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordChannelEvent(const FSimurghRTCChannelInfo& Info);
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordStateEvent(ESimurghRTCSessionState State);
@@ -98,6 +108,8 @@ protected:
     void RequestDisconnect_Implementation() override;
     void RequestConnect_Implementation() override;
     void RequestSession_Implementation() override;
+    void RequestValidationSend_Implementation() override;
+    void RequestCloseChannel_Implementation() override;
 private:
     void Start(USimurghRTCOperation* Operation, FName Step);
     void Completed(FName Step, const FSimurghRTCOperationResult& Result);

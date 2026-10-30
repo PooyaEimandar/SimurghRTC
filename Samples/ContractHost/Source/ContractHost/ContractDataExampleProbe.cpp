@@ -1,6 +1,7 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "ContractDataExampleProbe.h"
 #include "ContractDataExample.h"
+#include "ContractChannelValidation.h"
 #include "SimurghRTCSessionTransport.h"
 #include "SimurghRTCNativeRuntime.h"
 #include "Containers/Ticker.h"
@@ -108,6 +109,7 @@ public:
         if (Phase == 1 && Actor.IsValid())
         {
             auto* Owner = Actor.Get();
+            Owner->TickChannelValidation();
             const bool Pending = Owner->PendingOperation && !Owner->PendingOperation->IsFinished();
             const bool Connecting = Owner->Session && Owner->Session->GetState() == ESimurghRTCSessionState::Connecting;
             const bool GateOpen = !TriggerGate.IsEmpty() && IFileManager::Get().FileExists(*TriggerGate);
@@ -188,6 +190,7 @@ public:
         if (Result)
         {
             const auto& R = *Result;
+            if (R.ChannelValidation) J->SetObjectField(TEXT("channel_validation"),R.ChannelValidation->Report());
             J->SetNumberField(TEXT("inactive_events"),R.InactiveEvents); J->SetNumberField(TEXT("active_events"),R.ActiveEvents);
             J->SetNumberField(TEXT("background_events"),R.BackgroundEvents); J->SetNumberField(TEXT("foreground_events"),R.ForegroundEvents);
             J->SetBoolField(TEXT("background_shutdown"),R.bBackgroundShutdown); J->SetBoolField(TEXT("background_pending"),R.bBackgroundPending);

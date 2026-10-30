@@ -4,6 +4,8 @@ SR-103 adds text and binary messages to the native and Direct providers. HTTP ne
 
 On 2026-10-25, packaged Unreal 5.8.3 Mac ARM64 Full client and dedicated Server passed **292 exact round trips across 24 channels and four fresh connections**, including backpressure recovery and native teardown. All 20 Unreal and 166 Python tests pass. The [validation record](reviews/SR103-data-channel-validation.json) includes artifact/build hashes, scope and earlier failed attempts.
 
+On 2026-10-30, the packaged Android and iOS simulator C++/Blueprint maps passed **64 cases and 4,704 exact round trips** in Direct-only and Full profiles. These use the shared API and check all six channel modes, 32/64 KiB limits, UTF-8 byte boundaries, ordered/unordered bursts, copied payloads and recovery from byte/slot queue saturation. See [Mobile data](MOBILE_DATA.md#run-ordering-limits-and-backpressure-checks) for the runner and scope; injected loss and message expiry remain separate tests.
+
 ## Use the internal provider
 
 The examples below use `FDirectClient`. For application code, prefer [Shared sessions](SHARED_SESSIONS.md), whose async OpenChannel completes after the native channel is open.

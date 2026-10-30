@@ -2,7 +2,7 @@
 
 SR-107 runs the same [C++ and Blueprint data maps](DATA_EXAMPLES.md) on Android ARM64 and the iOS ARM64 simulator, against a packaged Unreal 5.8.3 dedicated Server. The mobile libraries include the current M155 DataChannel bridge and remain separate from the Mac library.
 
-Basic data/lifecycle checks, local HTTPS/TURN, explicit reconnect, controlled signaling/relay loss recovery and app background/resume now pass. Broader packaged reliability/backpressure checks and Wi-Fi/cellular transitions remain open. Physical iOS testing remains deferred; simulator results do not close that device gate.
+Packaged data/lifecycle checks, local HTTPS/TURN, reconnect, controlled network-loss recovery and app background/resume pass. Channel ordering/reliability options, message limits and queue recovery now pass too. Physical iOS testing remains deferred; packet-loss/expiry and Wi-Fi/cellular transitions need separate validation.
 
 ## Build the packages
 
@@ -81,6 +81,18 @@ Each C++/Blueprint map tests a connected session over direct ICE and TURN/UDP, p
 
 These checks cover an app switch with the process preserved. Screen lock, forced termination, low-memory eviction and physical iOS behavior require separate validation. The sample makes no background-networking guarantee.
 
+## Run ordering, limits and backpressure checks
+
+Use the network suite's arguments with `tools/run_mobile_channel_probe.py`. Rebuild the Server and mobile packages first, including the regenerated Blueprint graph. Run Direct-only and Full separately.
+
+Each C++/Blueprint map runs all six ordering/reliability combinations over verified local HTTPS. It checks the options at both peers, exact Unicode/binary echoes, empty messages, a 32-message burst and the 64 KiB message limit. Ordered channels must preserve sequence; unordered channels must preserve the message set. Text limits are checked in UTF-8 bytes, including multibyte characters.
+
+Reliable channels also fill the 256 KiB send buffer and the 64-message queue, require `ResourceExhausted` for the rejected send, then retry after the queue drains. The rejected payload must arrive exactly once after retry. The checks also mutate caller-owned payloads after admission to verify that the provider copied them.
+
+Two additional cases per map repeat the reliable ordered flow through TURN/UDP and with a lower 32 KiB negotiated limit. The lower-limit fixture changes only the SDP `max-message-size` attribute in both directions; this is test setup, not a production signaling feature. Reports require matching remote limits, bounded buffered amounts, responsive game-thread ticks and complete cleanup.
+
+These are controlled local network tests. They validate configured partial-reliability options and exact delivery in these runs; packet-loss, reordering and message-expiry behavior require separate tests. Unordered delivery is allowed to arrive in order.
+
 ## Check the native libraries
 
 The standalone fixture checks all six ordering/reliability combinations, exact UTF-8/binary payloads, empty messages, 32/64 KiB negotiated limits, ordered bursts and bounded receive overflow:
@@ -95,14 +107,18 @@ Use an Android serial or an iOS simulator UDID to match the artifact. Android re
 
 ## Evidence and remaining work
 
-On **2026-10-29**, Direct-only and Full packages passed all **40 cases** on the Galaxy S25 Ultra (Android 17) and the ARM64 iOS 27.0 simulator. They recorded 40 native client closures, 16 exact message round trips, actual object collection, no late callbacks and no pending cleanup. Android used real network ICE to the Mac Server. All four mobile package audits, the Android/simulator/Mac native DataChannel fixtures, the iOS device C ABI link check, 27 Unreal tests and 192 Python tests passed.
+These suites passed on **2026-10-29–30**, using the Galaxy S25 Ultra (Android 17) and ARM64 iOS 27.0 simulator. Each covers Direct-only and Full packages through the actual C++ and Blueprint maps.
 
-The runner records package and library hashes, device/runtime identity, each case, Server counters and cleanup. Development package sizes are recorded as absolute bytes; they are not Shipping download sizes or an RTC size delta.
+| Suite | Cases | Main result | Build details |
+|---|---:|---|---|
+| Basic data and lifecycle | 40 | Exact messages, owner destruction, cancellation and cleanup | [Initial record](reviews/SR107-mobile-data-validation.json) |
+| HTTPS and TURN | 36 | Verified HTTPS, UDP/TCP relays and expected certificate/authentication rejections | [Network record](reviews/SR107-mobile-network-validation.json) |
+| Reconnect and loss recovery | 32 | 128 exact round trips after reconnect or controlled signaling/relay loss | [Recovery record](reviews/SR107-mobile-recovery-validation.json) |
+| Background and resume | 24 | 80 exact round trips and eight silent pending-Connect cancellations through real app switches | [Background record](reviews/SR107-mobile-background-validation.json) |
+| Channel options, limits and queues | 64 | 4,704 exact round trips, 256 expected rejected sends and 64 native client closures | [Channel record](reviews/SR107-mobile-channel-validation.json) |
 
-The follow-up network suite passed **36 cases** across both profiles and platforms: 24 successful C++/Blueprint message cases and 12 certificate/authentication rejection cases. It recorded 48 exact text/binary round trips. TURN/UDP and TURN/TCP runs confirmed selected relay candidates at both ends. All 28 Unreal tests and 196 Python tests passed, along with native lifecycle, codec, DataChannel and TURN checks and package audits. The final packages also passed 20 timeout, cancellation, owner-destruction and cleanup regression cases.
+The latest channel suite recorded **32 recoveries from byte-buffer saturation and 32 from message-slot saturation**, with no extra echoes from rejected sends. Eight cases negotiated 32 KiB and eight used TURN/UDP. The largest measured active game-thread tick gap was 456 ms. The final packages also passed 34 regressions: 20 lifecycle, eight reconnect/loss recovery and six background/resume cases. All 29 Unreal tests, 203 Python tests and five Server/mobile package audits passed. Native WebRTC artifacts were reused unchanged; the Server and mobile samples were rebuilt.
 
-On **2026-10-30**, all **32 recovery cases** passed across both profiles and platforms. They recorded 128 exact text/binary round trips, 64 native client closures and 192 rejected uses of retired channel handles. Both implementations reported signaling and relay loss, kept the game thread ticking, then reconnected after the fixture was restored. The largest measured tick gap was 351 ms. The final packages also passed 20 lifecycle regression cases. All 29 Unreal tests and 198 Python tests passed; the five Server/mobile package audits passed too.
+Records contain package/library hashes, device identity, build checkout states, case results and cleanup. These are local Development builds; their absolute package sizes are not Shipping download sizes or measured RTC size deltas. Earlier suites used their own recorded packages.
 
-The **24 background/resume cases** also passed on 2026-10-30, across both profiles and platforms. They recorded 80 exact text/binary round trips, 48 native client closures, 96 rejected uses of retired channel handles and eight silent pending-Connect cancellations. All four real lifecycle events were observed, and each app kept its process while switching away and returning. The first simulator attempts exposed delayed shutdown after suspension; moving Shutdown to deactivation fixed it. The final packages passed 20 lifecycle and eight reconnect/loss recovery regressions, all 29 Unreal tests, 200 Python tests and four mobile package audits. Native libraries and the previously validated Server package were reused unchanged.
-
-See the [initial data record](reviews/SR107-mobile-data-validation.json), [HTTPS/TURN record](reviews/SR107-mobile-network-validation.json), [recovery record](reviews/SR107-mobile-recovery-validation.json) and [background/resume record](reviews/SR107-mobile-background-validation.json) for exact builds and scope. M1 remains in progress: broader packaged ordering/reliability, limits/backpressure tests and physical iOS acceptance remain open. Screen lock, OS termination, Wi-Fi/cellular transitions and ICE restart need separate validation.
+M1 remains in progress because physical iOS acceptance is deferred. Packet-loss/reordering, message expiry, multi-channel aggregate-byte saturation, screen lock, OS termination, Wi-Fi/cellular transitions and ICE restart require separate validation.
