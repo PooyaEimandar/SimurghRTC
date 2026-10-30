@@ -1,10 +1,10 @@
 # SimurghRTC mobile clients
 
-**Status: ARM64 dependency builds pass; client integration is in progress.** Use the [pinned build workflow](MOBILE_BUILDS.md) and [artifact setup](MOBILE_ARTIFACTS.md). The [validation record](M0_VALIDATION.md) covers library builds, links and repeat comparisons. Packaged Unreal apps, device runs and app-size results remain unverified.
+**Status: packaged lifecycle, local-media and C++/Blueprint Direct-data checks pass on Android and the iOS simulator, including local verified HTTPS, forced TURN/UDP/TCP, explicit reconnect, controlled signaling/relay loss recovery and app background/resume. Broader mobile acceptance is in progress.** See [Native backend](NATIVE_BACKEND.md) for the current isolated M155 builds, [M0 results](M0_VALIDATION.md) for earlier package evidence, and [Mobile data](MOBILE_DATA.md) for SR-107. Physical iOS acceptance and Shipping size comparisons remain open.
 
 ## Targets and dependency artifacts
 
-Mobile clients use the same C++ and Blueprint API for Direct Unreal and Janus. Desktop builds use Unreal's bundled libwebrtc; Android/iOS use separate builds of upstream libwebrtc. Mobile targets are clients only.
+Mobile clients use the same C++ and Blueprint API for Direct Unreal and Janus. Desktop, Android and iOS use separately built, pinned WebRTC libraries behind the same private C interface. Mobile targets are clients only.
 
 | Target | Dependency build host | Planned artifact and integration | Required evidence |
 |---|---|---|---|
@@ -16,7 +16,7 @@ Final linkage and packaging are selected by [SR-006 and SR-007](../ROADMAP.md#e0
 
 Build the dependencies once per pinned revision, patches, platform, architecture, toolchain and configuration, then reuse them in plugin/application builds. Plugin consumers receive versioned artifacts; they do not need a WebRTC source checkout for routine packaging. Retain build scripts, a dependency manifest, checksums and third-party notices, and make artifacts reproducible from a clean build host. Keep build outputs out of source control and distribute permitted binaries through versioned release artifacts.
 
-Initially align mobile and engine libwebrtc revisions where feasible. Record any divergence, isolate API differences in private adapters and validate wire interoperability against the desktop server and Janus. Pin matching headers and libraries. Verify C++ runtime/ABI settings, dependent crypto libraries, native symbol collisions, minimum OS versions and Android native-library page-size requirements for the selected UE/toolchain. Record security updates and rebuild dependencies through the same qualification process.
+Use matching bridge sources and reviewed WebRTC revisions across the plugin's platform artifacts. Keep their symbols isolated from Unreal's own libraries, and validate wire interoperability against the desktop server and Janus. Pin matching headers and libraries. Verify C++ runtime/ABI settings, dependent crypto libraries, native symbol collisions, minimum OS versions and Android native-library page-size requirements for the selected UE/toolchain. Record security updates and rebuild dependencies through the same qualification process.
 
 Upstream references: [Android build workflow](https://webrtc.googlesource.com/src/+/main/docs/native-code/android/), [iOS build workflow](https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/ios/README.md), [build options](https://webrtc.googlesource.com/src/+/main/webrtc.gni). Exact tool versions and flags must be recorded for our pinned revision rather than copied from an unrelated release.
 
@@ -38,7 +38,7 @@ Required device scenarios include:
 - Camera/microphone permissions, denial and revocation; camera selection/switching, orientation and capture teardown.
 - Audio focus/session interruptions, speaker/headset/Bluetooth route changes, mute and recovery, with a defined echo-cancellation reference and no unintended double processing.
 - Local preview, remote video textures, audio playback, generated/render-target sources, hardware codec selection and software fallback or explicit unsupported results.
-- Foreground/background transitions, screen lock, resume and process termination. Define which sessions close, pause or reconnect; do not promise unrestricted background camera, microphone or network activity.
+- Foreground/background transitions, screen lock, resume and process termination. The data samples now pass app-switch tests by shutting down on deactivation and creating fresh sessions on reactivation. Screen lock and process termination remain open; do not promise unrestricted background camera, microphone or network activity.
 - Wi-Fi/cellular changes, forced TURN, constrained networks and reconnect with fresh or reconciled state. Test bounded queues, cancellations and callbacks after their Blueprint/UObject owners are destroyed.
 - Direct Unreal and applicable Janus services, including calls with desktop peers and mobile peers where the service supports them. Run the same common contract tests on both platforms and test Janus-disabled packaging.
 

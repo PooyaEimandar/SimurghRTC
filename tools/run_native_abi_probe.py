@@ -15,7 +15,8 @@ from run_mobile_probe import ios_simulator, ios_simulator_runtime
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run_probe(artifact, output, device=None, ndk=None, adb=None, link_only=False):
+def run_probe(artifact, output, device=None, ndk=None, adb=None, link_only=False, *, probe='lifecycle'):
+    a.require(probe in ('lifecycle', 'data'), 'Unknown native consumer fixture.')
     a.require(not output.exists(), 'Use a new evidence directory.')
     identity = native_artifacts.validate(artifact)
     target = identity['platform']
@@ -24,14 +25,17 @@ def run_probe(artifact, output, device=None, ndk=None, adb=None, link_only=False
               'Physical iOS execution is not supported; use --link-only for a device link check.')
     a.require(platform.system() == 'Darwin' and platform.machine() == 'arm64', 'Run this consumer harness on Mac ARM64.')
     a.require(target == 'Mac' or link_only or device, 'Select a device serial or simulator UDID.')
-    source = ROOT / 'Config/NativeBackend/abi_test.c'
+    source = ROOT / ('Config/NativeBackend/abi_test.c' if probe == 'lifecycle' else 'Fixtures/native/data_channels.c')
     build = a.read_json(artifact / 'Build/build.json')
-    a.require(a.digest(source) == build['bridge_sources']['abi_test.c'], 'C ABI fixture changed after artifact build.')
+    if probe == 'lifecycle':
+        a.require(a.digest(source) == build['bridge_sources']['abi_test.c'], 'C ABI fixture changed after artifact build.')
     output.mkdir(parents=True)
     record = {'schema': 1, 'passed': False, 'artifact': identity, 'fixture_sha256': a.digest(source),
-              'runtime_validation': 'not_run',
+              'runtime_validation': 'not_run', 'probe_kind': probe,
               'scope': ('iOS device C ABI compile/link only; no signing, deployment or runtime acceptance'
-                        if link_only else 'standalone C ABI lifecycle and local codecs; not a packaged Unreal run')}
+                        if link_only else 'standalone native ' + probe + ' fixture; not a packaged Unreal run')}
+    fixture_inputs = [source] + ([ROOT / 'Fixtures/native/signaling.c'] if probe == 'data' else [])
+    record['fixture_inputs'] = {str(p.relative_to(ROOT)): a.digest(p) for p in fixture_inputs}
     commands, remote = [], None
     adb_args = [str(adb), '-s', device] if target == 'Android' else []
 
@@ -113,12 +117,18 @@ def run_probe(artifact, output, device=None, ndk=None, adb=None, link_only=False
                 result = command([executable], check=False)
         text = result.stdout + result.stderr
         (output / 'runtime.log').write_text(text)
-        a.require(result.returncode == 0 and 'PASS: six peers, overlapping owners, ABI rejection, repeated VP8/Opus;' in text,
-                  'C ABI runtime checks did not complete.')
-        a.require(text.count('media: 12 frames, 50 packets,') == 2
-                  and 'M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d' in text, 'Incomplete media/backend evidence.')
+        marker = ('PASS: six peers, overlapping owners, ABI rejection, repeated VP8/Opus;' if probe == 'lifecycle'
+                  else 'PASS: DataChannel UTF-8/binary round trips')
+        a.require(result.returncode == 0 and marker in text, 'Native runtime checks did not complete.')
+        a.require(all(a.digest(ROOT / p) == value for p, value in record['fixture_inputs'].items()), 'Fixture changed during run.')
+        if probe == 'lifecycle':
+            a.require(text.count('media: 12 frames, 50 packets,') == 2
+                      and 'M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d' in text, 'Incomplete media/backend evidence.')
+            record.update(peers_created=6, codec_runs=2)
+        else:
+            record.update(connected_pairs=3, channel_modes=6, negotiated_limits=[32768, 65536], loopback_only=True)
         record.update(passed=True, runtime_validation='passed', exit_code=result.returncode, executable_sha256=a.digest(executable),
-                      exported_symbols=sorted(exports), peers_created=6, codec_runs=2)
+                      exported_symbols=sorted(exports))
     except (ValueError, OSError, KeyError, subprocess.TimeoutExpired) as error:
         record['error'] = str(error)
     finally:

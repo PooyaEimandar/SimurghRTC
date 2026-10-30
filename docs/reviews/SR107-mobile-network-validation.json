@@ -1,0 +1,2973 @@
+{
+  "artifacts": {
+    "Android": {
+      "architecture": "arm64",
+      "archive_bytes": 28246424,
+      "artifact_id": "android-arm64-m155-b02a73f9a830",
+      "files": 17,
+      "manifest_sha256": "6f972d8078d225064194571ad14669f68230e93f33f8d6392b53117db18e44a7",
+      "objects": 1,
+      "platform": "Android",
+      "runtime_validation": "unverified"
+    },
+    "IOS": {
+      "architecture": "arm64",
+      "archive_bytes": 17340096,
+      "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+      "files": 7,
+      "manifest_sha256": "a49ce46a014f5bf53faa43cd6eb419ca6feccdd09a4b8194e55fc4a3c0e20de5",
+      "objects": 1,
+      "platform": "IOS",
+      "runtime_validation": "unverified"
+    },
+    "IOSSimulator": {
+      "architecture": "arm64",
+      "archive_bytes": 17411664,
+      "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+      "files": 7,
+      "manifest_sha256": "10476274af310ec1395bcf2c068f87cce2e4cada55a6cb3118af5de0a116bdc8",
+      "objects": 1,
+      "platform": "IOSSimulator",
+      "runtime_validation": "unverified"
+    },
+    "Mac": {
+      "architecture": "arm64",
+      "archive_bytes": 17901368,
+      "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+      "files": 7,
+      "manifest_sha256": "5e7992824f1a818650dd8f60752eca354f1676462cb05be3df7cc31bf7a8b784",
+      "objects": 1,
+      "platform": "Mac",
+      "runtime_validation": "unverified"
+    }
+  },
+  "base_commit": "10582cef7a8a9a133f8fe386ed7be2c1be1ffa52",
+  "changes": [
+    "Added runtime ICE settings and an additive relay-only field to the shared C++/Blueprint config.",
+    "Threaded copied ICE configuration through Direct client, Server and native owner-worker creation.",
+    "Added private C ABI configuration and redacted selected candidate diagnostics without changing existing event layouts.",
+    "Distinguished HTTP certificate/connection failures from timeout failures.",
+    "Added scoped local HTTPS and pinned-source coturn fixtures and packaged network acceptance tooling."
+  ],
+  "cleanup": {
+    "engine_tracked_changes": "",
+    "fixture_simulators_removed": true,
+    "original_simulator_preserved": true,
+    "passed": true,
+    "server_and_turn_processes_remaining": [],
+    "temporary_certificate_keys_removed": true,
+    "temporary_turn_config_removed": true,
+    "unrelated_adb_reverse_ports_preserved": [
+      41899,
+      1981,
+      8558
+    ]
+  },
+  "engine_revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+  "engine_version": "5.8.3",
+  "evidence_sha256": {
+    "Intermediate/SR107Network20261029/android-direct-link-audit.json": "26006e48d92a4a5dfb0ab18447f04d32ef19365e64382501011b97d818a1cfa2",
+    "Intermediate/SR107Network20261029/android-full-link-audit.json": "924c8eac19054aafdb7778def4f0fd347f46ee77627ccc5560d09ef1898e63b0",
+    "Intermediate/SR107Network20261029/audit-server/package-audit.json": "14448667b3d4e8aeccbb8d8c366f292cab19c10ff249b1c9f85241915803f3d2",
+    "Intermediate/SR107Network20261029/cleanup.json": "26180cf14f2703fd135a2da45e79a4751a36b7844c2afaed827ec28206c7f31a",
+    "Intermediate/SR107Network20261029/direct-Android-lifecycle-regression/result.json": "ab2b0aa16f2456e4588d7f4840b406cd2a9fe94a8a922990aa1855dd0e5a3d00",
+    "Intermediate/SR107Network20261029/direct-android-verified/result.json": "272712c7f9a06c34016da5515562aa59fec635671704af18401c38cab5fb7f89",
+    "Intermediate/SR107Network20261029/direct-network-final-android-command.json": "51013bed588713428df8a9fbfc1bdd8990b7fbb3c94597c4bacde7854aa19a92",
+    "Intermediate/SR107Network20261029/direct-network-final-cook-android-command.json": "37287e17e4543cf9fc214e2c6c516f551ea23f4e2bb13e506370bdebf81be172",
+    "Intermediate/SR107Network20261029/direct-network-final-cook-simulator-command.json": "4b259f44abe22cb62f65850482c334ff6ee5db6f4e0d7e177d65d28e684cd32e",
+    "Intermediate/SR107Network20261029/direct-network-final-editor-command.json": "806e38032ea542685c664f3951128a4d428b9e74937d4ba7f915b7744c545bdc",
+    "Intermediate/SR107Network20261029/direct-network-final-editor-finalize-command.json": "287e587be4f4a97f0fd6a4c49e3ef352358e0e120b8aa81dffcfc2310e86744c",
+    "Intermediate/SR107Network20261029/direct-network-final-editor-metadata-command.json": "15c4e4f986da5ddfd98254814530910a54a37151f3bb8fbbcc5344d18cf72ca6",
+    "Intermediate/SR107Network20261029/direct-network-final-simulator-command.json": "07c0ce31d8914481730e1effa71a5fc4df255dcacf4292133d1b1797da61cee3",
+    "Intermediate/SR107Network20261029/direct-simulator-verified/result.json": "1050be5a4a5d85bbdee867ed90a407e82bdb4f3c64cdf6f18d6f079f67c5d3ce",
+    "Intermediate/SR107Network20261029/editor-network-final-editor-command.json": "998eb23c9c5f30af7696f40b8d641dbb04b3d3b780b7cad1dcb7659d56009993",
+    "Intermediate/SR107Network20261029/editor-network-final-editor-finalize-command.json": "295f4fe49dac1fb1428859e646574127c89dcfc8972d02f448c3564b70b5f869",
+    "Intermediate/SR107Network20261029/editor-network-final-editor-metadata-command.json": "a48f9572e59511422d57db6a37db5cad33563900cf9f3c38d41a433134636a01",
+    "Intermediate/SR107Network20261029/editor-network-final-tests-command.json": "fb8b47d7e0a893fe2dec8d5e9d46f60db7b312635733cef34c61230f31e023c8",
+    "Intermediate/SR107Network20261029/editor-network-final-tests-report/index.json": "94734f258a0088214eb02b5629df2bdf7f27993e46153e5b699a52bcca7c3a7b",
+    "Intermediate/SR107Network20261029/full-IOSSimulator-lifecycle-regression/result.json": "95edf573b5732cc75d10553605a2befe2a5b6f12d168d47ecdbd3f1229f5364f",
+    "Intermediate/SR107Network20261029/full-android-verified/result.json": "97523e6035df4c6b732aa7fe99a93d4938f168abcb960506c97442f63566078e",
+    "Intermediate/SR107Network20261029/full-network-final-android-command.json": "8dda4a18e621be3a8f8e4bc42031203d497497a5c66efb9e991ba9972c087073",
+    "Intermediate/SR107Network20261029/full-network-final-cook-android-command.json": "d6ca1f18d32c27c740cdd3febd82497afb47a13788ba80f01132989a356ae0ba",
+    "Intermediate/SR107Network20261029/full-network-final-cook-simulator-command.json": "85ecca84e94f4c7c317474c68e6b77ebe814daf80d88d1dad32398883996e984",
+    "Intermediate/SR107Network20261029/full-network-final-editor-command.json": "a75abf7a2f3a61d5f7a7c72da3b901fbd0476db4f056e8b8ae53a1245225cd82",
+    "Intermediate/SR107Network20261029/full-network-final-editor-finalize-command.json": "3823ad5b7f1a44554a997645d5f2842a5fbbc6ad82782265dd0d274270df171b",
+    "Intermediate/SR107Network20261029/full-network-final-editor-metadata-command.json": "23d0783eb435ff5416ffa9ea72e1656a5bcc0aceaf82f9e8bfc94180f84b18d9",
+    "Intermediate/SR107Network20261029/full-network-final-simulator-command.json": "573271c9f286a7b096fc01cb8ef8b287daea0dc4ada58b71ffd6af24609fcafd",
+    "Intermediate/SR107Network20261029/full-simulator-verified/result.json": "867deebb659d60adf906f2351410fbc4871c80e9ba8705be2940d0426c7728b9",
+    "Intermediate/SR107Network20261029/native-Android-abi/result.json": "0c33f32bf540b7311d4c0e5907d5b8719da6aa1774e782e56a813112865ffce7",
+    "Intermediate/SR107Network20261029/native-IOS-abi/result.json": "5a676ab56bfda067b6f39a01f6410ad5e7d78329a670edd1bf60afd238914497",
+    "Intermediate/SR107Network20261029/native-IOSSimulator-abi/result.json": "3759a96e0f5825ad138b90b88d476276eae012dcdc80d5a61fc348b122668741",
+    "Intermediate/SR107Network20261029/native-data-Android/result.json": "99b80cef65b2a143782a21e1c44b208b5c834280d2c6ad24f16233bb6d36b0a5",
+    "Intermediate/SR107Network20261029/native-data-IOSSimulator/result.json": "c557628220b9bffe1c90f5fbe40fe3da1ed3eff74dc01556e190df3815118353",
+    "Intermediate/SR107Network20261029/native-data-Mac/result.json": "9921177f8758337d1ff1d2b4b381878064bbde2ed366995781e3f0910e4b15b4",
+    "Intermediate/SR107Network20261029/native-mac-abi/result.json": "13d781a1d6389f1fe180df3b479e294ff777ba3c5400b00ef81ee9b7e6e0992f",
+    "Intermediate/SR107Network20261029/native-turn/result.json": "2cf22848af25648e7f1383840a7ecbf94e9fb34a2d737b3950aede74f96e309c",
+    "Intermediate/SR107Network20261029/python-tests-final.log": "82f3fb9bd9b7f106471dba87c1c1d77813ccde92c2a6ecda290a64782338e04c",
+    "Intermediate/SR107Network20261029/server-network-final-cook-server-command.json": "cb6e50b3ca59df6bdf8370076d318a0b498c0372ef49586cf3588bfe03717369",
+    "Intermediate/SR107Network20261029/server-network-final-editor-command.json": "6b30b9defc932ccdc1cce8d91e3527224c0e2c829e67def179d8d0863416ae1b",
+    "Intermediate/SR107Network20261029/server-network-final-editor-finalize-command.json": "8fb6fa301d14f84249f14e0337476b40868750c63bbdbdfd5631d8822f062654",
+    "Intermediate/SR107Network20261029/server-network-final-editor-metadata-command.json": "0c551a850ed3a6630e1baad3abc072a17f0d192445595e221b0bc7cbb331be0b",
+    "Intermediate/SR107Network20261029/server-network-final-server-command.json": "8db8032da9cde5c4ad5653c5d4c5acd7495e49291e7fffb02fff584c2ad4e8a9",
+    "Intermediate/SR107Network20261029/server-network-final-server-finalize-command.json": "462b1531a657ac20f94edd5e62810f686684c8b44cfdb4e475843f7f4f534fe5",
+    "Intermediate/SR107Network20261029/server-network-final-server-metadata-command.json": "c16963797a1bedecd01e4c9dad987cbbe2e2dbc1c064f28b642f8a67440bbaee",
+    "Intermediate/SR107Network20261029/simulator-direct-link-audit.json": "c94b1d524c2c6eeb13ae1957ace77a8738d7903598576600fd73be847dfd1b4d",
+    "Intermediate/SR107Network20261029/simulator-full-link-audit.json": "aa8ec0a164dffc204ec110d3695855379d5cef41473ef96cf9ec9fb9a5e2e75b",
+    "Intermediate/SR107Network20261029/stage-direct-network-final.json": "4f65c7cbefdda63b799cd2d25109deda77e660e3d44b86a5aa8b1ac8a40b1c6b",
+    "Intermediate/SR107Network20261029/stage-editor-network-final.json": "08a06a9a4a3865fe832fce2dcbb09cca6f68d6b062f99adf8e31efec39dfbbec",
+    "Intermediate/SR107Network20261029/stage-full-network-final.json": "24af809ecb045569860b7a04d77714ee8f63e8a2d850d323e507a9f9fd5cc580",
+    "Intermediate/SR107Network20261029/stage-server-network-final.json": "4f8c6a6c936cae4c85f4170177b5e849f0edef598620134cef3d10b2629c6ee9",
+    "LocalBuilds/Artifacts/M155-Android-SR107Network-20261029/artifact.json": "6f972d8078d225064194571ad14669f68230e93f33f8d6392b53117db18e44a7",
+    "LocalBuilds/Artifacts/M155-IOS-SR107Network-20261029/artifact.json": "a49ce46a014f5bf53faa43cd6eb419ca6feccdd09a4b8194e55fc4a3c0e20de5",
+    "LocalBuilds/Artifacts/M155-IOSSimulator-SR107Network-20261029/artifact.json": "10476274af310ec1395bcf2c068f87cce2e4cada55a6cb3118af5de0a116bdc8",
+    "LocalBuilds/Artifacts/M155-Mac-SR107Network-20261029/artifact.json": "5e7992824f1a818650dd8f60752eca354f1676462cb05be3df7cc31bf7a8b784",
+    "LocalBuilds/Fixtures/CoturnMac-SR107-20261029-b/fixture.json": "d38eb280294cc39c09013d2f5979f1464fa657afe4e1f2455e34503842dbe05e"
+  },
+  "issue": "SR-107",
+  "limitations": [
+    "Physical iOS runtime acceptance remains deferred; iOS device archive was compiled/linked only.",
+    "Local HTTPS and TURN UDP/TCP only; no Internet NAT traversal, blocked UDP fallback, TURN/TLS, or hostile-network claim.",
+    "Packaged mobile reliability/drop, large-message/backpressure, reconnect, network loss and foreground/background acceptance remain open.",
+    "Development package sizes are not Shipping download sizes or an RTC size delta.",
+    "Native artifacts were built incrementally from pinned inputs; this change does not claim a fresh repeat-build comparison."
+  ],
+  "native": {
+    "native-Android-abi": {
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 28246424,
+        "artifact_id": "android-arm64-m155-b02a73f9a830",
+        "files": 17,
+        "manifest_sha256": "6f972d8078d225064194571ad14669f68230e93f33f8d6392b53117db18e44a7",
+        "objects": 1,
+        "platform": "Android",
+        "runtime_validation": "unverified"
+      },
+      "fixture_inputs": {
+        "Config/NativeBackend/abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d"
+      },
+      "passed": true,
+      "runtime_validation": "passed",
+      "scope": "standalone native lifecycle fixture; not a packaged Unreal run"
+    },
+    "native-IOS-abi": {
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 17340096,
+        "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+        "files": 7,
+        "manifest_sha256": "a49ce46a014f5bf53faa43cd6eb419ca6feccdd09a4b8194e55fc4a3c0e20de5",
+        "objects": 1,
+        "platform": "IOS",
+        "runtime_validation": "unverified"
+      },
+      "fixture_inputs": {
+        "Config/NativeBackend/abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d"
+      },
+      "passed": true,
+      "runtime_validation": "not_run",
+      "scope": "iOS device C ABI compile/link only; no signing, deployment or runtime acceptance"
+    },
+    "native-IOSSimulator-abi": {
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 17411664,
+        "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+        "files": 7,
+        "manifest_sha256": "10476274af310ec1395bcf2c068f87cce2e4cada55a6cb3118af5de0a116bdc8",
+        "objects": 1,
+        "platform": "IOSSimulator",
+        "runtime_validation": "unverified"
+      },
+      "fixture_inputs": {
+        "Config/NativeBackend/abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d"
+      },
+      "passed": true,
+      "runtime_validation": "passed",
+      "scope": "standalone native lifecycle fixture; not a packaged Unreal run"
+    },
+    "native-data-Android": {
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 28246424,
+        "artifact_id": "android-arm64-m155-b02a73f9a830",
+        "files": 17,
+        "manifest_sha256": "6f972d8078d225064194571ad14669f68230e93f33f8d6392b53117db18e44a7",
+        "objects": 1,
+        "platform": "Android",
+        "runtime_validation": "unverified"
+      },
+      "fixture_inputs": {
+        "Fixtures/native/data_channels.c": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+        "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+      },
+      "passed": true,
+      "runtime_validation": "passed",
+      "scope": "standalone native data fixture; not a packaged Unreal run"
+    },
+    "native-data-IOSSimulator": {
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 17411664,
+        "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+        "files": 7,
+        "manifest_sha256": "10476274af310ec1395bcf2c068f87cce2e4cada55a6cb3118af5de0a116bdc8",
+        "objects": 1,
+        "platform": "IOSSimulator",
+        "runtime_validation": "unverified"
+      },
+      "fixture_inputs": {
+        "Fixtures/native/data_channels.c": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+        "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+      },
+      "passed": true,
+      "runtime_validation": "passed",
+      "scope": "standalone native data fixture; not a packaged Unreal run"
+    },
+    "native-data-Mac": {
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 17901368,
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "files": 7,
+        "manifest_sha256": "5e7992824f1a818650dd8f60752eca354f1676462cb05be3df7cc31bf7a8b784",
+        "objects": 1,
+        "platform": "Mac",
+        "runtime_validation": "unverified"
+      },
+      "fixture_inputs": {
+        "Fixtures/native/data_channels.c": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+        "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+      },
+      "passed": true,
+      "runtime_validation": "passed",
+      "scope": "standalone native data fixture; not a packaged Unreal run"
+    },
+    "native-mac-abi": {
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 17901368,
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "files": 7,
+        "manifest_sha256": "5e7992824f1a818650dd8f60752eca354f1676462cb05be3df7cc31bf7a8b784",
+        "objects": 1,
+        "platform": "Mac",
+        "runtime_validation": "unverified"
+      },
+      "fixture_inputs": {
+        "Config/NativeBackend/abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d"
+      },
+      "passed": true,
+      "runtime_validation": "passed",
+      "scope": "standalone native lifecycle fixture; not a packaged Unreal run"
+    },
+    "native-turn": {
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 17901368,
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "files": 7,
+        "manifest_sha256": "5e7992824f1a818650dd8f60752eca354f1676462cb05be3df7cc31bf7a8b784",
+        "objects": 1,
+        "platform": "Mac",
+        "runtime_validation": "unverified"
+      },
+      "cases": {
+        "tcp": {
+          "exit_code": 0,
+          "stdout": "PASS: TURN relay-only text/binary round trips; local=4 remote=4 protocol=2 stats=2/2\n"
+        },
+        "udp": {
+          "exit_code": 0,
+          "stdout": "PASS: TURN relay-only text/binary round trips; local=4 remote=4 protocol=1 stats=2/2\n"
+        }
+      },
+      "passed": true,
+      "sources": {
+        "Fixtures/native/data_channels.c": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+        "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad",
+        "Fixtures/native/turn.c": "1df64c988d05f821b31b42118792eca51587fc3e9481c97e043cf68f018e2696"
+      }
+    }
+  },
+  "networks": {
+    "direct-android-verified": {
+      "cases": [
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 20352,
+          "received": 2,
+          "relay_only": false,
+          "remote_closed": 1,
+          "route": "direct",
+          "run_id": "06670c81-b78d-45fb-a0ee-a17893a3f279",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 8,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 3,
+            "local_candidate": 1,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 0,
+            "remote_candidate": 1,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 3,
+            "stun_responses": 3
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "b526e171-9571-46d0-90a2-012480f3f064",
+          "tls": {
+            "requests": 14,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 20930,
+          "received": 2,
+          "relay_only": false,
+          "remote_closed": 1,
+          "route": "direct",
+          "run_id": "341b3c1f-4049-4af3-8fb7-60fb589e4765",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 8,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 3,
+            "local_candidate": 1,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 0,
+            "remote_candidate": 1,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 3,
+            "stun_responses": 3
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "29cc3789-6433-4ac5-bc42-de1e0ca7bfa0",
+          "tls": {
+            "requests": 14,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-udp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 21322,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "udp",
+          "run_id": "70ff4acd-1354-4a09-b3e1-4c0fe8829306",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 1,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "4a69f7b3-e673-4a13-a15c-1391fc1ccc22",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-udp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 21780,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "udp",
+          "run_id": "f674ef2d-f411-4ced-a3ef-f29dc9e5dd23",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 1,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "b3f9ac2c-15cb-48dc-8d4b-377e9e9d464a",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-tcp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 22175,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "tcp",
+          "run_id": "62c4c3d4-ab1a-485a-82d6-c096d77375ea",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 2,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "5a222223-9032-4202-afe7-11f5cd702ef0",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-tcp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 22627,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "tcp",
+          "run_id": "fbe83bb0-7774-45b2-b783-27b520a0b200",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 2,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "d9c73dde-249c-4b19-b975-3630af5cf53b",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 7,
+          "late_callbacks": 0,
+          "name": "cpp-unauthorized-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 23138,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "9c7ecee5-db1a-44b4-b418-5c7f9ace0a85",
+          "scenario": "unauthorized",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "7c3342d6-e093-4cde-927a-0def969d9d29",
+          "tls": {
+            "requests": 1,
+            "statuses": [
+              401
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 11,
+          "late_callbacks": 0,
+          "name": "cpp-tls-rejected-direct-untrusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 23546,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "e2e94c55-ec2e-453b-af74-8874c37bbe26",
+          "scenario": "tls-rejected",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "de82b9d8-4675-46d0-9dc8-87ca0cdf1d65",
+          "tls": {
+            "requests": 0,
+            "statuses": [],
+            "tls_failures": 3,
+            "tls_versions": []
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 11,
+          "late_callbacks": 0,
+          "name": "blueprint-tls-rejected-direct-wrong-host",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 24115,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "6a306eb0-53cf-4679-b247-7ddf225464f0",
+          "scenario": "tls-rejected",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "22ec159a-eea2-4130-a539-5d32879b3873",
+          "tls": {
+            "requests": 0,
+            "statuses": [],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        }
+      ],
+      "cleanup": {
+        "certificate_keys_removed": true,
+        "client_secrets_removed": true,
+        "client_stopped": true,
+        "disposable_simulator_deleted": null,
+        "reverse_ports_removed": true
+      },
+      "client": {
+        "app_sha256": "a49e773e6935bcbf169264589899698c2956c8e2860e2d8c811b3e1f9190a04b",
+        "artifact": {
+          "architecture": "arm64",
+          "archive_bytes": 28246424,
+          "artifact_id": "android-arm64-m155-b02a73f9a830",
+          "files": 17,
+          "manifest_sha256": "6f972d8078d225064194571ad14669f68230e93f33f8d6392b53117db18e44a7",
+          "objects": 1,
+          "platform": "Android",
+          "runtime_validation": "unverified"
+        },
+        "device": "R5CYA1ZQG0V",
+        "model": "SM-S938B",
+        "os": "17",
+        "page_size": "4096",
+        "platform": "Android",
+        "profile": "direct-only",
+        "scope": "physical-device",
+        "size": {
+          "apk_bytes": 105853811,
+          "native_libraries": {
+            "lib/arm64-v8a/libGPUCounters.so": {
+              "compressed_bytes": 478738,
+              "uncompressed_bytes": 1051160
+            },
+            "lib/arm64-v8a/libUnreal.so": {
+              "compressed_bytes": 71934658,
+              "uncompressed_bytes": 177674032
+            },
+            "lib/arm64-v8a/libheapprofd_standalone_client.so": {
+              "compressed_bytes": 392988,
+              "uncompressed_bytes": 857896
+            },
+            "lib/arm64-v8a/libpsoservice.so": {
+              "compressed_bytes": 104975,
+              "uncompressed_bytes": 288336
+            },
+            "lib/arm64-v8a/libswappy.so": {
+              "compressed_bytes": 202024,
+              "uncompressed_bytes": 542640
+            },
+            "lib/arm64-v8a/libvkquality.so": {
+              "compressed_bytes": 148633,
+              "uncompressed_bytes": 409824
+            }
+          },
+          "rtc_size_delta_measured": false,
+          "shipping_baseline": false
+        }
+      }
+    },
+    "direct-simulator-verified": {
+      "cases": [
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 59729,
+          "received": 2,
+          "relay_only": false,
+          "remote_closed": 1,
+          "route": "direct",
+          "run_id": "d53a4871-2f09-4bd2-95a4-8a1fc98794e5",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 4,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 1,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 0,
+            "remote_candidate": 1,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 7
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "ba04cc68-2b4a-c6a5-c638-9aa73a15197d",
+          "tls": {
+            "requests": 10,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 59914,
+          "received": 2,
+          "relay_only": false,
+          "remote_closed": 1,
+          "route": "direct",
+          "run_id": "bafbe1e2-5e27-4338-89fd-96cba743d90b",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 4,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 2,
+            "local_candidate": 1,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 0,
+            "remote_candidate": 1,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 2,
+            "stun_responses": 5
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "6fb1a0b5-5849-d0af-5cde-79b72b8b36b4",
+          "tls": {
+            "requests": 10,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-udp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 60006,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "udp",
+          "run_id": "67bbad6e-7a5f-486f-a574-3991593dada7",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 1,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "2a300ce0-064d-b5b9-a10c-c78dc5daa387",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 1,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-udp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 60126,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "udp",
+          "run_id": "5b3a070a-3699-40ea-b954-e570978f0e35",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 1,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "8bd3872e-e54a-faab-3f28-ed80c18dab57",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-tcp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 60215,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "tcp",
+          "run_id": "f7edd1d7-9842-4e06-a4a4-1d2a414edfd2",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 2,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "4afacaae-1649-e09f-5ce0-6882491269d8",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-tcp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 60299,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "tcp",
+          "run_id": "d2c57556-40fa-436c-9c32-05524f36fde5",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 2,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "2c49e5f6-a24b-9662-c320-8989f5265af4",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 7,
+          "late_callbacks": 0,
+          "name": "cpp-unauthorized-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 60384,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "eca99f40-a488-42ce-8e3c-07795af5a2d7",
+          "scenario": "unauthorized",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "03efc217-5944-2e12-cefc-43ae323469c3",
+          "tls": {
+            "requests": 1,
+            "statuses": [
+              401
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 11,
+          "late_callbacks": 0,
+          "name": "cpp-tls-rejected-direct-untrusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 60441,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "6380a735-6859-4bec-9fce-10ac63a185ea",
+          "scenario": "tls-rejected",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "55f670ad-634c-0275-cfb0-8982e469870a",
+          "tls": {
+            "requests": 0,
+            "statuses": [],
+            "tls_failures": 3,
+            "tls_versions": []
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 11,
+          "late_callbacks": 0,
+          "name": "blueprint-tls-rejected-direct-wrong-host",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 60509,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "47f88c03-7843-427e-afb0-aa6dd51be3c5",
+          "scenario": "tls-rejected",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "bd0f7132-d544-4092-f787-fa9974fd0cb8",
+          "tls": {
+            "requests": 0,
+            "statuses": [],
+            "tls_failures": 3,
+            "tls_versions": []
+          }
+        }
+      ],
+      "cleanup": {
+        "certificate_keys_removed": true,
+        "client_secrets_removed": true,
+        "client_stopped": true,
+        "disposable_simulator_deleted": true,
+        "reverse_ports_removed": true
+      },
+      "client": {
+        "artifact": {
+          "architecture": "arm64",
+          "archive_bytes": 17411664,
+          "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+          "files": 7,
+          "manifest_sha256": "10476274af310ec1395bcf2c068f87cce2e4cada55a6cb3118af5de0a116bdc8",
+          "objects": 1,
+          "platform": "IOSSimulator",
+          "runtime_validation": "unverified"
+        },
+        "device": "A07C5C47-AADF-4A2F-AFEB-7DF8D1D16C6B",
+        "device_info": {
+          "dataPath": "/Users/pooyaeimandar/Library/Developer/CoreSimulator/Devices/A07C5C47-AADF-4A2F-AFEB-7DF8D1D16C6B/data",
+          "dataPathSize": 373977088,
+          "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+          "isAvailable": true,
+          "lastUsedAt": "2026-10-29T16:06:08Z",
+          "logPath": "/Users/pooyaeimandar/Library/Logs/CoreSimulator/A07C5C47-AADF-4A2F-AFEB-7DF8D1D16C6B",
+          "logPathSize": 86016,
+          "name": "SimurghRTC-Network-4d2f3c0d-0f47-4e57-8221-8b739f92c18c",
+          "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+          "state": "Booted",
+          "udid": "A07C5C47-AADF-4A2F-AFEB-7DF8D1D16C6B"
+        },
+        "executable_sha256": "f425fdb299ef35b97998b9166988a8b069fd5d1e7fb4422c23c1541717253170",
+        "platform": "IOSSimulator",
+        "profile": "direct-only",
+        "runtime": {
+          "buildversion": "24A434",
+          "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+          "name": "iOS 27.0",
+          "supportedArchitectures": [
+            "arm64"
+          ],
+          "version": "27.0"
+        },
+        "scope": "simulator",
+        "simulator_support": {
+          "archive_sha256": "8209c79e03666f623cad3e58d37ee974cb9e2ff81ed3e80221950059bba619b4",
+          "manifest_sha256": "25fe83713f3b633f77798a2d65d2b3bfa3ccc45fcdf3193c82a8b5c4ed408d44"
+        },
+        "size": {
+          "bundle_file_bytes": 285271270,
+          "executable_bytes": 253079200,
+          "rtc_size_delta_measured": false,
+          "shipping_baseline": false
+        }
+      }
+    },
+    "full-android-verified": {
+      "cases": [
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 24905,
+          "received": 2,
+          "relay_only": false,
+          "remote_closed": 1,
+          "route": "direct",
+          "run_id": "d8de9e7f-f19a-4403-8aa0-54e5ee48ecd8",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 8,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 3,
+            "local_candidate": 1,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 0,
+            "remote_candidate": 1,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 3,
+            "stun_responses": 6
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "99e63022-aa0c-4a71-8e9c-6af9a481b3ab",
+          "tls": {
+            "requests": 14,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 25274,
+          "received": 2,
+          "relay_only": false,
+          "remote_closed": 1,
+          "route": "direct",
+          "run_id": "18cb8a10-7250-4dd9-9239-dec25171ed4f",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 8,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 3,
+            "local_candidate": 1,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 0,
+            "remote_candidate": 1,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 3,
+            "stun_responses": 3
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "0d8a9734-4802-42d3-bd9a-897180e1bd38",
+          "tls": {
+            "requests": 14,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-udp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 25663,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "udp",
+          "run_id": "adbe875d-61c4-4140-bc30-cb4ede74e0c7",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 1,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "f40d164e-b715-4f48-8264-7f6ff2f14149",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-udp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 26030,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "udp",
+          "run_id": "695d1c74-12e5-47d0-a6cf-3c3ec443694b",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 1,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 2
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "34e1c773-2738-419c-9135-3512a13d6bb1",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-tcp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 26373,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "tcp",
+          "run_id": "50fa0523-e015-4fa3-af27-7f5ce68aaa08",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 2,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "7b1a9c7d-da37-4cfb-b6fe-7749eec4b2b8",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-tcp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 26716,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "tcp",
+          "run_id": "0f0e2232-9d10-450b-86df-645664e32805",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 2,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "3431d2a7-d004-4b82-aa50-a89548a9e018",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 7,
+          "late_callbacks": 0,
+          "name": "cpp-unauthorized-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 27107,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "9254fbec-6555-4a47-8f15-bf15e3c2ec8d",
+          "scenario": "unauthorized",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "0196579f-b8ac-41c6-8b9b-1d4326dd48d5",
+          "tls": {
+            "requests": 1,
+            "statuses": [
+              401
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 11,
+          "late_callbacks": 0,
+          "name": "cpp-tls-rejected-direct-untrusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 27540,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "479d3bee-dfed-42da-8192-cec219539682",
+          "scenario": "tls-rejected",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "95b6f891-4c8f-4567-96fd-dde732ae56f0",
+          "tls": {
+            "requests": 0,
+            "statuses": [],
+            "tls_failures": 3,
+            "tls_versions": []
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 11,
+          "late_callbacks": 0,
+          "name": "blueprint-tls-rejected-direct-wrong-host",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 28069,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "698f4f80-e4fd-4c40-87d4-5737e9c3894f",
+          "scenario": "tls-rejected",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "efe41a04-618a-4ac2-97d3-6be33d04e1d7",
+          "tls": {
+            "requests": 0,
+            "statuses": [],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        }
+      ],
+      "cleanup": {
+        "certificate_keys_removed": true,
+        "client_secrets_removed": true,
+        "client_stopped": true,
+        "disposable_simulator_deleted": null,
+        "reverse_ports_removed": true
+      },
+      "client": {
+        "app_sha256": "56dd1f54656cf5ce0e34089a9561dcbd41e3c7d134d3ac51ee48b198ac4135bf",
+        "artifact": {
+          "architecture": "arm64",
+          "archive_bytes": 28246424,
+          "artifact_id": "android-arm64-m155-b02a73f9a830",
+          "files": 17,
+          "manifest_sha256": "6f972d8078d225064194571ad14669f68230e93f33f8d6392b53117db18e44a7",
+          "objects": 1,
+          "platform": "Android",
+          "runtime_validation": "unverified"
+        },
+        "device": "R5CYA1ZQG0V",
+        "model": "SM-S938B",
+        "os": "17",
+        "page_size": "4096",
+        "platform": "Android",
+        "profile": "full",
+        "scope": "physical-device",
+        "size": {
+          "apk_bytes": 105861938,
+          "native_libraries": {
+            "lib/arm64-v8a/libGPUCounters.so": {
+              "compressed_bytes": 478738,
+              "uncompressed_bytes": 1051160
+            },
+            "lib/arm64-v8a/libUnreal.so": {
+              "compressed_bytes": 71938855,
+              "uncompressed_bytes": 177679536
+            },
+            "lib/arm64-v8a/libheapprofd_standalone_client.so": {
+              "compressed_bytes": 392988,
+              "uncompressed_bytes": 857896
+            },
+            "lib/arm64-v8a/libpsoservice.so": {
+              "compressed_bytes": 104975,
+              "uncompressed_bytes": 288336
+            },
+            "lib/arm64-v8a/libswappy.so": {
+              "compressed_bytes": 202024,
+              "uncompressed_bytes": 542640
+            },
+            "lib/arm64-v8a/libvkquality.so": {
+              "compressed_bytes": 148633,
+              "uncompressed_bytes": 409824
+            }
+          },
+          "rtc_size_delta_measured": false,
+          "shipping_baseline": false
+        }
+      }
+    },
+    "full-simulator-verified": {
+      "cases": [
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 62088,
+          "received": 2,
+          "relay_only": false,
+          "remote_closed": 1,
+          "route": "direct",
+          "run_id": "4812b419-6805-460e-916d-a6601b228d25",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 2,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 2,
+            "local_candidate": 1,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 0,
+            "remote_candidate": 1,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 2,
+            "stun_responses": 4
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "73f4a154-0346-521c-8535-7d8ce58e429f",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 62177,
+          "received": 2,
+          "relay_only": false,
+          "remote_closed": 1,
+          "route": "direct",
+          "run_id": "90cdfa19-81dd-4c15-8d4b-cdd8af383b23",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 4,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 2,
+            "local_candidate": 1,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 0,
+            "remote_candidate": 1,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 2,
+            "stun_responses": 5
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "ac28f642-d145-a82a-d058-08be1e1e84fe",
+          "tls": {
+            "requests": 10,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-udp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 62298,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "udp",
+          "run_id": "fbe94dc4-e62f-4f59-abd2-b59d61470e27",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 1,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "553aa8b8-1c4d-6a08-285e-c7a336930b0f",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-udp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 62410,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "udp",
+          "run_id": "03735da8-5ea9-4db7-9fab-d8139d5e61c5",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 1,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "0e82c67e-0742-3a5c-0818-1db025d0d688",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "cpp-messages-tcp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 62500,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "tcp",
+          "run_id": "be642a81-e8e0-4c3b-bea2-ce5c5496d55d",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 2,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "d41d8346-b44d-b13d-5130-ffa1fb04d797",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": true,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 0,
+          "late_callbacks": 0,
+          "name": "blueprint-messages-tcp-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 62618,
+          "received": 2,
+          "relay_only": true,
+          "remote_closed": 1,
+          "route": "tcp",
+          "run_id": "6bf027ea-f135-45d8-b47a-7c58f4b40cc0",
+          "scenario": "messages",
+          "selected_route": {
+            "applied_ice": 1,
+            "connection": 2,
+            "dtls": 3,
+            "ice": 2,
+            "ice_route_samples": 4,
+            "local_candidate": 4,
+            "protocol": 1,
+            "queued_ice": 0,
+            "relay_protocol": 2,
+            "remote_candidate": 4,
+            "remote_end": true,
+            "sctp_open": true,
+            "stats_samples": 4,
+            "stun_responses": 1
+          },
+          "sent": 2,
+          "server_closed": 1,
+          "server_connected": 1,
+          "server_created": 1,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "82231f0e-8b4c-7d97-e3c2-c198f1f1c6d0",
+          "tls": {
+            "requests": 8,
+            "statuses": [
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200,
+              200
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 7,
+          "late_callbacks": 0,
+          "name": "cpp-unauthorized-direct-trusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 62711,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "e03c4988-8079-4584-b572-7c31be14a22e",
+          "scenario": "unauthorized",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "95926265-dc41-2f54-f5d6-498d8c7c8f46",
+          "tls": {
+            "requests": 1,
+            "statuses": [
+              401
+            ],
+            "tls_failures": 0,
+            "tls_versions": [
+              "TLSv1.3"
+            ]
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "cpp",
+          "last_failure": 11,
+          "late_callbacks": 0,
+          "name": "cpp-tls-rejected-direct-untrusted",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 62781,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "01de3ce8-d545-40cb-9c48-912fafd85386",
+          "scenario": "tls-rejected",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "17846aa4-ee47-54c7-0662-7189cc1783ed",
+          "tls": {
+            "requests": 0,
+            "statuses": [],
+            "tls_failures": 3,
+            "tls_versions": []
+          }
+        },
+        {
+          "exact_payloads": false,
+          "https": true,
+          "implementation": "blueprint",
+          "last_failure": 11,
+          "late_callbacks": 0,
+          "name": "blueprint-tls-rejected-direct-wrong-host",
+          "native_closed": 1,
+          "objects_collected": true,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "passed": true,
+          "pending_cleanup": 0,
+          "pid": 62852,
+          "received": 0,
+          "relay_only": false,
+          "remote_closed": 0,
+          "route": "direct",
+          "run_id": "612f9692-2b65-46d5-b189-a6743227eaf5",
+          "scenario": "tls-rejected",
+          "selected_route": null,
+          "sent": 0,
+          "server_closed": 0,
+          "server_connected": 0,
+          "server_created": 0,
+          "server_exit_code": 0,
+          "server_records": 0,
+          "session_id": "227dea46-394e-5586-f5d9-cfaf901a6f40",
+          "tls": {
+            "requests": 0,
+            "statuses": [],
+            "tls_failures": 3,
+            "tls_versions": []
+          }
+        }
+      ],
+      "cleanup": {
+        "certificate_keys_removed": true,
+        "client_secrets_removed": true,
+        "client_stopped": true,
+        "disposable_simulator_deleted": true,
+        "reverse_ports_removed": true
+      },
+      "client": {
+        "artifact": {
+          "architecture": "arm64",
+          "archive_bytes": 17411664,
+          "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+          "files": 7,
+          "manifest_sha256": "10476274af310ec1395bcf2c068f87cce2e4cada55a6cb3118af5de0a116bdc8",
+          "objects": 1,
+          "platform": "IOSSimulator",
+          "runtime_validation": "unverified"
+        },
+        "device": "5A6FE879-F06F-4D50-B479-CEC80A985654",
+        "device_info": {
+          "dataPath": "/Users/pooyaeimandar/Library/Developer/CoreSimulator/Devices/5A6FE879-F06F-4D50-B479-CEC80A985654/data",
+          "dataPathSize": 286105600,
+          "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+          "isAvailable": true,
+          "lastUsedAt": "2026-10-29T16:08:22Z",
+          "logPath": "/Users/pooyaeimandar/Library/Logs/CoreSimulator/5A6FE879-F06F-4D50-B479-CEC80A985654",
+          "logPathSize": 24576,
+          "name": "SimurghRTC-Network-918ebfd6-e49f-4a1d-974f-69ef8ccb6d51",
+          "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+          "state": "Booted",
+          "udid": "5A6FE879-F06F-4D50-B479-CEC80A985654"
+        },
+        "executable_sha256": "9d56f43d078df6e0e83eb3860db89be1fdc8dc2164a1b0ed4d98f3f977b446e5",
+        "platform": "IOSSimulator",
+        "profile": "full",
+        "runtime": {
+          "buildversion": "24A434",
+          "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+          "name": "iOS 27.0",
+          "supportedArchitectures": [
+            "arm64"
+          ],
+          "version": "27.0"
+        },
+        "scope": "simulator",
+        "simulator_support": {
+          "archive_sha256": "8209c79e03666f623cad3e58d37ee974cb9e2ff81ed3e80221950059bba619b4",
+          "manifest_sha256": "25fe83713f3b633f77798a2d65d2b3bfa3ccc45fcdf3193c82a8b5c4ed408d44"
+        },
+        "size": {
+          "bundle_file_bytes": 285295902,
+          "executable_bytes": 253101024,
+          "rtc_size_delta_measured": false,
+          "shipping_baseline": false
+        }
+      }
+    }
+  },
+  "package_audits": {
+    "android-direct-link-audit.json": {
+      "apk_abis": [
+        "arm64-v8a"
+      ],
+      "apk_bytes": 105853811,
+      "apk_sha256": "a49e773e6935bcbf169264589899698c2956c8e2860e2d8c811b3e1f9190a04b",
+      "artifact_manifest_sha256": "6f972d8078d225064194571ad14669f68230e93f33f8d6392b53117db18e44a7",
+      "build_id": "8c2247a89ccd9a6a0da02040a647905dabc90864",
+      "link_map_sha256": "6828523d6a93c9cc2b830f438b8407e8e09b1c95b4f5a4d42058c4e193f5204a",
+      "link_response_sha256": "2df5c049fd9a31447817c08ecb97c82b0f8caaff46ef463c913baba87c976979",
+      "minimum_load_alignment": 16384,
+      "packaged_elf_bytes": 177674032,
+      "packaged_elf_sha256": "a4e91c0d488f70f919f767e6966b2da5f9cda8b1c4bed280ff2d9a7343f2462c",
+      "passed": true,
+      "platform": "Android",
+      "profile": "direct",
+      "webrtc_archive_objects": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Plugins/SimurghRTC/ThirdParty/WebRTC/Android/arm64/Lib/libwebrtc.a(isolated.o)"
+      ],
+      "with_janus": false
+    },
+    "android-full-link-audit.json": {
+      "apk_abis": [
+        "arm64-v8a"
+      ],
+      "apk_bytes": 105861938,
+      "apk_sha256": "56dd1f54656cf5ce0e34089a9561dcbd41e3c7d134d3ac51ee48b198ac4135bf",
+      "artifact_manifest_sha256": "6f972d8078d225064194571ad14669f68230e93f33f8d6392b53117db18e44a7",
+      "build_id": "900f287fa6475248fb993b92d5ad6d2d249a56e9",
+      "link_map_sha256": "60391ec727075cff002c3a95f9d4456ae5c47cdc30a31b7569458b98958384ae",
+      "link_response_sha256": "d06281f7e963bf96f7b60ef9f86d0ef1abceee7bb46e622305f06162e0028680",
+      "minimum_load_alignment": 16384,
+      "packaged_elf_bytes": 177679536,
+      "packaged_elf_sha256": "e7937e9f4e716d81733dad96d1482d37b397583164dca9712e81d86f8d6a7308",
+      "passed": true,
+      "platform": "Android",
+      "profile": "full",
+      "webrtc_archive_objects": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Plugins/SimurghRTC/ThirdParty/WebRTC/Android/arm64/Lib/libwebrtc.a(isolated.o)"
+      ],
+      "with_janus": true
+    },
+    "audit-server/package-audit.json": {
+      "architecture": "arm64",
+      "archive_exports": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_ConfigureIceV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_GetIceRouteV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ],
+      "archive_sha256": "e42435521dffc7d1e0ab78979ee2060b01967a55400ca3e4f0ea0209dd59c938",
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 17901368,
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "files": 7,
+        "manifest_sha256": "5e7992824f1a818650dd8f60752eca354f1676462cb05be3df7cc31bf7a8b784",
+        "objects": 1,
+        "platform": "Mac",
+        "runtime_validation": "unverified"
+      },
+      "built_and_staged_uuid": "59C9E6BF-3487-3C80-99D9-CA65F64178CE",
+      "built_executable_sha256": "5249032b28ea0157bd05a481365f7a67392b05960ecddc11cd1c60cbf99a51a3",
+      "bundle_file_bytes": 383933088,
+      "code_signature_valid": true,
+      "editor_link_inputs": false,
+      "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+      "executable_bytes": 284599904,
+      "executable_sha256": "5249032b28ea0157bd05a481365f7a67392b05960ecddc11cd1c60cbf99a51a3",
+      "janus_link_inputs": false,
+      "link_response_sha256": "3c32b9221715abc3525be92998cb96686eb25b9ed8fa86db140a74aaa36c6879",
+      "passed": true,
+      "platform": "Mac",
+      "profile": "server",
+      "rtc_size_delta_measured": false,
+      "schema": 1,
+      "shipping_size_baseline": false,
+      "unreal_media_presentation_module": false,
+      "webrtc_link_inputs": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+      ]
+    },
+    "simulator-direct-link-audit.json": {
+      "artifact_manifest_sha256": "10476274af310ec1395bcf2c068f87cce2e4cada55a6cb3118af5de0a116bdc8",
+      "built_and_packaged_uuid": "7B53B14C-6271-3011-8FD5-C29AAFBDB3D0",
+      "code_signature_valid": true,
+      "executable_sha256": "f425fdb299ef35b97998b9166988a8b069fd5d1e7fb4422c23c1541717253170",
+      "http2_objects_resolved_from": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Build/IOSSimulator/libnghttp2.a"
+      ],
+      "link_map_sha256": "32bd9129720f4bbddd4d9539cd5398455496bbdf1e7979bf568629faf6e81154",
+      "link_response_sha256": "1172ec39bf0ed419d04f7af1a7cc310f79eb7f0dec92fe11eb52e0fa2571b22d",
+      "passed": true,
+      "platform": "IOSSimulator",
+      "profile": "direct",
+      "webrtc_link_inputs": [
+        "\"/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Plugins/SimurghRTC/ThirdParty/WebRTC/IOSSimulator/arm64/Lib/libwebrtc.a\""
+      ]
+    },
+    "simulator-full-link-audit.json": {
+      "artifact_manifest_sha256": "10476274af310ec1395bcf2c068f87cce2e4cada55a6cb3118af5de0a116bdc8",
+      "built_and_packaged_uuid": "B030A132-14DD-3519-B302-B9568FD26123",
+      "code_signature_valid": true,
+      "executable_sha256": "9d56f43d078df6e0e83eb3860db89be1fdc8dc2164a1b0ed4d98f3f977b446e5",
+      "http2_objects_resolved_from": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Build/IOSSimulator/libnghttp2.a"
+      ],
+      "link_map_sha256": "24dadc54289a657b43e24be6379ced0081973d25bd32eed643b21f4fe8f53993",
+      "link_response_sha256": "bf69095a91236b52ab7d2beb82afad95632aad71e5f22336b8ba72bd59578b43",
+      "passed": true,
+      "platform": "IOSSimulator",
+      "profile": "full",
+      "webrtc_link_inputs": [
+        "\"/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Plugins/SimurghRTC/ThirdParty/WebRTC/IOSSimulator/arm64/Lib/libwebrtc.a\""
+      ]
+    }
+  },
+  "regressions": {
+    "direct-Android-lifecycle-regression": {
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 28246424,
+        "artifact_id": "android-arm64-m155-b02a73f9a830",
+        "files": 17,
+        "manifest_sha256": "6f972d8078d225064194571ad14669f68230e93f33f8d6392b53117db18e44a7",
+        "objects": 1,
+        "platform": "Android",
+        "runtime_validation": "unverified"
+      },
+      "cases": 10,
+      "passed": true,
+      "server": {
+        "application_messages_tested": true,
+        "arm64_build": true,
+        "artifact_manifest_sha256": "5e7992824f1a818650dd8f60752eca354f1676462cb05be3df7cc31bf7a8b784",
+        "callbacks_on_game_thread": true,
+        "closed": 4,
+        "closed_session_ids": [
+          "00d12a89-4540-898c-ced2-50b0be6209f6",
+          "1e9e267e-144e-2982-50bf-5386d6681354",
+          "eef6701c-6842-682a-9050-0ab4d39fc74e",
+          "822c8394-5d49-155e-8142-9e84eeeea3ed"
+        ],
+        "connected": 4,
+        "connected_session_ids": [
+          "00d12a89-4540-898c-ced2-50b0be6209f6",
+          "1e9e267e-144e-2982-50bf-5386d6681354",
+          "eef6701c-6842-682a-9050-0ab4d39fc74e",
+          "822c8394-5d49-155e-8142-9e84eeeea3ed"
+        ],
+        "connected_sessions": 0,
+        "created": 4,
+        "data_channels_closed": 2,
+        "data_channels_opened": 2,
+        "data_received": 4,
+        "data_sent": 4,
+        "early_ice": 0,
+        "echo_pending": 0,
+        "editor_build": false,
+        "elapsed_seconds": 23.432105623185635,
+        "engine_version": "5.8.3-0+UE5",
+        "error": "",
+        "expired": 0,
+        "last_transport": {
+          "applied_ice": 4,
+          "connection": 2,
+          "dtls": 3,
+          "ice": 2,
+          "ice_route_samples": 2,
+          "local_candidate": 1,
+          "protocol": 1,
+          "queued_ice": 0,
+          "relay_protocol": 0,
+          "remote_candidate": 1,
+          "remote_end": true,
+          "sctp_open": true,
+          "stats_samples": 2,
+          "stun_responses": 3
+        },
+        "live_peers": 0,
+        "loopback_only": false,
+        "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+        "network_media_tested": false,
+        "passed": true,
+        "peak_connected_sessions": 1,
+        "peak_live_peers": 1,
+        "pid": 63071,
+        "platform": "Mac",
+        "records": 0,
+        "rejected": 0,
+        "replays": 0,
+        "run_id": "b4cda483-2751-4ba0-9f06-5828f3b09c39",
+        "running": false,
+        "schema": 1,
+        "server_build": true,
+        "teardown_complete": true,
+        "with_janus": false
+      }
+    },
+    "full-IOSSimulator-lifecycle-regression": {
+      "artifact": {
+        "architecture": "arm64",
+        "archive_bytes": 17411664,
+        "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+        "files": 7,
+        "manifest_sha256": "10476274af310ec1395bcf2c068f87cce2e4cada55a6cb3118af5de0a116bdc8",
+        "objects": 1,
+        "platform": "IOSSimulator",
+        "runtime_validation": "unverified"
+      },
+      "cases": 10,
+      "passed": true,
+      "server": {
+        "application_messages_tested": true,
+        "arm64_build": true,
+        "artifact_manifest_sha256": "5e7992824f1a818650dd8f60752eca354f1676462cb05be3df7cc31bf7a8b784",
+        "callbacks_on_game_thread": true,
+        "closed": 4,
+        "closed_session_ids": [
+          "162956d6-a043-565f-0c38-808faebb2350",
+          "29ed8c3a-9d40-c500-8b07-a0b9916beb79",
+          "444de5c4-b44d-5e90-dd0a-6696ad807eb3",
+          "250b8721-2f4c-10a9-b99f-baabd49f0b40"
+        ],
+        "connected": 4,
+        "connected_session_ids": [
+          "162956d6-a043-565f-0c38-808faebb2350",
+          "29ed8c3a-9d40-c500-8b07-a0b9916beb79",
+          "444de5c4-b44d-5e90-dd0a-6696ad807eb3",
+          "250b8721-2f4c-10a9-b99f-baabd49f0b40"
+        ],
+        "connected_sessions": 0,
+        "created": 4,
+        "data_channels_closed": 2,
+        "data_channels_opened": 2,
+        "data_received": 4,
+        "data_sent": 4,
+        "early_ice": 0,
+        "echo_pending": 0,
+        "editor_build": false,
+        "elapsed_seconds": 30.27680103853345,
+        "engine_version": "5.8.3-0+UE5",
+        "error": "",
+        "expired": 0,
+        "last_transport": {
+          "applied_ice": 2,
+          "connection": 2,
+          "dtls": 3,
+          "ice": 2,
+          "ice_route_samples": 2,
+          "local_candidate": 1,
+          "protocol": 1,
+          "queued_ice": 0,
+          "relay_protocol": 0,
+          "remote_candidate": 1,
+          "remote_end": true,
+          "sctp_open": true,
+          "stats_samples": 2,
+          "stun_responses": 5
+        },
+        "live_peers": 0,
+        "loopback_only": true,
+        "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+        "network_media_tested": false,
+        "passed": true,
+        "peak_connected_sessions": 1,
+        "peak_live_peers": 1,
+        "pid": 63639,
+        "platform": "Mac",
+        "records": 0,
+        "rejected": 0,
+        "replays": 0,
+        "run_id": "208c544f-f012-4923-9cf3-3d39c61abb0f",
+        "running": false,
+        "schema": 1,
+        "server_build": true,
+        "teardown_complete": true,
+        "with_janus": false
+      }
+    }
+  },
+  "repaired_attempts": [
+    "Qualified the Unreal error helper to avoid an overload collision.",
+    "Made ICE scheme/query checks case-sensitive and corrected the embedded-null test input.",
+    "Rebuilt the Server cook Editor module after its cache was missing.",
+    "Mapped non-timeout HTTP failures to InternalError instead of Timeout after TLS rejection exposed the bug.",
+    "Adjusted the hostname-rejection harness for clients that complete TLS but reject before sending HTTP; accepted runs use the corrected criterion."
+  ],
+  "schema": 1,
+  "source_sha256": {
+    "Config/NativeBackend/BUILD.gn": "53e77e51f1d0890807718547780363c890c11c563b189f085035fc957bf507b1",
+    "Config/NativeBackend/abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d",
+    "Config/NativeBackend/exports.txt": "fece2e0ff2120693ebe7978a5ef097fec108895208fefe5f4ae118440e26e3da",
+    "Config/NativeBackend/runtime.cc": "d6a8e399051bf99fa323611646cd50d511e56a71814551f2053799fb692519c7",
+    "Config/NativeBackend/signaling.cc": "7273873f398629d277b7e50a45653300c8294b7f2cf0163bc6b3a7c53e57fcdb",
+    "Config/NativeBackend/signaling.h": "197cedc0f7655265837421589f6e2c54db430b41d06f8faedbe8ab8d567b3f58",
+    "Config/NativeBackend/simurgh_rtc_abi.h": "c02ceabefdab5fdcd29e7ea2f31384c1e7134c7a224ae190e982452b7fea1c29",
+    "Fixtures/native/data_channels.c": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+    "Fixtures/native/turn.c": "1df64c988d05f821b31b42118792eca51587fc3e9481c97e043cf68f018e2696",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCTypes.cpp": "00c60fed5c3e2450cfbe828510e037f4022519ba8516538dbda1c790faf3fdde",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/Tests/SimurghRTCContractTests.cpp": "47e387c34e641e080e497f6d15e3d058d0b436a945fa2f6441ff121672e48923",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCTypes.h": "747c68a40f07a1ae38d60ab40253bbee662a74abc83fd5ef8bf6786b0c3be022",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Private/SimurghRTCDirectClient.cpp": "4f9cd55bd536ba6bdb46ff1d6ee29d192536d719715f7b32970d3a9c32574469",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Private/SimurghRTCDirectSessionTransport.cpp": "c09be93c82b1a45088a3c918c1e492d21fea22216ead8de6f96394e8f6a8b994",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Private/Tests/SimurghRTCDirectTests.cpp": "afab09b799dd0fe5bb8e621ec3090bd9dc6960a2eb3075931cb7bd58f5eeb7dc",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Public/SimurghRTCDirectClient.h": "3a1c2639149cb20770a3986988eb63d8cdecc98db4512a09df84a01d1ee74219",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/NativeBackend.inputs.json": "9ed03ccedfe23a32d7da625019d4d69ad29b80f8b9fa32ed204e4b37a8f50589",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeModule.cpp": "9e5536e97a444515de19fcbee98f512dc0d00c28ca6171added68e6de4635181",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativePeerService.cpp": "96baa6089036fb05d66782c6f70e75118eea7984dd39555f550e7255429ee0ae",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativePeerService.h": "938227902c1e8d4a1d5b8aa42fdb940b61e61ba6c63579b982528518e57f28f4",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeRuntime.cpp": "73cdb45ed8a3d298e2f71007ade6549b27ba6e16fb1e69c0ac65c4d7281a9f95",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativePeer.h": "61475833d801b7b6d9fa4ba5b9b309ced7f148ff9b8d1182f6faeab7875d5eda",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativeRuntime.h": "4a7936448f9cb4db6d0f7f73ed0431aa88912c4697046eae9390170bd3341b0c",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativeSignaling.h": "d75c428e5d80e424af847ee320fbd6c6a00444f272d4ed35ef383585ee292be1",
+    "Plugins/SimurghRTC/Source/SimurghRTCServer/Private/SimurghRTCDirectServer.cpp": "2384c180f12f42430d54f9392e6dca8f5ce45b97bfe089ded5e1f9984c14d21e",
+    "Plugins/SimurghRTC/Source/SimurghRTCServer/Public/SimurghRTCDirectServer.h": "ade513b78acb177bea0e83360ff9218b86df23ea5a73fec1587a4cfb060829f4",
+    "Samples/ContractHost/Source/ContractHost/ContractDataExample.cpp": "abffb8abbcdafa5ee8c9340ce9d299f21df042178407b36cf05affc77ae31de8",
+    "Samples/ContractHost/Source/ContractHost/ContractDataExampleProbe.cpp": "5cd3313611ca9c3ce34eed2e26ba46055758ded84d81312671e0edd8291e084c",
+    "Samples/ContractHost/Source/ContractHost/ContractDirectProbe.cpp": "ae6258c4eb9063a86ec10b70ca4fd11c533136ac94fc4880853d9efe713a7e01",
+    "Samples/ContractHost/Source/ContractHost/ContractIceConfig.cpp": "69d22fccd9b5b44cffc4e1c1320fe2d23e31b6330e6d8647f7ba62076f923177",
+    "Samples/ContractHost/Source/ContractHost/ContractIceConfig.h": "5f27e1c86dc9f3f4017ab9832fbcfe6c68154bfb728608e78b78d0724e9ef33f",
+    "Samples/ContractHost/Source/ContractHost/Public/ContractDataExample.h": "ea1f8a6c4cd29a5cd17a24946cfa6e2b98590b132c98941978e7dfa05274bc27",
+    "tools/build_macos_turn_fixture.py": "7afb0336580265723e5dae31e1a9e1ac9a0cc501af848853191efce1e3a00314",
+    "tools/build_native_android.py": "8ebed77eeec1f1a0d91e06649e71a34b4e1f4a7d8c563d19a5ebe657806c2a4e",
+    "tools/network_fixtures.py": "66eb7635a30e812a6bb6f3354ec6b0f1ff3a4077112ce584cdd504cb58a73312",
+    "tools/run_data_example_probe.py": "5984ddb6453ad67551929f254038a401662d60eac1480bbb122ee417dd575105",
+    "tools/run_direct_probe.py": "67999aba09d11c5ce68a50ec0f8150b1ce72758cbb8b7963f8abaf5a828216a9",
+    "tools/run_mobile_data_example_probe.py": "a8108d883d309400d715ebfe7b4fd1a7b4678299b4abd06d31bae6cb229392fd",
+    "tools/run_mobile_network_probe.py": "9dded14837643a60f72eb67d6f6b045c22ef5ca304173525794f4bf62f66cb35",
+    "tools/run_native_abi_probe.py": "fb2e51a353f86c57a3e8febefb5da62822af583c32da8dfc8fe6b57391dd2c96",
+    "tools/run_native_data_probe.py": "215d05d55591e82c6dd6ecc8511fd517b18bc2ce6cee9d1d2e827bf4957b9a51",
+    "tools/run_native_turn_probe.py": "354e108b34d7d262d9019bc743e96dc5d987a16d80ea7b8779951f1338142ee4",
+    "tools/tests/test_data_example_probe.py": "d40d64ea03736d0bae955274c0303b951635170b955b7a2cc993a6f5e5d3582d",
+    "tools/tests/test_direct_probe.py": "58704c7c21d519a2be32ee3c1f3a56155fb3f361a57645042a2c903110027402",
+    "tools/tests/test_mobile_data_example_probe.py": "6287341dc7526334c0f3d81fadfd2f59699ad3da26a8979bed2bdad0b1ebcd9a",
+    "tools/tests/test_native_android_ndk.py": "880bae6cc27f4fff1c07f374d33683ffb134ff8a55069895c1e980b4bdd1a31b",
+    "tools/tests/test_native_data_runner.py": "7a7dc86c89dc96432eb6a7d36dff9f1c99cefcf2b88318ac6f4bee53f34520a5",
+    "tools/tests/test_network_fixtures.py": "6082c30d56f889a13190db1921bc64752ea1ed1a54c16f0c03f9d59ea14d63c8"
+  },
+  "status": "in_progress",
+  "summary": {
+    "exact_message_round_trips": 48,
+    "lifecycle_regression_cases": 20,
+    "negative_cases": 12,
+    "packaged_network_cases": 36,
+    "platforms": [
+      "physical Android ARM64",
+      "iOS ARM64 simulator"
+    ],
+    "profiles": [
+      "Direct-only",
+      "Full"
+    ],
+    "python_tests": 196,
+    "successful_message_cases": 24,
+    "unreal_tests": 28
+  },
+  "turn_fixture": {
+    "dependency_record": "LocalBuilds/Fixtures/CoturnMac-SR107-20261029-b/fixture.json",
+    "executable_sha256": "1b0a107ae97901577b8a75087db3dc8b2e2df4ae578368b4fa37dd8900701ac4",
+    "scope": "native Mac fixture; source pinned, installed compiler/OpenSSL/libevent recorded; relay sockets on Mac loopback",
+    "source": {
+      "archive_sha256": "d7e2ee337b5298c30cc5cd365c3173d05b97c749d28e9416afa4ca907925ce15",
+      "archive_url": "https://codeload.github.com/coturn/coturn/tar.gz/23c6c1d32a3d2b21a56cee65d3203bcc4ea82d2b",
+      "commit": "23c6c1d32a3d2b21a56cee65d3203bcc4ea82d2b",
+      "repository": "coturn/coturn",
+      "tag": "4.18.0"
+    }
+  },
+  "validated_at": "2026-10-29T16:11:58.083433+00:00"
+}

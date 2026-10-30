@@ -99,11 +99,13 @@ struct FDataGraph
         Then(Print,Sample(Disconnect ? TEXT("CompleteExample") : TEXT("RequestDisconnect"),X+1100,Y));
         Outcome(Task,Step,TEXT("Cancelled"),X,Y+650);
     }
-    UK2Node_AddDelegate* Bind(const TCHAR* Delegate, const TCHAR* EventName, int32 X, int32 Y, int32 EventY, UK2Node_CustomEvent*& Event)
+    UK2Node_AddDelegate* Bind(const TCHAR* Delegate, const TCHAR* EventName, int32 X, int32 Y, int32 EventY, UK2Node_CustomEvent*& Event, bool Lifecycle = false)
     {
-        auto* Property = FindFProperty<FMulticastDelegateProperty>(USimurghRTCSession::StaticClass(),Delegate);
-        auto* Bind = Node<UK2Node_AddDelegate>(X,Y); Bind->SetFromProperty(Property,false,USimurghRTCSession::StaticClass()); Bind->AllocateDefaultPins();
-        Wire(Get(TEXT("Session"),X,Y+160),TEXT("Session"),Bind,TEXT("self"));
+        UClass* Class = Lifecycle ? UApplicationLifecycleComponent::StaticClass() : USimurghRTCSession::StaticClass();
+        const TCHAR* Target = Lifecycle ? TEXT("ApplicationLifecycle") : TEXT("Session");
+        auto* Property = FindFProperty<FMulticastDelegateProperty>(Class,Delegate);
+        auto* Bind = Node<UK2Node_AddDelegate>(X,Y); Bind->SetFromProperty(Property,false,Class); Bind->AllocateDefaultPins();
+        Wire(Get(Target,X,Y+160),Target,Bind,TEXT("self"));
         Event = UK2Node_CustomEvent::CreateFromFunction(FVector2D(0,EventY),Graph,EventName,Property->SignatureFunction,false);
         bValid &= Schema->TryCreateConnection(Event->FindPinChecked(UK2Node_Event::DelegateOutputName),Bind->GetDelegatePin());
         return Bind;
@@ -177,14 +179,31 @@ int32 GenerateContractDataExamples(const FString& Params)
     auto* Begin = FKismetEditorUtilities::AddDefaultEventNode(BP,G.Graph,TEXT("ReceiveBeginPlay"),AActor::StaticClass(),Y);
     auto* Prepare = G.Sample(TEXT("PrepareExample"),300,0); G.Then(Begin,Prepare);
     auto* Ready = G.Node<UK2Node_IfThenElse>(650,0); Ready->AllocateDefaultPins(); G.Then(Prepare,Ready); G.Wire(Prepare,TEXT("ReturnValue"),Ready,TEXT("Condition"));
-    auto* Create = G.Call(USimurghRTCSession::StaticClass(),TEXT("CreateSession"),950,0); G.Wire(Ready,TEXT("then"),Create,TEXT("execute"));
+    UK2Node_CustomEvent *BackgroundEvent, *ForegroundEvent, *OSBackgroundEvent, *OSForegroundEvent;
+    auto* BindBackground = G.Bind(TEXT("ApplicationWillDeactivateDelegate"),TEXT("RtcAppInactive"),950,-500,7300,BackgroundEvent,true);
+    auto* BindForeground = G.Bind(TEXT("ApplicationHasReactivatedDelegate"),TEXT("RtcAppActive"),1350,-500,7900,ForegroundEvent,true);
+    G.Then(Ready,BindBackground); G.Then(BindBackground,BindForeground);
+    auto* BindOSBackground = G.Bind(TEXT("ApplicationWillEnterBackgroundDelegate"),TEXT("RtcOSBackground"),1750,-500,8500,OSBackgroundEvent,true);
+    auto* BindOSForeground = G.Bind(TEXT("ApplicationHasEnteredForegroundDelegate"),TEXT("RtcOSForeground"),2150,-500,8900,OSForegroundEvent,true);
+    G.Then(BindForeground,BindOSBackground); G.Then(BindOSBackground,BindOSForeground);
+    G.Then(BindOSForeground,G.Sample(TEXT("RequestSession"),2550,-500));
+    G.Then(OSBackgroundEvent,G.Sample(TEXT("RecordOSBackground"),350,8500));
+    G.Then(OSForegroundEvent,G.Sample(TEXT("RecordOSForeground"),350,8900));
+    Y = -1500;
+    auto* SessionEvent = FKismetEditorUtilities::AddDefaultEventNode(BP,G.Graph,TEXT("RequestSession"),AContractDataExample::StaticClass(),Y);
+    SessionEvent->NodePosX = 500;
+    auto* Create = G.Call(USimurghRTCSession::StaticClass(),TEXT("CreateSession"),950,0); G.Then(SessionEvent,Create);
     auto* Store = G.Set(TEXT("Session"),1300,0); G.Then(Create,Store); G.Wire(Create,TEXT("ReturnValue"),Store,TEXT("Session"));
     UK2Node_CustomEvent *Message, *ChannelEvent, *StateEvent;
     auto* BindMessage = G.Bind(TEXT("OnMessage"),TEXT("ReceiveRtcMessage"),1650,0,2000,Message);
     auto* BindChannel = G.Bind(TEXT("OnChannelChanged"),TEXT("RtcChannelChanged"),2000,0,3500,ChannelEvent);
     auto* BindState = G.Bind(TEXT("OnStateChanged"),TEXT("RtcStateChanged"),2350,0,3900,StateEvent);
     G.Then(Store,BindMessage); G.Then(BindMessage,BindChannel); G.Then(BindChannel,BindState);
-    auto* Connect = G.Async(TEXT("Connect"),2800,0); G.Then(BindState,Connect);
+    G.Then(BindState,G.Sample(TEXT("RequestConnect"),2700,-450));
+    Y = -900;
+    auto* ConnectEvent = FKismetEditorUtilities::AddDefaultEventNode(BP,G.Graph,TEXT("RequestConnect"),AContractDataExample::StaticClass(),Y);
+    ConnectEvent->NodePosX = 2400;
+    auto* Connect = G.Async(TEXT("Connect"),2800,0); G.Then(ConnectEvent,Connect);
     auto* Connected = G.Outcome(Connect,TEXT("Connect"),TEXT("Success"),3250,0);
     G.FailureBranches(Connect,TEXT("Connect"),3250,700);
     auto* Open = G.Async(TEXT("OpenChannel"),3700,0); G.Then(Connected,Open);
@@ -217,7 +236,12 @@ int32 GenerateContractDataExamples(const FString& Params)
     Y = 4500;
     auto* DisconnectEvent = FKismetEditorUtilities::AddDefaultEventNode(BP,G.Graph,TEXT("RequestDisconnect"),AContractDataExample::StaticClass(),Y);
     auto* Disconnect = G.Async(TEXT("Disconnect"),400,4500); G.Then(DisconnectEvent,Disconnect);
-    auto* Disconnected = G.Outcome(Disconnect,TEXT("Disconnect"),TEXT("Success"),850,4500); G.Then(Disconnected,G.Sample(TEXT("CompleteExample"),1250,4500));
+    auto* Disconnected = G.Outcome(Disconnect,TEXT("Disconnect"),TEXT("Success"),850,4500);
+    auto* NextRound = G.Sample(TEXT("PrepareNextRound"),1250,4500); G.Then(Disconnected,NextRound);
+    auto* Again = G.Node<UK2Node_IfThenElse>(1600,4500,TEXT("Reconnect uses the same session and a new channel; credentials are loaded again at runtime")); Again->AllocateDefaultPins();
+    G.Then(NextRound,Again); G.Wire(NextRound,TEXT("ReturnValue"),Again,TEXT("Condition"));
+    G.Then(Again,G.Sample(TEXT("RequestConnect"),2000,4400));
+    G.Wire(Again,TEXT("else"),G.Sample(TEXT("CompleteExample"),2000,4650),TEXT("execute"));
     G.FailureBranches(Disconnect,TEXT("Disconnect"),850,5100,true);
     Y = 6100;
     auto* End = FKismetEditorUtilities::AddDefaultEventNode(BP,G.Graph,TEXT("ReceiveEndPlay"),AActor::StaticClass(),Y);
@@ -227,6 +251,15 @@ int32 GenerateContractDataExamples(const FString& Params)
     G.Then(End,HasSession); G.Wire(ValidSession,TEXT("ReturnValue"),HasSession,TEXT("Condition"));
     auto* Shutdown = G.SessionCall(TEXT("Shutdown"),700,6100); G.Then(HasSession,Shutdown); G.Then(Shutdown,G.Sample(TEXT("RecordEndPlay"),1150,6100));
     Shutdown->NodeComment = TEXT("Always shut down at EndPlay; pending operations settle silently"); Shutdown->bCommentBubbleVisible = true;
+    auto* BackgroundReady = G.Sample(TEXT("PrepareBackground"),350,7300); G.Then(BackgroundEvent,BackgroundReady);
+    auto* BackgroundBranch = G.Node<UK2Node_IfThenElse>(750,7300,TEXT("Close immediately before suspension; no asynchronous wait")); BackgroundBranch->AllocateDefaultPins();
+    G.Then(BackgroundReady,BackgroundBranch); G.Wire(BackgroundReady,TEXT("ReturnValue"),BackgroundBranch,TEXT("Condition"));
+    auto* BackgroundShutdown = G.SessionCall(TEXT("Shutdown"),1100,7300); G.Then(BackgroundBranch,BackgroundShutdown);
+    G.Then(BackgroundShutdown,G.Sample(TEXT("RecordBackgroundShutdown"),1500,7300));
+    auto* ForegroundReady = G.Sample(TEXT("PrepareForeground"),350,7900); G.Then(ForegroundEvent,ForegroundReady);
+    auto* ForegroundBranch = G.Node<UK2Node_IfThenElse>(750,7900,TEXT("Shutdown is final: resume creates and binds a fresh session")); ForegroundBranch->AllocateDefaultPins();
+    G.Then(ForegroundReady,ForegroundBranch); G.Wire(ForegroundReady,TEXT("ReturnValue"),ForegroundBranch,TEXT("Condition"));
+    G.Then(ForegroundBranch,G.Sample(TEXT("RequestSession"),1100,7900));
     if (!G.bValid) return 2;
     FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP);
     FCompilerResultsLog Results;

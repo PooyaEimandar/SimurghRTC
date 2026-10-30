@@ -17,7 +17,7 @@ bool FDirectProtocolTest::RunTest(const FString&)
     const FString Reordered = TEXT("{\"body\":{\"identity\":\"test\",\"purpose\":\"data\"},\"sequence\":0,\"request_id\":\"a\",\"type\":\"create\",\"version\":1,\"protocol\":\"simurghrtc.direct\"}");
     TestTrue(TEXT("Key order is immaterial"), Direct::ParseRequest(Direct::Bytes(Reordered), B, Error));
     TestEqual(TEXT("Canonical replay digest"), A.Digest, B.Digest);
-    for (const FString Bad : {Create.Replace(TEXT("\"version\":1"), TEXT("\"version\":2")),
+    for (const FString& Bad : {Create.Replace(TEXT("\"version\":1"), TEXT("\"version\":2")),
         Create.Replace(TEXT("\"sequence\":0"), TEXT("\"sequence\":0.0")),
         Create.Replace(TEXT("\"sequence\":0"), TEXT("\"sequence\":0e0")),
         Create.Replace(TEXT("\"sequence\":0"), TEXT("\"sequence\":true")),

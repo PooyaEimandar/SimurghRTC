@@ -64,6 +64,8 @@ Success means the plugin copied the payload into a bounded send queue; it does n
 
 Each session has its own PeerConnection and local channel handles. A handle from another session, a closed connection or an earlier reconnect is rejected. The server application decides whether to echo or route messages; the transport does neither automatically.
 
+For connection loss, handle `OnStateChanged(Failed)` and read `GetConnectionError()` in C++ or Blueprint. After connectivity returns, call Connect on the same session and open a new channel. The session ID stays the same, while the PeerConnection and channel handles are replaced. The new connection clears the previous error; the plugin does not retry a failed connection automatically.
+
 ## Close and reuse
 
 Use `CloseChannel` to close one channel and `Disconnect` to close the whole connection. Both are async operations: bind completion and activate as above. Disconnect cancels other active operations and waits for transport closure within the session's timeout.
@@ -73,6 +75,8 @@ Connect can run again after Closed or Failed. The same session UObject keeps its
 Call `Session->Shutdown()` from EndPlay or widget teardown. Shutdown is final and silent: it cancels pending work and detaches callbacks immediately. Native cleanup continues without invoking the former owner. Owner loss, world cleanup and session garbage collection provide the same fallback. Keep the engine ticking while normal connection cleanup completes; do not treat a silent Shutdown as a remote acknowledgement.
 
 Dropping a session variable does not immediately destroy its UObject. Call Shutdown when callbacks must stop immediately; garbage collection provides cleanup when the object is actually collected.
+
+The mobile data samples call Shutdown when the app deactivates, before suspension, then create a new session when it becomes active again. This policy is implemented in the sample's C++ flow and Blueprint graph; applications can choose their own lifecycle policy. See [background and resume](DATA_EXAMPLES.md#background-and-resume).
 
 ## Run the packaged checks
 

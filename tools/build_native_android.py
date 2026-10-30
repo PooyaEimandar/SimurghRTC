@@ -17,6 +17,20 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / 'Config/NativeBackend'
 LOCK = ROOT / 'Config/NativeWebRTC.android.lock.json'
 
+def prepare_ndk(archive, install, sha256, *, extract):
+    a.require(a.digest(archive) == sha256, 'NDK archive drift.')
+    if extract and not install.exists():
+        install.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix='ndk-extract-', dir=install.parent) as temporary:
+            staged = Path(temporary) / 'install'
+            b.extract_zip(archive, staged)
+            (staged / '.archive-sha256').write_text(sha256)
+            staged.rename(install)
+    receipt = install / '.archive-sha256'
+    a.require(receipt.is_file() and receipt.read_text() == sha256,
+              'NDK extraction receipt is missing or changed; re-extract the pinned archive.')
+    b.verify_extraction(archive, install)
+
 def build(work, output, ndk_cache, jobs, build_name=None, fresh=False):
     lock = a.read_json(LOCK); spec = lock['platforms']['Android']
     inputs = {p: a.digest(p) for p in [LOCK, Path(__file__), *CONFIG.glob('*')] if p.is_file()}
@@ -49,13 +63,7 @@ def build(work, output, ndk_cache, jobs, build_name=None, fresh=False):
         ndk_install = ndk_cache / 'host/ndk-r27c'
         if ndk_cache == work:
             b.download(spec['ndk_archive'], ndk_archive)
-            if not ndk_install.exists():
-                with tempfile.TemporaryDirectory(prefix='ndk-extract-', dir=host) as temporary:
-                    staged = Path(temporary) / 'install'
-                    b.extract_zip(ndk_archive, staged)
-                    staged.rename(ndk_install)
-        a.require(a.digest(ndk_archive) == spec['ndk_archive']['sha256'], 'NDK archive drift.')
-        b.verify_extraction(ndk_archive,ndk_install)
+        prepare_ndk(ndk_archive, ndk_install, spec['ndk_archive']['sha256'], extract=ndk_cache == work)
         ndk = ndk_install / 'android-ndk-r27c'
         a.require('Pkg.Revision = ' + spec['ndk'] in (ndk / 'source.properties').read_text(),'NDK revision mismatch.')
         source = work / 'src'; probe = source / 'simurgh_probe'; probe.mkdir(exist_ok=True)

@@ -2,7 +2,7 @@ from pathlib import Path
 import sys
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from run_data_example_probe import MAPS, SCENARIOS, validate_example
+from run_data_example_probe import MAPS, SCENARIOS, RECOVERY_SCENARIOS, validate_example
 
 
 class DataExampleProbeTests(unittest.TestCase):
@@ -13,7 +13,7 @@ class DataExampleProbeTests(unittest.TestCase):
                   'destroy-connect':[], 'destroy-open':['Connect:Success']}[scenario]
         states={'messages':[1,2,3,4], 'timeout':[1,5,3,4], 'disconnect-pending':[1,3,4], 'destroy-connect':[1], 'destroy-open':[1,2]}[scenario]
         return dict(schema=1,run_id='run',pid=42,implementation=implementation,scenario=scenario,map=MAPS[implementation],
-            editor_build=False,server_build=False,arm64_build=True,with_janus=True,artifact_manifest_sha256='digest',
+            platform='Mac',simulator_build=False,editor_build=False,server_build=False,arm64_build=True,with_janus=True,artifact_manifest_sha256='digest',
             native_backend='M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d',shared_api=True,loopback_only=True,
             network_media_tested=False,passed=True,error='',transports_created=1,native_closed=1,remote_closed=1,pending_cleanup=0,
             objects_collected=True,end_play_calls=1,end_play_closed=True,late_callbacks=0,callbacks_on_game_thread=True,
@@ -55,6 +55,45 @@ class DataExampleProbeTests(unittest.TestCase):
         for scenario in ('timeout','disconnect-pending'):
             bad=self.report(scenario=scenario);bad['last_failure']=0
             with self.subTest(scenario=scenario),self.assertRaises(ValueError):self.validate(bad)
+
+    def recovery_report(self, scenario):
+        value=self.report();graceful=scenario=='reconnect'
+        value.update(scenario=scenario,transports_created=2,native_closed=2,remote_closed=2 if graceful else 1,
+                     sent=4,received=4,rounds_completed=2,stale_handle_checks=6,recovery_requested=not graceful,
+                     channel_ids=['00000000-0000-4000-8000-000000000002','00000000-0000-4000-8000-000000000003'],
+                     connection_errors=[] if graceful else [11],heartbeats=300,max_tick_gap_seconds=.04,
+                     states=[1,2,3,4,1,2,3,4] if graceful else [1,2,5,1,2,3,4])
+        value['outcomes']=(value['outcomes'] if graceful else value['outcomes'][:2])+value['outcomes']
+        value['operations']=value['completions']=len(value['outcomes'])
+        return value
+
+    def test_recovery_requires_two_distinct_rounds_and_responsive_cleanup(self):
+        for scenario in RECOVERY_SCENARIOS:
+            good=self.recovery_report(scenario);self.validate(good)
+            for key,value in [('sent',2),('rounds_completed',1),('stale_handle_checks',3),('native_closed',1),
+                              ('channel_ids',good['channel_ids'][:1]*2),('max_tick_gap_seconds',2),('heartbeats',0),
+                              ('connection_errors',[8]),('recovery_requested',scenario=='reconnect')]:
+                with self.subTest(scenario=scenario,key=key),self.assertRaises(ValueError):self.validate(dict(good,**{key:value}))
+
+    def background_report(self, pending):
+        value=self.recovery_report('reconnect')
+        value.update(scenario='background-connect' if pending else 'background-connected',inactive_events=1,active_events=1,background_events=1,foreground_events=1,
+            background_shutdown=True,background_pending=pending,background_cancelled=pending,retired_objects_collected=True,
+            background_seconds=8.5,shutdown_seconds=.002,session_ids=['00000000-0000-4000-8000-000000000004',value['session_id']],
+            rounds_completed=1 if pending else 2,stale_handle_checks=0 if pending else 6,
+            states=[1,1,2,3,4] if pending else [1,2,1,2,3,4],remote_closed=1)
+        value['outcomes']=value['outcomes'][4:] if pending else value['outcomes'][:2]+value['outcomes'][4:]
+        value['operations']=len(value['outcomes'])+int(pending);value['completions']=len(value['outcomes'])
+        if pending:value.update(sent=2,received=2,channel_ids=value['channel_ids'][1:])
+        return value
+
+    def test_background_requires_os_events_silent_shutdown_and_fresh_session(self):
+        for pending in (False,True):
+            good=self.background_report(pending);self.validate(good)
+            for key,value in [('inactive_events',0),('active_events',2),('background_events',0),('foreground_events',2),('background_shutdown',False),
+                ('background_pending',not pending),('background_cancelled',not pending),('retired_objects_collected',False),
+                ('session_ids',[good['session_id']]*2),('shutdown_seconds',1),('background_seconds',0),('late_callbacks',1)]:
+                with self.subTest(pending=pending,key=key),self.assertRaises(ValueError):self.validate(dict(good,**{key:value}))
 
 
 if __name__=='__main__':unittest.main()

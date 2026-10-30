@@ -53,7 +53,90 @@ FSimurghRTCError SimurghRTC::ValidateSessionConfig(const FSimurghRTCSessionConfi
         InvalidCharacter |= Character == 0 || FChar::IsWhitespace(Character) || Character < 32;
     if (Authority.IsEmpty() || Authority.Contains(TEXT("@")) || Config.Endpoint.Contains(TEXT("#")) || InvalidCharacter)
         return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Signaling URL requires a host and must not contain credentials, fragments or whitespace."));
-    return {};
+    return ValidateIceServers(Config.IceServers, Config.bRelayOnly);
+}
+
+namespace
+{
+bool IceTextValid(const FString& Text, int32 Limit, bool bUrl)
+{
+    if (FTCHARToUTF8(*Text, Text.Len()).Length() > Limit) return false;
+    for (TCHAR C : Text)
+        if (C < 32 || C == 127 || (bUrl && (C <= 32 || C >= 127 || C == '@' || C == '/' || C == '#'))) return false;
+    return true;
+}
+bool IceUrlValid(const FString& Url, bool& bTurn)
+{
+    int32 Colon = INDEX_NONE;
+    if (!Url.FindChar(':', Colon)) return false;
+    const FString Scheme = Url.Left(Colon);
+    if (!Scheme.Equals(Scheme.ToLower(), ESearchCase::CaseSensitive)) return false;
+    bTurn = Scheme == TEXT("turn") || Scheme == TEXT("turns");
+    if (!bTurn && Scheme != TEXT("stun") && Scheme != TEXT("stuns")) return false;
+    FString Host = Url.Mid(Colon + 1);
+    int32 Query = INDEX_NONE;
+    if (Host.FindChar('?', Query))
+    {
+        const FString Suffix = Host.Mid(Query);
+        if (!Suffix.Equals(Suffix.ToLower(), ESearchCase::CaseSensitive)) return false;
+        if (!bTurn || (Suffix != TEXT("?transport=udp") && Suffix != TEXT("?transport=tcp"))
+            || (Scheme == TEXT("turns") && Suffix != TEXT("?transport=tcp"))) return false;
+        Host = Host.Left(Query);
+    }
+    FString Port;
+    if (Host.StartsWith(TEXT("[")))
+    {
+        int32 End = INDEX_NONE;
+        if (!Host.FindChar(']', End) || End < 3) return false;
+        if (End + 1 < Host.Len())
+        {
+            if (Host[End + 1] != ':') return false;
+            Port = Host.Mid(End + 2); if (Port.IsEmpty()) return false;
+        }
+        Host = Host.Mid(1, End - 1);
+        if (!Host.Contains(TEXT(":"))) return false;
+        for (TCHAR C : Host) if (!FChar::IsHexDigit(C) && C != ':' && C != '.') return false;
+    }
+    else
+    {
+        int32 PortStart = INDEX_NONE;
+        if (Host.FindChar(':', PortStart))
+        {
+            Port = Host.Mid(PortStart + 1); Host = Host.Left(PortStart);
+            if (Port.IsEmpty()) return false;
+        }
+        if (Host.IsEmpty()) return false;
+        for (TCHAR C : Host) if (!FChar::IsAlnum(C) && C != '-' && C != '.' && C != '_') return false;
+    }
+    if (!Port.IsEmpty())
+    {
+        if (Port.Len() > 5) return false;
+        for (TCHAR C : Port) if (C < '0' || C > '9') return false;
+        const int32 Number = FCString::Atoi(*Port); if (Number < 1 || Number > 65535) return false;
+    }
+    return true;
+}
+}
+FSimurghRTCError SimurghRTC::ValidateIceServers(const TArray<FSimurghRTCIceServer>& Servers, bool bRelayOnly)
+{
+    const auto Invalid = [] { return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument,
+        TEXT("ICE requires at most 8 servers and 16 URLs; use stun/stuns/turn/turns URIs, bounded runtime credentials, and a TURN server for relay-only mode.")); };
+    if (Servers.Num() > 8) return Invalid();
+    int32 Urls = 0; bool bHasTurn = false;
+    for (const auto& Server : Servers)
+    {
+        Urls += Server.Urls.Num();
+        if (Server.Urls.IsEmpty() || Urls > 16 || !IceTextValid(Server.Username, 512, false)
+            || !IceTextValid(Server.Credential, 512, false)) return Invalid();
+        for (const FString& Url : Server.Urls)
+        {
+            bool bTurn = false;
+            if (!IceTextValid(Url, 2048, true) || !IceUrlValid(Url, bTurn)
+                || (bTurn && (Server.Username.IsEmpty() || Server.Credential.IsEmpty()))) return Invalid();
+            bHasTurn |= bTurn;
+        }
+    }
+    return bRelayOnly && !bHasTurn ? Invalid() : FSimurghRTCError{};
 }
 
 FSimurghRTCError SimurghRTC::ValidateChannelOptions(const FSimurghRTCChannelOptions& Options)

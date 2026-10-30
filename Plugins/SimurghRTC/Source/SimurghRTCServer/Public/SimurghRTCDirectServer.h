@@ -49,6 +49,8 @@ struct FDirectServerConfig
     int32 MaxSessionsPerPrincipal = 4;
     double IdleSeconds = 30;
     double ReplaySeconds = 30;
+    TArray<FSimurghRTCIceServer> IceServers;
+    bool bRelayOnly = false;
     bool bLoopbackProbe = false; // Explicit same-host tests only.
 };
 struct FDirectServerSnapshot

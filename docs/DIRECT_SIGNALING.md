@@ -68,3 +68,5 @@ HTTPServer serves HTTP. For remote use, put a trusted HTTPS reverse proxy in fro
 Use the final endpoint URL, with no redirects. The client rejects a changed final URL, but Unreal's underlying HTTP implementation may already have followed a redirect. Do not use redirecting endpoints for credentials. Keep credentials and SDP out of access logs.
 
 For local development, the client accepts `http://127.0.0.1:<port>/simurghrtc/v1/signal` only when `bAllowLoopbackHttp` is enabled. The sample listener binds only to loopback. This local implementation does not close M0's external dependency acceptance gates or qualify an untrusted public service.
+
+For packaged Android and iOS simulator HTTPS/TURN checks, use [Mobile data](MOBILE_DATA.md#run-https-and-turn-checks). Configure client and Server ICE settings separately; `bRelayOnly` requires TURN. HTTP certificate or connection failures return `InternalError` after bounded retries, while request/deadline expiry returns `Timeout`.

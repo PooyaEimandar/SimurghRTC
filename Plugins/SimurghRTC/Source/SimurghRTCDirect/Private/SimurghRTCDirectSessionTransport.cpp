@@ -72,16 +72,18 @@ void RegisterDirectSessionTransport()
 {
     SetSessionTransportFactory(ESimurghRTCProvider::DirectUnreal,[](UObject* Owner, const FSimurghRTCSessionConfig& Config, FSimurghRTCError& Error) -> TSharedPtr<ISessionTransport>
     {
-        if (!Config.IceServers.IsEmpty() || Config.Purpose == ESimurghRTCPurpose::Receive)
-        { Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::NotImplemented,TEXT("Custom ICE servers and receive-only sessions are not integrated yet.")); return {}; }
+        if (Config.Purpose == ESimurghRTCPurpose::Receive)
+        { Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::NotImplemented,TEXT("Receive-only sessions are not integrated yet.")); return {}; }
         FDirectClientConfig Direct; Direct.Endpoint = Config.Endpoint; Direct.BearerToken = Config.AccessToken; Direct.Identity = Config.LocalIdentity;
         Direct.Purpose = Config.Purpose == ESimurghRTCPurpose::Call ? TEXT("call") : Config.Purpose == ESimurghRTCPurpose::TextRoom ? TEXT("text-room") : TEXT("data");
         Direct.bAllowLoopbackHttp = Config.bAllowInsecureDevelopmentSignaling;
+        Direct.IceServers = Config.IceServers; Direct.bRelayOnly = Config.bRelayOnly;
         Direct.ConnectTimeoutSeconds = FMath::Max(0.1f, float(Config.TimeoutMilliseconds)/1000.0f);
         Direct.RequestTimeoutSeconds = FMath::Clamp(Direct.ConnectTimeoutSeconds,0.1f,2.0f);
         // Explicit same-host fixture switch; ordinary connections retain normal ICE interfaces.
         Direct.bLoopbackProbe = FParse::Param(FCommandLine::Get(),TEXT("SimurghRTCSessionLoopbackProbe"))
-            && Direct.bAllowLoopbackHttp && Direct.Endpoint.StartsWith(TEXT("http://127.0.0.1:"));
+            && !Direct.bRelayOnly && ((Direct.bAllowLoopbackHttp && Direct.Endpoint.StartsWith(TEXT("http://127.0.0.1:")))
+                || Direct.Endpoint.StartsWith(TEXT("https://127.0.0.1:")));
         Error = FDirectClient::ValidateConfig(Direct); if (Error.IsError()) return {};
         if (!FNativeRuntime::IsSupported())
         { Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::PlatformUnavailable,TEXT("No native transport is available for this build.")); return {}; }

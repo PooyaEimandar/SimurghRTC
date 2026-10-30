@@ -45,6 +45,32 @@ SR_NATIVE_EXPORT void SimurghRTC_DestroyV1(struct SR_Runtime* runtime);
 SR_NATIVE_EXPORT int SimurghRTC_MediaProbeV1(const SR_MediaInput* input, SR_MediaOutput* out, char* error, uint32_t capacity);
 SR_NATIVE_EXPORT const char* SimurghRTC_NativeVersionV1(int component); // Static text; caller must not free.
 
+// Additive ICE configuration. Copied before returning; configure before CreatePeer.
+// Up to 16 URLs, 2048 UTF-8 bytes per URL, 512 bytes per username/credential.
+// Each entry has one stun/stuns/turn/turns URI; TURN requires both credentials.
+#define SR_MAX_ICE_SERVERS 16
+#define SR_MAX_ICE_URL_BYTES 2048
+#define SR_MAX_ICE_CREDENTIAL_BYTES 512
+typedef struct SR_IceServer {
+  const char* url; uint32_t url_bytes;
+  const char* username; uint32_t username_bytes;
+  const char* credential; uint32_t credential_bytes;
+} SR_IceServer;
+typedef struct SR_IceConfig {
+  uint32_t size, abi_version;
+  const SR_IceServer* servers; uint32_t server_count;
+  int32_t relay_only; // 0 = all candidates, 1 = TURN only; requires a TURN URL.
+} SR_IceConfig;
+// Returns SR_SignalError. Invalid input leaves the previous configuration intact.
+SR_NATIVE_EXPORT int SimurghRTC_ConfigureIceV1(struct SR_Runtime* runtime, const SR_IceConfig* config);
+// Selected candidate types: none/host/srflx/prflx/relay/other = 0..5.
+// No addresses, URLs, usernames or credentials are returned.
+typedef struct SR_IceRoute {
+  uint32_t size, abi_version, stats_samples;
+  int32_t local_type, remote_type, relay_protocol; // Protocol: none/UDP/TCP/TLS/other = 0..4.
+} SR_IceRoute;
+SR_NATIVE_EXPORT int SimurghRTC_GetIceRouteV1(struct SR_Runtime* runtime, SR_IceRoute* out);
+
 // Additive signaling API. Requests copy their inputs before returning. Completion
 // and transport events are polled on the runtime's owner thread, never callbacks
 // into the consumer. Only initial offer/answer negotiation is supported.

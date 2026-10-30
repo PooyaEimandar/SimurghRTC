@@ -22,10 +22,10 @@ PATH = '/simurghrtc/v1/signal'
 MAX_BODY = 256 * 1024
 
 
-def validate_server(report, run_id, pid, manifest, application_messages=False):
+def validate_server(report, run_id, pid, manifest, application_messages=False, *, loopback=True):
     expected = dict(schema=1, run_id=run_id, pid=pid, server_build=True, editor_build=False, with_janus=False,
                     arm64_build=True, platform='Mac', artifact_manifest_sha256=manifest,
-                    native_backend='M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d', loopback_only=True,
+                    native_backend='M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d', loopback_only=loopback,
                     network_media_tested=False, application_messages_tested=application_messages, passed=True, error='',
                     callbacks_on_game_thread=True, running=False, live_peers=0, teardown_complete=True)
     a.require(type(report) is dict, 'Missing Server report.')

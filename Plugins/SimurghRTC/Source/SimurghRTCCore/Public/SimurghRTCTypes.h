@@ -153,6 +153,8 @@ struct SIMURGHRTCCORE_API FSimurghRTCSessionConfig
     UPROPERTY(Transient, BlueprintReadWrite, Category="SimurghRTC") TArray<FSimurghRTCIceServer> IceServers;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC", meta=(ClampMin="1", ClampMax="300000")) int32 TimeoutMilliseconds = 30000;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC") bool bAllowInsecureDevelopmentSignaling = false;
+    // Use only TURN candidates. Requires a TURN URL and runtime credentials in IceServers.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SimurghRTC") bool bRelayOnly = false;
 };
 
 USTRUCT(BlueprintType)
@@ -248,6 +250,7 @@ namespace SimurghRTC
     inline constexpr int32 ApiContractVersion = 1;
     SIMURGHRTCCORE_API FSimurghRTCError MakeError(ESimurghRTCErrorCode Code, const FString& Message);
     SIMURGHRTCCORE_API FSimurghRTCError ValidateSessionConfig(const FSimurghRTCSessionConfig& Config);
+    SIMURGHRTCCORE_API FSimurghRTCError ValidateIceServers(const TArray<FSimurghRTCIceServer>& Servers, bool bRelayOnly);
     SIMURGHRTCCORE_API FSimurghRTCError ValidateChannelOptions(const FSimurghRTCChannelOptions& Options);
     SIMURGHRTCCORE_API FSimurghRTCError ValidateAudioFrame(const FSimurghRTCAudioFrame& Frame);
     SIMURGHRTCCORE_API FSimurghRTCError ValidateVideoFrame(const FSimurghRTCVideoFrame& Frame);

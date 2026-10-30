@@ -104,7 +104,7 @@ bool FNativePeerService::StartWorker(FString& OutError)
 }
 
 FNativePeer::FHandle FNativePeerService::Open(UObject* Owner, ENativeFactoryMode Mode,
-    FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe)
+    FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe, const FNativeIceConfig& Ice)
 {
     check(IsInGameThread());
     OutError.Reset();
@@ -116,6 +116,8 @@ FNativePeer::FHandle FNativePeerService::Open(UObject* Owner, ENativeFactoryMode
     { OutError = TEXT("The isolated native backend is not available for this target."); return {}; }
     if (Entries.Num() >= MaxPeers)
     { OutError = TEXT("Native peer capacity reached; wait for pending peers to close."); return {}; }
+    const auto IceError = ValidateIceServers(Ice.Servers, Ice.bRelayOnly);
+    if (IceError.IsError()) { OutError = IceError.Message; return {}; }
     if (!StartWorker(OutError)) return {};
 
     auto State = MakeShared<FNativePeerSharedState, ESPMode::ThreadSafe>();
@@ -129,7 +131,8 @@ FNativePeer::FHandle FNativePeerService::Open(UObject* Owner, ENativeFactoryMode
     Entry->OnOpened = MoveTemp(OnOpened);
     Entry->Data = MakeUnique<FNativeDataGame>(State->Data);
     Entries.Add(Entry);
-    Enqueue({ECommand::Open, State, Mode, bLoopbackProbe});
+    FCommand Command; Command.Type = ECommand::Open; Command.State = State; Command.Mode = Mode;
+    Command.bLoopbackProbe = bLoopbackProbe; Command.Ice = Ice; Enqueue(MoveTemp(Command));
     return Peer;
 }
 
@@ -339,7 +342,7 @@ uint32 FNativePeerService::Run()
             }
             auto Runtime = MakeUnique<FNativeRuntime>();
             FString Error;
-            const bool bReady = Runtime->Start(Command.Mode, Error) && Runtime->CreateProbePeerConnection(Error, Command.bLoopbackProbe);
+            const bool bReady = Runtime->Start(Command.Mode, Error) && Runtime->CreateProbePeerConnection(Error, Command.bLoopbackProbe, Command.Ice);
             const auto Diagnostics = bReady ? Runtime->GetDiagnostics() : FNativeFactoryDiagnostics{};
             if (!bReady) Runtime.Reset();
             bool bCancelled;

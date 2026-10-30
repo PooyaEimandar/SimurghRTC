@@ -165,4 +165,31 @@ bool FSessionOwnerLossTest::RunTest(const FString&)
     TestTrue(TEXT("World cleanup settles operation"),Op->IsFinished());
     World->DestroyWorld(false); return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSessionConnectionErrorTest,"SimurghRTC.Session.ConnectionErrorRecovery",Flags)
+bool FSessionConnectionErrorTest::RunTest(const FString&)
+{
+    FFixture F; const auto Id = F.Session->GetSessionId();
+    TestFalse(TEXT("New session has no connection failure"),F.Session->GetConnectionError().IsError());
+    auto Connect = F.Connect(); auto Old = F.Created.Last();
+    Old->Status.State = ESimurghRTCSessionState::Connected; Tick();
+    TestTrue(TEXT("First connection completed"),Connect->GetResult().IsSuccess());
+    Old->Status.State = ESimurghRTCSessionState::Failed;
+    Old->Status.Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InternalError,TEXT("Transport unavailable.")); Tick();
+    TestEqual(TEXT("Transport loss reaches facade"),F.Session->GetState(),ESimurghRTCSessionState::Failed);
+    TestEqual(TEXT("Connection failure retained after retirement"),F.Session->GetConnectionError().Code,ESimurghRTCErrorCode::InternalError);
+    TestEqual(TEXT("Failure identifies facade"),F.Session->GetConnectionError().SessionId,Id);
+    TestFalse(TEXT("Unsolicited loss has no operation ID"),F.Session->GetConnectionError().OperationId.IsValid());
+    auto Reconnect = F.Connect();
+    TestEqual(TEXT("Reconnect preserves facade"),F.Session->GetSessionId(),Id);
+    TestEqual(TEXT("Reconnect creates fresh transport"),F.Created.Num(),2);
+    TestFalse(TEXT("New connection clears the old error"),F.Session->GetConnectionError().IsError());
+    F.Created.Last()->Status.State = ESimurghRTCSessionState::Connected; Tick();
+    TestTrue(TEXT("Reconnect completes"),Reconnect->GetResult().IsSuccess());
+    // Mutating the retired transport cannot alter the new connection.
+    Old->Status.Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::Timeout,TEXT("Late old error.")); Tick();
+    TestEqual(TEXT("Old failure cannot replace new state"),F.Session->GetState(),ESimurghRTCSessionState::Connected);
+    TestFalse(TEXT("Old failure cannot replace new error"),F.Session->GetConnectionError().IsError());
+    return true;
+}
+
 #endif

@@ -281,4 +281,41 @@ bool FSimurghRTCFrameContractTest::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSimurghRTCIceValidationTest, "SimurghRTC.Contract.IceConfiguration", TestFlags)
+bool FSimurghRTCIceValidationTest::RunTest(const FString&)
+{
+    using SimurghRTC::ValidateIceServers;
+    TestFalse(TEXT("Default host ICE remains valid"), ValidateIceServers({}, false).IsError());
+    TestTrue(TEXT("Relay-only requires TURN"), ValidateIceServers({}, true).IsError());
+    FSimurghRTCIceServer Server; Server.Username = TEXT("fixture-user"); Server.Credential = TEXT("fixture-secret");
+    for (const TCHAR* Url : {TEXT("stun:rtc.invalid"), TEXT("stuns:rtc.invalid:5349"), TEXT("turn:127.0.0.1:3478?transport=udp"),
+        TEXT("turn:rtc.invalid?transport=tcp"), TEXT("turns:rtc.invalid:5349?transport=tcp"), TEXT("turn:[::1]:3478")})
+    {
+        Server.Urls = {Url}; TestFalse(TEXT("Supported ICE URI accepted"), ValidateIceServers({Server}, false).IsError());
+    }
+    for (const TCHAR* Url : {TEXT("https://rtc.invalid"), TEXT("turn://rtc.invalid"), TEXT("turn:user:secret@rtc.invalid"),
+        TEXT("turn:rtc.invalid#secret"), TEXT("turn:rtc.invalid?transport=udp?extra=x"), TEXT("stun:rtc.invalid?transport=udp"),
+        TEXT("turns:rtc.invalid?transport=udp"), TEXT("TURN:rtc.invalid"), TEXT("turn:"), TEXT("turn:rtc.invalid:"),
+        TEXT("turn:rtc.invalid:65536"), TEXT("turn:rtc.invalid:0"), TEXT("turn:rtc.invalid:abc"), TEXT("turn:[::1]extra"), TEXT("turn:a b")})
+    {
+        Server.Urls = {Url}; const auto Error = ValidateIceServers({Server}, false);
+        TestTrue(TEXT("Malformed ICE URI rejected"), Error.IsError());
+        TestFalse(TEXT("Credential stays out of errors"), Error.Message.Contains(Server.Credential));
+    }
+    Server.Urls = {TEXT("turn:rtc.invalid")};
+    TestFalse(TEXT("Authenticated relay-only accepted"), ValidateIceServers({Server}, true).IsError());
+    Server.Credential.Reset(); TestTrue(TEXT("TURN needs credential"), ValidateIceServers({Server}, true).IsError());
+    Server.Credential = FString::ChrN(513, 'x'); TestTrue(TEXT("Credential bytes bounded"), ValidateIceServers({Server}, true).IsError());
+    const TCHAR EmbeddedNull[] = {'s', 0, 'e', 0}; Server.Credential = FString(3, EmbeddedNull);
+    TestTrue(TEXT("Embedded null rejected"), ValidateIceServers({Server}, true).IsError());
+    Server.Credential = TEXT("secret"); Server.Urls.Init(TEXT("turn:rtc.invalid"), 17);
+    TestTrue(TEXT("URL count bounded"), ValidateIceServers({Server}, false).IsError());
+    Server.Urls = {TEXT("stun:rtc.invalid")}; TArray<FSimurghRTCIceServer> Many; Many.Init(Server, 9);
+    TestTrue(TEXT("Server count bounded"), ValidateIceServers(Many, false).IsError());
+    TestTrue(TEXT("STUN alone cannot satisfy relay-only"), ValidateIceServers({Server}, true).IsError());
+    FSessionFixture Fixture; auto Config = Fixture.Config(); Config.bRelayOnly = true;
+    TestTrue(TEXT("Session applies ICE policy validation"), SimurghRTC::ValidateSessionConfig(Config).IsError());
+    return true;
+}
+
 #endif

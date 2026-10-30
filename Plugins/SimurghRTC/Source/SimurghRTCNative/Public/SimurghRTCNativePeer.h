@@ -42,7 +42,7 @@ public:
      * bLoopbackProbe is only for same-host fixtures; it restricts candidates to loopback.
      */
     static FHandle Open(UObject* LifetimeOwner, ENativeFactoryMode Mode,
-        FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe = false);
+        FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe = false, const FNativeIceConfig& Ice = {});
 
     ~FNativePeer();
     FNativePeer(const FNativePeer&) = delete;

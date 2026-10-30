@@ -14,6 +14,7 @@ public:
     SR_Runtime* Handle = nullptr;
     TUniquePtr<SR_SignalEvent> SignalEvent;
     TUniquePtr<SR_DataEvent> DataEvent;
+    SR_IceRoute IceRoute{sizeof(SR_IceRoute), SR_ABI_VERSION, 0, 0, 0, 0};
     ~FImpl() { SimurghRTC_DestroyV1(Handle); }
 #endif
 };
@@ -55,7 +56,7 @@ bool FNativeRuntime::Start(ENativeFactoryMode Mode, FString& OutError)
     return false;
 #endif
 }
-bool FNativeRuntime::CreateProbePeerConnection(FString& OutError, bool bLoopbackOnly)
+bool FNativeRuntime::CreateProbePeerConnection(FString& OutError, bool bLoopbackOnly, const FNativeIceConfig& Ice)
 {
     check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId());
     OutError.Reset();
@@ -64,6 +65,27 @@ bool FNativeRuntime::CreateProbePeerConnection(FString& OutError, bool bLoopback
     char Error[1024]{};
     if (bLoopbackOnly && SimurghRTC_EnableLoopbackProbeV1(Impl->Handle))
     { OutError = TEXT("Loopback probe mode must be enabled before peer creation."); return false; }
+    const auto IceError = ValidateIceServers(Ice.Servers, Ice.bRelayOnly);
+    if (IceError.IsError()) { OutError = IceError.Message; return false; }
+    // Keep converted buffers stable until the C ABI copies them.
+    TArray<TArray<uint8>> Strings; Strings.Reserve(48);
+    const auto Store = [&Strings](const FString& Text) -> const char*
+    {
+        FTCHARToUTF8 Utf8(*Text, Text.Len()); TArray<uint8> Bytes;
+        Bytes.Append(reinterpret_cast<const uint8*>(Utf8.Get()), Utf8.Length()); Bytes.Add(0);
+        Strings.Add(MoveTemp(Bytes)); return reinterpret_cast<const char*>(Strings.Last().GetData());
+    };
+    TArray<SR_IceServer> Servers;
+    for (const auto& Server : Ice.Servers) for (const auto& Url : Server.Urls)
+    {
+        SR_IceServer Entry{}; Entry.url = Store(Url); Entry.url_bytes = Strings.Last().Num() - 1;
+        Entry.username = Store(Server.Username); Entry.username_bytes = Strings.Last().Num() - 1;
+        Entry.credential = Store(Server.Credential); Entry.credential_bytes = Strings.Last().Num() - 1;
+        Servers.Add(Entry);
+    }
+    SR_IceConfig Config{sizeof(SR_IceConfig), SR_ABI_VERSION, Servers.GetData(), static_cast<uint32>(Servers.Num()), Ice.bRelayOnly ? 1 : 0};
+    if (SimurghRTC_ConfigureIceV1(Impl->Handle, &Config))
+    { OutError = TEXT("Native ICE configuration was rejected."); return false; }
     if (SimurghRTC_CreatePeerV1(Impl->Handle, Error, sizeof(Error)))
     { OutError = UTF8_TO_TCHAR(Error); return false; }
     return true;
@@ -143,6 +165,11 @@ bool FNativeRuntime::PollSignal(FNativeTransportEvent& OutEvent)
     T.CandidatePairs = Native.transport.candidate_pairs; T.SucceededPairs = Native.transport.succeeded_pairs; T.FailedPairs = Native.transport.failed_pairs;
     T.StunRequestsSent = Native.transport.stun_requests_sent; T.StunResponsesReceived = Native.transport.stun_responses_received;
     T.PacketsDiscardedOnSend = Native.transport.packets_discarded_on_send;
+    if (Native.transport.stats_samples != Impl->IceRoute.stats_samples)
+        SimurghRTC_GetIceRouteV1(Impl->Handle, &Impl->IceRoute);
+    T.IceRouteSamples = Impl->IceRoute.stats_samples;
+    T.SelectedLocalCandidate = Impl->IceRoute.local_type; T.SelectedRemoteCandidate = Impl->IceRoute.remote_type;
+    T.RelayProtocol = Impl->IceRoute.relay_protocol;
     OutEvent.Type = static_cast<ENativeSignalEvent>(Native.type);
     if (OutEvent.Type == ENativeSignalEvent::None) return true;
     auto& Result = OutEvent.Result;

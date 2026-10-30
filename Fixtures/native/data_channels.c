@@ -116,9 +116,12 @@ static void receive_limit(void) {
   CHECK(e->type==SR_DATA_FATAL && e->error_code==SR_RESOURCE_EXHAUSTED);
   close_peer(a);close_peer(b);free(a);free(b);free(left);free(right);free(e);
 }
+
+#ifndef SR_DATA_NO_MAIN
 int main(void) {
   CHECK(SimurghRTC_ChannelV1(NULL,NULL,NULL)==SR_INVALID_ARGUMENT);
   CHECK(SimurghRTC_PollDataV1(NULL,NULL)==SR_INVALID_ARGUMENT);
   roundtrips(0);roundtrips(1);receive_limit();
   puts("PASS: DataChannel UTF-8/binary round trips, six reliability/order modes, negotiated limits, FIFO and bounded receive overflow");return 0;
 }
+#endif

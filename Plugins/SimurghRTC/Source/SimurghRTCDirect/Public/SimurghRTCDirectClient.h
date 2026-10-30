@@ -17,6 +17,8 @@ struct FDirectClientConfig
     float RequestTimeoutSeconds = 2;
     float ConnectTimeoutSeconds = 20;
     bool bAllowLoopbackHttp = false;
+    TArray<FSimurghRTCIceServer> IceServers;
+    bool bRelayOnly = false;
     bool bLoopbackProbe = false;
     bool bEarlyIceProbe = false;
 };

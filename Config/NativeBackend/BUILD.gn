@@ -5,6 +5,7 @@ rtc_static_library("probe") {
   suppressed_configs = [ "//build/config/compiler:thin_archive" ]
   sources = [ "runtime.cc", "media.cc", "signaling.cc", "signaling.h", "data_channels.cc", "data_channels.h", "simurgh_rtc_abi.h" ]
   deps = [
+    "//pc:ice_server_parsing",
     "//third_party/boringssl", "//third_party/opus", "//third_party/libvpx",
     "//api:create_peerconnection_factory", "//api:create_modular_peer_connection_factory",
     "//api/video:video_frame", "//rtc_base:buffer", "//third_party/libyuv",

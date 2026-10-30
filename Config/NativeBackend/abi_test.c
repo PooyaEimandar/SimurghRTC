@@ -19,7 +19,28 @@ int main(void) {
     assert(!SimurghRTC_CreatePeerV1(a, error, sizeof(error)));
     assert(SimurghRTC_CreatePeerV1(a, error, sizeof(error)));
     SimurghRTC_DestroyV1(a); a = NULL;
+    SR_IceConfig ice = {sizeof(ice), SR_ABI_VERSION, NULL, 0, 0};
+    assert(SimurghRTC_ConfigureIceV1(NULL, &ice) == SR_INVALID_ARGUMENT);
+    assert(!SimurghRTC_ConfigureIceV1(b, &ice));
+    ice.relay_only = 1; assert(SimurghRTC_ConfigureIceV1(b, &ice) == SR_INVALID_ARGUMENT);
+    ice.relay_only = 2; assert(SimurghRTC_ConfigureIceV1(b, &ice) == SR_INVALID_ARGUMENT);
+    ice.relay_only = 0; ice.server_count = 17; assert(SimurghRTC_ConfigureIceV1(b, &ice) == SR_INVALID_ARGUMENT);
+    char url[] = "turn:127.0.0.1:9?transport=udp";
+    SR_IceServer server = {url, (uint32_t)strlen(url), "fixture-user", 12, "fixture-password", 16};
+    ice.servers = &server; ice.server_count = 1; ice.relay_only = 1;
+    assert(!SimurghRTC_ConfigureIceV1(b, &ice));
+    server.credential_bytes = 0; assert(SimurghRTC_ConfigureIceV1(b, &ice) == SR_INVALID_ARGUMENT);
+    server.credential_bytes = 513; assert(SimurghRTC_ConfigureIceV1(b, &ice) == SR_INVALID_ARGUMENT);
+    server.credential_bytes = 16; server.url_bytes = 2049; assert(SimurghRTC_ConfigureIceV1(b, &ice) == SR_INVALID_ARGUMENT);
+    server.url_bytes = (uint32_t)strlen(url); url[0] = '@';
+    assert(SimurghRTC_ConfigureIceV1(b, &ice) == SR_INVALID_ARGUMENT);
+    // Rejected inputs leave the previous owned configuration intact.
     assert(!SimurghRTC_CreatePeerV1(b, error, sizeof(error)));
+    assert(SimurghRTC_ConfigureIceV1(b, &ice) == SR_INVALID_STATE);
+    SR_IceRoute route = {sizeof(route), SR_ABI_VERSION, 0, 0, 0, 0};
+    assert(!SimurghRTC_GetIceRouteV1(b, &route));
+    assert(!route.stats_samples && !route.local_type && !route.remote_type);
+    route.size--; assert(SimurghRTC_GetIceRouteV1(b, &route) == SR_INVALID_ARGUMENT);
     assert(!SimurghRTC_DiagnosticsV1(b, &d));
     assert(d.peer_ready && !d.dummy_audio && !d.audio_processing && !d.audio_codecs[0] && !d.video_codecs[0]);
     d.abi_version = 2; assert(SimurghRTC_DiagnosticsV1(b, &d));

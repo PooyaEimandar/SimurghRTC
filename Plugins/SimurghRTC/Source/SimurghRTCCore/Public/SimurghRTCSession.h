@@ -32,6 +32,8 @@ public:
     UFUNCTION(BlueprintPure, Category="SimurghRTC") FGuid GetSessionId() const { return SessionId; }
     UFUNCTION(BlueprintPure, Category="SimurghRTC") ESimurghRTCSessionState GetState() const { return State; }
     UFUNCTION(BlueprintPure, Category="SimurghRTC") FSimurghRTCCapability GetCapability(ESimurghRTCProvider Provider, ESimurghRTCFeature Feature) const;
+    // Connection/transport error; read from OnStateChanged(Failed). Cleared by a new Connect or Disconnect.
+    UFUNCTION(BlueprintPure, Category="SimurghRTC") FSimurghRTCError GetConnectionError() const;
     UFUNCTION(BlueprintPure, Category="SimurghRTC") FSimurghRTCStatistics GetStatistics() const { return {}; }
     UFUNCTION(BlueprintPure, Category="SimurghRTC") FSimurghRTCCallInfo GetCallInfo() const { return {}; }
     UFUNCTION(BlueprintCallable, Category="SimurghRTC") FSimurghRTCError GetChannelInfo(FSimurghRTCChannelHandle Channel, FSimurghRTCChannelInfo& Info) const;

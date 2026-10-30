@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <mutex>
 #include <thread>
+#include "pc/ice_server_parsing.h"
 #include "api/create_peerconnection_factory.h"
 #include "api/create_modular_peer_connection_factory.h"
 #include "api/audio/builtin_audio_processing_builder.h"
@@ -38,6 +39,8 @@ struct SR_Runtime {
   std::shared_ptr<sr::Signaling> observer = std::make_shared<sr::Signaling>();
   webrtc::scoped_refptr<webrtc::PeerConnectionInterface> peer;
   SR_Diagnostics diagnostics{};
+  webrtc::PeerConnectionInterface::IceServers ice_servers;
+  bool relay_only = false;
   ~SR_Runtime() {
     if (signaling_started) signaling->BlockingCall([&] {
       observer->Shutdown();
@@ -125,10 +128,12 @@ extern "C" int SimurghRTC_CreatePeerV1(SR_Runtime* r, char* error, uint32_t capa
   r->signaling->BlockingCall([&] {
     webrtc::PeerConnectionInterface::RTCConfiguration config;
     config.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
+    config.servers = r->ice_servers;
+    config.type = r->relay_only ? webrtc::PeerConnectionInterface::kRelay : webrtc::PeerConnectionInterface::kAll;
     webrtc::PeerConnectionDependencies deps(r->observer.get());
     auto created = r->factory->CreatePeerConnectionOrError(config, std::move(deps));
     if (created.ok()) { r->peer = created.MoveValue(); r->observer->Attach(r->peer.get()); }
-    else Fail(error, capacity, created.error().message());
+    else Fail(error, capacity, "PeerConnection creation failed.");
   });
   r->diagnostics.peer_ready = !!r->peer;
   return r->peer ? 0 : 1;
@@ -167,4 +172,55 @@ extern "C" int SimurghRTC_PollDataV1(SR_Runtime* r, SR_DataEvent* event) {
   if (!r || r->owner != std::this_thread::get_id() || !r->peer || !event
       || event->size != sizeof(*event) || event->abi_version != SR_ABI_VERSION) return SR_INVALID_ARGUMENT;
   r->signaling->BlockingCall([&] { r->observer->PollData(*event); }); return SR_OK;
+}
+
+namespace {
+bool IceText(const char* text, uint32_t size, uint32_t limit, bool url) {
+  if (size > limit || (size && !text)) return false;
+  for (uint32_t i = 0; i < size; ++i) {
+    const auto c = static_cast<unsigned char>(text[i]);
+    if (c < 32 || c == 127 || (url && (c <= 32 || c >= 127 || c == '@' || c == '/' || c == '#'))) return false;
+  }
+  return true;
+}
+}
+extern "C" int SimurghRTC_ConfigureIceV1(SR_Runtime* r, const SR_IceConfig* config) {
+  if (!r || r->owner != std::this_thread::get_id() || !config
+      || config->size != sizeof(*config) || config->abi_version != SR_ABI_VERSION) return SR_INVALID_ARGUMENT;
+  if (!r->factory || r->peer) return SR_INVALID_STATE;
+  if (config->server_count > SR_MAX_ICE_SERVERS || (config->server_count && !config->servers)
+      || (config->relay_only != 0 && config->relay_only != 1)) return SR_INVALID_ARGUMENT;
+  webrtc::PeerConnectionInterface::IceServers servers;
+  bool has_turn = false;
+  for (uint32_t i = 0; i < config->server_count; ++i) {
+    const auto& in = config->servers[i];
+    if (!in.url_bytes || !IceText(in.url, in.url_bytes, SR_MAX_ICE_URL_BYTES, true)
+        || !IceText(in.username, in.username_bytes, SR_MAX_ICE_CREDENTIAL_BYTES, false)
+        || !IceText(in.credential, in.credential_bytes, SR_MAX_ICE_CREDENTIAL_BYTES, false)) return SR_INVALID_ARGUMENT;
+    webrtc::PeerConnectionInterface::IceServer server;
+    const std::string url(in.url, in.url_bytes);
+    const bool turn = url.rfind("turn:", 0) == 0 || url.rfind("turns:", 0) == 0;
+    if (!turn && url.rfind("stun:", 0) != 0 && url.rfind("stuns:", 0) != 0) return SR_INVALID_ARGUMENT;
+    if (turn && (!in.username_bytes || !in.credential_bytes)) return SR_INVALID_ARGUMENT;
+    if (in.username_bytes) server.username.assign(in.username, in.username_bytes);
+    if (in.credential_bytes) server.password.assign(in.credential, in.credential_bytes);
+    // Reject ambiguous queries before invoking the upstream parser.
+    const auto query = url.find('?');
+    if (query != std::string::npos && (!turn || (url.substr(query) != "?transport=udp" && url.substr(query) != "?transport=tcp"))) return SR_INVALID_ARGUMENT;
+    if (url.rfind("turns:", 0) == 0 && query != std::string::npos && url.substr(query) != "?transport=tcp") return SR_INVALID_ARGUMENT;
+    server.urls.push_back(url); servers.push_back(std::move(server)); has_turn |= turn;
+  }
+  if (config->relay_only && !has_turn) return SR_INVALID_ARGUMENT;
+  webrtc::ServerAddresses stun;
+  std::vector<webrtc::RelayServerConfig> turn;
+  if (!webrtc::ParseIceServersOrError(servers, &stun, &turn).ok()) return SR_INVALID_ARGUMENT;
+  r->ice_servers = std::move(servers); r->relay_only = config->relay_only != 0;
+  return SR_OK;
+}
+extern "C" int SimurghRTC_GetIceRouteV1(SR_Runtime* r, SR_IceRoute* out) {
+  if (!r || r->owner != std::this_thread::get_id() || !out
+      || out->size != sizeof(*out) || out->abi_version != SR_ABI_VERSION) return SR_INVALID_ARGUMENT;
+  if (!r->peer) return SR_INVALID_STATE;
+  r->signaling->BlockingCall([&] { *out = r->observer->IceRoute(); });
+  return SR_OK;
 }

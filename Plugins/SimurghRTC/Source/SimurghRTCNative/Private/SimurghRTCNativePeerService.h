@@ -30,7 +30,7 @@ public:
 
     FNativePeerService();
     ~FNativePeerService();
-    FNativePeer::FHandle Open(UObject* Owner, ENativeFactoryMode Mode, FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe = false);
+    FNativePeer::FHandle Open(UObject* Owner, ENativeFactoryMode Mode, FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe = false, const FNativeIceConfig& Ice = {});
     void Close(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State);
     bool Signal(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State,
         FNativeSignalRequest Request, FNativeSignalCompleted OnComplete, FString& OutError);
@@ -77,6 +77,7 @@ private:
         uint64 OperationId = 0;
         double Deadline = 0;
         FNativeDataCommand Data;
+        FNativeIceConfig Ice;
 #if WITH_DEV_AUTOMATION_TESTS
         FEvent* Entered = nullptr;
         FEvent* Release = nullptr;

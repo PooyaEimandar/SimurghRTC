@@ -47,6 +47,9 @@ class DirectProbeTests(unittest.TestCase):
                             created=1,connected=1,closed=1,expired=0,replays=2,rejected=2,early_ice=1,
                             connected_session_ids=[SESSION],closed_session_ids=[SESSION],last_transport=r['pairs'][0]['transport'])
         validate_server(r,'run',42,'hash')
+        network=copy.deepcopy(r);network['loopback_only']=False
+        validate_server(network,'run',42,'hash',loopback=False)
+        with self.assertRaises(ValueError):validate_server(network,'run',42,'hash')
         for key,value in [('server_build',False),('pid',43),('live_peers',1),('closed_session_ids',[]),('teardown_complete',False)]:
             bad=copy.deepcopy(r);bad[key]=value
             with self.assertRaises(ValueError):validate_server(bad,'run',42,'hash')

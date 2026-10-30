@@ -12,7 +12,7 @@ Applications depend on `SimurghRTCCore` and include `SimurghRTCSession.h` and `S
 
 | Surface | C++ entry points | Blueprint equivalent |
 |---|---|---|
-| Session | `CreateSession(Owner)`, `GetSessionId`, `GetState`, `GetProvider`, `Shutdown` | Callable functions and pure queries |
+| Session | `CreateSession(Owner)`, `GetSessionId`, `GetState`, `GetConnectionError`, `GetProvider`, `Shutdown` | Callable functions and pure queries |
 | Connection | `Connect(Session, Config)`, `Disconnect(Session)` | Async Connect / Disconnect |
 | Channels | `OpenChannel`, `CloseChannel` | Matching async nodes |
 | Data | `Session->SendText`, `SendBytes`, `GetChannelInfo` | Callable nodes with a structured error |
@@ -30,7 +30,11 @@ Session events are `OnStateChanged`, `OnMessage`, `OnChannelChanged`, `OnTrackCh
 
 `FSimurghRTCSessionConfig` selects provider, purpose, endpoint, local identity, access token, ICE servers and timeout. Direct permits HTTP(S); Janus also permits WS(S). Insecure signaling needs explicit development opt-in. Endpoints require a host and cannot embed user credentials, fragments or whitespace. Credentials are transient and omitted from errors/logs. Operation completion releases its configuration copy. Application code and Blueprint literals must not embed production secrets.
 
-The current Direct adapter requires the full `/simurghrtc/v1/signal` URL, a local identity and an access token. HTTP is limited to explicitly enabled loopback development endpoints. Custom ICE servers and receive-only sessions return `NotImplemented`; they are not silently ignored. Purpose selects the server admission category, but does not implement calls or rooms.
+The current Direct adapter requires the full `/simurghrtc/v1/signal` URL, a local identity and an access token. HTTP is limited to explicitly enabled loopback development endpoints. ICE servers are passed to the native backend. Receive-only sessions still return `NotImplemented`. Purpose selects the server admission category, but does not implement calls or rooms.
+
+Set `IceServers` at runtime for STUN/TURN. Set `bRelayOnly = true` to require TURN; it defaults to false, so existing clients keep direct ICE routes. This is an additive v1 field available in C++ and Blueprint. Server hosts set `FDirectServerConfig.IceServers` and `bRelayOnly` separately.
+
+ICE settings allow 8 server entries and 16 URLs in total. Use `stun:host`, `stuns:host`, `turn:host:port?transport=udp`, `turn:host:port?transport=tcp`, or `turns:host:port?transport=tcp`. Bracket IPv6 hosts. URLs are limited to 2,048 UTF-8 bytes; usernames and credentials to 512 bytes each. TURN requires both credentials. Relay-only requires at least one TURN URL. Invalid input returns `InvalidArgument` without exposing its contents. Settings are copied for that connection; reconnect to apply changes.
 
 | Purpose | Direct Unreal | Janus |
 |---|---|---|
@@ -65,6 +69,8 @@ For a live owner, exactly one of **On Success**, **On Failure** or **On Cancelle
 | Activate a dormant proxy after shutdown | Settle it as cancelled without calling the former owner. |
 
 Direct Connect goes `Idle/Closed/Failed → Connecting → Connected`, or `Failed` on a connection error. Validation failures leave session state unchanged. Cancelling during `Connecting` returns to `Idle`; cancellation before execution leaves the prior state unchanged. Disconnect moves through `Closing` to `Closed`. Cancelling its proxy cannot undo a close already sent. Reconnect keeps the facade's session GUID but creates a fresh PeerConnection, server session and channel handles.
+
+When `OnStateChanged` reports `Failed`, call `GetConnectionError()` to read the retained transport error. It identifies the session; an unsolicited connection loss has no operation ID. An accepted new Connect or Disconnect clears it. Reconnect is an explicit application action: restore connectivity, call Connect again, then open new channels. Old channel handles remain invalid.
 
 Transport callbacks use weak UObject references and return to the game thread. Shutdown removes listeners immediately; native cleanup continues without calling the former owner. Connect enforces the configured deadline (1–300,000 ms, starting at activation). Other remote operations use the connected session's timeout. A timeout settles the operation while remaining cleanup continues in the background.
 

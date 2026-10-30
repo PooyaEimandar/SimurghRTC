@@ -245,7 +245,7 @@ public:
             if (Live >= Config.MaxSessions || PrincipalLive >= Config.MaxSessionsPerPrincipal || Sessions.Num() >= 64) { Error(Request, TEXT("ResourceLimit"), Complete); return true; }
             Session = MakeShared<FDirectSession>(); Session->Id = FGuid::NewGuid().ToString(EGuidFormats::DigitsWithHyphensLower);
             Session->Principal = Allowed.Principal; Session->Identity = Admission.Identity; Session->Purpose = Admission.Purpose; Session->CreateId = Request.Id; Session->CreateDigest = Request.Digest;
-            Session->Peer = FNativePeer::Open(Owner.Get(), Admission.Purpose == TEXT("call") ? ENativeFactoryMode::BuiltinMedia : ENativeFactoryMode::DataOnly, {}, Failure, Config.bLoopbackProbe);
+            Session->Peer = FNativePeer::Open(Owner.Get(), Admission.Purpose == TEXT("call") ? ENativeFactoryMode::BuiltinMedia : ENativeFactoryMode::DataOnly, {}, Failure, Config.bLoopbackProbe, {Config.IceServers, Config.bRelayOnly});
             if (!Session->Peer) { Error(Request, TEXT("ResourceLimit"), Complete); return true; }
             TWeakPtr<FImpl> Weak = AsShared(); TWeakPtr<FDirectSession> WeakSession = Session;
             Session->Peer->SetChannelHandler([Weak, WeakSession](const FNativeChannelEvent& Event)
@@ -465,6 +465,8 @@ TSharedPtr<FDirectServer> FDirectServer::Bind(UObject* Owner, TSharedRef<IHttpRo
         || !FMath::IsFinite(Config.IdleSeconds) || Config.IdleSeconds < 1 || Config.IdleSeconds > 300
         || !FMath::IsFinite(Config.ReplaySeconds) || Config.ReplaySeconds < 1 || Config.ReplaySeconds > 300)
     { Error = TEXT("Invalid Direct Server configuration."); return {}; }
+    const auto IceError = ValidateIceServers(Config.IceServers, Config.bRelayOnly);
+    if (IceError.IsError()) { Error = IceError.Message; return {}; }
     auto Impl = MakeShared<FImpl>(); Impl->Owner = Owner; Impl->Router = Router; Impl->Config = MoveTemp(Config);
     TWeakPtr<FImpl> Weak = Impl;
     Impl->Route = Router->BindRoute(FHttpPath(Direct::Path), EHttpServerRequestVerbs::VERB_POST,

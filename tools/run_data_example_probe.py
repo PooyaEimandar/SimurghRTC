@@ -16,18 +16,24 @@ from run_mobile_probe import read_report
 from run_signaling_probe import server_bundle_id
 
 SCENARIOS = ('messages', 'timeout', 'disconnect-pending', 'destroy-connect', 'destroy-open')
+BACKGROUND_SCENARIOS = ('background-connected', 'background-connect')
+RECOVERY_SCENARIOS = ('reconnect', 'signaling-loss', 'relay-loss')
 MAPS = {'cpp': '/Game/Examples/Direct/Maps/RtcDataCpp', 'blueprint': '/Game/Examples/Direct/Maps/RtcDataBlueprint'}
 
 
-def validate_example(report, run_id, pid, manifest, with_janus, implementation, scenario):
-    a.require(implementation in MAPS and scenario in SCENARIOS, 'Unknown data-example case.')
+def validate_example(report, run_id, pid, manifest, with_janus, implementation, scenario, *, platform='Mac', simulator=False, loopback=True):
+    recovery = scenario in RECOVERY_SCENARIOS; background = scenario in BACKGROUND_SCENARIOS
+    rounds = 2 if recovery or scenario=='background-connected' else 1
+    connections = 2 if recovery or background else 1
+    a.require(implementation in MAPS and scenario in (*SCENARIOS, *RECOVERY_SCENARIOS, *BACKGROUND_SCENARIOS, 'unauthorized', 'tls-rejected'), 'Unknown data-example case.')
     a.require(report.get('passed') is True, 'Data example failed: '+str(report.get('error', 'missing result')))
     expected = dict(schema=1, run_id=run_id, pid=pid, implementation=implementation, scenario=scenario,
                     map=MAPS[implementation], editor_build=False, server_build=False, arm64_build=True,
                     with_janus=with_janus, artifact_manifest_sha256=manifest,
                     native_backend='M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d', shared_api=True,
-                    loopback_only=True, network_media_tested=False, error='', transports_created=1,
-                    native_closed=1, pending_cleanup=0, objects_collected=True, end_play_calls=1,
+                    platform=platform, simulator_build=simulator, loopback_only=loopback,
+                    network_media_tested=False, error='', transports_created=connections,
+                    native_closed=connections, pending_cleanup=0, objects_collected=True, end_play_calls=1,
                     end_play_closed=True, late_callbacks=0, callbacks_on_game_thread=True,
                     disconnect_requested=scenario=='disconnect-pending')
     for key, value in expected.items():
@@ -38,26 +44,60 @@ def validate_example(report, run_id, pid, manifest, with_janus, implementation, 
     sid=report.get('session_id');a.require(type(sid) is str and str(uuid.UUID(sid))==sid and uuid.UUID(sid).int!=0, 'Invalid session ID.')
     for key in ('operations', 'completions', 'sent', 'received', 'channel_events', 'open_events', 'remote_closed', 'quiet_ticks', 'last_failure'):
         a.require(type(report.get(key)) is int and report[key]>=0, 'Invalid counter: '+key)
-    a.require(report['quiet_ticks']>=8 and report['remote_closed']<=1, 'Missing quiet cleanup interval.')
+    a.require(report['quiet_ticks']>=8 and report['remote_closed']<=connections, 'Missing quiet cleanup interval.')
     states=report.get('states')
-    expected_states={'messages':[1,2,3,4], 'timeout':[1,5,3,4], 'disconnect-pending':[1,3,4], 'destroy-connect':[1], 'destroy-open':[1,2]}[scenario]
+    expected_states={'background-connected':[1,2,1,2,3,4], 'background-connect':[1,1,2,3,4], 'reconnect':[1,2,3,4,1,2,3,4], 'signaling-loss':[1,2,5,1,2,3,4], 'relay-loss':[1,2,5,1,2,3,4], 'messages':[1,2,3,4], 'timeout':[1,5,3,4], 'unauthorized':[1,5,3,4], 'tls-rejected':[1,5,3,4], 'disconnect-pending':[1,3,4], 'destroy-connect':[1], 'destroy-open':[1,2]}[scenario]
     a.require(type(states) is list and all(type(v) is int for v in states) and states==expected_states, 'Session state events differ.')
     pending=scenario.startswith('destroy-')
     a.require(report.get('pending_at_destruction') is pending and report.get('silent_cancelled') is pending, 'Pending owner cleanup differs.')
     outcomes = {
+        'background-connected': ['Connect:Success','OpenChannel:Success','Connect:Success','OpenChannel:Success','CloseChannel:Success','Disconnect:Success'],
+        'background-connect': ['Connect:Success','OpenChannel:Success','CloseChannel:Success','Disconnect:Success'],
+        'reconnect': ['Connect:Success','OpenChannel:Success','CloseChannel:Success','Disconnect:Success']*2,
+        'signaling-loss': ['Connect:Success','OpenChannel:Success','Connect:Success','OpenChannel:Success','CloseChannel:Success','Disconnect:Success'],
+        'relay-loss': ['Connect:Success','OpenChannel:Success','Connect:Success','OpenChannel:Success','CloseChannel:Success','Disconnect:Success'],
         'messages': ['Connect:Success','OpenChannel:Success','CloseChannel:Success','Disconnect:Success'],
         'timeout': ['Connect:Failure','Disconnect:Success'],
+        'unauthorized': ['Connect:Failure','Disconnect:Success'], 'tls-rejected': ['Connect:Failure','Disconnect:Success'],
         'disconnect-pending': ['Connect:Cancelled','Disconnect:Success'],
         'destroy-connect': [], 'destroy-open': ['Connect:Success'],
     }[scenario]
     a.require(report.get('outcomes')==outcomes and report['completions']==len(outcomes), 'Completion branches differ.')
-    a.require(report['operations']==len(outcomes)+int(pending), 'Pending or duplicate operation count differs.')
-    messages=scenario=='messages'
-    a.require(report['sent']==report['received']==(2 if messages else 0), 'Message totals differ.')
+    a.require(report['operations']==len(outcomes)+int(pending or scenario=='background-connect'), 'Pending or duplicate operation count differs.')
+    messages=scenario=='messages' or recovery or background
+    a.require(report['sent']==report['received']==(2*rounds if messages else 0), 'Message totals differ.')
     a.require(report.get('exact_payloads') is messages and report.get('channel_info_checked') is messages, 'Payload or channel verification missing.')
-    a.require(report['last_failure']==(8 if scenario=='timeout' else 9 if scenario=='disconnect-pending' else 0), 'Structured error differs.')
+    a.require(report['last_failure']==(8 if scenario=='timeout' else 7 if scenario=='unauthorized' else 11 if scenario=='tls-rejected' else 9 if scenario=='disconnect-pending' else 0), 'Structured error differs.')
     if messages:
-        a.require(report['channel_events']>0 and report['open_events']>0 and report['remote_closed']==1, 'Channel events or acknowledged close missing.')
+        a.require(report['channel_events']>0 and report['open_events']>0 and report['remote_closed']>=1, 'Channel events or acknowledged close missing.')
+    if background:
+        expected_background=dict(inactive_events=1,active_events=1,background_events=1,foreground_events=1,background_shutdown=True,
+            background_pending=scenario=='background-connect',background_cancelled=scenario=='background-connect',
+            retired_objects_collected=True,rounds_completed=rounds,stale_handle_checks=6 if rounds==2 else 0,recovery_requested=False)
+        for key,value in expected_background.items():
+            a.require(type(report.get(key)) is type(value) and report[key]==value,'Unexpected background result: '+key)
+        ids=report.get('session_ids',[])
+        a.require(type(ids) is list and len(ids)==2 and len(set(ids))==2 and ids[-1]==sid
+                  and all(str(uuid.UUID(v))==v and uuid.UUID(v).int for v in ids),'Resume must create a fresh session.')
+        channels=report.get('channel_ids',[])
+        a.require(type(channels) is list and len(channels)==rounds and len(set(channels))==rounds,'Resume reused a channel.')
+        a.require(report.get('connection_errors')==[],'Backgrounding should shut down without a connection failure.')
+        elapsed=report.get('background_seconds');shutdown=report.get('shutdown_seconds')
+        a.require(type(elapsed) in (int,float) and 3<=elapsed<60,'Missing bounded real background interval.')
+        a.require(type(shutdown) in (int,float) and 0<=shutdown<1,'Background shutdown blocked the game thread.')
+        gap=report.get('max_tick_gap_seconds');ticks=report.get('heartbeats')
+        a.require(type(gap) in (int,float) and 0<=gap<2 and type(ticks) is int and ticks>=10,'Foreground game thread did not remain responsive.')
+    if recovery:
+        a.require(report.get('rounds_completed')==2 and report.get('stale_handle_checks')==6, 'Missing recovery/old-handle checks.')
+        ids=report.get('channel_ids',[])
+        a.require(len(ids)==2 and len(set(ids))==2 and all(str(uuid.UUID(v))==v and uuid.UUID(v).int for v in ids),'Reconnect reused/invalid channel identity.')
+        a.require(report.get('recovery_requested') is (scenario!='reconnect'), 'Recovery gate differs.')
+        errors=report.get('connection_errors')
+        if scenario=='reconnect':a.require(errors==[] and report['remote_closed']==2,'Graceful reconnect lost a connection or cleanup acknowledgement.')
+        else:a.require(type(errors) is list and len(errors)==1 and type(errors[0]) is int
+                       and errors[0] in ([11] if scenario=='signaling-loss' else [2,11]),'Missing structured connection-loss error.')
+        gap=report.get('max_tick_gap_seconds');ticks=report.get('heartbeats')
+        a.require(type(gap) in (int,float) and 0<=gap<2 and type(ticks) is int and ticks>=10,'Game thread did not remain responsive.')
     return sid
 
 

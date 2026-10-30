@@ -62,7 +62,7 @@ An accepted send may wait in the native worker if SCTP is full. It has a 30-seco
 
 ## Run the checks
 
-Rebuild the native library after changing the bridge. Previous artifacts fail the source/hash checks. Mac qualification does not qualify the updated bridge on Android or iOS; rebuild and validate those targets separately.
+Rebuild the native library after changing the bridge. Previous artifacts fail the source/hash checks. Rebuild and validate each mobile target separately; [Mobile data](MOBILE_DATA.md) records the current packaged and native results.
 
 ```sh
 python3 tools/run_native_data_probe.py \
@@ -77,4 +77,4 @@ python3 tools/run_data_probe.py \
 
 Use separately packaged Mac ARM64 Game and dedicated Server apps with the same current artifact; see [building](BUILDING.md) and [Direct signaling](DIRECT_SIGNALING.md). The runner checks saved reports, executable and artifact hashes, distinct process IDs, exact message counts, channel closure and native cleanup. It removes temporary credentials and stops the processes it starts.
 
-The native fixture additionally tests a lower advertised 32 KiB limit, zero-lifetime configuration, a Server-originated channel and explicit receive-overflow failure. The Unreal fixture tests six ordering/reliability combinations, exact Unicode/binary echoes, empty and maximum-size messages, a 32-message ordered burst, rejected sends, copied inputs and queue recovery. These are controlled loopback tests. Packet-loss/expiry behavior, cross-device traffic and mobile packages need separate acceptance. SR-105 adds shared C++ session checks; [SR-106 data examples](DATA_EXAMPLES.md) exercise the public nodes through an actual packaged Blueprint graph.
+The native fixture additionally tests a lower advertised 32 KiB limit, zero-lifetime configuration, a Server-originated channel and explicit receive-overflow failure. The Unreal fixture tests six ordering/reliability combinations, exact Unicode/binary echoes, empty and maximum-size messages, a 32-message ordered burst, rejected sends, copied inputs and queue recovery. These are controlled loopback tests. Packet-loss/expiry behavior and cross-device traffic need separate acceptance. See [Mobile data](MOBILE_DATA.md) for mobile package checks. SR-105 adds shared C++ session checks; [SR-106 data examples](DATA_EXAMPLES.md) exercise the public nodes through an actual packaged Blueprint graph.

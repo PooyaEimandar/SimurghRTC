@@ -1,0 +1,3928 @@
+{
+  "schema": 1,
+  "issue": "SR-107",
+  "date": "2026-10-29",
+  "status": "in_progress",
+  "engine_version": "5.8.3",
+  "project_base_revision": "10582cef7a8a9a133f8fe386ed7be2c1be1ffa52",
+  "scope": "Packaged Android ARM64 and iOS ARM64 simulator C++/Blueprint Direct data maps; local Mac dedicated Server.",
+  "public_plugin_api_changed": false,
+  "native_bridge_changed": false,
+  "limitations": [
+    "Development packages; no Shipping size baseline or incremental RTC size measurement.",
+    "Authenticated development HTTP only. Android uses adb reverse for signaling and normal network ICE for data; iOS simulator uses loopback ICE.",
+    "HTTPS, forced TURN, mobile reconnect, network loss, foreground/background, and packaged mobile backpressure/reliability matrix remain open.",
+    "Native ordering/reliability and negotiated-limit fixtures are separate from the packaged shared-API sample checks.",
+    "Physical iOS testing is deferred; its rebuilt library has compile/link evidence only.",
+    "Native builds reuse existing compiled output directories; these are not new repeat-build or independent-host acceptance runs.",
+    "M1 and the external M0 acceptance gates remain open."
+  ],
+  "artifacts": {
+    "Mac": {
+      "identity": {
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17895536,
+        "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "f970a6d3f93ba87dba9ba8cb7c936adb48548cfa18bd4b95d59e1c8f01f5daf4",
+      "source_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "build": {
+        "archive_before_isolation_sha256": "e5d54671e34eeb3d099d9dcafe1f8428ad79c5ddacd021a39f0d2246a9c3a35b",
+        "bridge_sources": {
+          "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
+          "BUILD.gn": "55baadbc2ab3d995f689af171cf827d87946bf639d6b7588903b38e948a3d6cf",
+          "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
+          "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
+          "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
+          "abi_test.c": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b",
+          "data_channels.cc": "67c964310058967d915bcc5c1a02bc110fd8319cea2ee0d47e0ea650e6686864",
+          "data_channels.h": "8880754dd273386542c122e553d54646cc53a29dcf6972d980d2eb3c04db0d5d",
+          "exports.txt": "6f1dc3a7830053082bc183c100b44b7781ec311dbbc063d201624303a8f0a472",
+          "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
+          "runtime.cc": "a4a5c796d3fdcf636ffd08fdb9df892a2b3142a49f7368b504cfcb00e59912e5",
+          "signaling.cc": "d6598f3fec9b1375c65faedb63b44ed70e42d3d6f770bbe278827ebdee6fd861",
+          "signaling.h": "7855f9474578e4c8ca30c7d6c671c5de37457d5ed7f48f15dbf39b2e9ae0626e",
+          "simurgh_rtc_abi.h": "277a4dc32a6d5d4bc2155399fef1db0fa68dbdc8c3930b532ab63d954df5603f"
+        },
+        "build_directory": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeMacRepeat20261019C",
+        "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/third_party/llvm-build/Release+Asserts/bin",
+        "distribution_notices": "review_required_SR902",
+        "exports": [
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "fresh_output": false,
+        "isolated_sha256": "d6e5934b788e6d2c2a3c5452a5ecd9cc680a9cf745c3f1a3a68c7dc12da8be76",
+        "platform": "Mac",
+        "recipe_sha256": "29c5c55471a24c68aa871aee17fc8a8c5c196691ab4ef055e13300638f867c2e",
+        "runtime_validation": "unverified",
+        "schema": 1,
+        "sdk": {
+          "minimum_os": "12.0",
+          "sdk": "27.0",
+          "sdk_name": "macosx"
+        },
+        "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+        "xcode": "Xcode 27.1\nBuild version 27A9275"
+      }
+    },
+    "Android": {
+      "identity": {
+        "artifact_id": "android-arm64-m155-b02a73f9a830",
+        "platform": "Android",
+        "architecture": "arm64",
+        "files": 17,
+        "objects": 1,
+        "archive_bytes": 28236244,
+        "manifest_sha256": "aecd0dffdc41ec544f1e23003febd2f55e4e8ec6cde31755fb841ad9a56fb798",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "43b2cadb1ec9ffc68bf8d5e05890bd7cfff0060ecd6c32673a3c8f9f22b2675e",
+      "source_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "build": {
+        "archive_before_isolation_sha256": "e580b79363c4654c23e4ba84612292d77e14cfdc3de87cf91d11a1bee22d7321",
+        "bridge_sources": {
+          "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
+          "BUILD.gn": "55baadbc2ab3d995f689af171cf827d87946bf639d6b7588903b38e948a3d6cf",
+          "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
+          "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
+          "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
+          "abi_test.c": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b",
+          "data_channels.cc": "67c964310058967d915bcc5c1a02bc110fd8319cea2ee0d47e0ea650e6686864",
+          "data_channels.h": "8880754dd273386542c122e553d54646cc53a29dcf6972d980d2eb3c04db0d5d",
+          "exports.txt": "6f1dc3a7830053082bc183c100b44b7781ec311dbbc063d201624303a8f0a472",
+          "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
+          "runtime.cc": "a4a5c796d3fdcf636ffd08fdb9df892a2b3142a49f7368b504cfcb00e59912e5",
+          "signaling.cc": "d6598f3fec9b1375c65faedb63b44ed70e42d3d6f770bbe278827ebdee6fd861",
+          "signaling.h": "7855f9474578e4c8ca30c7d6c671c5de37457d5ed7f48f15dbf39b2e9ae0626e",
+          "simurgh_rtc_abi.h": "277a4dc32a6d5d4bc2155399fef1db0fa68dbdc8c3930b532ab63d954df5603f"
+        },
+        "build_directory": "/build/src/out/NativeAndroidRepeat20261019B",
+        "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /build/src/third_party/llvm-build/Release+Asserts/bin",
+        "compiler_runtime_sha256": "32faf9cae893d732d45799f18040b90c69f847bc408d8207c6f65dd2c2f940e4",
+        "distribution_notices": "review_required_SR902",
+        "exports": [
+          "SimurghRTC_ChannelV1",
+          "SimurghRTC_CreatePeerV1",
+          "SimurghRTC_CreateV1",
+          "SimurghRTC_DestroyV1",
+          "SimurghRTC_DiagnosticsV1",
+          "SimurghRTC_EnableLoopbackProbeV1",
+          "SimurghRTC_MediaProbeV1",
+          "SimurghRTC_NativeVersionV1",
+          "SimurghRTC_PollDataV1",
+          "SimurghRTC_PollEventV1",
+          "SimurghRTC_SignalV1"
+        ],
+        "fresh_output": false,
+        "isolated_sha256": "01a04fb25f544a24f234a2fecc624463eb7425cf81e29e04d112b1a140f4948d",
+        "minimum_os": "26",
+        "ndk": "27.2.12479018",
+        "platform": "Android",
+        "recipe_sha256": "8ebed77eeec1f1a0d91e06649e71a34b4e1f4a7d8c563d19a5ebe657806c2a4e",
+        "runtime_validation": "unverified",
+        "schema": 1,
+        "source_lock_sha256": "b02a73f9a8301c4e9a1c54b81f4285bfb533a6379ec18f66f1522b8ce1dc9ae3"
+      }
+    },
+    "IOSSimulator": {
+      "identity": {
+        "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+        "platform": "IOSSimulator",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17405824,
+        "manifest_sha256": "63c1245fe344726914a2be0aec2d6c53784885ba9bd18e16affcd02e9e34e152",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "670188df19fdfda2f5662821030c239515ad05983ef405faa1dd00da7e1922f9",
+      "source_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "build": {
+        "archive_before_isolation_sha256": "fc1fbd002dcd008c6e629515afb0fef92a0a824772e541f601a3f306b628a449",
+        "bridge_sources": {
+          "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
+          "BUILD.gn": "55baadbc2ab3d995f689af171cf827d87946bf639d6b7588903b38e948a3d6cf",
+          "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
+          "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
+          "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
+          "abi_test.c": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b",
+          "data_channels.cc": "67c964310058967d915bcc5c1a02bc110fd8319cea2ee0d47e0ea650e6686864",
+          "data_channels.h": "8880754dd273386542c122e553d54646cc53a29dcf6972d980d2eb3c04db0d5d",
+          "exports.txt": "6f1dc3a7830053082bc183c100b44b7781ec311dbbc063d201624303a8f0a472",
+          "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
+          "runtime.cc": "a4a5c796d3fdcf636ffd08fdb9df892a2b3142a49f7368b504cfcb00e59912e5",
+          "signaling.cc": "d6598f3fec9b1375c65faedb63b44ed70e42d3d6f770bbe278827ebdee6fd861",
+          "signaling.h": "7855f9474578e4c8ca30c7d6c671c5de37457d5ed7f48f15dbf39b2e9ae0626e",
+          "simurgh_rtc_abi.h": "277a4dc32a6d5d4bc2155399fef1db0fa68dbdc8c3930b532ab63d954df5603f"
+        },
+        "build_directory": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeIOSSimulatorRepeat20261019BRetry",
+        "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/third_party/llvm-build/Release+Asserts/bin",
+        "distribution_notices": "review_required_SR902",
+        "exports": [
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "fresh_output": false,
+        "isolated_sha256": "1a0a92823ad616aebb579dcf2f72624800f47820966d374e4825f7c60630a7df",
+        "platform": "IOSSimulator",
+        "recipe_sha256": "29c5c55471a24c68aa871aee17fc8a8c5c196691ab4ef055e13300638f867c2e",
+        "runtime_validation": "unverified",
+        "schema": 1,
+        "sdk": {
+          "minimum_os": "15.0",
+          "sdk": "27.1",
+          "sdk_name": "iphonesimulator"
+        },
+        "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+        "xcode": "Xcode 27.1\nBuild version 27A9275"
+      }
+    },
+    "IOS": {
+      "identity": {
+        "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+        "platform": "IOS",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17334008,
+        "manifest_sha256": "b617fb5ffc875d9b467aebc6ccf1db8ada0eb25b52d5a72d38e7b038526758d9",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "6847b1f2aa88cff2688ed6e664e8cbbefe07edec9d27f877ac839eff934d2f66",
+      "source_revision": "5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+      "build": {
+        "archive_before_isolation_sha256": "168dc58326cba3abd0025c7185245f04f114419ce9012691749ed21a5c0310be",
+        "bridge_sources": {
+          "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
+          "BUILD.gn": "55baadbc2ab3d995f689af171cf827d87946bf639d6b7588903b38e948a3d6cf",
+          "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
+          "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
+          "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
+          "abi_test.c": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b",
+          "data_channels.cc": "67c964310058967d915bcc5c1a02bc110fd8319cea2ee0d47e0ea650e6686864",
+          "data_channels.h": "8880754dd273386542c122e553d54646cc53a29dcf6972d980d2eb3c04db0d5d",
+          "exports.txt": "6f1dc3a7830053082bc183c100b44b7781ec311dbbc063d201624303a8f0a472",
+          "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
+          "runtime.cc": "a4a5c796d3fdcf636ffd08fdb9df892a2b3142a49f7368b504cfcb00e59912e5",
+          "signaling.cc": "d6598f3fec9b1375c65faedb63b44ed70e42d3d6f770bbe278827ebdee6fd861",
+          "signaling.h": "7855f9474578e4c8ca30c7d6c671c5de37457d5ed7f48f15dbf39b2e9ae0626e",
+          "simurgh_rtc_abi.h": "277a4dc32a6d5d4bc2155399fef1db0fa68dbdc8c3930b532ab63d954df5603f"
+        },
+        "build_directory": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeIOSRepeat20261024BRetry",
+        "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/third_party/llvm-build/Release+Asserts/bin",
+        "distribution_notices": "review_required_SR902",
+        "exports": [
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "fresh_output": false,
+        "isolated_sha256": "35e21997c2c01825714e93db4c560715270f0d8002e264eb97c3a409f79a7ca2",
+        "platform": "IOS",
+        "recipe_sha256": "29c5c55471a24c68aa871aee17fc8a8c5c196691ab4ef055e13300638f867c2e",
+        "runtime_validation": "unverified",
+        "schema": 1,
+        "sdk": {
+          "minimum_os": "15.0",
+          "sdk": "27.1",
+          "sdk_name": "iphoneos"
+        },
+        "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+        "xcode": "Xcode 27.1\nBuild version 27A9275"
+      }
+    }
+  },
+  "runtime_suites": {
+    "direct-simulator-data-verified": {
+      "client": {
+        "platform": "IOSSimulator",
+        "device": "6E05FD1A-C100-4B29-BAF2-D80687A3E4BF",
+        "profile": "direct-only",
+        "artifact": {
+          "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+          "platform": "IOSSimulator",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17405824,
+          "manifest_sha256": "63c1245fe344726914a2be0aec2d6c53784885ba9bd18e16affcd02e9e34e152",
+          "runtime_validation": "unverified"
+        },
+        "scope": "simulator",
+        "executable_sha256": "87ee5fe08fb0743816361e48887fc5755f3f882ec93cc95770b6dffa8e2c2de8",
+        "simulator_support": {
+          "manifest_sha256": "25fe83713f3b633f77798a2d65d2b3bfa3ccc45fcdf3193c82a8b5c4ed408d44",
+          "archive_sha256": "8209c79e03666f623cad3e58d37ee974cb9e2ff81ed3e80221950059bba619b4"
+        },
+        "size": {
+          "bundle_file_bytes": 285249494,
+          "executable_bytes": 253057424,
+          "shipping_baseline": false,
+          "rtc_size_delta_measured": false
+        },
+        "device_info": {
+          "dataPath": "/Users/pooyaeimandar/Library/Developer/CoreSimulator/Devices/6E05FD1A-C100-4B29-BAF2-D80687A3E4BF/data",
+          "dataPathSize": 8644853760,
+          "logPath": "/Users/pooyaeimandar/Library/Logs/CoreSimulator/6E05FD1A-C100-4B29-BAF2-D80687A3E4BF",
+          "udid": "6E05FD1A-C100-4B29-BAF2-D80687A3E4BF",
+          "lastUsedAt": "2026-10-28T13:43:21Z",
+          "isAvailable": true,
+          "logPathSize": 720896,
+          "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+          "state": "Booted",
+          "name": "iPhone 17",
+          "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+        },
+        "runtime": {
+          "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+          "name": "iOS 27.0",
+          "version": "27.0",
+          "buildversion": "24A434",
+          "supportedArchitectures": [
+            "arm64"
+          ]
+        }
+      },
+      "server": {
+        "schema": 1,
+        "run_id": "0605c452-51e2-49e6-832c-f9e09c9cf02c",
+        "pid": 87640,
+        "server_build": true,
+        "editor_build": false,
+        "with_janus": false,
+        "arm64_build": true,
+        "engine_version": "5.8.3-0+UE5",
+        "platform": "Mac",
+        "artifact_manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+        "loopback_only": true,
+        "network_media_tested": false,
+        "application_messages_tested": true,
+        "connected_sessions": 0,
+        "peak_live_peers": 1,
+        "peak_connected_sessions": 1,
+        "records": 0,
+        "running": false,
+        "live_peers": 0,
+        "created": 4,
+        "connected": 4,
+        "closed": 4,
+        "expired": 0,
+        "replays": 0,
+        "rejected": 0,
+        "early_ice": 2,
+        "connected_session_ids": [
+          "0fd8fa91-844c-d676-dc08-44a9787f520a",
+          "a6c6c66a-c24e-871f-1853-639cfa99fed9",
+          "79df5825-8e45-b9d1-4613-d5a0557f09c4",
+          "deee287d-bd47-441f-e9c2-c999ab3a1c61"
+        ],
+        "closed_session_ids": [
+          "0fd8fa91-844c-d676-dc08-44a9787f520a",
+          "a6c6c66a-c24e-871f-1853-639cfa99fed9",
+          "79df5825-8e45-b9d1-4613-d5a0557f09c4",
+          "deee287d-bd47-441f-e9c2-c999ab3a1c61"
+        ],
+        "last_transport": {
+          "connection": 2,
+          "ice": 2,
+          "dtls": 3,
+          "protocol": 1,
+          "sctp_open": true,
+          "queued_ice": 0,
+          "applied_ice": 4,
+          "remote_end": true,
+          "stats_samples": 3,
+          "stun_responses": 5
+        },
+        "data_channels_opened": 2,
+        "data_channels_closed": 2,
+        "data_received": 4,
+        "data_sent": 4,
+        "echo_pending": 0,
+        "teardown_complete": true,
+        "passed": true,
+        "error": "",
+        "callbacks_on_game_thread": true,
+        "elapsed_seconds": 39.30900487676263
+      },
+      "server_executable_sha256": "db85231a8de3e8a9bcfe3d7d0f834587c7583e39965782acdf2c33fcb9c3ba08",
+      "server_exit_code": 0,
+      "cases": {
+        "cpp-messages": {
+          "implementation": "cpp",
+          "scenario": "messages",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 87653,
+          "session_id": "dbcdbff3-4c45-a825-b2ef-3188ead71394",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 2,
+          "received": 2,
+          "exact_payloads": true,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 4,
+          "completions": 4,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "cpp-timeout": {
+          "implementation": "cpp",
+          "scenario": "timeout",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 87800,
+          "session_id": "e62bcff9-1649-a3b7-d000-0ebe101c54f1",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ]
+        },
+        "cpp-disconnect-pending": {
+          "implementation": "cpp",
+          "scenario": "disconnect-pending",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 87879,
+          "session_id": "17c34f6d-a045-1a7f-214b-c2a2eacc5083",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ]
+        },
+        "cpp-destroy-connect": {
+          "implementation": "cpp",
+          "scenario": "destroy-connect",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 87948,
+          "session_id": "99793505-6643-9c22-8d95-0fa8b6a31ac6",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 1,
+          "completions": 0,
+          "outcomes": [],
+          "states": [
+            1
+          ]
+        },
+        "cpp-destroy-open": {
+          "implementation": "cpp",
+          "scenario": "destroy-open",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 88045,
+          "session_id": "dc4a27fa-e147-0f9a-0c11-8bb5f95a10b0",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 2,
+          "completions": 1,
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ]
+        },
+        "blueprint-messages": {
+          "implementation": "blueprint",
+          "scenario": "messages",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 88132,
+          "session_id": "e224d309-6843-c5b9-5835-c5a5eff9cfde",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 2,
+          "received": 2,
+          "exact_payloads": true,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 4,
+          "completions": 4,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "blueprint-timeout": {
+          "implementation": "blueprint",
+          "scenario": "timeout",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 88203,
+          "session_id": "b5442e96-f645-e754-a393-51973d82dc1d",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ]
+        },
+        "blueprint-disconnect-pending": {
+          "implementation": "blueprint",
+          "scenario": "disconnect-pending",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 88257,
+          "session_id": "c39a23b7-2244-40ef-adbd-ed8af95c4747",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ]
+        },
+        "blueprint-destroy-connect": {
+          "implementation": "blueprint",
+          "scenario": "destroy-connect",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 88317,
+          "session_id": "ec052c04-814b-2634-f2dc-6c8311d34afc",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 1,
+          "completions": 0,
+          "outcomes": [],
+          "states": [
+            1
+          ]
+        },
+        "blueprint-destroy-open": {
+          "implementation": "blueprint",
+          "scenario": "destroy-open",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 88366,
+          "session_id": "cefae8f0-c843-48fe-e9ea-16aa5c7f46ff",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 2,
+          "completions": 1,
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ]
+        }
+      },
+      "cleanup": {
+        "client_stopped": true,
+        "client_secrets_removed": true,
+        "reverse_ports_removed": true,
+        "server_stopped": true,
+        "server_secret_removed": true
+      },
+      "elapsed_seconds": 42.541
+    },
+    "full-simulator-data-verified": {
+      "client": {
+        "platform": "IOSSimulator",
+        "device": "6E05FD1A-C100-4B29-BAF2-D80687A3E4BF",
+        "profile": "full",
+        "artifact": {
+          "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+          "platform": "IOSSimulator",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17405824,
+          "manifest_sha256": "63c1245fe344726914a2be0aec2d6c53784885ba9bd18e16affcd02e9e34e152",
+          "runtime_validation": "unverified"
+        },
+        "scope": "simulator",
+        "executable_sha256": "f8fcc49a2447a56af2024e6e98577ff8a955678f385099b85219a7adb78c8d8d",
+        "simulator_support": {
+          "manifest_sha256": "25fe83713f3b633f77798a2d65d2b3bfa3ccc45fcdf3193c82a8b5c4ed408d44",
+          "archive_sha256": "8209c79e03666f623cad3e58d37ee974cb9e2ff81ed3e80221950059bba619b4"
+        },
+        "size": {
+          "bundle_file_bytes": 285257710,
+          "executable_bytes": 253062832,
+          "shipping_baseline": false,
+          "rtc_size_delta_measured": false
+        },
+        "device_info": {
+          "dataPath": "/Users/pooyaeimandar/Library/Developer/CoreSimulator/Devices/6E05FD1A-C100-4B29-BAF2-D80687A3E4BF/data",
+          "dataPathSize": 8643510272,
+          "logPath": "/Users/pooyaeimandar/Library/Logs/CoreSimulator/6E05FD1A-C100-4B29-BAF2-D80687A3E4BF",
+          "udid": "6E05FD1A-C100-4B29-BAF2-D80687A3E4BF",
+          "lastUsedAt": "2026-10-28T13:43:21Z",
+          "isAvailable": true,
+          "logPathSize": 720896,
+          "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+          "state": "Booted",
+          "name": "iPhone 17",
+          "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+        },
+        "runtime": {
+          "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+          "name": "iOS 27.0",
+          "version": "27.0",
+          "buildversion": "24A434",
+          "supportedArchitectures": [
+            "arm64"
+          ]
+        }
+      },
+      "server": {
+        "schema": 1,
+        "run_id": "60504728-6f44-4597-806e-84e3a9ebeacc",
+        "pid": 90027,
+        "server_build": true,
+        "editor_build": false,
+        "with_janus": false,
+        "arm64_build": true,
+        "engine_version": "5.8.3-0+UE5",
+        "platform": "Mac",
+        "artifact_manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+        "loopback_only": true,
+        "network_media_tested": false,
+        "application_messages_tested": true,
+        "connected_sessions": 0,
+        "peak_live_peers": 1,
+        "peak_connected_sessions": 1,
+        "records": 0,
+        "running": false,
+        "live_peers": 0,
+        "created": 4,
+        "connected": 4,
+        "closed": 4,
+        "expired": 0,
+        "replays": 0,
+        "rejected": 0,
+        "early_ice": 0,
+        "connected_session_ids": [
+          "2e965005-a24c-1438-9259-dcb4e19eec3d",
+          "9d0d7edc-3349-b5b9-1748-af96278648d2",
+          "a5844807-9f48-320f-b6da-b4ae96eafc83",
+          "b261fbdf-2c4d-7f5f-550d-c9a1c8ae44e8"
+        ],
+        "closed_session_ids": [
+          "2e965005-a24c-1438-9259-dcb4e19eec3d",
+          "9d0d7edc-3349-b5b9-1748-af96278648d2",
+          "a5844807-9f48-320f-b6da-b4ae96eafc83",
+          "b261fbdf-2c4d-7f5f-550d-c9a1c8ae44e8"
+        ],
+        "last_transport": {
+          "connection": 2,
+          "ice": 2,
+          "dtls": 3,
+          "protocol": 1,
+          "sctp_open": true,
+          "queued_ice": 0,
+          "applied_ice": 2,
+          "remote_end": true,
+          "stats_samples": 2,
+          "stun_responses": 5
+        },
+        "data_channels_opened": 2,
+        "data_channels_closed": 1,
+        "data_received": 4,
+        "data_sent": 4,
+        "echo_pending": 0,
+        "teardown_complete": true,
+        "passed": true,
+        "error": "",
+        "callbacks_on_game_thread": true,
+        "elapsed_seconds": 32.974464166909456
+      },
+      "server_executable_sha256": "db85231a8de3e8a9bcfe3d7d0f834587c7583e39965782acdf2c33fcb9c3ba08",
+      "server_exit_code": 0,
+      "cases": {
+        "cpp-messages": {
+          "implementation": "cpp",
+          "scenario": "messages",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 90041,
+          "session_id": "5870bfa9-824e-9961-430a-9ca3f1756e5a",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 2,
+          "received": 2,
+          "exact_payloads": true,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 4,
+          "completions": 4,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "cpp-timeout": {
+          "implementation": "cpp",
+          "scenario": "timeout",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 90110,
+          "session_id": "6dac82e6-914d-8014-dc3d-55803ec26cbc",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ]
+        },
+        "cpp-disconnect-pending": {
+          "implementation": "cpp",
+          "scenario": "disconnect-pending",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 90160,
+          "session_id": "e40263b1-c946-b829-4722-93ad2bb24af4",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ]
+        },
+        "cpp-destroy-connect": {
+          "implementation": "cpp",
+          "scenario": "destroy-connect",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 90209,
+          "session_id": "2f084163-8d47-4815-5014-a3b28c5a8cfc",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 1,
+          "completions": 0,
+          "outcomes": [],
+          "states": [
+            1
+          ]
+        },
+        "cpp-destroy-open": {
+          "implementation": "cpp",
+          "scenario": "destroy-open",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 90261,
+          "session_id": "c8aca4a2-1547-b9fb-5585-cdaa4570935f",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 2,
+          "completions": 1,
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ]
+        },
+        "blueprint-messages": {
+          "implementation": "blueprint",
+          "scenario": "messages",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 90312,
+          "session_id": "a303cdf0-0649-6af2-f852-2e950377bd6e",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 2,
+          "received": 2,
+          "exact_payloads": true,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 4,
+          "completions": 4,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "blueprint-timeout": {
+          "implementation": "blueprint",
+          "scenario": "timeout",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 90371,
+          "session_id": "7af6c9ed-5f4c-5aaa-36cd-e5ab73875c52",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ]
+        },
+        "blueprint-disconnect-pending": {
+          "implementation": "blueprint",
+          "scenario": "disconnect-pending",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 90434,
+          "session_id": "0ad8c84e-354b-fc94-880f-078d750e339b",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ]
+        },
+        "blueprint-destroy-connect": {
+          "implementation": "blueprint",
+          "scenario": "destroy-connect",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 90475,
+          "session_id": "5e6a7ffe-064c-b080-ef1a-7c94d4adf3f9",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 1,
+          "completions": 0,
+          "outcomes": [],
+          "states": [
+            1
+          ]
+        },
+        "blueprint-destroy-open": {
+          "implementation": "blueprint",
+          "scenario": "destroy-open",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 90532,
+          "session_id": "2deb9204-2643-9ac7-da56-389dba50636a",
+          "platform": "IOS",
+          "simulator_build": true,
+          "loopback_only": true,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 2,
+          "completions": 1,
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ]
+        }
+      },
+      "cleanup": {
+        "client_stopped": true,
+        "client_secrets_removed": true,
+        "reverse_ports_removed": true,
+        "server_stopped": true,
+        "server_secret_removed": true
+      },
+      "elapsed_seconds": 36.055
+    },
+    "direct-android-data-accepted": {
+      "client": {
+        "platform": "Android",
+        "device": "R5CYA1ZQG0V",
+        "profile": "direct-only",
+        "artifact": {
+          "artifact_id": "android-arm64-m155-b02a73f9a830",
+          "platform": "Android",
+          "architecture": "arm64",
+          "files": 17,
+          "objects": 1,
+          "archive_bytes": 28236244,
+          "manifest_sha256": "aecd0dffdc41ec544f1e23003febd2f55e4e8ec6cde31755fb841ad9a56fb798",
+          "runtime_validation": "unverified"
+        },
+        "scope": "physical-device",
+        "app_sha256": "821c0c2f8a3f954f21565a0e078705ccfd64fa82e7216bf7308f4521c9100eca",
+        "size": {
+          "apk_bytes": 105843699,
+          "native_libraries": {
+            "lib/arm64-v8a/libGPUCounters.so": {
+              "uncompressed_bytes": 1051160,
+              "compressed_bytes": 478738
+            },
+            "lib/arm64-v8a/libUnreal.so": {
+              "uncompressed_bytes": 177649392,
+              "compressed_bytes": 71924548
+            },
+            "lib/arm64-v8a/libheapprofd_standalone_client.so": {
+              "uncompressed_bytes": 857896,
+              "compressed_bytes": 392988
+            },
+            "lib/arm64-v8a/libpsoservice.so": {
+              "uncompressed_bytes": 288336,
+              "compressed_bytes": 104975
+            },
+            "lib/arm64-v8a/libswappy.so": {
+              "uncompressed_bytes": 542640,
+              "compressed_bytes": 202024
+            },
+            "lib/arm64-v8a/libvkquality.so": {
+              "uncompressed_bytes": 409824,
+              "compressed_bytes": 148633
+            }
+          },
+          "shipping_baseline": false,
+          "rtc_size_delta_measured": false
+        },
+        "model": "SM-S938B",
+        "os": "17",
+        "page_size": "4096"
+      },
+      "server": {
+        "schema": 1,
+        "run_id": "5fefbfc0-f2c5-4c29-b217-f7fdaef13b7d",
+        "pid": 4289,
+        "server_build": true,
+        "editor_build": false,
+        "with_janus": false,
+        "arm64_build": true,
+        "engine_version": "5.8.3-0+UE5",
+        "platform": "Mac",
+        "artifact_manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+        "loopback_only": false,
+        "network_media_tested": false,
+        "application_messages_tested": true,
+        "connected_sessions": 0,
+        "peak_live_peers": 1,
+        "peak_connected_sessions": 1,
+        "records": 0,
+        "running": false,
+        "live_peers": 0,
+        "created": 4,
+        "connected": 4,
+        "closed": 4,
+        "expired": 0,
+        "replays": 0,
+        "rejected": 0,
+        "early_ice": 0,
+        "connected_session_ids": [
+          "5d774257-ca4d-72c9-b409-4d9516c0fb73",
+          "3507cac7-6247-becd-9e84-e59c776704fd",
+          "6f5a9d6b-3f42-cab2-75c7-9aa0af473bf4",
+          "02218bd8-dc44-0e91-8679-75b35cf32403"
+        ],
+        "closed_session_ids": [
+          "5d774257-ca4d-72c9-b409-4d9516c0fb73",
+          "3507cac7-6247-becd-9e84-e59c776704fd",
+          "6f5a9d6b-3f42-cab2-75c7-9aa0af473bf4",
+          "02218bd8-dc44-0e91-8679-75b35cf32403"
+        ],
+        "last_transport": {
+          "connection": 2,
+          "ice": 2,
+          "dtls": 3,
+          "protocol": 1,
+          "sctp_open": true,
+          "queued_ice": 0,
+          "applied_ice": 8,
+          "remote_end": true,
+          "stats_samples": 4,
+          "stun_responses": 3
+        },
+        "data_channels_opened": 2,
+        "data_channels_closed": 1,
+        "data_received": 4,
+        "data_sent": 4,
+        "echo_pending": 0,
+        "teardown_complete": true,
+        "passed": true,
+        "error": "",
+        "callbacks_on_game_thread": true,
+        "elapsed_seconds": 26.545813377946615
+      },
+      "server_executable_sha256": "db85231a8de3e8a9bcfe3d7d0f834587c7583e39965782acdf2c33fcb9c3ba08",
+      "server_exit_code": 0,
+      "cases": {
+        "cpp-messages": {
+          "implementation": "cpp",
+          "scenario": "messages",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 27890,
+          "session_id": "1ac6b32c-a669-43b5-a35a-4e117a720044",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 2,
+          "received": 2,
+          "exact_payloads": true,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 4,
+          "completions": 4,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "cpp-timeout": {
+          "implementation": "cpp",
+          "scenario": "timeout",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 28366,
+          "session_id": "a93484be-900c-4c4f-ac79-dfb3cb4577fe",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ]
+        },
+        "cpp-disconnect-pending": {
+          "implementation": "cpp",
+          "scenario": "disconnect-pending",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 28674,
+          "session_id": "b7dd990c-0945-43bc-b97c-c9a86298d11f",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ]
+        },
+        "cpp-destroy-connect": {
+          "implementation": "cpp",
+          "scenario": "destroy-connect",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 28960,
+          "session_id": "6b4feec4-894c-4d1e-872a-7a3791661f4d",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 1,
+          "completions": 0,
+          "outcomes": [],
+          "states": [
+            1
+          ]
+        },
+        "cpp-destroy-open": {
+          "implementation": "cpp",
+          "scenario": "destroy-open",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 29342,
+          "session_id": "c77c773a-b366-4a14-b600-f92ca6dc8d0a",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 2,
+          "completions": 1,
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ]
+        },
+        "blueprint-messages": {
+          "implementation": "blueprint",
+          "scenario": "messages",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 29650,
+          "session_id": "9bd0c8b3-64ef-4142-bf16-1291a438d58f",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 2,
+          "received": 2,
+          "exact_payloads": true,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 4,
+          "completions": 4,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "blueprint-timeout": {
+          "implementation": "blueprint",
+          "scenario": "timeout",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 29955,
+          "session_id": "d25f8e13-1cca-452a-bf36-4b81d8d55117",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ]
+        },
+        "blueprint-disconnect-pending": {
+          "implementation": "blueprint",
+          "scenario": "disconnect-pending",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 30301,
+          "session_id": "e9717c7a-8b55-45a4-9320-56d3e7bc9577",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ]
+        },
+        "blueprint-destroy-connect": {
+          "implementation": "blueprint",
+          "scenario": "destroy-connect",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 30696,
+          "session_id": "8193081d-213e-4d3c-a299-4b98ffad9411",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 1,
+          "completions": 0,
+          "outcomes": [],
+          "states": [
+            1
+          ]
+        },
+        "blueprint-destroy-open": {
+          "implementation": "blueprint",
+          "scenario": "destroy-open",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 31072,
+          "session_id": "f9cff48f-ca0c-4658-8938-00f8504808fa",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 2,
+          "completions": 1,
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ]
+        }
+      },
+      "cleanup": {
+        "client_stopped": true,
+        "client_secrets_removed": true,
+        "reverse_ports_removed": true,
+        "server_stopped": true,
+        "server_secret_removed": true
+      },
+      "elapsed_seconds": 32.779
+    },
+    "full-android-data-accepted": {
+      "client": {
+        "platform": "Android",
+        "device": "R5CYA1ZQG0V",
+        "profile": "full",
+        "artifact": {
+          "artifact_id": "android-arm64-m155-b02a73f9a830",
+          "platform": "Android",
+          "architecture": "arm64",
+          "files": 17,
+          "objects": 1,
+          "archive_bytes": 28236244,
+          "manifest_sha256": "aecd0dffdc41ec544f1e23003febd2f55e4e8ec6cde31755fb841ad9a56fb798",
+          "runtime_validation": "unverified"
+        },
+        "scope": "physical-device",
+        "app_sha256": "0c508aaab6e4808b630c9a24cce634604cca51db65f2335ddc39a1519901ea64",
+        "size": {
+          "apk_bytes": 105849526,
+          "native_libraries": {
+            "lib/arm64-v8a/libGPUCounters.so": {
+              "uncompressed_bytes": 1051160,
+              "compressed_bytes": 478738
+            },
+            "lib/arm64-v8a/libUnreal.so": {
+              "uncompressed_bytes": 177654960,
+              "compressed_bytes": 71926443
+            },
+            "lib/arm64-v8a/libheapprofd_standalone_client.so": {
+              "uncompressed_bytes": 857896,
+              "compressed_bytes": 392988
+            },
+            "lib/arm64-v8a/libpsoservice.so": {
+              "uncompressed_bytes": 288336,
+              "compressed_bytes": 104975
+            },
+            "lib/arm64-v8a/libswappy.so": {
+              "uncompressed_bytes": 542640,
+              "compressed_bytes": 202024
+            },
+            "lib/arm64-v8a/libvkquality.so": {
+              "uncompressed_bytes": 409824,
+              "compressed_bytes": 148633
+            }
+          },
+          "shipping_baseline": false,
+          "rtc_size_delta_measured": false
+        },
+        "model": "SM-S938B",
+        "os": "17",
+        "page_size": "4096"
+      },
+      "server": {
+        "schema": 1,
+        "run_id": "2745c1ed-bc54-41a8-b7c3-55c719b74e03",
+        "pid": 5283,
+        "server_build": true,
+        "editor_build": false,
+        "with_janus": false,
+        "arm64_build": true,
+        "engine_version": "5.8.3-0+UE5",
+        "platform": "Mac",
+        "artifact_manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+        "loopback_only": false,
+        "network_media_tested": false,
+        "application_messages_tested": true,
+        "connected_sessions": 0,
+        "peak_live_peers": 1,
+        "peak_connected_sessions": 1,
+        "records": 0,
+        "running": false,
+        "live_peers": 0,
+        "created": 4,
+        "connected": 4,
+        "closed": 4,
+        "expired": 0,
+        "replays": 0,
+        "rejected": 0,
+        "early_ice": 0,
+        "connected_session_ids": [
+          "b6351da2-b64e-2fb3-18d2-8e801fa0c09a",
+          "c07c3092-3f4a-c69a-0111-09abbe9fbc0c",
+          "40af8ef9-ca42-fdae-58db-9fa61039e32a",
+          "2b48db9b-c540-972a-890a-1a815991320f"
+        ],
+        "closed_session_ids": [
+          "b6351da2-b64e-2fb3-18d2-8e801fa0c09a",
+          "c07c3092-3f4a-c69a-0111-09abbe9fbc0c",
+          "40af8ef9-ca42-fdae-58db-9fa61039e32a",
+          "2b48db9b-c540-972a-890a-1a815991320f"
+        ],
+        "last_transport": {
+          "connection": 2,
+          "ice": 2,
+          "dtls": 3,
+          "protocol": 1,
+          "sctp_open": true,
+          "queued_ice": 0,
+          "applied_ice": 8,
+          "remote_end": true,
+          "stats_samples": 3,
+          "stun_responses": 3
+        },
+        "data_channels_opened": 3,
+        "data_channels_closed": 2,
+        "data_received": 4,
+        "data_sent": 4,
+        "echo_pending": 0,
+        "teardown_complete": true,
+        "passed": true,
+        "error": "",
+        "callbacks_on_game_thread": true,
+        "elapsed_seconds": 25.10229091718793
+      },
+      "server_executable_sha256": "db85231a8de3e8a9bcfe3d7d0f834587c7583e39965782acdf2c33fcb9c3ba08",
+      "server_exit_code": 0,
+      "cases": {
+        "cpp-messages": {
+          "implementation": "cpp",
+          "scenario": "messages",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 31646,
+          "session_id": "cef63327-7c8f-4072-aecc-ed837d809ec3",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 2,
+          "received": 2,
+          "exact_payloads": true,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 4,
+          "completions": 4,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "cpp-timeout": {
+          "implementation": "cpp",
+          "scenario": "timeout",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 32046,
+          "session_id": "d6d388a5-7b22-4546-9cfe-d407c4e061ec",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ]
+        },
+        "cpp-disconnect-pending": {
+          "implementation": "cpp",
+          "scenario": "disconnect-pending",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 32447,
+          "session_id": "e07cbe68-d30e-40a4-a677-6d819fcae49c",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ]
+        },
+        "cpp-destroy-connect": {
+          "implementation": "cpp",
+          "scenario": "destroy-connect",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 32741,
+          "session_id": "36acf91e-ff00-426b-906a-e58f0f579241",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 1,
+          "completions": 0,
+          "outcomes": [],
+          "states": [
+            1
+          ]
+        },
+        "cpp-destroy-open": {
+          "implementation": "cpp",
+          "scenario": "destroy-open",
+          "map": "/Game/Examples/Direct/Maps/RtcDataCpp",
+          "actor_class": "/Script/ContractHost.ContractDataCpp",
+          "pid": 626,
+          "session_id": "e79e0ea4-9419-4137-91ab-391ae4dd99cf",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 2,
+          "completions": 1,
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ]
+        },
+        "blueprint-messages": {
+          "implementation": "blueprint",
+          "scenario": "messages",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 1012,
+          "session_id": "25581f2e-b91e-4e86-9cb7-c790a403bf90",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 2,
+          "received": 2,
+          "exact_payloads": true,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 4,
+          "completions": 4,
+          "outcomes": [
+            "Connect:Success",
+            "OpenChannel:Success",
+            "CloseChannel:Success",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "blueprint-timeout": {
+          "implementation": "blueprint",
+          "scenario": "timeout",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 1767,
+          "session_id": "400f9b6a-8c98-4b49-8a06-10ff7266b2a4",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Failure",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            5,
+            3,
+            4
+          ]
+        },
+        "blueprint-disconnect-pending": {
+          "implementation": "blueprint",
+          "scenario": "disconnect-pending",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 2219,
+          "session_id": "ebfcb5e5-7282-41c9-9e15-0d17bed2e0f4",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": false,
+          "silent_cancelled": false,
+          "operations": 2,
+          "completions": 2,
+          "outcomes": [
+            "Connect:Cancelled",
+            "Disconnect:Success"
+          ],
+          "states": [
+            1,
+            3,
+            4
+          ]
+        },
+        "blueprint-destroy-connect": {
+          "implementation": "blueprint",
+          "scenario": "destroy-connect",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 2765,
+          "session_id": "14ef741a-96a9-432e-9bbf-3fb8bd97d2c5",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 0,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 1,
+          "completions": 0,
+          "outcomes": [],
+          "states": [
+            1
+          ]
+        },
+        "blueprint-destroy-open": {
+          "implementation": "blueprint",
+          "scenario": "destroy-open",
+          "map": "/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "actor_class": "/Game/Examples/Direct/BP_RtcData.BP_RtcData_C",
+          "pid": 3375,
+          "session_id": "5515fab7-fbaf-4a8b-a47b-e5f7f715e899",
+          "platform": "Android",
+          "simulator_build": false,
+          "loopback_only": false,
+          "passed": true,
+          "error": "",
+          "transports_created": 1,
+          "native_closed": 1,
+          "remote_closed": 1,
+          "pending_cleanup": 0,
+          "sent": 0,
+          "received": 0,
+          "exact_payloads": false,
+          "objects_collected": true,
+          "callbacks_on_game_thread": true,
+          "end_play_calls": 1,
+          "end_play_closed": true,
+          "late_callbacks": 0,
+          "quiet_ticks": 8,
+          "pending_at_destruction": true,
+          "silent_cancelled": true,
+          "operations": 2,
+          "completions": 1,
+          "outcomes": [
+            "Connect:Success"
+          ],
+          "states": [
+            1,
+            2
+          ]
+        }
+      },
+      "cleanup": {
+        "client_stopped": true,
+        "client_secrets_removed": true,
+        "reverse_ports_removed": true,
+        "server_stopped": true,
+        "server_secret_removed": true
+      },
+      "elapsed_seconds": 30.841
+    }
+  },
+  "totals": {
+    "packaged_cases": 40,
+    "native_client_closures": 40,
+    "exact_message_roundtrips": 16
+  },
+  "native_checks": {
+    "native-data-simulator": {
+      "schema": 1,
+      "passed": true,
+      "artifact": {
+        "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+        "platform": "IOSSimulator",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17405824,
+        "manifest_sha256": "63c1245fe344726914a2be0aec2d6c53784885ba9bd18e16affcd02e9e34e152",
+        "runtime_validation": "unverified"
+      },
+      "fixture_sha256": "1b6911ae9f81883a2bbe9e0604e38a677578dbf3e85e4ae98b15f69d9dbc0b81",
+      "runtime_validation": "passed",
+      "probe_kind": "data",
+      "scope": "standalone native data fixture; not a packaged Unreal run",
+      "fixture_inputs": {
+        "Fixtures/native/data_channels.c": "1b6911ae9f81883a2bbe9e0604e38a677578dbf3e85e4ae98b15f69d9dbc0b81",
+        "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+      },
+      "device": {
+        "dataPath": "/Users/pooyaeimandar/Library/Developer/CoreSimulator/Devices/6E05FD1A-C100-4B29-BAF2-D80687A3E4BF/data",
+        "dataPathSize": 8634380288,
+        "logPath": "/Users/pooyaeimandar/Library/Logs/CoreSimulator/6E05FD1A-C100-4B29-BAF2-D80687A3E4BF",
+        "udid": "6E05FD1A-C100-4B29-BAF2-D80687A3E4BF",
+        "lastUsedAt": "2026-10-28T13:43:21Z",
+        "isAvailable": true,
+        "logPathSize": 720896,
+        "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+        "state": "Booted",
+        "name": "iPhone 17",
+        "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+      },
+      "runtime": {
+        "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+        "name": "iOS 27.0",
+        "version": "27.0",
+        "buildversion": "24A434",
+        "supportedArchitectures": [
+          "arm64"
+        ]
+      },
+      "connected_pairs": 3,
+      "channel_modes": 6,
+      "negotiated_limits": [
+        32768,
+        65536
+      ],
+      "loopback_only": true,
+      "exit_code": 0,
+      "executable_sha256": "cc9eb20599171ea859317ed9217881b47042fbd02dce226f57b93866fb7d3ffe",
+      "exported_symbols": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ]
+    },
+    "native-data-android": {
+      "schema": 1,
+      "passed": true,
+      "artifact": {
+        "artifact_id": "android-arm64-m155-b02a73f9a830",
+        "platform": "Android",
+        "architecture": "arm64",
+        "files": 17,
+        "objects": 1,
+        "archive_bytes": 28236244,
+        "manifest_sha256": "aecd0dffdc41ec544f1e23003febd2f55e4e8ec6cde31755fb841ad9a56fb798",
+        "runtime_validation": "unverified"
+      },
+      "fixture_sha256": "1b6911ae9f81883a2bbe9e0604e38a677578dbf3e85e4ae98b15f69d9dbc0b81",
+      "runtime_validation": "passed",
+      "probe_kind": "data",
+      "scope": "standalone native data fixture; not a packaged Unreal run",
+      "fixture_inputs": {
+        "Fixtures/native/data_channels.c": "1b6911ae9f81883a2bbe9e0604e38a677578dbf3e85e4ae98b15f69d9dbc0b81",
+        "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+      },
+      "minimum_load_alignment": 16384,
+      "device": {
+        "model": "SM-S938B",
+        "os": "17"
+      },
+      "connected_pairs": 3,
+      "channel_modes": 6,
+      "negotiated_limits": [
+        32768,
+        65536
+      ],
+      "loopback_only": true,
+      "exit_code": 0,
+      "executable_sha256": "27cb282572715d6642bf09f41dc1ba8d61c5bf54314cf8b5925ae335862f73ad",
+      "exported_symbols": [
+        "SimurghRTC_ChannelV1",
+        "SimurghRTC_CreatePeerV1",
+        "SimurghRTC_CreateV1",
+        "SimurghRTC_DestroyV1",
+        "SimurghRTC_DiagnosticsV1",
+        "SimurghRTC_EnableLoopbackProbeV1",
+        "SimurghRTC_MediaProbeV1",
+        "SimurghRTC_NativeVersionV1",
+        "SimurghRTC_PollDataV1",
+        "SimurghRTC_PollEventV1",
+        "SimurghRTC_SignalV1"
+      ],
+      "remote_binary_removed": true
+    },
+    "native-data-mac-regression": {
+      "schema": 1,
+      "passed": true,
+      "artifact": {
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17895536,
+        "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "runtime_validation": "unverified"
+      },
+      "fixture_sha256": "1b6911ae9f81883a2bbe9e0604e38a677578dbf3e85e4ae98b15f69d9dbc0b81",
+      "runtime_validation": "passed",
+      "probe_kind": "data",
+      "scope": "standalone native data fixture; not a packaged Unreal run",
+      "fixture_inputs": {
+        "Fixtures/native/data_channels.c": "1b6911ae9f81883a2bbe9e0604e38a677578dbf3e85e4ae98b15f69d9dbc0b81",
+        "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+      },
+      "connected_pairs": 3,
+      "channel_modes": 6,
+      "negotiated_limits": [
+        32768,
+        65536
+      ],
+      "loopback_only": true,
+      "exit_code": 0,
+      "executable_sha256": "99bf00bb1834e89755e28d46b0a77d33f92d20c7a3cfc6dc6d5f3cc389a87d93",
+      "exported_symbols": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ]
+    },
+    "native-ios-link": {
+      "schema": 1,
+      "passed": true,
+      "artifact": {
+        "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+        "platform": "IOS",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17334008,
+        "manifest_sha256": "b617fb5ffc875d9b467aebc6ccf1db8ada0eb25b52d5a72d38e7b038526758d9",
+        "runtime_validation": "unverified"
+      },
+      "fixture_sha256": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b",
+      "runtime_validation": "not_run",
+      "probe_kind": "lifecycle",
+      "scope": "iOS device C ABI compile/link only; no signing, deployment or runtime acceptance",
+      "fixture_inputs": {
+        "Config/NativeBackend/abi_test.c": "0a654de702f0778305f76dd120df1b59e661b270abc6df40f9913f9773bd095b"
+      },
+      "link_validated": true,
+      "executable_sha256": "5ea3b5ca9efd5dc1fb9dd762b8b956fd7618b164d376e9203988aa567a68a324",
+      "exported_symbols": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ]
+    }
+  },
+  "package_audits": {
+    "android-direct-link-audit.json": {
+      "passed": true,
+      "profile": "direct",
+      "platform": "Android",
+      "artifact_manifest_sha256": "aecd0dffdc41ec544f1e23003febd2f55e4e8ec6cde31755fb841ad9a56fb798",
+      "apk_sha256": "821c0c2f8a3f954f21565a0e078705ccfd64fa82e7216bf7308f4521c9100eca",
+      "apk_bytes": 105843699,
+      "apk_abis": [
+        "arm64-v8a"
+      ],
+      "packaged_elf_sha256": "54a52abef3674256edb5d86ed2ab214e68f4238b902c76493da36bef1151fa07",
+      "packaged_elf_bytes": 177649392,
+      "build_id": "e2cddc4c745d259ec2ed91e91e80346b03807833",
+      "minimum_load_alignment": 16384,
+      "webrtc_archive_objects": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Plugins/SimurghRTC/ThirdParty/WebRTC/Android/arm64/Lib/libwebrtc.a(isolated.o)"
+      ],
+      "with_janus": false,
+      "link_response_sha256": "f31441f22ae0943d2fb5fbc8d59a9f46ef167fc984b80f39b7ef595f5b1c1204",
+      "link_map_sha256": "ca0af8292bfff5bbf8403afc56c7323c75501d19603ba9d171abc881fb434d34"
+    },
+    "android-full-link-audit.json": {
+      "passed": true,
+      "profile": "full",
+      "platform": "Android",
+      "artifact_manifest_sha256": "aecd0dffdc41ec544f1e23003febd2f55e4e8ec6cde31755fb841ad9a56fb798",
+      "apk_sha256": "0c508aaab6e4808b630c9a24cce634604cca51db65f2335ddc39a1519901ea64",
+      "apk_bytes": 105849526,
+      "apk_abis": [
+        "arm64-v8a"
+      ],
+      "packaged_elf_sha256": "8cb0ba74a53deb9f9b4df45c549cf0251d2560d966e191c70019da3a88b06254",
+      "packaged_elf_bytes": 177654960,
+      "build_id": "30d766e719cc348bc347a8e5a464cbcaa30732b8",
+      "minimum_load_alignment": 16384,
+      "webrtc_archive_objects": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Plugins/SimurghRTC/ThirdParty/WebRTC/Android/arm64/Lib/libwebrtc.a(isolated.o)"
+      ],
+      "with_janus": true,
+      "link_response_sha256": "c52e971194149dfc80b002e184e2324bd66e4649b924fa8ef83ab5381e347095",
+      "link_map_sha256": "2bc0c39f7ac9d5a78c56c2ff55e368fade5960306aa1247011b0c252ab0c4466"
+    },
+    "simulator-direct-link-audit.json": {
+      "passed": true,
+      "built_and_packaged_uuid": "CFE7EA0F-DF3B-37F1-84AA-3952A6198AE3",
+      "code_signature_valid": true,
+      "profile": "direct",
+      "platform": "IOSSimulator",
+      "webrtc_link_inputs": [
+        "\"/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Plugins/SimurghRTC/ThirdParty/WebRTC/IOSSimulator/arm64/Lib/libwebrtc.a\""
+      ],
+      "http2_objects_resolved_from": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Build/IOSSimulator/libnghttp2.a"
+      ],
+      "link_response_sha256": "990b0a09487e2abb267994388906a2b621f78f63fa54a886791157f18e2a1e2d",
+      "link_map_sha256": "63b1992cee700f31bd352ce600061f4a780605f659eac56e7422d88999c25b43",
+      "executable_sha256": "87ee5fe08fb0743816361e48887fc5755f3f882ec93cc95770b6dffa8e2c2de8",
+      "artifact_manifest_sha256": "63c1245fe344726914a2be0aec2d6c53784885ba9bd18e16affcd02e9e34e152"
+    },
+    "simulator-full-link-audit.json": {
+      "passed": true,
+      "built_and_packaged_uuid": "F772E4E0-6A3C-30E9-BB50-1A28AB38878C",
+      "code_signature_valid": true,
+      "profile": "full",
+      "platform": "IOSSimulator",
+      "webrtc_link_inputs": [
+        "\"/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Plugins/SimurghRTC/ThirdParty/WebRTC/IOSSimulator/arm64/Lib/libwebrtc.a\""
+      ],
+      "http2_objects_resolved_from": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Build/IOSSimulator/libnghttp2.a"
+      ],
+      "link_response_sha256": "cedb7ad869f900d166d70bd7cfa1d7b408c686200a2c4567d8ea9ba5e0f654ed",
+      "link_map_sha256": "c5398b04fb899dde7c01a95205439e63e034c67bc76b4a9d284040f197f2cf5a",
+      "executable_sha256": "f8fcc49a2447a56af2024e6e98577ff8a955678f385099b85219a7adb78c8d8d",
+      "artifact_manifest_sha256": "63c1245fe344726914a2be0aec2d6c53784885ba9bd18e16affcd02e9e34e152"
+    },
+    "audit-server/package-audit.json": {
+      "schema": 1,
+      "passed": true,
+      "profile": "server",
+      "platform": "Mac",
+      "architecture": "arm64",
+      "artifact": {
+        "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "files": 7,
+        "objects": 1,
+        "archive_bytes": 17895536,
+        "manifest_sha256": "c140f7a2790f9a278776deacfd605426b539ba0ef39308e1b2b7aeab1834cdf0",
+        "runtime_validation": "unverified"
+      },
+      "archive_sha256": "f970a6d3f93ba87dba9ba8cb7c936adb48548cfa18bd4b95d59e1c8f01f5daf4",
+      "archive_exports": [
+        "_SimurghRTC_ChannelV1",
+        "_SimurghRTC_CreatePeerV1",
+        "_SimurghRTC_CreateV1",
+        "_SimurghRTC_DestroyV1",
+        "_SimurghRTC_DiagnosticsV1",
+        "_SimurghRTC_EnableLoopbackProbeV1",
+        "_SimurghRTC_MediaProbeV1",
+        "_SimurghRTC_NativeVersionV1",
+        "_SimurghRTC_PollDataV1",
+        "_SimurghRTC_PollEventV1",
+        "_SimurghRTC_SignalV1"
+      ],
+      "webrtc_link_inputs": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+      ],
+      "link_response_sha256": "cf98133fd9a654715b74d90926b267e47ea9f6a4f912a7b24bb8de2f3ac6d743",
+      "editor_link_inputs": false,
+      "janus_link_inputs": false,
+      "unreal_media_presentation_module": false,
+      "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+      "executable_sha256": "db85231a8de3e8a9bcfe3d7d0f834587c7583e39965782acdf2c33fcb9c3ba08",
+      "executable_bytes": 284573744,
+      "built_executable_sha256": "77f3b8fe244f53889c5ae92fb27390685b1a4830add7218dec8c57c09caabd78",
+      "built_and_staged_uuid": "E0134493-2A3B-312B-A7F9-596D8B575FCA",
+      "bundle_file_bytes": 383906928,
+      "shipping_size_baseline": false,
+      "rtc_size_delta_measured": false,
+      "code_signature_valid": true
+    }
+  },
+  "cooked_assets": [
+    {
+      "profile": "direct",
+      "cooked_files": {
+        "contracthost/content/paks/contracthost-ios.pak": {
+          "bytes": 10521525,
+          "sha256": "891284538215c2c0287074f395a7677380538b4e44a713907a684d44ee9c5551"
+        },
+        "contracthost/content/paks/global.ucas": {
+          "bytes": 1560224,
+          "sha256": "6e1523f6d36eca4f199b933d95fafb3dd76ef92148c95d6ab4aaf5832583cef6"
+        },
+        "contracthost/content/paks/contracthost-ios.ucas": {
+          "bytes": 13415696,
+          "sha256": "3fe4987bf81b4f9134bf3f51c723b668589547bf80447a00f14b97618aa88409"
+        },
+        "contracthost/content/paks/global.utoc": {
+          "bytes": 482,
+          "sha256": "ec85652f0d2619025962fb781f89018aa0b93bcd68f47092f9b7a4e5b32e3361"
+        },
+        "contracthost/content/paks/contracthost-ios.utoc": {
+          "bytes": 41819,
+          "sha256": "e595a693c5625f1ea87238a63a98790ddd28b3fa80719f0e94909f09897d7b2c"
+        }
+      }
+    },
+    {
+      "profile": "full",
+      "cooked_files": {
+        "contracthost/content/paks/contracthost-ios.pak": {
+          "bytes": 10521648,
+          "sha256": "5a581b00b2a3070aae3417f5aa9145640e7178310bd1ffcd4071231458f18aad"
+        },
+        "contracthost/content/paks/global.ucas": {
+          "bytes": 1560560,
+          "sha256": "8a901917bd9779f2e3d0bda0e5a4d0ff512637dd8de20d79377c3ea0d2cb14d6"
+        },
+        "contracthost/content/paks/contracthost-ios.ucas": {
+          "bytes": 13417920,
+          "sha256": "7c4bca0d381be00af869f39a160ca11139808853095112d640a199581b08fa53"
+        },
+        "contracthost/content/paks/global.utoc": {
+          "bytes": 482,
+          "sha256": "1dcbe556ab63d77250acab0c743e2a0ecfa1b48fc36e06935323be067f3dbd34"
+        },
+        "contracthost/content/paks/contracthost-ios.utoc": {
+          "bytes": 41946,
+          "sha256": "e42be7c4b1de776954ef0a2ee2ddc810c623d4e2547e761e795d1722d423e7fc"
+        }
+      }
+    }
+  ],
+  "package_toolchains": {
+    "Direct": {
+      "DTXcode": "2710",
+      "DTXcodeBuild": "27A9275",
+      "DTSDKName": "iphonesimulator27.1",
+      "DTSDKBuild": "24A94232",
+      "CFBundleIdentifier": "org.simurghrtc.m155.direct",
+      "CFBundleSupportedPlatforms": [
+        "iPhoneSimulator"
+      ]
+    },
+    "Full": {
+      "DTXcode": "2710",
+      "DTXcodeBuild": "27A9275",
+      "DTSDKName": "iphonesimulator27.1",
+      "DTSDKBuild": "24A94232",
+      "CFBundleIdentifier": "org.simurghrtc.m155.full",
+      "CFBundleSupportedPlatforms": [
+        "iPhoneSimulator"
+      ]
+    },
+    "xcode": "Xcode 27.1\nBuild version 27A9275"
+  },
+  "final_cleanup": {
+    "org.simurghrtc.m155.direct": {
+      "process_absent": true,
+      "temporary_credentials_absent": true
+    },
+    "org.simurghrtc.m155.full": {
+      "process_absent": true,
+      "temporary_credentials_absent": true
+    },
+    "remaining_adb_reverse_mappings": "UsbFfs tcp:41899 tcp:41899\nUsbFfs tcp:1981 tcp:1981\nUsbFfs tcp:8558 tcp:8558",
+    "simulator_processes_absent": true,
+    "owned_reverse_ports": [
+      "tcp:32991",
+      "tcp:33233",
+      "tcp:34699",
+      "tcp:34809",
+      "tcp:37431",
+      "tcp:38463",
+      "tcp:39833",
+      "tcp:40953",
+      "tcp:41039",
+      "tcp:41565",
+      "tcp:42273",
+      "tcp:42915",
+      "tcp:43637",
+      "tcp:43853",
+      "tcp:44001",
+      "tcp:44831",
+      "tcp:45047",
+      "tcp:45261",
+      "tcp:46157",
+      "tcp:46193",
+      "tcp:46603"
+    ],
+    "owned_reverse_ports_absent": true
+  },
+  "tests": {
+    "unreal_passed": 27,
+    "unreal_failed": 0,
+    "unreal_warnings": 0,
+    "python_passed": 192
+  },
+  "builds": {
+    "direct-android-fixed-android-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHost",
+        "Android",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-NoDebugInfo",
+        "-MapFile"
+      ],
+      "started": "2026-10-29T15:13:50.070842+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:14:23.666668+00:00"
+    },
+    "direct-android-fixed-cook-android-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+        "BuildCookRun",
+        "-WaitForUATMutex",
+        "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-noP4",
+        "-platform=Android",
+        "-clientarchitecture=arm64",
+        "-clientconfig=Development",
+        "-package",
+        "-cookflavor=ASTC",
+        "-editorarchitecture=arm64",
+        "-skipbuild",
+        "-nocompileeditor",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-map=/Engine/Maps/Entry+/Game/Examples/Direct/Maps/RtcDataCpp+/Game/Examples/Direct/Maps/RtcDataBlueprint",
+        "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Content/Examples",
+        "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+        "-unattended",
+        "-utf8output"
+      ],
+      "started": "2026-10-29T15:14:23.731361+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:14:59.060483+00:00"
+    },
+    "direct-android-fixed-editor-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-SimurghRTCAndroidCook",
+        "-SimurghRTCIOSCook"
+      ],
+      "started": "2026-10-29T15:12:48.230847+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:13:04.629849+00:00"
+    },
+    "direct-android-fixed-editor-finalize-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "-Mode=ApplePostBuildSync",
+        "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR10720261029/direct-editor-postbuildsync.json",
+        "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Intermediate/Build/XmlConfigCache.bin"
+      ],
+      "started": "2026-10-29T15:13:04.682825+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:13:18.363506+00:00"
+    },
+    "direct-android-fixed-editor-metadata-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-SimurghRTCAndroidCook",
+        "-SimurghRTCIOSCook",
+        "-ActionTypeFilter=WriteMetadata"
+      ],
+      "started": "2026-10-29T15:13:18.423326+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:13:27.872362+00:00"
+    },
+    "direct-android-fixed-tests-command.json": {
+      "command": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Binaries/Mac/UnrealEditor-Cmd",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-unattended",
+        "-nullrhi",
+        "-nosound",
+        "-ExecCmds=Automation RunTests SimurghRTC.",
+        "-TestExit=Automation Test Queue Empty",
+        "-ReportExportPath=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR10720261029/direct-android-fixed-tests-report"
+      ],
+      "started": "2026-10-29T15:13:27.937805+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:13:50.013985+00:00"
+    },
+    "direct-android-package-android-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHost",
+        "Android",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-NoDebugInfo",
+        "-MapFile"
+      ],
+      "started": "2026-10-29T15:11:12.296673+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 6,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:11:37.552001+00:00"
+    },
+    "direct-android-package-editor-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-SimurghRTCAndroidCook",
+        "-SimurghRTCIOSCook"
+      ],
+      "started": "2026-10-29T15:10:30.350130+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:10:48.151083+00:00"
+    },
+    "direct-android-package-editor-finalize-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "-Mode=ApplePostBuildSync",
+        "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR10720261029/direct-editor-postbuildsync.json",
+        "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Intermediate/Build/XmlConfigCache.bin"
+      ],
+      "started": "2026-10-29T15:10:48.212174+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:11:02.346952+00:00"
+    },
+    "direct-android-package-editor-metadata-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-SimurghRTCAndroidCook",
+        "-SimurghRTCIOSCook",
+        "-ActionTypeFilter=WriteMetadata"
+      ],
+      "started": "2026-10-29T15:11:02.409875+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:11:12.238254+00:00"
+    },
+    "direct-cook-simulator-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+        "BuildCookRun",
+        "-WaitForUATMutex",
+        "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-noP4",
+        "-platform=IOS",
+        "-clientarchitecture=iossimulator",
+        "-clientconfig=Development",
+        "-package",
+        "-xcodebuildoptions=SDKROOT=iphonesimulator CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=NO",
+        "-editorarchitecture=arm64",
+        "-skipbuild",
+        "-nocompileeditor",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-map=/Engine/Maps/Entry+/Game/Examples/Direct/Maps/RtcDataCpp+/Game/Examples/Direct/Maps/RtcDataBlueprint",
+        "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Content/Examples",
+        "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+        "-unattended",
+        "-utf8output"
+      ],
+      "started": "2026-10-29T14:58:48.209177+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:59:36.529836+00:00"
+    },
+    "direct-editor-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-SimurghRTCAndroidCook",
+        "-SimurghRTCIOSCook"
+      ],
+      "started": "2026-10-29T14:56:17.667204+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:57:14.390970+00:00"
+    },
+    "direct-editor-finalize-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "-Mode=ApplePostBuildSync",
+        "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR10720261029/direct-editor-postbuildsync.json",
+        "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/Intermediate/Build/XmlConfigCache.bin"
+      ],
+      "started": "2026-10-29T14:57:14.488785+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:57:31.457896+00:00"
+    },
+    "direct-editor-metadata-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-SimurghRTCAndroidCook",
+        "-SimurghRTCIOSCook",
+        "-ActionTypeFilter=WriteMetadata"
+      ],
+      "started": "2026-10-29T14:57:31.531503+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:57:43.969073+00:00"
+    },
+    "direct-simulator-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHost",
+        "IOS",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=iossimulator",
+        "-NoDebugInfo",
+        "-MapFile"
+      ],
+      "started": "2026-10-29T14:58:13.174359+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:58:48.131687+00:00"
+    },
+    "direct-tests-command.json": {
+      "command": [
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Binaries/Mac/UnrealEditor-Cmd",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+        "-unattended",
+        "-nullrhi",
+        "-nosound",
+        "-ExecCmds=Automation RunTests SimurghRTC.",
+        "-TestExit=Automation Test Queue Empty",
+        "-ReportExportPath=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR10720261029/direct-tests-report"
+      ],
+      "started": "2026-10-29T14:57:44.045676+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:58:13.100288+00:00"
+    },
+    "full-android-fixed-android-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHost",
+        "Android",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-NoDebugInfo",
+        "-MapFile"
+      ],
+      "started": "2026-10-29T15:15:43.469293+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:16:29.365932+00:00"
+    },
+    "full-android-fixed-cook-android-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+        "BuildCookRun",
+        "-WaitForUATMutex",
+        "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+        "-noP4",
+        "-platform=Android",
+        "-clientarchitecture=arm64",
+        "-clientconfig=Development",
+        "-package",
+        "-cookflavor=ASTC",
+        "-editorarchitecture=arm64",
+        "-skipbuild",
+        "-nocompileeditor",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-map=/Engine/Maps/Entry+/Game/Examples/Direct/Maps/RtcDataCpp+/Game/Examples/Direct/Maps/RtcDataBlueprint",
+        "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Content/Examples",
+        "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+        "-unattended",
+        "-utf8output"
+      ],
+      "started": "2026-10-29T15:16:29.435220+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:17:03.586937+00:00"
+    },
+    "full-android-fixed-editor-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-SimurghRTCAndroidCook",
+        "-SimurghRTCIOSCook"
+      ],
+      "started": "2026-10-29T15:14:59.153440+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:15:18.401825+00:00"
+    },
+    "full-android-fixed-editor-finalize-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "-Mode=ApplePostBuildSync",
+        "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR10720261029/full-editor-postbuildsync.json",
+        "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Intermediate/Build/XmlConfigCache.bin"
+      ],
+      "started": "2026-10-29T15:15:18.464904+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:15:32.140915+00:00"
+    },
+    "full-android-fixed-editor-metadata-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-SimurghRTCAndroidCook",
+        "-SimurghRTCIOSCook",
+        "-ActionTypeFilter=WriteMetadata"
+      ],
+      "started": "2026-10-29T15:15:32.212515+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:15:43.401805+00:00"
+    },
+    "full-cook-simulator-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+        "BuildCookRun",
+        "-WaitForUATMutex",
+        "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+        "-noP4",
+        "-platform=IOS",
+        "-clientarchitecture=iossimulator",
+        "-clientconfig=Development",
+        "-package",
+        "-xcodebuildoptions=SDKROOT=iphonesimulator CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=NO",
+        "-editorarchitecture=arm64",
+        "-skipbuild",
+        "-nocompileeditor",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-map=/Engine/Maps/Entry+/Game/Examples/Direct/Maps/RtcDataCpp+/Game/Examples/Direct/Maps/RtcDataBlueprint",
+        "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Content/Examples",
+        "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+        "-unattended",
+        "-utf8output"
+      ],
+      "started": "2026-10-29T15:02:21.182592+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:03:20.421420+00:00"
+    },
+    "full-editor-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-SimurghRTCAndroidCook",
+        "-SimurghRTCIOSCook"
+      ],
+      "started": "2026-10-29T15:00:15.779721+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:01:14.542657+00:00"
+    },
+    "full-editor-finalize-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "-Mode=ApplePostBuildSync",
+        "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR10720261029/full-editor-postbuildsync.json",
+        "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/Intermediate/Build/XmlConfigCache.bin"
+      ],
+      "started": "2026-10-29T15:01:14.626096+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:01:31.018044+00:00"
+    },
+    "full-editor-metadata-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-SimurghRTCAndroidCook",
+        "-SimurghRTCIOSCook",
+        "-ActionTypeFilter=WriteMetadata"
+      ],
+      "started": "2026-10-29T15:01:31.114294+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:01:44.339382+00:00"
+    },
+    "full-simulator-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHost",
+        "IOS",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=iossimulator",
+        "-NoDebugInfo",
+        "-MapFile"
+      ],
+      "started": "2026-10-29T15:01:44.418525+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T15:02:21.047893+00:00"
+    },
+    "server-cook-server-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+        "BuildCookRun",
+        "-WaitForUATMutex",
+        "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "-noP4",
+        "-platform=Mac",
+        "-serverplatform=Mac",
+        "-server",
+        "-noclient",
+        "-serverarchitecture=arm64",
+        "-serverconfig=Development",
+        "-editorarchitecture=arm64",
+        "-skipbuild",
+        "-nocompileeditor",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-map=/Engine/Maps/Entry",
+        "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Content/Examples",
+        "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+        "-unattended",
+        "-utf8output"
+      ],
+      "started": "2026-10-29T14:54:28.714958+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:54:59.219014+00:00"
+    },
+    "server-editor-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64"
+      ],
+      "started": "2026-10-29T14:53:03.668724+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:53:22.980445+00:00"
+    },
+    "server-editor-finalize-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "-Mode=ApplePostBuildSync",
+        "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR10720261029/server-editor-postbuildsync.json",
+        "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/XmlConfigCache.bin"
+      ],
+      "started": "2026-10-29T14:53:23.043848+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:53:37.163666+00:00"
+    },
+    "server-editor-metadata-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostEditor",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-ActionTypeFilter=WriteMetadata"
+      ],
+      "started": "2026-10-29T14:53:37.225696+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:53:48.299133+00:00"
+    },
+    "server-server-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostServer",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64"
+      ],
+      "started": "2026-10-29T14:53:48.363581+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:54:05.394505+00:00"
+    },
+    "server-server-finalize-command.json": {
+      "command": [
+        "env",
+        "UE_SKIP_UBT=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "-Mode=ApplePostBuildSync",
+        "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/Mac/arm64/ContractHostServer/Development/PostBuildSync_ContractHostServer.json",
+        "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/XmlConfigCache.bin"
+      ],
+      "started": "2026-10-29T14:54:05.459113+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:54:18.008013+00:00"
+    },
+    "server-server-metadata-command.json": {
+      "command": [
+        "env",
+        "UE_BUILD_FROM_XCODE=1",
+        "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+        "ContractHostServer",
+        "Mac",
+        "Development",
+        "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "-WaitMutex",
+        "-NoHotReloadFromIDE",
+        "-NoUBA",
+        "-MaxParallelActions=6",
+        "-architecture=arm64",
+        "-ActionTypeFilter=WriteMetadata"
+      ],
+      "started": "2026-10-29T14:54:18.071900+00:00",
+      "engine_before": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+      "exit_code": 0,
+      "engine_after": {
+        "revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+        "status": "?? Engine/Binaries/Mac/\n"
+      },
+      "finished": "2026-10-29T14:54:28.650990+00:00"
+    }
+  },
+  "engine_revision": "746264e6b3784f049e9bd7b7f00164dace8bd04e",
+  "engine_tracked_changes": false,
+  "source_note": "The Server and simulator builds precede a one-line const-reference fix in the Direct automation test. Runtime plugin code and native bridge are unchanged. Android packages and the final Unreal test run include that correction.",
+  "compile_source_snapshots": {
+    "stage-server-final.json": {
+      "path": "Intermediate/SR10720261029/stage-server-final.json",
+      "sha256": "ee1b63a090219144dc70c313e2b4a9a60c016b83169d31df54484e1693a546f7"
+    },
+    "stage-direct-final.json": {
+      "path": "Intermediate/SR10720261029/stage-direct-final.json",
+      "sha256": "6f90f08a5c25a3b968261223c85d69610137617047edb383c2d0973c378cc6e3"
+    },
+    "stage-full-final.json": {
+      "path": "Intermediate/SR10720261029/stage-full-final.json",
+      "sha256": "2d6bd006d6ca22e0b6d6d4fd7d64b166b062ee8495e79baa0fb56651412cfd63"
+    },
+    "stage-direct-android-fixed.json": {
+      "path": "Intermediate/SR10720261029/stage-direct-android-fixed.json",
+      "sha256": "20ddb47479e83123577f67951b0465182edb0939882ab1c462be69312b2b0019"
+    },
+    "stage-full-android-fixed.json": {
+      "path": "Intermediate/SR10720261029/stage-full-android-fixed.json",
+      "sha256": "f63f7146d170ac1a15b11fc2cd137a7ec48ab194101d2c5ab9cad2b86f945a1a"
+    }
+  },
+  "source_sha256": {
+    "Fixtures/native/data_channels.c": "1b6911ae9f81883a2bbe9e0604e38a677578dbf3e85e4ae98b15f69d9dbc0b81",
+    "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Private/Tests/SimurghRTCDirectTests.cpp": "afab09b799dd0fe5bb8e621ec3090bd9dc6960a2eb3075931cb7bd58f5eeb7dc",
+    "Samples/ContractHost/Source/ContractHost/ContractDataExampleProbe.cpp": "f214cc5939faacded9e8afa26c56cc5da9cb8484a5b238c7437619f5cd28b3b6",
+    "Samples/ContractHost/Source/ContractHost/ContractDirectProbe.cpp": "86c60ef1cb16e8785efa2e16fc4951af1b220eba2c05632f7ca074b62bc28d19",
+    "tools/build_native_android.py": "8ebed77eeec1f1a0d91e06649e71a34b4e1f4a7d8c563d19a5ebe657806c2a4e",
+    "tools/run_data_example_probe.py": "ebcd79c107531ec974fc0d329ba3dbfd12b096303c84189c9cd35ba51c15055c",
+    "tools/run_direct_probe.py": "67999aba09d11c5ce68a50ec0f8150b1ce72758cbb8b7963f8abaf5a828216a9",
+    "tools/run_mobile_data_example_probe.py": "6704608d01d0827bdbcf715f2c60b53f0a129c7c0e486e3befc237a9ab077dc5",
+    "tools/run_native_abi_probe.py": "fb2e51a353f86c57a3e8febefb5da62822af583c32da8dfc8fe6b57391dd2c96",
+    "tools/run_native_data_probe.py": "215d05d55591e82c6dd6ecc8511fd517b18bc2ce6cee9d1d2e827bf4957b9a51",
+    "tools/tests/test_data_example_probe.py": "d40d64ea03736d0bae955274c0303b951635170b955b7a2cc993a6f5e5d3582d",
+    "tools/tests/test_direct_probe.py": "58704c7c21d519a2be32ee3c1f3a56155fb3f361a57645042a2c903110027402",
+    "tools/tests/test_mobile_data_example_probe.py": "6287341dc7526334c0f3d81fadfd2f59699ad3da26a8979bed2bdad0b1ebcd9a",
+    "tools/tests/test_native_android_ndk.py": "880bae6cc27f4fff1c07f374d33683ffb134ff8a55069895c1e980b4bdd1a31b",
+    "tools/tests/test_native_data_runner.py": "7a7dc86c89dc96432eb6a7d36dff9f1c99cefcf2b88318ac6f4bee53f34520a5"
+  },
+  "staged_sources": {
+    "direct": {
+      "snapshot": "Intermediate/SR10720261029/stage-direct-android-fixed.json",
+      "snapshot_sha256": "20ddb47479e83123577f67951b0465182edb0939882ab1c462be69312b2b0019",
+      "target": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileDirect"
+    },
+    "full": {
+      "snapshot": "Intermediate/SR10720261029/stage-full-android-fixed.json",
+      "snapshot_sha256": "f63f7146d170ac1a15b11fc2cd137a7ec48ab194101d2c5ab9cad2b86f945a1a",
+      "target": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155MobileFull"
+    },
+    "server": {
+      "snapshot": "Intermediate/SR10720261029/stage-server-final.json",
+      "snapshot_sha256": "ee1b63a090219144dc70c313e2b4a9a60c016b83169d31df54484e1693a546f7",
+      "target": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022"
+    }
+  },
+  "fixed_attempts": [
+    {
+      "evidence": "direct-android-data-verified/result.json",
+      "reason": "The first Galaxy C++ message case passed but Unreal truncated the JSON log line. The runner now reads the complete report from that app\u2019s scoped saved directory."
+    },
+    {
+      "evidence": "direct-android-package-android-command.json",
+      "reason": "NDK treats a range-loop FString copy in an existing contract test as an error. Changed the loop variable to a const reference and rebuilt both Android profiles."
+    },
+    {
+      "evidence": "native-android.log",
+      "reason": "The fresh native NDK extraction omitted its archive receipt. The builder now writes and verifies it; all cached files were checked before restoring the receipt."
+    },
+    {
+      "evidence": "direct-simulator-data/result.json",
+      "reason": "Host-side absolute simulator credential paths were remapped by Unreal. The runner now uses paths relative to the iOS private Library directory."
+    },
+    {
+      "evidence": "direct-simulator-data-private-paths/result.json",
+      "reason": "The C++ message case passed, then cleanup raced the successful app exit. Cleanup now verifies process disappearance even if simctl reports nothing to terminate."
+    }
+  ],
+  "evidence_sha256": {
+    "Intermediate/SR10720261029/android-direct-link-audit.json": "985352d4ceff672ed5d705d4de17cd432b0b40248d3b9b582fa0f29942159a11",
+    "Intermediate/SR10720261029/android-full-link-audit.json": "13f2c88fd9f1365ec6ce5bf9ed55b07cb1983c897da4161ca74f52853e549bb2",
+    "Intermediate/SR10720261029/android-packages-fixed.json": "6f71c2fd6a85504952e1501e7034d0c7fdc9321c579f777cdd337cc2c5f47b2b",
+    "Intermediate/SR10720261029/android-packages.json": "8277711bf121a82883a13c93a8da812c20cb03fa5feaafd490d240fd71502c40",
+    "Intermediate/SR10720261029/audit-server/package-audit.json": "a8a9f8cd4b83ec6c3b5039d8acef011cd7ad2feb2e73126c171c2f8b238b8e93",
+    "Intermediate/SR10720261029/direct-android-data-accepted/blueprint-destroy-connect/probe.json": "9bddb8d8b96c2c3b6d0bd97c655c7841732f4bf5ff5a0f2d77399cb63f884e53",
+    "Intermediate/SR10720261029/direct-android-data-accepted/blueprint-destroy-open/probe.json": "4ec1b31f0529a816069033e9cb842b80b1d32bea999b185b06857918e153263c",
+    "Intermediate/SR10720261029/direct-android-data-accepted/blueprint-disconnect-pending/probe.json": "a978da8944a02aed6ada0ce9c7fdc3b0e11c011e7416f28ac7edf0bab9bf6ab8",
+    "Intermediate/SR10720261029/direct-android-data-accepted/blueprint-messages/probe.json": "e822ce70af7c09fd2645967a4c3ded2696370e973ace60067c8f1e2bae512e62",
+    "Intermediate/SR10720261029/direct-android-data-accepted/blueprint-timeout/probe.json": "0b7b64cb1d672881abd59c714e39b5475e1585be5ccea4c3ddc9b5595e073b94",
+    "Intermediate/SR10720261029/direct-android-data-accepted/cpp-destroy-connect/probe.json": "6ae12a26cfb352b8209a95eff351f9dddb623c3e33e153a16e0d0ab651b64d10",
+    "Intermediate/SR10720261029/direct-android-data-accepted/cpp-destroy-open/probe.json": "d0eba65c7425b4590f80b5e165c0dbcc283e0f3dd758080219e03e228cde0745",
+    "Intermediate/SR10720261029/direct-android-data-accepted/cpp-disconnect-pending/probe.json": "919561a40c414020ab64c25d2b3941c1d5803f7cd0b192db33b89f9706b264f9",
+    "Intermediate/SR10720261029/direct-android-data-accepted/cpp-messages/probe.json": "f3359d248870e98899382fc2ac8f2083b68d511a7957484937f54c1e2c96f614",
+    "Intermediate/SR10720261029/direct-android-data-accepted/cpp-timeout/probe.json": "0cc6340459558b7a4978bcec251d67565bab93492534913b46ce0576f5ecace0",
+    "Intermediate/SR10720261029/direct-android-data-accepted/result.json": "f32e3ffb1d212973382ce0d3984a9672ca5d1d852ca540279f6562c75f021450",
+    "Intermediate/SR10720261029/direct-android-fixed-android-command.json": "f897f6e97d41ed9dab7b4619098c7f004f9d046070f5cbe29f2305e4d087464d",
+    "Intermediate/SR10720261029/direct-android-fixed-cook-android-command.json": "7b6c433b0d7d3aa597013660f1febeb1142eca55e7e158b8385c7a8e2fddd5fb",
+    "Intermediate/SR10720261029/direct-android-fixed-editor-command.json": "a3895c65dd22646707295bc804b806b68bce7ca434f3a595513445287c1325eb",
+    "Intermediate/SR10720261029/direct-android-fixed-editor-finalize-command.json": "d141fbd29d147df8a8a2cae063d422e77627bfb7c88733c99c901874d25eedf4",
+    "Intermediate/SR10720261029/direct-android-fixed-editor-metadata-command.json": "c220e982cbd474cf1ec67b8e5350ec89a8fa5b45cef5a7ea728fb8ffc51c4c7b",
+    "Intermediate/SR10720261029/direct-android-fixed-tests-command.json": "1783b95ac02c4e3d27875fa8473eba5a591d93b30f0f65f341aa315335ce2afc",
+    "Intermediate/SR10720261029/direct-android-fixed-tests-report/index.json": "b9557299ed0d0dac139c7461c10d3a4a16d18c01f5f7e49fa37891bc59df6c5f",
+    "Intermediate/SR10720261029/direct-android-package-android-command.json": "a4e368a8d01eef9e1038c14f13e7672c307b0fa877b2e9dc384378fa938fc009",
+    "Intermediate/SR10720261029/direct-android-package-editor-command.json": "281322a40cab58319e0ebc4afb12c75b4eb0aa79fefa913c725add0f0ce8cd95",
+    "Intermediate/SR10720261029/direct-android-package-editor-finalize-command.json": "5aeba2d08ba78d59b86df4efe3201969665f0f7a84f600c8b1ebc63da2ad35d2",
+    "Intermediate/SR10720261029/direct-android-package-editor-metadata-command.json": "8f93ce109ad6968129469a70356d8ba1f063b2a48616591f024772cceed547bf",
+    "Intermediate/SR10720261029/direct-cook-simulator-command.json": "6370527fbb1c012e96464aee17491d7271d0122896366d5b9fe9064cfcfb97f0",
+    "Intermediate/SR10720261029/direct-editor-command.json": "04cb067ebd069ddaee668bdae50ccc7e99aa89417df53724f6e9f9ead0e1eb65",
+    "Intermediate/SR10720261029/direct-editor-finalize-command.json": "d5bf9679424214948547813fd15dc0abd14434a81b164eb18c306032132680fb",
+    "Intermediate/SR10720261029/direct-editor-metadata-command.json": "50bc941928f1fe42ec461491f2b137cc3b3c349ca6d7e0382d820c97902d04d9",
+    "Intermediate/SR10720261029/direct-simulator-command.json": "93abf408b0d3dc9e154d7d3e86b537d84daa5659c72163b1ec7fc95c706d098f",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/blueprint-destroy-connect/probe.json": "9b4a507c80536b72e497450b4bb363179e0fbd649f6926ddc3dc4d274a74963a",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/blueprint-destroy-open/probe.json": "63aa10ae80a2427d3c917fdf44b9833cc01054d2304a1fb3a7f7873c2a173084",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/blueprint-disconnect-pending/probe.json": "e3f1fff6ffe9850c87b0ebaec6ca1c2598d68526a8e5a5b0002b3d02fb414caf",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/blueprint-messages/probe.json": "4e64fe935cb3e5622b8eab77554c8f7c7fd99fe9f51b318a59a216bab7d3cf4e",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/blueprint-timeout/probe.json": "3943a78d74e851e19005b8850c642967408b48951504ecec3db631f40d6d2c77",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/cpp-destroy-connect/probe.json": "6a11c00d45211990880bd742bb37aff8da0e2da10d3ac209f48ea1fe9f9e48fd",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/cpp-destroy-open/probe.json": "aa9100e10fa9454ce1f2fc5c0ce7540aaf7e0fc047c823d47d3e7c8f2b5c01b3",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/cpp-disconnect-pending/probe.json": "edaf6bb2092bd65002a08f68a61f5d70adf63558f7ad4818e1359f468b94abc1",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/cpp-messages/probe.json": "5f128d3e8057c9e09f38a299fc05c526f2117f649f1c0e5d4f20981460d481a5",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/cpp-timeout/probe.json": "8edad308aad7519483c755466bf96e5aebdb05ba9a61b175c6fa49ba747b8654",
+    "Intermediate/SR10720261029/direct-simulator-data-verified/result.json": "69258d704807b5dbc6d225cf62b935a4a59b6f6572634b8ae6da1c7f580b4544",
+    "Intermediate/SR10720261029/direct-tests-command.json": "e88a5fe78b353bf6e2f7595b866876b42e39297ab0a0c1d869648b102c0b599c",
+    "Intermediate/SR10720261029/final-cleanup.json": "791722bf3531c847ec630fb593652b278c2153a0de7e771caf1b03e60cacbce1",
+    "Intermediate/SR10720261029/full-android-data-accepted/blueprint-destroy-connect/probe.json": "bf8442961ca36ef1f7bd2da252f4a60c80547950620706cf3165c28c0197baab",
+    "Intermediate/SR10720261029/full-android-data-accepted/blueprint-destroy-open/probe.json": "4f769f36e340c342f9292c1a70b9b1f7cf87e53d3e4223ff49f60f149e1329db",
+    "Intermediate/SR10720261029/full-android-data-accepted/blueprint-disconnect-pending/probe.json": "fd09c76e360bdfdbaab5c85f54e12e138cffeb0a033d8fa58a9bbc7e872e2b9b",
+    "Intermediate/SR10720261029/full-android-data-accepted/blueprint-messages/probe.json": "7597dea463c7df51fc590d29975eb539688b01f87c5b9cb61c8fa786b37e1feb",
+    "Intermediate/SR10720261029/full-android-data-accepted/blueprint-timeout/probe.json": "614620c553e9bf5cfaeecce46adc40744ea51aca0fe14a7f883e2ac45e60c712",
+    "Intermediate/SR10720261029/full-android-data-accepted/cpp-destroy-connect/probe.json": "9d24fdb3faca6122e70e7ce4c845c01d94602e10e62ce290a020d990ae93b389",
+    "Intermediate/SR10720261029/full-android-data-accepted/cpp-destroy-open/probe.json": "80aeca386566adc80ba1b9b95c35a3ea813ceaa059542a91ae902a3aeeb265b1",
+    "Intermediate/SR10720261029/full-android-data-accepted/cpp-disconnect-pending/probe.json": "34176226c0a1f7a136bb44bd4e2ed3ce738bf69b339d7c4a21c11e31a4652cb9",
+    "Intermediate/SR10720261029/full-android-data-accepted/cpp-messages/probe.json": "614de8216cda5a427050435fadfd1b4d71329065f28117c0d3a57cc8419b7fae",
+    "Intermediate/SR10720261029/full-android-data-accepted/cpp-timeout/probe.json": "421ec21df3ba55abd3f164e479676a06406c80aeeb56f2c33b5b0ba711e09d1e",
+    "Intermediate/SR10720261029/full-android-data-accepted/result.json": "c49308adcfe82d50f763d15ec2ce202cb1e0ebfd35093564e5a67df0c4005166",
+    "Intermediate/SR10720261029/full-android-fixed-android-command.json": "02375bc8474bb5482761d6a254cbbd1a9556a8efed4eb3de4c491e3cd132ba38",
+    "Intermediate/SR10720261029/full-android-fixed-cook-android-command.json": "6ffecaf81e629587bd81dc6f05fad11ebf3dd4957be213cccb9b6cc9283f485b",
+    "Intermediate/SR10720261029/full-android-fixed-editor-command.json": "4ac0e66a3f00db428d66bae86163a1b9c30e6bf9a622526a9bce6a741e52c1fc",
+    "Intermediate/SR10720261029/full-android-fixed-editor-finalize-command.json": "3902d01e25e6357f13358367a738b6db3433f0614696677419968113444e0bdf",
+    "Intermediate/SR10720261029/full-android-fixed-editor-metadata-command.json": "05a8c8839cecd2ef6605bb741f8d4e1a4258d1b478d0495521eaa9a2ac39341f",
+    "Intermediate/SR10720261029/full-cook-simulator-command.json": "64856e6de388c1c0379e36f86b4a502f25a3c29c9703701cc2576c4a6217f752",
+    "Intermediate/SR10720261029/full-editor-command.json": "020d610b0cb8a2b8f6c47fa9a9a64b598e3b3c181fd2a1032ab5573280340929",
+    "Intermediate/SR10720261029/full-editor-finalize-command.json": "296e14d635d90da4eff084b2acc6a2c8581fbcd00ca4e67ac043f91b4a9fb980",
+    "Intermediate/SR10720261029/full-editor-metadata-command.json": "c10480793aedc8f9d6fa34072954cdf862039b9825694df6771450f2be75d982",
+    "Intermediate/SR10720261029/full-simulator-command.json": "c3c618d14ac1ef63fc8b082bcc1eb97d5bb457819064f3397674be0f61e7a658",
+    "Intermediate/SR10720261029/full-simulator-data-verified/blueprint-destroy-connect/probe.json": "6ab44f07d74eb6f21cf014862dc492c370fe62fc33c52c7a267fd21727b0bf4d",
+    "Intermediate/SR10720261029/full-simulator-data-verified/blueprint-destroy-open/probe.json": "b5db151b6dfe6fac27a1db5678ba9fb9bac2151d3cdc222b0dd52eb86962ea4d",
+    "Intermediate/SR10720261029/full-simulator-data-verified/blueprint-disconnect-pending/probe.json": "987b6a95912689cfe15cfad9b38994324d5d54b3eb28715cc62099623f84f44c",
+    "Intermediate/SR10720261029/full-simulator-data-verified/blueprint-messages/probe.json": "5d4dff4bd31dabb05959d79b10f3910d4c02de643651be3c4938671a5652093f",
+    "Intermediate/SR10720261029/full-simulator-data-verified/blueprint-timeout/probe.json": "0418d5c5637259ff13c4c31ca20b323dd9dddc7ce8b61222d18d6d7f080936c5",
+    "Intermediate/SR10720261029/full-simulator-data-verified/cpp-destroy-connect/probe.json": "734fe2e0ebbf375f486d7f718cec422f9b894122a0a4fe8394c9ff2093a7d10f",
+    "Intermediate/SR10720261029/full-simulator-data-verified/cpp-destroy-open/probe.json": "59599cf43dc4d5b18ca83c8193867b3deb689506ac6feba7545d316235ce83ef",
+    "Intermediate/SR10720261029/full-simulator-data-verified/cpp-disconnect-pending/probe.json": "684264aa6564954d54ccd3e6bb1803b05edb3bd360747a01901655aa7cdcb4c2",
+    "Intermediate/SR10720261029/full-simulator-data-verified/cpp-messages/probe.json": "bd272dbb8315902664a6308e96ffa8640c1f875f581e1d3a317abf96a852e266",
+    "Intermediate/SR10720261029/full-simulator-data-verified/cpp-timeout/probe.json": "98535aa0684b24854e1f702f7cc65595a71905a6874ff5cc16bcb2a56c826959",
+    "Intermediate/SR10720261029/full-simulator-data-verified/result.json": "b4f1bdb12ff8ec0c3edaf1b4f2302cb5c5a480e8770bfc9a1fe79e278fd9a08e",
+    "Intermediate/SR10720261029/native-android-retry.log": "bf1e342513203a73420eca2eeafe3361eb97eb349d45932b3383020640384195",
+    "Intermediate/SR10720261029/native-android.log": "91b634587329a62b4048e1d90a96443d5f25aa7d97fae72265cda276a6afdd10",
+    "Intermediate/SR10720261029/native-data-android/commands.json": "cc3b426bddd5b65486a985f1cbeeb96ea653f84281e1ff002fa506de24367802",
+    "Intermediate/SR10720261029/native-data-android/result.json": "abc2aff3cd5e0d46648329757cfa8ccd3867b7f4f61b36ee6271746e9ad2a986",
+    "Intermediate/SR10720261029/native-data-android/runtime.log": "4060d698cf54587e66778b0f574c1ec636ca38a82d5e525b8115476dd4ffbc8d",
+    "Intermediate/SR10720261029/native-data-mac-regression/commands.json": "ed959628c0a19d899eae0e145fb1cbe9874beb006fac4920bc8b360dcc7aa4ba",
+    "Intermediate/SR10720261029/native-data-mac-regression/result.json": "5b77d96f562a7cf12bbfe347c86c1ba06d2f79ac4bf14d94b91e9ddee5c804a4",
+    "Intermediate/SR10720261029/native-data-mac-regression/runtime.log": "4060d698cf54587e66778b0f574c1ec636ca38a82d5e525b8115476dd4ffbc8d",
+    "Intermediate/SR10720261029/native-data-simulator/commands.json": "03268f7352c986d98e6b048921b01245b62d22877671b05b21d71e4c4d28c8ca",
+    "Intermediate/SR10720261029/native-data-simulator/result.json": "fb2e3e37cf58c059ae885ac36ba49518248ea966ec5f8e3dd6d1dc6ddb49ee4d",
+    "Intermediate/SR10720261029/native-data-simulator/runtime.log": "4060d698cf54587e66778b0f574c1ec636ca38a82d5e525b8115476dd4ffbc8d",
+    "Intermediate/SR10720261029/native-ios-link/commands.json": "0d2dedca0d07155dfa6ba0a4b034a850b0512e3cb11ba2093b148800c3b710dd",
+    "Intermediate/SR10720261029/native-ios-link/result.json": "803c9166a7e083d7dd6d7e304b7d2a76897296bae034f25b20f07c0ed3df1a9c",
+    "Intermediate/SR10720261029/native-ios.log": "80592e7996afe37452e76db43c32be97bea1a988855f31ddc4d9b5f5f512a22b",
+    "Intermediate/SR10720261029/native-simulator.log": "f2e58d900d9dbb77a5b5f1eed83fffe4432694b92e474c99fb67b6824a6154a9",
+    "Intermediate/SR10720261029/ndk-receipt-repair.log": "1194104aedf8ab366a961e866f413c3771da13b0f8e0976f5598b364a62d6cf9",
+    "Intermediate/SR10720261029/package-toolchains.json": "cc43675591a3bde52e5590762cb04b114dd4df5bd3b3c628da55e08f2a793d04",
+    "Intermediate/SR10720261029/pipeline-direct-android-fixed.json": "54f819a042deaa73bbf067ea19b1c7a600eca3f9e4ee8eecf727348b4d591356",
+    "Intermediate/SR10720261029/pipeline-direct-android-package.json": "684fcd8089bd0b484416ed02f8783fd95b0e42877d616ba13343dcb2632a12ee",
+    "Intermediate/SR10720261029/pipeline-direct.json": "411208fd3c56b50088bed942f2fc12b458c2280388a38cc2fc588204a7c4a3b6",
+    "Intermediate/SR10720261029/pipeline-full-android-fixed.json": "0634621b88fa9c5f09bd62e7b36e8a8835389aec613a6bfbddc58f3f5825c3a6",
+    "Intermediate/SR10720261029/pipeline-full.json": "986f857090752b96f44882cad8abd35c94a8abea44d1bcf52f4029a149f7c67f",
+    "Intermediate/SR10720261029/pipeline-server.json": "b07e3d37924667d229384a347755f311ebff4a3b3f9ce2fb0a47fee516ad7df9",
+    "Intermediate/SR10720261029/python-tests-final.log": "21902e323b98d56c888de867217c439f55b11e6ddbbb8d17415717e71d022c72",
+    "Intermediate/SR10720261029/server-cook-server-command.json": "40811c66c0b29bf420d1a935c40ddbc73ee7597278f3a931611a8adf40ea7e11",
+    "Intermediate/SR10720261029/server-editor-command.json": "1c9f697eb3a8cb72e8589a05a6008e6213bf7817a93350de60effff1c25ac1ac",
+    "Intermediate/SR10720261029/server-editor-finalize-command.json": "8f36eacaf4277d1d0e4b8dc5c485102f5dee8d3d938e2422866f5fdbdb7c4ae5",
+    "Intermediate/SR10720261029/server-editor-metadata-command.json": "92febb5d9488a7151bb1bca1961176b925a7e1fd6a5730ec807b646b2dd18694",
+    "Intermediate/SR10720261029/server-server-command.json": "db7ae2f99309f69dc25739c1bec24e05ff4731cb3f903fea50a35ddf9a1e850c",
+    "Intermediate/SR10720261029/server-server-finalize-command.json": "325579ffc24f6c4f5a6e0cbe63f24f0a15f1595b88845ccfbc450652d0fd027b",
+    "Intermediate/SR10720261029/server-server-metadata-command.json": "228135b709f8693ffa27ab3c873b3fe106d60c373b142ed2ccbe492fa6b4f351",
+    "Intermediate/SR10720261029/simulator-cooked-assets.json": "1cd99382adb1c364ad1aae0bb938b02120f451c72c8122008e1b8d1aaef2aff4",
+    "Intermediate/SR10720261029/simulator-direct-link-audit.json": "8e61bd1acaa5a63536d16fc4ab61640a773d92bdcf48e0aa8d886701e957168c",
+    "Intermediate/SR10720261029/simulator-full-link-audit.json": "2b8b947161642e5d59b7f195a335cdadacb585c0f3a67585b984c9ddc1c10a41",
+    "Intermediate/SR10720261029/stage-direct-android-fixed.json": "20ddb47479e83123577f67951b0465182edb0939882ab1c462be69312b2b0019",
+    "Intermediate/SR10720261029/stage-direct-android.json": "95e70322a46c2954337fd9ab42440099366817c95fbc23de5cc0dd3910f09d48",
+    "Intermediate/SR10720261029/stage-direct-final.json": "6f90f08a5c25a3b968261223c85d69610137617047edb383c2d0973c378cc6e3",
+    "Intermediate/SR10720261029/stage-full-android-fixed.json": "f63f7146d170ac1a15b11fc2cd137a7ec48ab194101d2c5ab9cad2b86f945a1a",
+    "Intermediate/SR10720261029/stage-full-final.json": "2d6bd006d6ca22e0b6d6d4fd7d64b166b062ee8495e79baa0fb56651412cfd63",
+    "Intermediate/SR10720261029/stage-server-final.json": "ee1b63a090219144dc70c313e2b4a9a60c016b83169d31df54484e1693a546f7"
+  }
+}

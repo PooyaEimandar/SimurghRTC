@@ -42,6 +42,7 @@ class Signaling final : public webrtc::PeerConnectionObserver,
   void OnStandardizedIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state) override;
   void OnIceCandidateError(const std::string&, int, const std::string&, int code, const std::string&) override;
   void Stats(const webrtc::RTCStatsReport& report);
+  SR_IceRoute IceRoute() const { return ice_route_; }
   void OnStateChange() override;
   void OnMessage(const webrtc::DataBuffer&) override {} // Reserved bootstrap channel has no application payloads.
 
@@ -66,6 +67,7 @@ class Signaling final : public webrtc::PeerConnectionObserver,
   webrtc::scoped_refptr<webrtc::DataChannelInterface> channel_;
   Channels channels_;
   SR_TransportState state_{};
+  SR_IceRoute ice_route_{sizeof(SR_IceRoute), SR_ABI_VERSION, 0, 0, 0, 0};
   std::map<uint64_t, Clock::time_point> pending_;
   std::deque<Event> events_;
   std::deque<std::unique_ptr<webrtc::IceCandidate>> early_ice_;

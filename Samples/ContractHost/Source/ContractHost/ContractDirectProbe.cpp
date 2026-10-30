@@ -1,5 +1,6 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "ContractDirectProbe.h"
+#include "ContractIceConfig.h"
 #include "ContractDataScenario.h"
 #include "ContractConcurrentScenario.h"
 #include "Containers/Ticker.h"
@@ -92,6 +93,9 @@ public:
         J->SetNumberField(TEXT("dtls"), T.DtlsState); J->SetNumberField(TEXT("protocol"), T.SelectedProtocol);
         J->SetBoolField(TEXT("sctp_open"), T.bDataTransportOpen); J->SetNumberField(TEXT("queued_ice"), T.RemoteIceQueued);
         J->SetNumberField(TEXT("applied_ice"), T.RemoteIceApplied); J->SetBoolField(TEXT("remote_end"), T.bRemoteIceComplete);
+        J->SetNumberField(TEXT("ice_route_samples"), T.IceRouteSamples);
+        J->SetNumberField(TEXT("local_candidate"), T.SelectedLocalCandidate); J->SetNumberField(TEXT("remote_candidate"), T.SelectedRemoteCandidate);
+        J->SetNumberField(TEXT("relay_protocol"), T.RelayProtocol);
         J->SetNumberField(TEXT("stats_samples"), T.StatsSamples); J->SetNumberField(TEXT("stun_responses"), double(T.StunResponsesReceived)); return J;
     }
     TSharedRef<FJsonObject> Metadata()
@@ -108,7 +112,7 @@ public:
         J->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString()); J->SetStringField(TEXT("platform"), FPlatformProperties::IniPlatformName());
         J->SetStringField(TEXT("artifact_manifest_sha256"), FNativeRuntime::GetMobileArtifactSHA256());
         J->SetStringField(TEXT("native_backend"), FNativeRuntime::GetBackendVersion());
-        J->SetBoolField(TEXT("loopback_only"), true); J->SetBoolField(TEXT("network_media_tested"), false); J->SetBoolField(TEXT("application_messages_tested"), (Scenario == TEXT("data") || Scenario == TEXT("concurrent") || Scenario == TEXT("shared") || Scenario == TEXT("example")));
+        J->SetBoolField(TEXT("loopback_only"), !FParse::Param(FCommandLine::Get(),TEXT("SimurghRTCDirectNetworkProbe"))); J->SetBoolField(TEXT("network_media_tested"), false); J->SetBoolField(TEXT("application_messages_tested"), (Scenario == TEXT("data") || Scenario == TEXT("concurrent") || Scenario == TEXT("shared") || Scenario == TEXT("example")));
         return J;
     }
 #if CONTRACTHOST_WITH_DIRECT_SERVER
@@ -142,7 +146,11 @@ public:
         GConfig->SetArray(TEXT("HTTPServer.Listeners"), TEXT("ListenerOverrides"), Overrides, GEngineIni); bOverrides = true;
         auto& Http = FHttpServerModule::Get(); bOwnsHttp = true; Http.StartAllListeners(); Router = Http.GetHttpRouter(Port, true);
         if (!Router) { Fail(TEXT("HTTP listener bind failed.")); return false; }
-        FDirectServerConfig Config; Config.bLoopbackProbe = true; Config.IdleSeconds = 5; Config.ReplaySeconds = 30;
+        FDirectServerConfig Config;
+        if (!LoadContractIceConfig(Config.IceServers, Config.bRelayOnly)) { Fail(TEXT("Invalid Server ICE configuration.")); return false; }
+        // Device probes use real network ICE. The development HTTP fixture stays bound to loopback.
+        Config.bLoopbackProbe = !FParse::Param(FCommandLine::Get(),TEXT("SimurghRTCDirectNetworkProbe"));
+        Config.IdleSeconds = 5; Config.ReplaySeconds = 30;
         if (Scenario == TEXT("shared") || Scenario == TEXT("example")) Config.MaxSessionsPerPrincipal = 16;
         if (Scenario == TEXT("data") || Scenario == TEXT("shared") || Scenario == TEXT("example")) Config.OnChannelEvent = [this](const FString& Session, const FNativeChannelEvent& Event)
         {

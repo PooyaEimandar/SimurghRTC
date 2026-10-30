@@ -2,6 +2,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/ApplicationLifecycleComponent.h"
 #include "SimurghRTCOperation.h"
 #include "SimurghRTCSession.h"
 #include "ContractDataExample.generated.h"
@@ -11,15 +12,28 @@ struct FContractDataExampleResult
 {
     FString Error, Scenario = TEXT("messages"), Implementation, ClassPath;
     FGuid SessionId;
+    TArray<FGuid> ChannelIds;
+    TArray<int32> ConnectionErrors;
+    int32 Round = 0, CompletedRounds = 0, StaleHandleChecks = 0;
+    bool bRoundRecorded = false, bAwaitingFailure = false, bFailureObserved = false;
+    bool IsRecovery() const { return Scenario == TEXT("reconnect") || Scenario == TEXT("signaling-loss") || Scenario == TEXT("relay-loss"); }
+    bool IsApplicationLifecycle() const { return Scenario == TEXT("background-connected") || Scenario == TEXT("background-connect"); }
+    bool IsTwoConnections() const { return IsRecovery() || IsApplicationLifecycle(); }
+    TArray<FGuid> SessionIds;
+    int32 InactiveEvents = 0, ActiveEvents = 0, BackgroundEvents = 0, ForegroundEvents = 0, BackgroundCompletions = 0;
+    bool bInBackground = false, bBackgroundShutdown = false, bBackgroundPending = false, bBackgroundCancelled = false;
+    bool bRetiredObjectsCollected = false;
+    double BackgroundStarted = 0, OSBackgroundAt = 0, BackgroundSeconds = 0, ForegroundAt = 0, ShutdownSeconds = 0;
     TArray<FString> Outcomes;
     TSet<FGuid> StartedIds, CompletedIds;
     TArray<ESimurghRTCSessionState> States;
     int32 Sent = 0, Received = 0, ChannelEvents = 0, OpenEvents = 0, EndPlayCalls = 0, LateCallbacks = 0;
     int32 LastFailure = 0;
     bool bGameThread = true, bComplete = false, bEnded = false, bEndPlayClosed = false;
+    bool bRelayOnly = false, bHttps = false;
     bool bTextReceived = false, bBytesReceived = false, bInfoChecked = false;
     void Fail(const TCHAR* Why) { if (Error.IsEmpty()) Error = Why; }
-    void Callback() { bGameThread &= IsInGameThread(); if (bEnded) { ++LateCallbacks; Fail(TEXT("Callback after EndPlay.")); } }
+    void Callback() { bGameThread &= IsInGameThread(); if (bEnded || bInBackground) { ++LateCallbacks; Fail(TEXT("Callback after EndPlay or background shutdown.")); } }
 };
 
 /** Configuration and assertions only. BP_RtcData implements its own public-node transport flow. */
@@ -36,6 +50,7 @@ public:
     UPROPERTY(Transient, BlueprintReadWrite, Category="RTC Example") TObjectPtr<USimurghRTCSession> Session;
     UPROPERTY(Transient, BlueprintReadWrite, Category="RTC Example") TObjectPtr<USimurghRTCOperation> PendingOperation;
     UPROPERTY(Transient, BlueprintReadWrite, Category="RTC Example") FSimurghRTCChannelHandle Channel;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="RTC Example") TObjectPtr<UApplicationLifecycleComponent> ApplicationLifecycle;
 
     UFUNCTION(BlueprintCallable, Category="RTC Example") bool PrepareExample();
     UFUNCTION(BlueprintCallable, Category="RTC Example") void TrackOperation(USimurghRTCOperation* Operation);
@@ -46,12 +61,30 @@ public:
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordChannelEvent(const FSimurghRTCChannelInfo& Info);
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordStateEvent(ESimurghRTCSessionState State);
     UFUNCTION(BlueprintCallable, Category="RTC Example") void CompleteExample();
+    // Reload runtime credentials and reset round assertions; does not connect or disconnect.
+    UFUNCTION(BlueprintCallable, Category="RTC Example") bool PrepareNextRound();
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="RTC Example") void RequestConnect();
+    virtual void RequestConnect_Implementation();
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="RTC Example") void RequestSession();
+    virtual void RequestSession_Implementation();
+    UFUNCTION(BlueprintCallable, Category="RTC Example") bool PrepareBackground();
+    UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordBackgroundShutdown();
+    UFUNCTION(BlueprintCallable, Category="RTC Example") bool PrepareForeground();
+    UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordOSBackground();
+    UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordOSForeground();
+    void WriteLifecycleProgress() const;
+    void CheckRetiredObjectsCollected();
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordEndPlay();
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="RTC Example") void RequestDisconnect();
     virtual void RequestDisconnect_Implementation();
     TSharedPtr<FContractDataExampleResult> GetExampleResult() const { return Report; }
 private:
+    bool LoadConnectionConfig();
+    void SetRoundPayload();
+    void CheckStaleChannel();
     TSharedPtr<FContractDataExampleResult> Report;
+    TWeakObjectPtr<USimurghRTCSession> RetiredSession;
+    TWeakObjectPtr<USimurghRTCOperation> RetiredOperation;
 };
 
 /** Native equivalent of /Game/Examples/Direct/BP_RtcData. */
@@ -63,10 +96,14 @@ protected:
     void BeginPlay() override;
     void EndPlay(const EEndPlayReason::Type Reason) override;
     void RequestDisconnect_Implementation() override;
+    void RequestConnect_Implementation() override;
+    void RequestSession_Implementation() override;
 private:
     void Start(USimurghRTCOperation* Operation, FName Step);
     void Completed(FName Step, const FSimurghRTCOperationResult& Result);
     UFUNCTION() void ReceivedMessage(const FSimurghRTCDataMessage& Message);
     UFUNCTION() void ChannelChanged(const FSimurghRTCChannelInfo& Info);
     UFUNCTION() void StateChanged(ESimurghRTCSessionState State);
+    UFUNCTION() void EnterBackground();
+    UFUNCTION() void EnterForeground();
 };

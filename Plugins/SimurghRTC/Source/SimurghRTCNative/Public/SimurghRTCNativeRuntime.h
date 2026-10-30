@@ -7,6 +7,11 @@
 
 namespace SimurghRTC
 {
+struct FNativeIceConfig
+{
+    TArray<FSimurghRTCIceServer> Servers;
+    bool bRelayOnly = false;
+};
 enum class ENativeFactoryMode : uint8 { DataOnly, BuiltinMedia };
 
 /** Evidence about a local factory, never negotiated session capabilities. */
@@ -35,7 +40,7 @@ public:
     static FString GetMobileArtifactSHA256();
     bool Start(ENativeFactoryMode Mode, FString& OutError);
     // Creates an idle, encrypted-by-default Unified Plan peer. No offer, ICE gathering or remote connection.
-    bool CreateProbePeerConnection(FString& OutError, bool bLoopbackOnly = false);
+    bool CreateProbePeerConnection(FString& OutError, bool bLoopbackOnly = false, const FNativeIceConfig& Ice = {});
     FNativeFactoryDiagnostics GetDiagnostics() const;
     bool Signal(uint64 Id, const FNativeSignalRequest& Request, FNativeSignalResult& OutFailure);
     bool PollSignal(FNativeTransportEvent& OutEvent);

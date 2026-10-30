@@ -298,6 +298,10 @@ void Signaling::Stats(const webrtc::RTCStatsReport& report) {
   state_.candidate_pairs = state_.succeeded_pairs = state_.failed_pairs = 0;
   state_.stun_requests_sent = state_.stun_responses_received = state_.packets_discarded_on_send = 0;
   state_.selected_protocol = 0; state_.dtls_state = 0;
+  ice_route_ = {sizeof(SR_IceRoute), SR_ABI_VERSION, state_.stats_samples, 0, 0, 0};
+  const auto type = [](const std::string& value) {
+    return value == "host" ? 1 : value == "srflx" ? 2 : value == "prflx" ? 3 : value == "relay" ? 4 : value.empty() ? 0 : 5;
+  };
   for (const auto* pair : report.GetStatsOfType<webrtc::RTCIceCandidatePairStats>()) {
     ++state_.candidate_pairs;
     if (pair->state == "succeeded") ++state_.succeeded_pairs;
@@ -312,7 +316,14 @@ void Signaling::Stats(const webrtc::RTCStatsReport& report) {
     if (transport->selected_candidate_pair_id) {
       const auto* pair = report.GetAs<webrtc::RTCIceCandidatePairStats>(*transport->selected_candidate_pair_id);
       const auto* candidate = pair && pair->local_candidate_id ? report.GetAs<webrtc::RTCLocalIceCandidateStats>(*pair->local_candidate_id) : nullptr;
-      if (candidate) { const auto protocol = candidate->protocol.value_or(""); state_.selected_protocol = protocol == "udp" ? 1 : protocol == "tcp" ? 2 : 3; }
+      if (candidate) {
+        const auto protocol = candidate->protocol.value_or(""); state_.selected_protocol = protocol == "udp" ? 1 : protocol == "tcp" ? 2 : 3;
+        ice_route_.local_type = type(candidate->candidate_type.value_or(""));
+        const auto relay = candidate->relay_protocol.value_or("");
+        ice_route_.relay_protocol = relay == "udp" ? 1 : relay == "tcp" ? 2 : relay == "tls" ? 3 : relay.empty() ? 0 : 4;
+      }
+      const auto* remote = pair && pair->remote_candidate_id ? report.GetAs<webrtc::RTCRemoteIceCandidateStats>(*pair->remote_candidate_id) : nullptr;
+      if (remote) ice_route_.remote_type = type(remote->candidate_type.value_or(""));
     }
   }
 }

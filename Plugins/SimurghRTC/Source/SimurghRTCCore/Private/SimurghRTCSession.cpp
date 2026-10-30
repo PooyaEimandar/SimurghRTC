@@ -85,6 +85,12 @@ FSimurghRTCCapability USimurghRTCSession::GetCapability(ESimurghRTCProvider Requ
     return Result;
 }
 
+FSimurghRTCError USimurghRTCSession::GetConnectionError() const
+{
+    check(IsInGameThread());
+    auto Error = TransportError; Error.SessionId = SessionId; return Error;
+}
+
 FSimurghRTCError USimurghRTCSession::ChannelUnavailable(FSimurghRTCChannelHandle Channel) const
 {
     auto Error = SimurghRTC::MakeError(Channel.IsValid() ? ESimurghRTCErrorCode::InvalidState : ESimurghRTCErrorCode::InvalidArgument,

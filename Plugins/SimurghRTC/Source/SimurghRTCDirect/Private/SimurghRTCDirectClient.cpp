@@ -204,7 +204,9 @@ public:
         {
             if (Attempt < 3 && FPlatformTime::Seconds() - RequestStarted < Config.RequestTimeoutSeconds * 3 + 1)
             { ++Snapshot.Retries; RetryAt = FPlatformTime::Seconds() + 0.1; return; }
-            Fail(TEXT("TimedOut")); return;
+            // Certificate/connection failures must not masquerade as a deadline expiry.
+            Fail(Request.IsValid() && Request->GetFailureReason() == EHttpFailureReason::TimedOut
+                ? TEXT("TimedOut") : TEXT("Unavailable")); return;
         }
         if (Response->GetURL() != Config.Endpoint) { Fail(TEXT("UnexpectedEndpoint")); return; }
         TSharedPtr<FJsonObject> Json; FString Error, Protocol, Status, Id, Session, Type; int32 V, Seq;
@@ -385,7 +387,7 @@ FSimurghRTCError FDirectClient::ValidateConfig(const FDirectClientConfig& Config
         || !FMath::IsFinite(Config.RequestTimeoutSeconds) || Config.RequestTimeoutSeconds < 0.1 || Config.RequestTimeoutSeconds > 10
         || !FMath::IsFinite(Config.ConnectTimeoutSeconds) || Config.ConnectTimeoutSeconds < 0.1 || Config.ConnectTimeoutSeconds > 300)
         return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument,TEXT("Direct requires a supported endpoint, identity, credential and timeout."));
-    return {};
+    return ValidateIceServers(Config.IceServers, Config.bRelayOnly);
 }
 TSharedPtr<FDirectClient> FDirectClient::Connect(UObject* Owner, FDirectClientConfig Config, FDirectClientChanged Changed, FString& Error)
 {
@@ -396,7 +398,7 @@ TSharedPtr<FDirectClient> FDirectClient::Connect(UObject* Owner, FDirectClientCo
     if (Clients.Num() >= 32) { Error = TEXT("Direct client capacity reached."); return {}; }
     auto State = MakeShared<FImpl>(); State->Owner = Owner; State->Config = MoveTemp(Config); State->Changed = MoveTemp(Changed);
     State->Started = FPlatformTime::Seconds();
-    State->Peer = FNativePeer::Open(Owner, State->Config.Purpose == TEXT("call") ? ENativeFactoryMode::BuiltinMedia : ENativeFactoryMode::DataOnly, {}, Error, State->Config.bLoopbackProbe);
+    State->Peer = FNativePeer::Open(Owner, State->Config.Purpose == TEXT("call") ? ENativeFactoryMode::BuiltinMedia : ENativeFactoryMode::DataOnly, {}, Error, State->Config.bLoopbackProbe, {State->Config.IceServers, State->Config.bRelayOnly});
     if (!State->Peer) return {};
     TWeakPtr<FImpl> Weak = State;
     State->Peer->SetEventHandler([Weak](const FNativeTransportEvent& E)
