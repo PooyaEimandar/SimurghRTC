@@ -206,7 +206,11 @@ int32 GenerateContractDataExamples(const FString& Params)
     auto* Connect = G.Async(TEXT("Connect"),2800,0); G.Then(ConnectEvent,Connect);
     auto* Connected = G.Outcome(Connect,TEXT("Connect"),TEXT("Success"),3250,0);
     G.FailureBranches(Connect,TEXT("Connect"),3250,700);
-    auto* Open = G.Async(TEXT("OpenChannel"),3700,0); G.Then(Connected,Open);
+    G.Then(Connected,G.Sample(TEXT("RequestOpenChannel"),3650,-900));
+    Y = -1200;
+    auto* OpenEvent = FKismetEditorUtilities::AddDefaultEventNode(BP,G.Graph,TEXT("RequestOpenChannel"),AContractDataExample::StaticClass(),Y);
+    OpenEvent->NodePosX = 3200;
+    auto* Open = G.Async(TEXT("OpenChannel"),3700,0); G.Then(OpenEvent,Open);
     auto* Opened = G.Outcome(Open,TEXT("OpenChannel"),TEXT("Success"),4150,0);
     G.FailureBranches(Open,TEXT("OpenChannel"),4650,700);
     auto* Break = G.Node<UK2Node_BreakStruct>(4150,250); Break->StructType = FSimurghRTCOperationResult::StaticStruct(); Break->AllocateDefaultPins();
@@ -236,7 +240,11 @@ int32 GenerateContractDataExamples(const FString& Params)
     Y = 1500;
     auto* CloseEvent = FKismetEditorUtilities::AddDefaultEventNode(BP,G.Graph,TEXT("RequestCloseChannel"),AContractDataExample::StaticClass(),Y);
     auto* Close = G.Async(TEXT("CloseChannel"),1100,2000); G.Then(CloseEvent,Close);
-    auto* Closed = G.Outcome(Close,TEXT("CloseChannel"),TEXT("Success"),1550,2000); G.Then(Closed,G.Sample(TEXT("RequestDisconnect"),1950,2000));
+    auto* Closed = G.Outcome(Close,TEXT("CloseChannel"),TEXT("Success"),1550,2000);
+    auto* FinishClose = G.Sample(TEXT("FinishChannelClose"),1950,2000); G.Then(Closed,FinishClose);
+    auto* AllClosed = G.Node<UK2Node_IfThenElse>(2350,2000,TEXT("Disconnect after the last channel closes")); AllClosed->AllocateDefaultPins();
+    G.Then(FinishClose,AllClosed); G.Wire(FinishClose,TEXT("ReturnValue"),AllClosed,TEXT("Condition"));
+    G.Then(AllClosed,G.Sample(TEXT("RequestDisconnect"),2750,2000));
     G.FailureBranches(Close,TEXT("CloseChannel"),1550,2600);
     Y = 9500;
     auto* ValidationSend = FKismetEditorUtilities::AddDefaultEventNode(BP,G.Graph,TEXT("RequestValidationSend"),AContractDataExample::StaticClass(),Y);

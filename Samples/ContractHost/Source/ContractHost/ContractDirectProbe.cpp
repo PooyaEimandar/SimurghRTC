@@ -1,4 +1,5 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
+#include "ContractNetworkValidation.h"
 #include "ContractDirectProbe.h"
 #include "ContractIceConfig.h"
 #include "ContractDataScenario.h"
@@ -167,7 +168,10 @@ public:
                     const int32 Mode = FCString::Atoi(*C.Info.Options.Label.Mid(Validation ? 15 : 6));
                     auto O = FContractDataScenario::Options(Mode);
                     if (Validation) O.Label = FString::Printf(TEXT("sr107-channels-%d"),Mode);
-                    const bool Valid = !Validation && (Scenario == TEXT("shared") || Scenario == TEXT("example")) ? C.Info.Options.Label == (Scenario == TEXT("example") ? TEXT("rtc-example") : TEXT("sr105-main")) && C.Info.Options.bOrdered
+                    FSimurghRTCChannelOptions NetworkOptions;
+                    const bool Network = Scenario == TEXT("example") && FContractNetworkValidation::ParseOptions(C.Info.Options.Label,NetworkOptions);
+                    const bool Valid = Network ? C.Info.Options.bOrdered == NetworkOptions.bOrdered
+                        && C.Info.Options.Reliability == NetworkOptions.Reliability && C.Info.Options.ReliabilityValue == NetworkOptions.ReliabilityValue : !Validation && (Scenario == TEXT("shared") || Scenario == TEXT("example")) ? C.Info.Options.Label == (Scenario == TEXT("example") ? TEXT("rtc-example") : TEXT("sr105-main")) && C.Info.Options.bOrdered
                         && C.Info.Options.Reliability == ESimurghRTCReliability::Reliable && C.Info.Options.ReliabilityValue == 0
                         : Mode >= 0 && Mode <= 5 && C.Info.Options.Label == O.Label && C.Info.Options.bOrdered == O.bOrdered
                         && C.Info.Options.Reliability == O.Reliability && C.Info.Options.ReliabilityValue == O.ReliabilityValue;

@@ -13,6 +13,7 @@ import ssl
 import subprocess
 import threading
 import time
+import uuid
 import mobile_artifacts as a
 from run_direct_probe import PATH
 
@@ -55,10 +56,11 @@ def limit_sdp_messages(body, limit):
 
 
 class HttpsProxy:
-    def __init__(self, upstream, cert, key, *, message_limit=None):
+    def __init__(self, upstream, cert, key, *, message_limit=None, close_race=False):
         self.upstream=upstream;self.requests=0;self.tls_failures=0;self.statuses=[];self.tls_versions=set()
         self.outage=threading.Event();self.dropped_requests=0
         self.hold_release=threading.Event();self.hold_release.set();self.held_requests=0
+        self.close_race=close_race;self.close_races=0;self.closed_close_responses=0
         self.message_limit=message_limit;self.sdp_requests=0;self.sdp_responses=0
         context=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER);context.minimum_version=ssl.TLSVersion.TLSv1_2
         context.load_cert_chain(cert,key);outer=self
@@ -98,12 +100,27 @@ class HttpsProxy:
                 try:
                     if outer.message_limit:
                         body,count=limit_sdp_messages(body,outer.message_limit);outer.sdp_requests+=count
-                    remote.request('POST',PATH,body,{'Content-Type':'application/json','Authorization':self.headers.get('Authorization','')})
+                    headers={'Content-Type':'application/json','Authorization':self.headers.get('Authorization','')}
+                    document=json.loads(body) if outer.close_race else {}
+                    closing=document.get('type')=='close'
+                    if closing and outer.close_races==0:
+                        # Close the same authenticated Server session before forwarding
+                        # the client's own close, preserving its envelope unchanged.
+                        prior=dict(document,request_id=uuid.uuid4().hex)
+                        remote.request('POST',PATH,json.dumps(prior).encode(),headers)
+                        response=remote.getresponse();reply=json.loads(response.read(262144))
+                        a.require((response.status==200 and reply.get('body')=={'state':'closed'}) or
+                                  (response.status==409 and reply.get('body')=={'code':'SessionClosed'}),
+                                  'Close-race fixture did not establish the closed Server state.')
+                        outer.close_races+=1
+                    remote.request('POST',PATH,body,headers)
                     response=remote.getresponse();data=response.read(262145)
                     if len(data)>262144:raise ValueError('Oversized signaling response')
                     if outer.message_limit and response.status==200:
                         data,count=limit_sdp_messages(data,outer.message_limit);outer.sdp_responses+=count
                     outer.requests+=1;outer.statuses.append(response.status)
+                    if closing and response.status==409 and json.loads(data).get('body')=={'code':'SessionClosed'}:
+                        outer.closed_close_responses+=1
                     self.send_response(response.status);self.send_header('Content-Type','application/json')
                     self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
                 except (OSError,http.client.HTTPException,ValueError):self.send_error(502)
@@ -119,7 +136,8 @@ class HttpsProxy:
         if enabled:self.outage.set()
         else:self.outage.clear()
     def report(self):return dict(requests=self.requests,dropped_requests=self.dropped_requests,held_requests=self.held_requests,tls_failures=self.tls_failures,statuses=self.statuses,tls_versions=sorted(self.tls_versions),
-                                message_limit=self.message_limit,sdp_requests=self.sdp_requests,sdp_responses=self.sdp_responses)
+                                message_limit=self.message_limit,sdp_requests=self.sdp_requests,sdp_responses=self.sdp_responses,
+                                close_races=self.close_races,closed_close_responses=self.closed_close_responses)
 
 
 class TurnFixture:

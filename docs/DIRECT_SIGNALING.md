@@ -33,7 +33,7 @@ Client = SimurghRTC::FDirectClient::Connect(this, MoveTemp(Config),
     }, Error);
 ```
 
-Retain `Client` and call `Close` during `EndPlay` or shutdown. A successful open starts negotiation; `Connected` requires both peers to establish the transport. Callbacks are suppressed after owner loss. Close cancels pending work without blocking the game thread. `bNativeClosed` confirms local cleanup; `bRemoteClosed` confirms an acknowledged Server close.
+Retain `Client` and call `Close` during `EndPlay` or shutdown. A successful open starts negotiation; `Connected` requires both peers to establish the transport. Callbacks are suppressed after owner loss. Close cancels pending work without blocking the game thread. `bNativeClosed` confirms local cleanup; `bRemoteClosed` confirms an acknowledged Server close. A correlated `SessionClosed` reply to Close also confirms remote cleanup; the client still waits for local native closure.
 
 Dropping the handle sends best-effort remote cleanup. If creation succeeded but its response was lost, the client may not know the session ID; the Server's idle lease removes that orphan. Defaults are a 20-second connection deadline, a 2-second HTTP timeout and at most two retries per request. A retry keeps the original request ID, sequence and body.
 

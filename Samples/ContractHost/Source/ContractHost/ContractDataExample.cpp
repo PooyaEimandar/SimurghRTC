@@ -1,6 +1,7 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "ContractDataExample.h"
 #include "ContractChannelValidation.h"
+#include "ContractNetworkValidation.h"
 #include "ContractIceConfig.h"
 #include "HAL/FileManager.h"
 #include "Misc/CommandLine.h"
@@ -29,6 +30,13 @@ bool AContractDataExample::PrepareExample()
     {
         FParse::Value(FCommandLine::Get(), TEXT("SimurghRTCExampleScenario="), Report->Scenario);
         if (Report->Scenario == TEXT("timeout")) Config.TimeoutMilliseconds = 250;
+        if (Report->Scenario.StartsWith(TEXT("network-")))
+        {
+            const int32 Mode = FCString::Atoi(*Report->Scenario.Mid(8));
+            if (Mode < 0 || Mode > 6 || Report->Scenario != FString::Printf(TEXT("network-%d"),Mode))
+                Report->Fail(TEXT("Invalid network-validation scenario."));
+            else { Options = FContractNetworkValidation::Options(Mode); Report->NetworkValidation = MakeShared<FContractNetworkValidation>(Mode); }
+        }
         if (Report->Scenario.StartsWith(TEXT("channels-")))
         {
             const bool Small = Report->Scenario == TEXT("channels-small");
@@ -165,6 +173,7 @@ void AContractDataExample::RecordSend(const FSimurghRTCError& Error)
 bool AContractDataExample::RecordMessage(const FSimurghRTCDataMessage& Message)
 {
     if (!Report) return false;
+    if (Report->NetworkValidation) { Report->NetworkValidation->Message(*this,Message); return false; }
     if (Report->ChannelValidation) { Report->ChannelValidation->Message(*this,Message); return false; }
     Report->Callback(); ++Report->Received;
     if (Message.Channel.Id != Channel.Id) Report->Fail(TEXT("Message arrived on a different channel."));
@@ -185,6 +194,7 @@ void AContractDataExample::RecordChannelEvent(const FSimurghRTCChannelInfo& Info
     Report->Callback(); ++Report->ChannelEvents;
     if (Report->ChannelValidation) Report->ChannelValidation->Changed(Info);
     if (Info.bOpen) ++Report->OpenEvents;
+    if (Report->NetworkValidation) { Report->NetworkValidation->Changed(*this,Info); return; }
     if (!Info.Handle.IsValid() || Info.Options.Label != Options.Label) Report->Fail(TEXT("Unexpected channel event."));
 }
 void AContractDataExample::RecordStateEvent(ESimurghRTCSessionState State)
@@ -217,13 +227,20 @@ void AContractDataExample::RequestDisconnect_Implementation()
 { if (Report) Report->Fail(TEXT("The sample must implement its Disconnect flow.")); }
 bool AContractDataExample::BeginChannelValidation()
 {
+    if (Report && Report->NetworkValidation) { Report->NetworkValidation->Opened(*this); return true; }
     if (!Report || !Report->ChannelValidation) return false;
     Report->ChannelValidation->Opened(*this); return true;
 }
 void AContractDataExample::RecordValidationSend(const FSimurghRTCError& Error)
-{ if (Report && Report->ChannelValidation) Report->ChannelValidation->SendResult(*this,Error); }
+{ if (Report && Report->ChannelValidation) Report->ChannelValidation->SendResult(*this,Error);
+  if (Report && Report->NetworkValidation) Report->NetworkValidation->SendResult(*this,Error); }
 void AContractDataExample::TickChannelValidation()
-{ if (Report && Report->ChannelValidation) Report->ChannelValidation->Tick(*this); }
+{ if (Report && Report->ChannelValidation) Report->ChannelValidation->Tick(*this);
+  if (Report && Report->NetworkValidation) Report->NetworkValidation->Tick(*this); }
+bool AContractDataExample::FinishChannelClose()
+{ return !Report || !Report->NetworkValidation || Report->NetworkValidation->Closed(*this); }
+void AContractDataExample::RequestOpenChannel_Implementation()
+{ if (Report) Report->Fail(TEXT("The sample must implement its channel open flow.")); }
 void AContractDataExample::RequestValidationSend_Implementation()
 { if (Report) Report->Fail(TEXT("The sample must implement its validation send flow.")); }
 void AContractDataExample::RequestCloseChannel_Implementation()
@@ -266,7 +283,7 @@ void AContractDataCpp::Completed(FName Step, const FSimurghRTCOperationResult& R
     RecordOutcome(Step, Result.IsSuccess() ? TEXT("Success") : Result.Error.Code == ESimurghRTCErrorCode::Cancelled ? TEXT("Cancelled") : TEXT("Failure"), Result);
     if (Step == TEXT("Disconnect")) { if (PrepareNextRound()) RequestConnect(); else CompleteExample(); return; }
     if (!Result.IsSuccess()) { if (Result.Error.Code != ESimurghRTCErrorCode::Cancelled) RequestDisconnect(); return; }
-    if (Step == TEXT("Connect")) Start(USimurghRTCOperation::OpenChannel(Session, Options), TEXT("OpenChannel"));
+    if (Step == TEXT("Connect")) RequestOpenChannel();
     else if (Step == TEXT("OpenChannel"))
     {
         Channel = Result.Channel;
@@ -275,10 +292,12 @@ void AContractDataCpp::Completed(FName Step, const FSimurghRTCOperationResult& R
         RecordSend(Session->SendText(Channel, TextToSend));
         RecordSend(Session->SendBytes(Channel, BytesToSend));
     }
-    else if (Step == TEXT("CloseChannel")) RequestDisconnect();
+    else if (Step == TEXT("CloseChannel") && FinishChannelClose()) RequestDisconnect();
 }
 void AContractDataCpp::ReceivedMessage(const FSimurghRTCDataMessage& Message)
 { if (RecordMessage(Message)) RequestCloseChannel(); }
+void AContractDataCpp::RequestOpenChannel_Implementation()
+{ Start(USimurghRTCOperation::OpenChannel(Session, Options), TEXT("OpenChannel")); }
 void AContractDataCpp::RequestCloseChannel_Implementation()
 { Start(USimurghRTCOperation::CloseChannel(Session, Channel), TEXT("CloseChannel")); }
 void AContractDataCpp::RequestValidationSend_Implementation()

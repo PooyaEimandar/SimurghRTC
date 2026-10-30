@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Run packaged C++/Blueprint data clients over verified HTTPS and forced TURN routes."""
+from contextlib import nullcontext
+from udp_impairment import UdpImpairment
+from network_validation import NETWORK_SCENARIOS, network_case, validate_remote_network, validate_impairment, impair_connection
 import argparse
 import http.client
 import json
@@ -109,6 +112,7 @@ def run(args):
     recovery=getattr(args,'recovery',False)
     background=getattr(args,'background',False)
     channels=getattr(args,'channels',False)
+    impairment=getattr(args,'impairment',False)
     output=args.output.resolve();a.require(not output.exists(),'Use a fresh evidence directory.');output.mkdir(parents=True)
     server=args.server_executable.resolve();project=args.server_project.resolve()
     artifact=a.validate(project/'Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64')
@@ -118,7 +122,7 @@ def run(args):
     certs=output/'certificates';cert_hashes=certificates(certs)
     result=dict(schema=1,passed=False,cases={},server_artifact=artifact,server_executable_sha256=a.digest(server),
                 certificate_sha256=cert_hashes,signaling='verified HTTPS to local TLS proxy; Unreal HTTPServer behind it',
-                turn_fixture=a.read_json(args.turn_fixture),physical_ios_tested=False,recovery_probes=recovery,background_probes=background,channel_probes=channels)
+                turn_fixture=a.read_json(args.turn_fixture),physical_ios_tested=False,recovery_probes=recovery,background_probes=background,channel_probes=channels,impairment_probes=impairment)
     simulator=None;client=None;started=time.monotonic()
     def sim(*command,check=True,timeout=120):
         r=subprocess.run(['xcrun','simctl',*map(str,command)],capture_output=True,text=True,timeout=timeout)
@@ -151,11 +155,12 @@ def run(args):
             if channels:
                 cases=[(implementation,scenario,'direct','trusted') for implementation in MAPS for scenario in CHANNEL_SCENARIOS]
                 cases += [(implementation,'channels-0','udp','trusted') for implementation in MAPS]
+            if impairment:cases=[(implementation,scenario,'udp','trusted') for implementation in MAPS for scenario in NETWORK_SCENARIOS]
             for implementation,scenario,route,certificate in cases:
                 name='-'.join([implementation,scenario,route,certificate]);dest=output/name;dest.mkdir()
                 run_id=str(uuid.uuid4());cid=str(uuid.uuid4());token=secrets.token_urlsafe(32)
                 folder=Path.home()/'Library/Containers'/server_bundle_id(server)/'Data/Library/Caches/SimurghRTC/Network'/run_id
-                folder.mkdir(parents=True,exist_ok=False);credential=folder/'token';ice_path=folder/'ice.json';process=None
+                folder.mkdir(parents=True,exist_ok=False);credential=folder/'token';ice_path=folder/'ice.json';process=None;udp=None;proxy=None
                 for path,value in [(credential,token),*([(ice_path,json.dumps(turn.config_for(transport=route)))] if route!='direct' else [])]:
                     with path.open('x') as f:os.chmod(path,0o600);f.write(value)
                 loopback=client.simulator and route=='direct'
@@ -183,40 +188,55 @@ def run(args):
                     with (dest/'server.log').open('w') as stream:process=subprocess.Popen(command,stdout=stream,stderr=subprocess.STDOUT)
                     await_health(lambda h:h['running'])
                     with HttpsProxy(port,certs/(certificate+'.pem'),certs/(certificate+'.key'),
-                                    message_limit=32768 if scenario=='channels-small' else None) as proxy:
+                                    message_limit=32768 if scenario=='channels-small' else None,close_race=impairment) as proxy, \
+                            (UdpImpairment(args.listen_ip,turn.port) if impairment else nullcontext()) as udp:
                         if scenario=='background-connect':proxy.set_hold(True)
+                        ice=turn.config_for(transport=route) if route!='direct' else None
+                        if impairment:ice['servers'][0]['urls']=[f'turn:{args.listen_ip}:{udp.port}?transport=udp']
                         gate=client.launch(cid,implementation,scenario,proxy.port,token+('-wrong' if scenario=='unauthorized' else ''),
-                            https=True,ice=turn.config_for(transport=route) if route!='direct' else None,
+                            https=True,ice=ice,
                             ca=None if client.simulator else certs/'ca.pem')
                         pid=client.pid
                         if scenario in ('signaling-loss','relay-loss'):recover_connection(client,cid,dest,scenario,gate,proxy,turn,row)
                         if background:background_connection(client,cid,dest,scenario,proxy,await_health,row)
+                        if impairment:impair_connection(client,cid,dest,scenario,gate,udp,row)
                         report=wait_until(lambda:client.report(cid,dest),90)
                         row['client']=report;(dest/'probe.json').write_text(json.dumps(report,indent=2)+'\n')
                         validate_example(report,cid,pid,client.artifact['manifest_sha256'],client.config['with_janus'],implementation,scenario,
                             platform='IOS' if client.simulator else 'Android',simulator=client.simulator,loopback=loopback)
                         a.require(report.get('https') is True and report.get('relay_only') is (route!='direct'),'Client network configuration differs.')
                         row['tls']=proxy.report()
+                        if impairment:a.require(proxy.close_races==proxy.closed_close_responses==1,'Missing authenticated already-closed acknowledgement.')
                         if scenario=='channels-small':
                             a.require(proxy.sdp_requests>=1 and proxy.sdp_responses>=1,'Lower SDP limit was not negotiated in both directions.')
                         if scenario=='tls-rejected':
                             validate_tls_rejection(row['tls'])
                         else:a.require(proxy.requests>0 and proxy.tls_versions,'Missing HTTPS traffic.')
                         client.stop()
+                    if impairment:
+                        row['impairment']=udp.report();validate_impairment(row['impairment'],scenario)
                     current=await_health(lambda h:h['live_peers']==0,20);row['health']=current
                     request(port,token,{},path='/simurghrtc/probe/stop');code=process.wait(timeout=30)
                     report=read_report((dest/'server.log').read_text(),run_id,'SIMURGHRTC_DIRECT_REPORT ');row['server']=report
                     row['server_exit_code']=code
                     validate_server(report,run_id,process.pid,artifact['manifest_sha256'],application_messages=True,loopback=loopback)
                     a.require(code==0 and report['records']==report['echo_pending']==0,'Server cleanup incomplete.')
-                    expected=2 if recovery or scenario=='background-connected' else int(channels or scenario in ('messages','background-connect'))
-                    messages=channel_case(scenario)['messages'] if channels else 2*expected
+                    expected=2 if recovery or scenario=='background-connected' else int(channels or impairment or scenario in ('messages','background-connect'))
+                    messages=network_case(scenario)['received'] if impairment else channel_case(scenario)['messages'] if channels else 2*expected
                     a.require(report['created']==report['connected']==report['closed']==expected and report['data_received']==report['data_sent']==messages,'Server totals differ.')
                     if channels:validate_remote_channel(report,scenario)
+                    if impairment:validate_remote_network(report,scenario)
                     if route!='direct':validate_route(report['last_transport'],route)
                     with socket.socket() as sock:a.require(sock.connect_ex(('127.0.0.1',port))!=0,'Server listener remains open.')
                     row['passed']=True;print('PASS '+name,flush=True)
                 finally:
+                    if udp:row['impairment']=udp.report()
+                    if proxy:row['tls']=proxy.report()
+                    if process and process.poll() is None and not row['passed']:
+                        try:
+                            row['failure_health']=health()
+                            request(port,token,{},path='/simurghrtc/probe/stop');process.wait(timeout=10)
+                        except (OSError,ValueError,subprocess.SubprocessError,http.client.HTTPException):pass
                     if process and process.poll() is None:
                         process.terminate()
                         try:process.wait(timeout=10)
@@ -243,8 +263,9 @@ def run(args):
     return result
 
 
-def main(*, recovery=False, background=False, channels=False):
-    parser=argparse.ArgumentParser(description='Validate packaged mobile DataChannel options, payload limits, ordering and backpressure.' if channels else
+def main(*, recovery=False, background=False, channels=False, impairment=False):
+    parser=argparse.ArgumentParser(description='Validate packaged mobile packet loss, reordering, partial-reliability expiry and aggregate backpressure.' if impairment else
+                                  'Validate packaged mobile DataChannel options, payload limits, ordering and backpressure.' if channels else
                                   'Validate packaged mobile app background/resume through actual OS lifecycle events.' if background else
                                   'Validate packaged mobile reconnect and controlled HTTPS/TURN loss recovery.' if recovery else __doc__)
     for name in ('server-project','server-executable','client-project','app','output','turn-fixture'):parser.add_argument('--'+name,type=Path,required=True)
@@ -252,7 +273,7 @@ def main(*, recovery=False, background=False, channels=False):
     parser.add_argument('--listen-ip',default='127.0.0.1',help='Local Mac LAN IPv4 for physical Android; loopback for simulator.')
     parser.add_argument('--adb',type=Path,default=Path.home()/'Library/Android/sdk/platform-tools/adb')
     parser.add_argument('--aapt',type=Path,default=Path.home()/'Library/Android/sdk/build-tools/36.0.0/aapt')
-    args=parser.parse_args();args.recovery=recovery;args.background=background;args.channels=channels
+    args=parser.parse_args();args.recovery=recovery;args.background=background;args.channels=channels;args.impairment=impairment
     result=run(args);print(json.dumps(dict(passed=result['passed'],error=result.get('error'))))
     return 0 if result['passed'] else 1
 

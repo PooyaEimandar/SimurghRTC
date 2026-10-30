@@ -52,7 +52,7 @@ This is the sample's chosen mobile policy, including temporary deactivation as w
 
 ## DataChannel validation mode
 
-The [mobile channel runner](MOBILE_DATA.md#run-ordering-limits-and-backpressure-checks) supplies test payloads to these same maps. `RequestValidationSend` contains the actual SendText/SendBytes nodes or C++ calls, and `RequestCloseChannel` contains the async close. A bounded helper prepares payloads and checks their echoes, limits and queue recovery. Normal map playback still sends the two small example messages.
+The [mobile channel runner](MOBILE_DATA.md#run-ordering-limits-and-backpressure-checks) supplies test payloads to these same maps. `RequestValidationSend` contains the actual SendText/SendBytes nodes or C++ calls, and `RequestOpenChannel` and `RequestCloseChannel` contain the async channel operations. A bounded helper prepares payloads and checks their echoes, limits and queue recovery. The [packet-impairment runner](MOBILE_DATA.md#run-packet-loss-expiry-and-multi-channel-checks) also uses these flows to open five channels, test their shared queue and close each one. Normal map playback still sends the two small example messages.
 
 ## Package and check
 

@@ -8,6 +8,7 @@
 #include "ContractDataExample.generated.h"
 
 class FContractChannelValidation;
+class FContractNetworkValidation;
 // Plain reporting state survives actor destruction without retaining any UObject.
 struct FContractDataExampleResult
 {
@@ -15,6 +16,7 @@ struct FContractDataExampleResult
     FGuid SessionId;
     TArray<FGuid> ChannelIds;
     TSharedPtr<FContractChannelValidation> ChannelValidation;
+    TSharedPtr<FContractNetworkValidation> NetworkValidation;
     TArray<int32> ConnectionErrors;
     int32 Round = 0, CompletedRounds = 0, StaleHandleChecks = 0;
     bool bRoundRecorded = false, bAwaitingFailure = false, bFailureObserved = false;
@@ -66,6 +68,9 @@ public:
     virtual void RequestValidationSend_Implementation();
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="RTC Example") void RequestCloseChannel();
     virtual void RequestCloseChannel_Implementation();
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="RTC Example") void RequestOpenChannel();
+    virtual void RequestOpenChannel_Implementation();
+    UFUNCTION(BlueprintCallable, Category="RTC Example") bool FinishChannelClose();
     void TickChannelValidation();
     UFUNCTION(BlueprintCallable, Category="RTC Example") bool RecordMessage(const FSimurghRTCDataMessage& Message);
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordChannelEvent(const FSimurghRTCChannelInfo& Info);
@@ -110,6 +115,7 @@ protected:
     void RequestSession_Implementation() override;
     void RequestValidationSend_Implementation() override;
     void RequestCloseChannel_Implementation() override;
+    void RequestOpenChannel_Implementation() override;
 private:
     void Start(USimurghRTCOperation* Operation, FName Step);
     void Completed(FName Step, const FSimurghRTCOperationResult& Result);

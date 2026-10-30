@@ -224,6 +224,12 @@ public:
             FString Code;
             if (!Direct::Fields(*Body, {TEXT("code")}) || !Direct::Text(*Body, TEXT("code"), Code, 64) || Response->GetResponseCode() != Direct::HttpStatus(Code))
             { Fail(TEXT("InvalidResponse")); return; }
+            // A correlated, authenticated reply can confirm that cleanup won
+            // the race. Keep waiting for local native closure in Tick().
+            if (Snapshot.State == EDirectClientState::Closing && Current.Type == TEXT("close") && Code == TEXT("SessionClosed"))
+            {
+                Snapshot.bRemoteClosed = true; Wire.Reset(); RetryAt = 0; return;
+            }
             Fail(Code); return;
         }
         if (Status != TEXT("accepted") || Response->GetResponseCode() != 200 || !Direct::SessionId(Session))

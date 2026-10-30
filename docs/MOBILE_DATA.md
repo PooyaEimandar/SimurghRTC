@@ -2,7 +2,7 @@
 
 SR-107 runs the same [C++ and Blueprint data maps](DATA_EXAMPLES.md) on Android ARM64 and the iOS ARM64 simulator, against a packaged Unreal 5.8.3 dedicated Server. The mobile libraries include the current M155 DataChannel bridge and remain separate from the Mac library.
 
-Packaged data/lifecycle checks, local HTTPS/TURN, reconnect, controlled network-loss recovery and app background/resume pass. Channel ordering/reliability options, message limits and queue recovery now pass too. Physical iOS testing remains deferred; packet-loss/expiry and Wi-Fi/cellular transitions need separate validation.
+Packaged data/lifecycle checks, local HTTPS/TURN, reconnect, controlled network-loss recovery and app background/resume pass. Channel options, message limits, packet loss/reordering, partial-reliability expiry and multi-channel queue recovery pass too. Physical iOS testing and Wi-Fi/cellular transitions remain open.
 
 ## Build the packages
 
@@ -91,7 +91,22 @@ Reliable channels also fill the 256 KiB send buffer and the 64-message queue, re
 
 Two additional cases per map repeat the reliable ordered flow through TURN/UDP and with a lower 32 KiB negotiated limit. The lower-limit fixture changes only the SDP `max-message-size` attribute in both directions; this is test setup, not a production signaling feature. Reports require matching remote limits, bounded buffered amounts, responsive game-thread ticks and complete cleanup.
 
-These are controlled local network tests. They validate configured partial-reliability options and exact delivery in these runs; packet-loss, reordering and message-expiry behavior require separate tests. Unordered delivery is allowed to arrive in order.
+This suite checks configured options and exact delivery on a healthy local path. The impairment suite below checks behavior when packets are dropped or reordered. Unordered delivery is allowed to arrive in order.
+
+## Run packet loss, expiry and multi-channel checks
+
+Use the network suite's arguments with `tools/run_mobile_impairment_probe.py`. Rebuild the Server and both mobile profiles, including the regenerated Blueprint graph. Each C++/Blueprint map runs seven cases through local TURN/UDP:
+
+| Cases | What must happen |
+|---|---|
+| Reliable, ordered and unordered | All 33 messages return exactly once while the fixture drops every seventh eligible packet and reverses adjacent packet pairs. Ordered messages preserve sequence; unordered messages preserve the set. |
+| No retransmits, ordered and unordered | Eight messages admitted during a three-second data blackout stay absent after traffic resumes. Fresh text and binary messages arrive. |
+| 100 ms lifetime, ordered and unordered | The same blackout expires eight old messages. Fresh messages still arrive, with no old or duplicate echoes during a ten-second quiet interval. |
+| Five reliable channels | Four channels fill the shared 1 MiB send queue. A send on the empty fifth channel returns `ResourceExhausted`; its exact retry and messages on all five channels arrive after the queue drains. |
+
+A bounded UDP proxy sits between the client and the local TURN fixture. It changes only traffic using DTLS application keys after the channel opens (including SCTP control packets); HTTPS signaling, TURN control, ICE checks and the DTLS handshake continue. The runner starts impairment only after the channels open and records actual packet drops and reordered pairs. It changes no system firewall or network settings.
+
+Both partial-reliability cases wait ten seconds after fresh messages arrive to catch late delivery. These checks test SCTP message lifetime and retransmission settings; the plugin's separate 30-second send-queue deadline remains untested. Packet order at the proxy does not require unordered application messages to arrive out of order. The reports also check channel options at the Server, per-channel and aggregate buffer limits, game-thread responsiveness, explicit channel closes and native peer cleanup.
 
 ## Check the native libraries
 
@@ -116,9 +131,12 @@ These suites passed on **2026-10-29–30**, using the Galaxy S25 Ultra (Android 
 | Reconnect and loss recovery | 32 | 128 exact round trips after reconnect or controlled signaling/relay loss | [Recovery record](reviews/SR107-mobile-recovery-validation.json) |
 | Background and resume | 24 | 80 exact round trips and eight silent pending-Connect cancellations through real app switches | [Background record](reviews/SR107-mobile-background-validation.json) |
 | Channel options, limits and queues | 64 | 4,704 exact round trips, 256 expected rejected sends and 64 native client closures | [Channel record](reviews/SR107-mobile-channel-validation.json) |
+| Packet impairment and shared queues | 56 | 768 exact round trips, 256 old messages discarded, eight recoveries from the shared 1 MiB limit | [Impairment record](reviews/SR107-mobile-impairment-validation.json) |
 
-The latest channel suite recorded **32 recoveries from byte-buffer saturation and 32 from message-slot saturation**, with no extra echoes from rejected sends. Eight cases negotiated 32 KiB and eight used TURN/UDP. The largest measured active game-thread tick gap was 456 ms. The final packages also passed 34 regressions: 20 lifecycle, eight reconnect/loss recovery and six background/resume cases. All 29 Unreal tests, 203 Python tests and five Server/mobile package audits passed. Native WebRTC artifacts were reused unchanged; the Server and mobile samples were rebuilt.
+The latest impairment suite passed **16 reliable loss/reordering cases, 32 partial-reliability blackout cases and eight five-channel pressure cases**. It recorded 688 dropped packets and 970 reordered packet pairs. Every case also forced an authenticated Server-close race and required Disconnect to succeed. All 88 client channels closed explicitly, all 56 native clients shut down, and no late callbacks or pending cleanup remained. The largest active game-thread tick gap was 304 ms.
+
+The final packages also passed 52 regressions: 20 lifecycle cases and 32 earlier channel cases. All 29 Unreal tests, 211 Python tests and five package audits passed. Native WebRTC artifacts were reused unchanged; the Server and mobile samples were rebuilt. The earlier channel record retains its original 64-case results and build details.
 
 Records contain package/library hashes, device identity, build checkout states, case results and cleanup. These are local Development builds; their absolute package sizes are not Shipping download sizes or measured RTC size deltas. Earlier suites used their own recorded packages.
 
-M1 remains in progress because physical iOS acceptance is deferred. Packet-loss/reordering, message expiry, multi-channel aggregate-byte saturation, screen lock, OS termination, Wi-Fi/cellular transitions and ICE restart require separate validation.
+M1 remains in progress because physical iOS acceptance is deferred. Screen lock, OS termination, Wi-Fi/cellular transitions, ICE restart and the separate plugin send-queue deadline still need validation. The completed impairment checks cover the controlled local conditions described above.

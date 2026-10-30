@@ -2,6 +2,7 @@
 #include "ContractDataExampleProbe.h"
 #include "ContractDataExample.h"
 #include "ContractChannelValidation.h"
+#include "ContractNetworkValidation.h"
 #include "SimurghRTCSessionTransport.h"
 #include "SimurghRTCNativeRuntime.h"
 #include "Containers/Ticker.h"
@@ -60,7 +61,7 @@ public:
     }
     void Progress()
     {
-        if (!Result || !Result->IsTwoConnections() || !Actor.IsValid() || !Actor->Session) return;
+        if (!Result || (!Result->IsTwoConnections() && !Result->NetworkValidation) || !Actor.IsValid() || !Actor->Session) return;
         const double Now = FPlatformTime::Seconds();
         if (Now - LastProgress < 0.25) return;
         LastProgress = Now;
@@ -69,6 +70,7 @@ public:
         J->SetStringField(TEXT("run_id"),RunId); J->SetStringField(TEXT("session_id"),Result->SessionId.ToString(EGuidFormats::DigitsWithHyphensLower));
         J->SetNumberField(TEXT("state"),int32(Actor->Session->GetState())); J->SetNumberField(TEXT("round"),Result->Round);
         J->SetNumberField(TEXT("completed_rounds"),Result->CompletedRounds); J->SetNumberField(TEXT("heartbeats"),Heartbeats);
+        if (Result->NetworkValidation) J->SetObjectField(TEXT("network_validation"),Result->NetworkValidation->Report());
         J->SetBoolField(TEXT("failure_observed"),Result->bFailureObserved);
         J->SetNumberField(TEXT("connection_error"),int32(Actor->Session->GetConnectionError().Code));
         J->SetNumberField(TEXT("max_tick_gap_seconds"),MaxTickGap);
@@ -83,7 +85,7 @@ public:
         if (Phase == 1 && (!Result || (!Result->bInBackground && Result->ForegroundAt <= LastTick)))
         { MaxTickGap = FMath::Max(MaxTickGap,Now-LastTick); ++Heartbeats; }
         LastTick = Now;
-        if (FPlatformTime::Seconds() - Started > (Result && Result->IsTwoConnections() ? 120 : 60)) Fail(TEXT("Packaged data example timed out."));
+        if (FPlatformTime::Seconds() - Started > (Result && (Result->IsTwoConnections() || Result->NetworkValidation) ? 120 : 60)) Fail(TEXT("Packaged data example timed out."));
         if (Phase == 0)
         {
             for (const auto& Context : GEngine->GetWorldContexts())
@@ -190,6 +192,7 @@ public:
         if (Result)
         {
             const auto& R = *Result;
+            if (R.NetworkValidation) J->SetObjectField(TEXT("network_validation"),R.NetworkValidation->Report());
             if (R.ChannelValidation) J->SetObjectField(TEXT("channel_validation"),R.ChannelValidation->Report());
             J->SetNumberField(TEXT("inactive_events"),R.InactiveEvents); J->SetNumberField(TEXT("active_events"),R.ActiveEvents);
             J->SetNumberField(TEXT("background_events"),R.BackgroundEvents); J->SetNumberField(TEXT("foreground_events"),R.ForegroundEvents);

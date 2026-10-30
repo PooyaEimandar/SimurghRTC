@@ -1,5 +1,6 @@
 """Acceptance gates must reject wrong trust, hostname, routes and error outcomes."""
 import http.client
+import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import ssl
@@ -48,6 +49,39 @@ class NetworkFixtureTests(unittest.TestCase):
             validate(value)
             for key,bad in [('last_failure',8),('received',1),('outcomes',['Connect:Success']),('native_closed',0)]:
                 with self.subTest(key=key),self.assertRaises(ValueError):validate(dict(value,**{key:bad}))
+
+    @unittest.skipUnless(Path('/opt/homebrew/opt/openssl@3/bin/openssl').exists(),'Mac fixture OpenSSL required')
+    def test_close_race_uses_same_authenticated_session_and_preserves_original_reply(self):
+        calls=[]
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self,*args):pass
+            def do_POST(self):
+                request=json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+                calls.append((request,self.headers.get('Authorization')))
+                response=dict(request,status='accepted' if len(calls)==1 else 'error',
+                              body={'state':'closed'} if len(calls)==1 else {'code':'SessionClosed'})
+                body=json.dumps(response).encode();self.send_response(200 if len(calls)==1 else 409)
+                self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body)
+        upstream=ThreadingHTTPServer(('127.0.0.1',0),Handler)
+        thread=threading.Thread(target=upstream.serve_forever,daemon=True);thread.start()
+        try:
+            with tempfile.TemporaryDirectory() as temp:
+                folder=Path(temp)/'certs';certificates(folder)
+                with HttpsProxy(upstream.server_port,folder/'trusted.pem',folder/'trusted.key',close_race=True) as proxy:
+                    conn=http.client.HTTPSConnection('127.0.0.1',proxy.port,context=ssl.create_default_context(cafile=str(folder/'ca.pem')),timeout=3)
+                    original=dict(type='close',session_id='owned-session',request_id='original',sequence=12,body={})
+                    try:
+                        conn.request('POST','/simurghrtc/v1/signal',json.dumps(original),{'Authorization':'Bearer test-only'})
+                        response=conn.getresponse();reply=json.loads(response.read())
+                        self.assertEqual(response.status,409);self.assertEqual(reply['body'],{'code':'SessionClosed'})
+                        self.assertEqual(reply['request_id'],'original')
+                    finally:conn.close()
+                    self.assertEqual(proxy.close_races,1);self.assertEqual(proxy.closed_close_responses,1)
+                    self.assertEqual(calls[1][0],original)
+                    self.assertEqual(calls[0][0]['session_id'],original['session_id'])
+                    self.assertNotEqual(calls[0][0]['request_id'],original['request_id'])
+                    self.assertEqual([v[1] for v in calls],['Bearer test-only']*2)
+        finally:upstream.shutdown();upstream.server_close();thread.join(timeout=3)
 
     @unittest.skipUnless(Path('/opt/homebrew/opt/openssl@3/bin/openssl').exists(),'Mac fixture OpenSSL required')
     def test_https_verifies_authority_and_hostname_before_forwarding(self):
