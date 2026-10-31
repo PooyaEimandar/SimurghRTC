@@ -20,6 +20,11 @@ public:
     FSessionTransportEventHandler Handler;
     TMap<FGuid,FSessionChannelSnapshot> Channels;
     bool bDelayClose = false;
+    bool bAudio = false, bAudioFull = false;
+    bool HasAudio() const override { return bAudio; }
+    FSimurghRTCError MuteAudio(bool) override { return {}; }
+    FSimurghRTCError PushAudio(const FSimurghRTCAudioFrame&) override
+    { return bAudioFull ? SimurghRTC::MakeError(ESimurghRTCErrorCode::ResourceExhausted,TEXT("Full")) : FSimurghRTCError{}; }
     int32 ClosedChannels = 0;
     FSessionTransportSnapshot Snapshot() const override { return Status; }
     void Close() override
@@ -192,4 +197,62 @@ bool FSessionConnectionErrorTest::RunTest(const FString&)
     return true;
 }
 
+#endif
+
+#if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSessionAudioOwnershipTest,"SimurghRTC.Session.AudioSourceOwnership",Flags)
+bool FSessionAudioOwnershipTest::RunTest(const FString&)
+{
+    if (!SIMURGHRTC_WITH_DIRECT || (!SIMURGHRTC_WITH_MEDIA && !UE_SERVER)) return true;
+    FFixture F;
+    auto Run = [&](USimurghRTCOperation* Raw)
+    {
+        TStrongObjectPtr<USimurghRTCOperation> Op(Raw); Op->Activate();
+        for (int32 I = 0; I < 4 && !Op->IsFinished(); ++I) Tick();
+        TestTrue(TEXT("Local operation completes on tick"),Op->IsFinished()); return Op->GetResult();
+    };
+    auto Created = Run(USimurghRTCOperation::CreateGeneratedSource(F.Session.Get(),ESimurghRTCTrackKind::Audio));
+    TestTrue(TEXT("Audio source can precede connection"),Created.IsSuccess() && Created.Source.IsValid());
+    TestTrue(TEXT("Unattached source can be muted before Connect"),Run(USimurghRTCOperation::SetSourceMuted(F.Session.Get(),Created.Source,true)).IsSuccess());
+    TestTrue(TEXT("Unattached source can be stopped before Connect"),Run(USimurghRTCOperation::StopSource(F.Session.Get(),Created.Source)).IsSuccess());
+    Created = Run(USimurghRTCOperation::CreateGeneratedSource(F.Session.Get(),ESimurghRTCTrackKind::Audio));
+    auto Connection = F.Connect(); auto Transport = F.Created.Last();
+    Transport->Status.State = ESimurghRTCSessionState::Connected; Tick();
+    TestEqual(TEXT("Attachment requires negotiated audio"),Run(USimurghRTCOperation::AttachSource(F.Session.Get(),Created.Source)).Error.Code,ESimurghRTCErrorCode::NotNegotiated);
+    Transport->bAudio = true;
+    const auto Attached = Run(USimurghRTCOperation::AttachSource(F.Session.Get(),Created.Source));
+    TestTrue(TEXT("Attachment returns a track"),Attached.IsSuccess() && Attached.Track.IsValid());
+    FSimurghRTCAudioFrame Frame; Frame.Samples.Init(0.25f,480); Frame.TimestampMicroseconds = 10000;
+    TestFalse(TEXT("Attached source sends"),F.Session->PushAudioFrame(Created.Source,Frame).IsError());
+    TestEqual(TEXT("Duplicate timestamp rejected"),F.Session->PushAudioFrame(Created.Source,Frame).Code,ESimurghRTCErrorCode::InvalidArgument);
+    Frame.TimestampMicroseconds = 20000; Transport->bAudioFull = true;
+    TestEqual(TEXT("Queue-full rejection visible"),F.Session->PushAudioFrame(Created.Source,Frame).Code,ESimurghRTCErrorCode::ResourceExhausted);
+    Transport->bAudioFull = false;
+    TestFalse(TEXT("Queue-full rejection did not consume timestamp"),F.Session->PushAudioFrame(Created.Source,Frame).IsError());
+    FSimurghRTCSourceHandle Foreign; Foreign.Id = FGuid::NewGuid();
+    TestEqual(TEXT("Foreign source rejected"),Run(USimurghRTCOperation::AttachSource(F.Session.Get(),Foreign)).Error.Code,ESimurghRTCErrorCode::InvalidState);
+    const auto Second = Run(USimurghRTCOperation::CreateGeneratedSource(F.Session.Get(),ESimurghRTCTrackKind::Audio));
+    TestEqual(TEXT("Only one local audio track"),Run(USimurghRTCOperation::AttachSource(F.Session.Get(),Second.Source)).Error.Code,ESimurghRTCErrorCode::InvalidState);
+    const auto Replaced = Run(USimurghRTCOperation::ReplaceSource(F.Session.Get(),Attached.Track,Second.Source));
+    TestTrue(TEXT("Replacement preserves track"),Replaced.IsSuccess() && Replaced.Track.Id == Attached.Track.Id);
+    Frame.TimestampMicroseconds = 30000;
+    TestEqual(TEXT("Former source cannot send"),F.Session->PushAudioFrame(Created.Source,Frame).Code,ESimurghRTCErrorCode::InvalidState);
+    TestTrue(TEXT("Mute succeeds"),Run(USimurghRTCOperation::SetSourceMuted(F.Session.Get(),Second.Source,true)).IsSuccess());
+    TestEqual(TEXT("Muted source rejects input"),F.Session->PushAudioFrame(Second.Source,Frame).Code,ESimurghRTCErrorCode::InvalidState);
+    Run(USimurghRTCOperation::SetSourceMuted(F.Session.Get(),Second.Source,false));
+    TestFalse(TEXT("Resume accepts input"),F.Session->PushAudioFrame(Second.Source,Frame).IsError());
+    TestTrue(TEXT("Detach succeeds"),Run(USimurghRTCOperation::DetachTrack(F.Session.Get(),Attached.Track)).IsSuccess());
+    const auto Again = Run(USimurghRTCOperation::AttachSource(F.Session.Get(),Second.Source));
+    TestTrue(TEXT("Reattach returns a fresh track"),Again.IsSuccess() && Again.Track.Id != Attached.Track.Id);
+    TestTrue(TEXT("Stop attached source succeeds"),Run(USimurghRTCOperation::StopSource(F.Session.Get(),Second.Source)).IsSuccess());
+    TestEqual(TEXT("Stopped source is invalid"),Run(USimurghRTCOperation::AttachSource(F.Session.Get(),Second.Source)).Error.Code,ESimurghRTCErrorCode::InvalidState);
+    Run(USimurghRTCOperation::Disconnect(F.Session.Get())); Tick();
+    auto Reconnect = F.Connect(); F.Created.Last()->bAudio = true; F.Created.Last()->Status.State = ESimurghRTCSessionState::Connected; Tick();
+    TestEqual(TEXT("Disconnect invalidates all source handles"),Run(USimurghRTCOperation::AttachSource(F.Session.Get(),Created.Source)).Error.Code,ESimurghRTCErrorCode::InvalidState);
+    for (int32 I = 0; I < 8; ++I) TestTrue(TEXT("Bounded source allocation"),Run(USimurghRTCOperation::CreateGeneratedSource(F.Session.Get(),ESimurghRTCTrackKind::Audio)).IsSuccess());
+    const auto Full = Run(USimurghRTCOperation::CreateGeneratedSource(F.Session.Get(),ESimurghRTCTrackKind::Audio));
+    TestEqual(TEXT("Ninth source rejected"),Full.Error.Code,ESimurghRTCErrorCode::ResourceExhausted);
+    TestFalse(TEXT("Rejected allocation has no handle"),Full.Source.IsValid());
+    return true;
+}
 #endif

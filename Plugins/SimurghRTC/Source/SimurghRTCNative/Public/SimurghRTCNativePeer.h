@@ -43,7 +43,7 @@ public:
      * bLoopbackProbe is only for same-host fixtures; it restricts candidates to loopback.
      */
     static FHandle Open(UObject* LifetimeOwner, ENativeFactoryMode Mode,
-        FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe = false, const FNativeIceConfig& Ice = {});
+        FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe = false, const FNativeIceConfig& Ice = {}, bool bAudio = false);
 
     ~FNativePeer();
     FNativePeer(const FNativePeer&) = delete;
@@ -64,6 +64,12 @@ public:
     FSimurghRTCError SendText(FSimurghRTCChannelHandle Channel, const FString& Text);
     FSimurghRTCError SendBytes(FSimurghRTCChannelHandle Channel, const TArray<uint8>& Bytes);
     void SetChannelHandler(FNativeChannelChanged OnChannel);
+    // Optional pre-negotiated audio slot. Game-thread PCM submissions are copied,
+    // bounded and chunked on the native owner worker. Initially muted.
+    FSimurghRTCError PushAudio(const FSimurghRTCAudioFrame& Frame);
+    FSimurghRTCError MuteAudio(bool bMuted);
+    bool PollAudio(FSimurghRTCAudioFrame& Out);
+    bool HasRemoteAudio() const;
     // Idempotent and nonblocking: Closed is published after native teardown finishes.
     void Close();
 

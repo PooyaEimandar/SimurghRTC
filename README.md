@@ -17,6 +17,7 @@ SimurghRTC is a C++ plugin for **Unreal Engine 5.8.3**. Its goal is to let an Un
 | Validate mobile data and lifecycle | [Mobile data](docs/MOBILE_DATA.md) |
 | Connect separate Unreal client and Server processes | [Direct HTTP signaling](docs/DIRECT_SIGNALING.md) |
 | Exchange text and binary messages | [DataChannels](docs/DATA_CHANNELS.md) |
+| Send generated audio and receive PCM | [Shared audio](docs/SHARED_AUDIO.md) |
 | Route messages between concurrent clients | [Server sessions](docs/SERVER_ROUTING.md) |
 | See what is finished and what comes next | [Roadmap](ROADMAP.md) |
 | Run the C++ and Blueprint lifecycle examples | [Lifecycle examples](docs/LIFECYCLE_EXAMPLES.md) |
@@ -28,6 +29,7 @@ SimurghRTC is a C++ plugin for **Unreal Engine 5.8.3**. Its goal is to let an Un
 - [Dependency review](docs/DEPENDENCY_REVIEW.md): versions, licenses and mobile ABI requirements. [Security work](docs/DEPENDENCY_SECURITY.md) tracks fixes and the dependency migration.
 - [Native Server test](docs/NATIVE_PROBE.md): libwebrtc setup and headless HTTP checks.
 - [Native media test](docs/MEDIA_PROBE.md): codecs, textures, render targets and audio playback integration.
+- [Shared generated audio](docs/SHARED_AUDIO.md): send PCM and receive decoded audio through Direct sessions.
 - [Native audio transport](docs/NATIVE_AUDIO.md): generated PCM over real Opus tracks and headless Unreal checks.
 - [Signaling examples](docs/SIGNALING_V1.md): Direct HTTP v1 and Janus message rules.
 - [Mobile clients](docs/MOBILE_CLIENTS.md): separate ARM64 builds, device testing and app-size validation.

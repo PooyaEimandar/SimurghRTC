@@ -23,8 +23,14 @@ FSimurghRTCError DirectError(const FString& Code)
 class FDirectSessionTransport final : public ISessionTransport
 {
     TSharedRef<FDirectClient> Client;
+    bool bAudio = false;
 public:
-    explicit FDirectSessionTransport(TSharedRef<FDirectClient> InClient) : Client(MoveTemp(InClient)) {}
+    explicit FDirectSessionTransport(TSharedRef<FDirectClient> InClient, bool Audio) : Client(MoveTemp(InClient)), bAudio(Audio) {}
+    bool HasAudio() const override { return bAudio && Client->HasRemoteAudio(); }
+    bool HasRemoteAudio() const override { return bAudio && Client->HasRemoteAudio(); }
+    FSimurghRTCError PushAudio(const FSimurghRTCAudioFrame& F) override { return Client->PushAudio(F); }
+    FSimurghRTCError MuteAudio(bool M) override { return Client->MuteAudio(M); }
+    bool PollAudio(FSimurghRTCAudioFrame& F) override { return Client->PollAudio(F); }
     FSessionTransportSnapshot Snapshot() const override
     {
         const auto S = Client->GetSnapshot(); FSessionTransportSnapshot Out;
@@ -74,6 +80,8 @@ void RegisterDirectSessionTransport()
     {
         if (Config.Purpose == ESimurghRTCPurpose::Receive)
         { Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::NotImplemented,TEXT("Receive-only sessions are not integrated yet.")); return {}; }
+        if (Config.Purpose == ESimurghRTCPurpose::Call && !SIMURGHRTC_WITH_MEDIA && !UE_SERVER)
+        { Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::BuildExcluded, TEXT("Audio is excluded by this client profile.")); return {}; }
         FDirectClientConfig Direct; Direct.Endpoint = Config.Endpoint; Direct.BearerToken = Config.AccessToken; Direct.Identity = Config.LocalIdentity;
         Direct.Purpose = Config.Purpose == ESimurghRTCPurpose::Call ? TEXT("call") : Config.Purpose == ESimurghRTCPurpose::TextRoom ? TEXT("text-room") : TEXT("data");
         Direct.bAllowLoopbackHttp = Config.bAllowInsecureDevelopmentSignaling;
@@ -94,7 +102,7 @@ void RegisterDirectSessionTransport()
                 : Why.Contains(TEXT("capacity")) ? ESimurghRTCErrorCode::ResourceExhausted : ESimurghRTCErrorCode::InternalError;
             Error = SimurghRTC::MakeError(Code,TEXT("Direct requires a supported endpoint, identity, credential and available native capacity.")); return {};
         }
-        return MakeShared<FDirectSessionTransport>(Client.ToSharedRef());
+        return MakeShared<FDirectSessionTransport>(Client.ToSharedRef(), Config.Purpose == ESimurghRTCPurpose::Call);
     });
 }
 }

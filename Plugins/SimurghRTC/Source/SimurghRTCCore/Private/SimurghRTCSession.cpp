@@ -79,6 +79,14 @@ FSimurghRTCCapability USimurghRTCSession::GetCapability(ESimurghRTCProvider Requ
             { Result.Platform = Result.Negotiated = ESimurghRTCSupport::Available; }
             else Result.Reason = SimurghRTC::MakeError(ESimurghRTCErrorCode::NotNegotiated, TEXT("Connect the session before using channels."));
         }
+        else if ((Feature == ESimurghRTCFeature::Audio || Feature == ESimurghRTCFeature::MediaSources)
+            && RequestedProvider == ESimurghRTCProvider::DirectUnreal && SimurghRTC::HasSessionTransport(RequestedProvider))
+        {
+            Result.Service = ESimurghRTCSupport::Available;
+            if (IsUsable() && Provider == RequestedProvider && State == ESimurghRTCSessionState::Connected && Transport && Transport->HasAudio())
+                Result.Platform = Result.Negotiated = ESimurghRTCSupport::Available;
+            else Result.Reason = SimurghRTC::MakeError(ESimurghRTCErrorCode::NotNegotiated, TEXT("Connect a Direct Call-purpose session for generated audio."));
+        }
         else Result.Reason = SimurghRTC::MakeError(ESimurghRTCErrorCode::NotImplemented, TEXT("This provider feature is not implemented."));
     }
     Result.Reason.SessionId = SessionId;
@@ -132,7 +140,7 @@ FSimurghRTCError USimurghRTCSession::StartTransport(const FSimurghRTCSessionConf
         { Provider = Config.Provider; TransportError = Error; SetState(ESimurghRTCSessionState::Failed); }
         return Error;
     }
-    ReleaseTransport(); Transport = MoveTemp(Started); TransportError = {}; Provider = Config.Provider;
+    ReleaseTransport(false); Transport = MoveTemp(Started); TransportError = {}; Provider = Config.Provider;
     OperationTimeoutSeconds = double(Config.TimeoutMilliseconds) / 1000.0;
     const uint64 Generation = TransportGeneration;
     TWeakObjectPtr<USimurghRTCSession> Weak(this);
@@ -145,8 +153,9 @@ FSimurghRTCError USimurghRTCSession::StartTransport(const FSimurghRTCSessionConf
     });
     SetState(ESimurghRTCSessionState::Connecting); return {};
 }
-void USimurghRTCSession::ReleaseTransport()
+void USimurghRTCSession::ReleaseTransport(bool bStopSources)
 {
+    if (bStopSources) ClearMedia(false);
     ++TransportGeneration;
     SimurghRTC::RetireSessionTransport(MoveTemp(Transport)); Transport.Reset();
 }
@@ -162,6 +171,7 @@ bool USimurghRTCSession::TickTransport(float)
             && (Snapshot.State == ESimurghRTCSessionState::Closed || Snapshot.State == ESimurghRTCSessionState::Failed))
         { TransportError = Snapshot.Error; ReleaseTransport(); SetState(ESimurghRTCSessionState::Closed); }
     }
+    if (IsUsable() && State == ESimurghRTCSessionState::Connected) TickAudio();
     return !bShuttingDown;
 }
 
@@ -172,7 +182,17 @@ FSimurghRTCError USimurghRTCSession::PushAudioFrame(FSimurghRTCSourceHandle Sour
     if (!Source.IsValid()) Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("A source handle is required."));
     if (!Error.IsError() && !SIMURGHRTC_WITH_MEDIA && !UE_SERVER)
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::BuildExcluded, TEXT("Media is excluded by this client profile."));
-    if (!Error.IsError()) Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("An active audio source belonging to this session is required."));
+    auto* Found = AudioSources.Find(Source.Id);
+    if (!Error.IsError() && (!IsUsable() || !Found || !Transport || State != ESimurghRTCSessionState::Connected
+        || LocalAudio.Source.Id != Source.Id || Found->bMuted))
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("An attached, unmuted audio source belonging to this session is required."));
+    if (!Error.IsError() && Frame.TimestampMicroseconds <= Found->LastTimestamp)
+        Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Audio source timestamps must increase."));
+    if (!Error.IsError())
+    {
+        Error = Transport->PushAudio(Frame);
+        if (!Error.IsError()) Found->LastTimestamp = Frame.TimestampMicroseconds;
+    }
     Error.SessionId = SessionId;
     return Error;
 }

@@ -362,6 +362,26 @@ public:
 FDirectClient::FDirectClient(TSharedRef<FImpl> InImpl) : Impl(MoveTemp(InImpl)) {}
 FDirectClient::~FDirectClient() { Impl->Abort(); }
 void FDirectClient::Close() { Impl->Close(); }
+FSimurghRTCError FDirectClient::PushAudio(const FSimurghRTCAudioFrame& Frame)
+{
+    check(IsInGameThread()); const auto Peer = Impl->Owner.IsValid() && Impl->Snapshot.State == EDirectClientState::Connected ? Impl->Peer : nullptr;
+    return Peer ? Peer->PushAudio(Frame) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
+}
+FSimurghRTCError FDirectClient::MuteAudio(bool bMuted)
+{
+    check(IsInGameThread()); const auto Peer = Impl->Owner.IsValid() && Impl->Snapshot.State == EDirectClientState::Connected ? Impl->Peer : nullptr;
+    return Peer ? Peer->MuteAudio(bMuted) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
+}
+bool FDirectClient::PollAudio(FSimurghRTCAudioFrame& Out)
+{
+    check(IsInGameThread()); const auto Peer = Impl->Owner.IsValid() && Impl->Snapshot.State == EDirectClientState::Connected ? Impl->Peer : nullptr;
+    return Peer ? Peer->PollAudio(Out) : false;
+}
+bool FDirectClient::HasRemoteAudio() const
+{
+    check(IsInGameThread()); const auto Peer = Impl->Owner.IsValid() && Impl->Snapshot.State == EDirectClientState::Connected ? Impl->Peer : nullptr;
+    return Peer ? Peer->HasRemoteAudio() : false;
+}
 FDirectClientSnapshot FDirectClient::GetSnapshot() const { check(IsInGameThread()); return Impl->Snapshot; }
 void FDirectClient::SetChannelHandler(FNativeChannelChanged Handler)
 { check(IsInGameThread()); if (Impl->Peer) Impl->Peer->SetChannelHandler(MoveTemp(Handler)); }
@@ -416,7 +436,7 @@ TSharedPtr<FDirectClient> FDirectClient::Connect(UObject* Owner, FDirectClientCo
     if (Clients.Num() >= 32) { Error = TEXT("Direct client capacity reached."); return {}; }
     auto State = MakeShared<FImpl>(); State->Owner = Owner; State->Config = MoveTemp(Config); State->Changed = MoveTemp(Changed);
     State->Started = FPlatformTime::Seconds();
-    State->Peer = FNativePeer::Open(Owner, State->Config.Purpose == TEXT("call") ? ENativeFactoryMode::BuiltinMedia : ENativeFactoryMode::DataOnly, {}, Error, State->Config.bLoopbackProbe, {State->Config.IceServers, State->Config.bRelayOnly});
+    State->Peer = FNativePeer::Open(Owner, State->Config.Purpose == TEXT("call") ? ENativeFactoryMode::BuiltinMedia : ENativeFactoryMode::DataOnly, {}, Error, State->Config.bLoopbackProbe, {State->Config.IceServers, State->Config.bRelayOnly}, State->Config.Purpose == TEXT("call"));
     if (!State->Peer) return {};
     TWeakPtr<FImpl> Weak = State;
     State->Peer->SetEventHandler([Weak](const FNativeTransportEvent& E)

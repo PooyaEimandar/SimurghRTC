@@ -7,6 +7,7 @@
 #include "HAL/RunnableThread.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 #include "SimurghRTCNativeDataService.h"
+#include "SimurghRTCNativeAudioQueue.h"
 
 class FEvent;
 class UWorld;
@@ -18,6 +19,7 @@ struct FNativePeerSharedState
     FCriticalSection Mutex;
     FNativePeerSnapshot Snapshot;
     uint64 Id = 0;
+    FNativeAudioQueue Audio;
     TArray<FNativeTransportEvent> Events;
     TSharedRef<FNativeDataShared, ESPMode::ThreadSafe> Data = MakeShared<FNativeDataShared, ESPMode::ThreadSafe>();
 };
@@ -30,7 +32,7 @@ public:
 
     FNativePeerService();
     ~FNativePeerService();
-    FNativePeer::FHandle Open(UObject* Owner, ENativeFactoryMode Mode, FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe = false, const FNativeIceConfig& Ice = {});
+    FNativePeer::FHandle Open(UObject* Owner, ENativeFactoryMode Mode, FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe = false, const FNativeIceConfig& Ice = {}, bool bAudio = false);
     void Close(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State);
     bool Signal(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State,
         FNativeSignalRequest Request, FNativeSignalCompleted OnComplete, FString& OutError);
@@ -73,6 +75,7 @@ private:
         TSharedPtr<FNativePeerSharedState, ESPMode::ThreadSafe> State;
         ENativeFactoryMode Mode = ENativeFactoryMode::DataOnly;
         bool bLoopbackProbe = false;
+        bool bAudio = false;
         FNativeSignalRequest Request;
         uint64 OperationId = 0;
         double Deadline = 0;

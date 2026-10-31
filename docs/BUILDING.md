@@ -62,7 +62,7 @@ Use a new or empty destination under `LocalBuilds/`. Do not place staged project
 | `data-only` | Both client providers; no client media, Janus room extensions or Server module |
 | `server` | Core, native adapter, Direct and Server probe; no client media or Janus |
 
-Profiles select code. Direct connections and DataChannels are available through the [shared session API](SHARED_SESSIONS.md); Janus signaling and network media remain pending. The data-only profile is a client build. To test a dedicated data-only factory, use the Server profile and its probe option.
+Profiles select code. Direct connections and DataChannels use the [shared session API](SHARED_SESSIONS.md). [Generated Opus audio](SHARED_AUDIO.md) is available for Direct sessions; Janus signaling, video and device capture remain pending. The data-only profile is a client build. To test a dedicated data-only factory, use the Server profile and its probe option.
 
 Staging also selects sample content. `Examples/BP_RtcLifecycle` is shared by every profile. `Examples/Janus/BP_JanusProfile` needs the Janus extension module and is copied only into Full and Janus-only hosts. This rule lives beside the module lists in `Config/Profiles.json`; excluded assets are omitted before cooking.
 

@@ -137,6 +137,7 @@ USimurghRTCOperation* USimurghRTCOperation::AttachSource(USimurghRTCSession* Ses
     if (!Source.IsValid())
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
     Operation->Initialize(Session, TEXT("AttachSource"), ESimurghRTCFeature::MediaSources, Error);
+    Operation->MediaSource = Source;
     return Operation;
 }
 
@@ -148,6 +149,7 @@ USimurghRTCOperation* USimurghRTCOperation::ReplaceSource(USimurghRTCSession* Se
     if (!Track.IsValid() || !Source.IsValid())
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
     Operation->Initialize(Session, TEXT("ReplaceSource"), ESimurghRTCFeature::MediaSources, Error);
+    Operation->MediaSource = Source; Operation->MediaTrack = Track;
     return Operation;
 }
 
@@ -159,6 +161,7 @@ USimurghRTCOperation* USimurghRTCOperation::SetSourceMuted(USimurghRTCSession* S
     if (!Source.IsValid())
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
     Operation->Initialize(Session, TEXT("SetSourceMuted"), ESimurghRTCFeature::MediaSources, Error);
+    Operation->MediaSource = Source; Operation->bMediaEnabled = bMuted;
     return Operation;
 }
 
@@ -170,6 +173,7 @@ USimurghRTCOperation* USimurghRTCOperation::StopSource(USimurghRTCSession* Sessi
     if (!Source.IsValid())
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
     Operation->Initialize(Session, TEXT("StopSource"), ESimurghRTCFeature::MediaSources, Error);
+    Operation->MediaSource = Source;
     return Operation;
 }
 
@@ -181,6 +185,7 @@ USimurghRTCOperation* USimurghRTCOperation::DetachTrack(USimurghRTCSession* Sess
     if (!Track.IsValid())
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
     Operation->Initialize(Session, TEXT("DetachTrack"), ESimurghRTCFeature::MediaSources, Error);
+    Operation->MediaTrack = Track;
     return Operation;
 }
 
@@ -192,6 +197,7 @@ USimurghRTCOperation* USimurghRTCOperation::CreateGeneratedSource(USimurghRTCSes
     if (Kind != ESimurghRTCTrackKind::Audio && Kind != ESimurghRTCTrackKind::Video)
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid generated source kind."));
     Operation->Initialize(InSession, TEXT("CreateGeneratedSource"), Kind == ESimurghRTCTrackKind::Audio ? ESimurghRTCFeature::Audio : ESimurghRTCFeature::Video, Error);
+    Operation->MediaKind = Kind;
     return Operation;
 }
 
@@ -203,6 +209,7 @@ USimurghRTCOperation* USimurghRTCOperation::SetDecodedFrameDelivery(USimurghRTCS
     if (!Track.IsValid())
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("A track belonging to this session is required."));
     Operation->Initialize(InSession, TEXT("SetDecodedFrameDelivery"), ESimurghRTCFeature::MediaSources, Error);
+    Operation->MediaTrack = Track; Operation->bMediaEnabled = bEnabled;
     return Operation;
 }
 
@@ -259,6 +266,7 @@ void USimurghRTCOperation::Execute()
             Session->TransportError = {};
             if (Session->Transport) { Session->Transport->SetHandler({}); Session->Transport->Close(); }
             Session->SetState(ESimurghRTCSessionState::Closing);
+            Session->ClearMedia(true);
             if (!Session->IsUsable()) return;
             TArray<TWeakObjectPtr<USimurghRTCOperation>> Pending;
             for (USimurghRTCOperation* Other : Session->PendingOperations) Pending.Add(Other);
@@ -299,6 +307,7 @@ void USimurghRTCOperation::Execute()
         return;
     }
     if (OperationName != TEXT("CreateGeneratedSource") && OperationName != TEXT("CreateSource")
+        && OperationName != TEXT("StopSource") && OperationName != TEXT("SetSourceMuted")
         && Session->GetState() != ESimurghRTCSessionState::Connected)
     {
         Finish(SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("This operation requires a connected session.")));
@@ -325,6 +334,14 @@ void USimurghRTCOperation::Execute()
             Finish(SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState,TEXT("The channel closed before opening.")));
         return;
     }
+    if (OperationName == TEXT("CreateGeneratedSource") || OperationName == TEXT("AttachSource")
+        || OperationName == TEXT("ReplaceSource") || OperationName == TEXT("SetSourceMuted")
+        || OperationName == TEXT("StopSource") || OperationName == TEXT("DetachTrack") || OperationName == TEXT("SetDecodedFrameDelivery"))
+    {
+        const auto Error = Session->ExecuteAudioOperation(OperationName, MediaKind, MediaSource, MediaTrack, bMediaEnabled, Result);
+        if (!bFinished && Session->IsUsable()) Finish(Error);
+        return;
+    }
     Finish(SimurghRTC::MakeError(ESimurghRTCErrorCode::NotImplemented, TEXT("This operation is not implemented.")));
 }
 
@@ -344,7 +361,7 @@ void USimurghRTCOperation::Finish(FSimurghRTCError Error, bool bBroadcast)
     ConnectConfig = {};
     if (Result.Error.IsError())
     {
-        Result.Channel = {};
+        Result.Channel = {}; Result.Source = {}; Result.Track = {};
         if (bStarted && Session.IsValid() && Session->IsUsable() && TransportGeneration == Session->TransportGeneration)
         {
             if (OperationName == TEXT("Connect") && Session->GetState() != ESimurghRTCSessionState::Closing)

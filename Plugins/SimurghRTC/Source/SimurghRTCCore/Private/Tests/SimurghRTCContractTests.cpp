@@ -175,7 +175,7 @@ bool FSimurghRTCProfileTest::RunTest(const FString&)
         SIMURGHRTC_WITH_JANUS_EXTENSIONS ? ESimurghRTCErrorCode::NotImplemented : ESimurghRTCErrorCode::BuildExcluded);
     const auto Audio = Fixture.Session->GetCapability(Fixture.Session->GetProvider(), ESimurghRTCFeature::Audio);
     TestEqual(TEXT("Audio capability follows target media selection"), Audio.Reason.Code,
-        (SIMURGHRTC_WITH_MEDIA || UE_SERVER) ? ESimurghRTCErrorCode::NotImplemented : ESimurghRTCErrorCode::BuildExcluded);
+        (SIMURGHRTC_WITH_MEDIA || UE_SERVER) ? (SIMURGHRTC_WITH_DIRECT ? ESimurghRTCErrorCode::NotNegotiated : ESimurghRTCErrorCode::NotImplemented) : ESimurghRTCErrorCode::BuildExcluded);
     auto DirectConfig = Fixture.Config(); DirectConfig.Provider = ESimurghRTCProvider::DirectUnreal;
     TStrongObjectPtr<USimurghRTCOperation> DirectConnect(USimurghRTCOperation::Connect(Fixture.Session.Get(), DirectConfig));
     DirectConnect->Activate(); TickOperations();
@@ -273,7 +273,7 @@ bool FSimurghRTCFrameContractTest::RunTest(const FString&)
     TStrongObjectPtr<USimurghRTCOperation> Source(USimurghRTCOperation::CreateGeneratedSource(Fixture.Session.Get(), ESimurghRTCTrackKind::Audio));
     Source->Activate(); TickOperations();
     TestEqual(TEXT("Generated-source shell has explicit availability"), Source->GetResult().Error.Code,
-        (SIMURGHRTC_WITH_MEDIA || UE_SERVER) ? ESimurghRTCErrorCode::NotImplemented : ESimurghRTCErrorCode::BuildExcluded);
+        (SIMURGHRTC_WITH_MEDIA || UE_SERVER) ? (SIMURGHRTC_WITH_DIRECT ? ESimurghRTCErrorCode::None : ESimurghRTCErrorCode::NotImplemented) : ESimurghRTCErrorCode::BuildExcluded);
     TStrongObjectPtr<USimurghRTCOperation> InvalidSource(USimurghRTCOperation::CreateGeneratedSource(Fixture.Session.Get(),
         static_cast<ESimurghRTCTrackKind>(StaticEnum<ESimurghRTCTrackKind>()->GetMaxEnumValue())));
     InvalidSource->Activate(); TickOperations();

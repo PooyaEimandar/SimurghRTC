@@ -81,6 +81,10 @@ public:
     FSimurghRTCError SendText(const FString& SessionId, FSimurghRTCChannelHandle Channel, const FString& Text);
     FSimurghRTCError SendBytes(const FString& SessionId, FSimurghRTCChannelHandle Channel, const TArray<uint8>& Bytes);
 
+    FSimurghRTCError PushAudio(const FString& SessionId, const FSimurghRTCAudioFrame& Frame);
+    FSimurghRTCError MuteAudio(const FString& SessionId, bool bMuted);
+    bool PollAudio(const FString& SessionId, FSimurghRTCAudioFrame& Out);
+    bool HasRemoteAudio(const FString& SessionId) const;
     FDirectServerSnapshot GetSnapshot() const;
     FSimurghRTCError GetSessionInfo(const FString& SessionId, FDirectSessionInfo& Out) const;
     TArray<FDirectSessionInfo> GetSessions(bool bIncludeClosed = false) const;

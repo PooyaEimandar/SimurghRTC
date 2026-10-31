@@ -32,11 +32,11 @@ private:
 };
 
 SimurghRTC::FNativePeer::FHandle SimurghRTC::FNativePeer::Open(UObject* LifetimeOwner, ENativeFactoryMode Mode,
-    FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe, const FNativeIceConfig& Ice)
+    FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe, const FNativeIceConfig& Ice, bool bAudio)
 {
     check(IsInGameThread());
     auto& Module = FModuleManager::LoadModuleChecked<FSimurghRTCNativeModule>(TEXT("SimurghRTCNative"));
-    return Module.Service->Open(LifetimeOwner, Mode, MoveTemp(OnOpened), OutError, bLoopbackProbe, Ice);
+    return Module.Service->Open(LifetimeOwner, Mode, MoveTemp(OnOpened), OutError, bLoopbackProbe, Ice, bAudio);
 }
 
 IMPLEMENT_MODULE(FSimurghRTCNativeModule, SimurghRTCNative)

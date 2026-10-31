@@ -2,7 +2,7 @@
 
 SR-201 starts M2 with generated PCM sent through real WebRTC audio tracks. Two peers negotiate Opus, exchange encrypted audio over local ICE, and receive decoded PCM. The path runs without a microphone, speaker, renderer or Unreal audio device.
 
-This is an internal transport foundation. Shared session audio operations, Blueprint audio nodes, Direct HTTP media negotiation, microphone capture and Unreal speaker playback are still pending. M1's remaining acceptance gaps stay tracked in the [roadmap](../ROADMAP.md).
+This transport foundation also backs the [shared generated-audio API](SHARED_AUDIO.md), including Direct HTTP negotiation, source controls and decoded PCM delivery. Microphone capture and Unreal speaker playback are still pending. M1's remaining acceptance gaps stay tracked in the [roadmap](../ROADMAP.md).
 
 ## What works
 
@@ -55,7 +55,7 @@ The headless Unreal probe connects two local pairs on a dedicated worker. It che
 
 `FNativeRuntime::ConfigureAudio`, `PushAudio`, `PollAudio`, `AudioState` and `MuteAudio` are internal synchronous methods. Use them on the runtime's owning worker thread. No WebRTC C++ objects cross the private C ABI, and no audio thread calls Unreal objects.
 
-The public API still allows up to 100 ms per audio submission, but its source registry and media transport are not implemented yet. The internal 10 ms interface is a building block for that implementation, not a change to the public contract. Track replacement, renegotiation, multiple tracks, device changes, actual speaker playback and cross-device audio remain open.
+The shared adapter accepts up to 100 ms of 48 kHz mono PCM, splits submissions into 10 ms native blocks, and implements source replacement, mute and cleanup. The broader native formats tested here are not yet wired through that shared adapter. Renegotiation, multiple tracks, device changes, speaker playback and cross-device audio remain open.
 
 Build identities, test results and unfinished acceptance items are kept in the [validation record](reviews/SR201-native-audio-validation.json). Earlier M0/M1 evidence describes its own recorded libraries; it does not validate these new audio exports.
 

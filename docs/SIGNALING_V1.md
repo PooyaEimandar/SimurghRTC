@@ -33,6 +33,8 @@ python3 -m unittest discover -s tools/tests -v
 3. **Poll** for events. The Server publishes its answer, local ICE, connection state and errors as ordered events.
 4. **Close** the session and clear its pending work.
 
+For generated audio, use the existing `call` purpose. Both peers create one initially muted Opus source before their first SDP exchange. Offer/answer, ICE, polling and close retain the same v1 envelopes and limits; audio itself uses encrypted WebRTC media packets. This does not implement call invitations or SDP renegotiation. See [Shared audio](SHARED_AUDIO.md).
+
 Each request has an ID and a sequence number. The first sequence is 0. An accepted request advances it by one; a rejected request does not. Close is the exception: it accepts any nonnegative sequence so cancellation can clean up after a lost response.
 
 Within the retained replay window, retries are idempotent: sending the same request ID and content returns the original result. Changing the content while reusing an ID produces `RequestConflict`. Skipping a sequence produces `OutOfOrder`. Retrying a poll returns its original event snapshot.

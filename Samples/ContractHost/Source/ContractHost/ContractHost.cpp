@@ -6,6 +6,7 @@
 #include "ContractSessionProbe.h"
 #include "ContractDataExampleProbe.h"
 #include "ContractAudioProbe.h"
+#include "ContractSharedAudioProbe.h"
 
 class FContractHostModule final : public FDefaultGameModuleImpl
 {
@@ -16,8 +17,9 @@ class FContractHostModule final : public FDefaultGameModuleImpl
     FContractSessionProbe Session;
     FContractDataExampleProbe DataExample;
     FContractAudioProbe Audio;
+    FContractSharedAudioProbe SharedAudio;
 public:
-    void StartupModule() override { Probe.Startup(); Lifecycle.Startup(); Signaling.Startup(); Direct.Startup(); Session.Startup(); DataExample.Startup(); Audio.Startup(); }
-    void ShutdownModule() override { Audio.Shutdown(); DataExample.Shutdown(); Session.Shutdown(); Direct.Shutdown(); Signaling.Shutdown(); Lifecycle.Shutdown(); Probe.Shutdown(); }
+    void StartupModule() override { Probe.Startup(); Lifecycle.Startup(); Signaling.Startup(); Direct.Startup(); Session.Startup(); DataExample.Startup(); Audio.Startup(); SharedAudio.Startup(); }
+    void ShutdownModule() override { SharedAudio.Shutdown(); Audio.Shutdown(); DataExample.Shutdown(); Session.Shutdown(); Direct.Shutdown(); Signaling.Shutdown(); Lifecycle.Shutdown(); Probe.Shutdown(); }
 };
 IMPLEMENT_PRIMARY_GAME_MODULE(FContractHostModule, ContractHost, "ContractHost");

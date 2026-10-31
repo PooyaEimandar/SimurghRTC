@@ -61,6 +61,10 @@ The probe covers:
 
 These tests explicitly restrict ICE to loopback, using the same-host test option introduced in SR-101. Normal provider connections retain the default network interfaces. They do not establish cross-device, NAT/TURN, mobile or physical iOS acceptance.
 
+## Generated audio
+
+The existing `call` purpose now reserves one bidirectional Opus track before offer/answer. The shared source API controls its outgoing PCM; Server hosts use the bounded audio methods on `FDirectServer`. DataChannel-only sessions retain the `data` purpose. See [Shared audio](SHARED_AUDIO.md) for usage and the separate-process probe.
+
 ## Deployment
 
 HTTPServer serves HTTP. For remote use, put a trusted HTTPS reverse proxy in front of its loopback listener and keep the HTTP client’s certificate checks enabled. Configure request/header/connection limits and timeouts at that boundary: HTTPServer receives the body before the plugin can reject an oversized request.

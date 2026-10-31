@@ -26,6 +26,7 @@ void PublishClosed(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>
     State->Snapshot.Transport.Connection = ENativeConnectionState::Closed;
     State->Snapshot.Transport.bDataTransportOpen = false;
     State->Events.Reset();
+    State->Audio.Reset();
 }
 
 bool PublishEvent(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>& State, FNativeTransportEvent Event)
@@ -40,7 +41,7 @@ bool PublishEvent(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>&
     }
     if (Event.Type == ENativeSignalEvent::FatalError)
     {
-        State->Events.Reset(); State->Snapshot.State = ENativePeerState::Failed;
+        State->Events.Reset(); State->Audio.Reset(); State->Snapshot.State = ENativePeerState::Failed;
         State->Snapshot.Error = Event.Result.Message; State->Snapshot.Diagnostics = {};
         State->Snapshot.SignalError = Event.Result.Error;
         Event.Transport.Connection = ENativeConnectionState::Failed;
@@ -108,7 +109,7 @@ bool FNativePeerService::StartWorker(FString& OutError)
 }
 
 FNativePeer::FHandle FNativePeerService::Open(UObject* Owner, ENativeFactoryMode Mode,
-    FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe, const FNativeIceConfig& Ice)
+    FNativePeerOpened OnOpened, FString& OutError, bool bLoopbackProbe, const FNativeIceConfig& Ice, bool bAudio)
 {
     check(IsInGameThread());
     OutError.Reset();
@@ -116,6 +117,8 @@ FNativePeer::FHandle FNativePeerService::Open(UObject* Owner, ENativeFactoryMode
     if (!IsValid(Owner)) { OutError = TEXT("A live native peer owner is required."); return {}; }
     if (Mode != ENativeFactoryMode::DataOnly && Mode != ENativeFactoryMode::BuiltinMedia)
     { OutError = TEXT("Invalid native factory mode."); return {}; }
+    if (bAudio && Mode != ENativeFactoryMode::BuiltinMedia)
+    { OutError = TEXT("Audio requires a media factory."); return {}; }
     if (!FNativeRuntime::IsSupported())
     { OutError = TEXT("The isolated native backend is not available for this target."); return {}; }
     if (Entries.Num() >= MaxPeers)
@@ -136,7 +139,7 @@ FNativePeer::FHandle FNativePeerService::Open(UObject* Owner, ENativeFactoryMode
     Entry->Data = MakeUnique<FNativeDataGame>(State->Data);
     Entries.Add(Entry);
     FCommand Command; Command.Type = ECommand::Open; Command.State = State; Command.Mode = Mode;
-    Command.bLoopbackProbe = bLoopbackProbe; Command.Ice = Ice; Enqueue(MoveTemp(Command));
+    Command.bLoopbackProbe = bLoopbackProbe; Command.Ice = Ice; Command.bAudio = bAudio; Enqueue(MoveTemp(Command));
     return Peer;
 }
 
@@ -146,6 +149,7 @@ void FNativePeerService::Close(const TSharedRef<FNativePeerSharedState, ESPMode:
     {
         FScopeLock Lock(&State->Mutex);
         if (State->Snapshot.State == ENativePeerState::Closing || State->Snapshot.State == ENativePeerState::Closed) return;
+        State->Audio.Reset();
         State->Snapshot.State = ENativePeerState::Closing;
         State->Snapshot.Diagnostics = {};
     }
@@ -299,6 +303,9 @@ uint32 FNativePeerService::Run()
         TSharedPtr<FNativePeerSharedState, ESPMode::ThreadSafe> State;
         bool bSignaling = false;
         TUniquePtr<FNativeDataWorker> Data;
+        bool bAudio = false;
+        uint64 AudioRevision = 0;
+        int64 AudioTime = 0;
     };
     TMap<uint64, FSlot> Runtimes;
     bool bPolling = false;
@@ -346,7 +353,13 @@ uint32 FNativePeerService::Run()
             }
             auto Runtime = MakeUnique<FNativeRuntime>();
             FString Error;
-            const bool bReady = Runtime->Start(Command.Mode, Error) && Runtime->CreateProbePeerConnection(Error, Command.bLoopbackProbe, Command.Ice);
+            bool bReady = Runtime->Start(Command.Mode, Error) && Runtime->CreateProbePeerConnection(Error, Command.bLoopbackProbe, Command.Ice);
+            if (bReady && Command.bAudio)
+            {
+                bReady = Runtime->ConfigureAudio(48000, 1) == ENativeSignalError::None
+                    && Runtime->MuteAudio(true) == ENativeSignalError::None;
+                if (!bReady) Error = TEXT("Could not configure the generated audio slot.");
+            }
             const auto Diagnostics = bReady ? Runtime->GetDiagnostics() : FNativeFactoryDiagnostics{};
             if (!bReady) Runtime.Reset();
             bool bCancelled;
@@ -359,6 +372,7 @@ uint32 FNativePeerService::Run()
                     {
                         FSlot Slot; Slot.Runtime = MoveTemp(Runtime); Slot.State = State;
                         Slot.Data = MakeUnique<FNativeDataWorker>(*Slot.Runtime, State->Data);
+                        Slot.bAudio = Command.bAudio; State->Audio.bConfigured = Command.bAudio;
                         Runtimes.Add(State->Id, MoveTemp(Slot));
                     }
                     State->Snapshot.State = bReady ? ENativePeerState::Ready : ENativePeerState::Failed;
@@ -371,6 +385,22 @@ uint32 FNativePeerService::Run()
         for (auto It = Runtimes.CreateIterator(); It; ++It)
         {
             auto& Slot = It.Value();
+            if (Slot.bAudio)
+            {
+                bool bOk;
+                {
+                    FScopeLock Lock(&Slot.State->Mutex);
+                    bOk = Slot.State->Snapshot.State != ENativePeerState::Ready ||
+                        Slot.State->Audio.Pump(*Slot.Runtime, Slot.AudioRevision, Slot.AudioTime);
+                }
+                if (!bOk)
+                {
+                    FNativeTransportEvent Event; Event.Type = ENativeSignalEvent::FatalError;
+                    Event.Result.Error = ENativeSignalError::NativeError; Event.Result.Message = TEXT("Audio transport failed.");
+                    PublishEvent(Slot.State.ToSharedRef(), MoveTemp(Event)); It.RemoveCurrent(); continue;
+                }
+                bPolling = true;
+            }
             if (!Slot.bSignaling) continue;
             bPolling = true;
             if (!Slot.Data->Poll())

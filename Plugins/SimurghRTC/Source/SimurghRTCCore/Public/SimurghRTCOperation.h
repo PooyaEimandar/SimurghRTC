@@ -80,6 +80,10 @@ private:
     FSimurghRTCError ValidationError;
     FSimurghRTCChannelOptions ChannelOptions;
     FSimurghRTCChannelHandle PendingChannel;
+    FSimurghRTCSourceHandle MediaSource;
+    FSimurghRTCTrackHandle MediaTrack;
+    ESimurghRTCTrackKind MediaKind = ESimurghRTCTrackKind::Audio;
+    bool bMediaEnabled = false;
     double Deadline = 0;
     uint64 TransportGeneration = 0;
     bool bStarted = false;

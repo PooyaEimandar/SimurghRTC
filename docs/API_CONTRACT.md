@@ -2,7 +2,7 @@
 
 Version **1** freezes the shared C++ and Blueprint surface for **Unreal Engine 5.8.3**. Applications can query `USimurghRTCSession::GetApiContractVersion()`. The [lifecycle examples](LIFECYCLE_EXAMPLES.md) execute local success, failure, cancellation and owner cleanup through both interfaces.
 
-Direct sessions now connect, open/close DataChannels, send text/binary messages and disconnect through this API. Start with [Shared sessions](SHARED_SESSIONS.md) or the [Blueprint and C++ data maps](DATA_EXAMPLES.md). Janus connections, calls, rooms, device capture and media delivery still return explicit implementation errors. Native media feasibility tests do not establish network media support.
+Direct sessions now connect, open/close DataChannels, send text/binary messages and disconnect through this API. Start with [Shared sessions](SHARED_SESSIONS.md) or the [Blueprint and C++ data maps](DATA_EXAMPLES.md). [Shared generated audio](SHARED_AUDIO.md) now implements Direct source/track controls and decoded PCM delivery. Janus connections, call invitations, rooms, device capture, speaker playback and video still return explicit implementation errors.
 
 The SR-001 review fixes ownership, call topology, headless media, device discovery, cancellation and errors below. Public v1 names, parameter types, Blueprint pins, enum values and these lifecycle rules are compatibility commitments. Additive APIs are allowed; breaking changes require a new contract version and migration notes. Append enum values rather than reordering them. The earlier M0 draft had no compatibility guarantee.
 
@@ -82,7 +82,7 @@ Channel options separate ordering and reliability. `Reliable` requires a zero bo
 
 Track information distinguishes local and remote tracks with `bRemote`; `Source` identifies a local track's source and is empty for remote tracks. `OnTrackChanged` with `bAdded=true` adds or updates information, and `false` removes it.
 
-Source ownership is independent of track ownership. Creating a source can precede Connect; attaching it requires a connected session and returns a track. Replacing a source preserves that track's identity and media kind. Muting retains the source; stopping invalidates it and ends its attached tracks. Detaching a track leaves the source available for another attachment. Disconnect closes channels/tracks and stops session-owned sources. Shutdown also releases sink references. These operations currently return explicit errors rather than fabricating resources.
+Source ownership is independent of track ownership. Creating a source can precede Connect; attaching it requires a connected session and returns a track. Replacing a source preserves that track's identity and media kind. Muting retains the source; stopping invalidates it and ends its attached tracks. Detaching a track leaves the source available for another attachment. Disconnect closes channels/tracks and stops session-owned sources. Shutdown also releases sink references. These operations are implemented for one generated Direct audio track per session; other media paths return explicit errors. See [Shared audio](SHARED_AUDIO.md) for the current format and queue limits.
 
 ### Headless media in Core
 
@@ -94,7 +94,7 @@ Generated sources and decoded frames require no RHI texture, audio component or 
 | `FSimurghRTCVideoFrame` | Tightly packed, top-down BGRA8; positive dimensions up to 3840 × 2160; exactly `Width × Height × 4` bytes |
 | Both | Nonnegative microsecond timestamp, relative to a source's monotonic clock; no platform buffer pointers |
 
-`CreateGeneratedSource(Session, Kind)` selects audio or video. Submit through `PushAudioFrame`/`PushVideoFrame`; the implementation must copy accepted input before returning. Source kind and monotonically increasing timestamps must be checked by the future source registry. The structural validators already reject invalid lengths, dimensions and samples.
+`CreateGeneratedSource(Session, Kind)` selects audio or video. Submit through `PushAudioFrame`/`PushVideoFrame`; the implementation must copy accepted input before returning. The audio source registry checks ownership and increasing timestamps. Structural validators reject invalid lengths, dimensions and samples. The current shared adapter accepts the 48 kHz mono subset; other structurally valid audio formats return `ServiceUnsupported`.
 
 Decoded frame delivery is off by default. Enable it per track with `SetDecodedFrameDelivery`; results arrive through `OnAudioFrame`/`OnVideoFrame` on the game thread. Copy event data if keeping it after the callback. Transport implementations must bound queued media, reject full submission queues with `ResourceExhausted`, and suppress delivery after disable/detach/shutdown. These CPU copies are a portable baseline; they do not promise zero-copy performance.
 
@@ -108,7 +108,7 @@ The draft's common source/track operations moved to Core for headless use. Use `
 
 ## Capabilities, errors and extensions
 
-`FSimurghRTCCapability` separates `Compiled`, `Platform`, `Service` and `Negotiated`, each Unknown/Available/Unavailable. `IsAvailable()` requires all four to be Available. Direct DataChannels report compiled/service availability when the adapter is included; platform and negotiation become Available after that session connects. Other features remain explicitly unavailable or unimplemented. `DeviceCapture` denotes the optional client capture module; generated/headless media is separate. Statistics have `bAvailable == false`; zeros are not measurements.
+`FSimurghRTCCapability` separates `Compiled`, `Platform`, `Service` and `Negotiated`, each Unknown/Available/Unavailable. `IsAvailable()` requires all four to be Available. Direct DataChannels report compiled/service availability when the adapter is included; platform and negotiation become Available after that session connects. Direct audio/media-source capabilities describe the generated-audio path when its remote track is negotiated. They do not claim device capture, playback or video support. Other features remain explicitly unavailable or unimplemented. `DeviceCapture` denotes the optional client capture module; generated/headless media is separate. Statistics have `bAvailable == false`; zeros are not measurements.
 
 Errors distinguish invalid input/state, build exclusion, unavailable platforms, unsupported services, missing negotiation, authorization, timeout, cancellation, pending implementation, exhausted resources, denied device permission and internal failure. `None` means success. Invalid payloads are rejected before resource use. Errors do not include raw provider messages or credentials.
 

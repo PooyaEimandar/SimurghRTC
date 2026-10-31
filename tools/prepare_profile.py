@@ -33,7 +33,7 @@ def documents(profile: str) -> tuple[dict, dict]:
     descriptor = {
         'FileVersion': 3, 'Version': 1, 'VersionName': '0.1.0-m0',
         'FriendlyName': 'SimurghRTC',
-        'Description': 'Shared RTC sessions and Direct data channels with isolated native WebRTC. Janus signaling and network media are pending.',
+        'Description': 'Shared RTC sessions, Direct data channels and generated Opus audio with isolated native WebRTC. Device capture, video and Janus signaling are pending.',
         'Category': 'Networking', 'CreatedBy': 'SimurghRTC contributors',
         'EngineVersion': policy['descriptor_engine_version'],
         'CanContainContent': False, 'IsBetaVersion': True,
@@ -46,7 +46,7 @@ def documents(profile: str) -> tuple[dict, dict]:
                 'with_janus_extensions': 'SimurghRTCJanusExtensions' in names,
                 'with_media': 'SimurghRTCMedia' in names,
                 'with_server': 'SimurghRTCServer' in names,
-                'native_transport': 'shared-direct-data' if 'SimurghRTCDirect' in names else 'internal-sdp-ice', 'desktop_native_factory': 'isolated-artifact-required',
+                'native_transport': 'shared-direct-data-audio' if 'SimurghRTCDirect' in names else 'internal-sdp-ice', 'desktop_native_factory': 'isolated-artifact-required',
                 'mobile_native_factory': 'external-artifact-required', 'modules': names}
     if profile == 'server':
         descriptor['SupportedTargetPlatforms'] = ['Win64','Mac','Linux']

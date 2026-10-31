@@ -245,7 +245,7 @@ public:
             if (Live >= Config.MaxSessions || PrincipalLive >= Config.MaxSessionsPerPrincipal || Sessions.Num() >= 64) { Error(Request, TEXT("ResourceLimit"), Complete); return true; }
             Session = MakeShared<FDirectSession>(); Session->Id = FGuid::NewGuid().ToString(EGuidFormats::DigitsWithHyphensLower);
             Session->Principal = Allowed.Principal; Session->Identity = Admission.Identity; Session->Purpose = Admission.Purpose; Session->CreateId = Request.Id; Session->CreateDigest = Request.Digest;
-            Session->Peer = FNativePeer::Open(Owner.Get(), Admission.Purpose == TEXT("call") ? ENativeFactoryMode::BuiltinMedia : ENativeFactoryMode::DataOnly, {}, Failure, Config.bLoopbackProbe, {Config.IceServers, Config.bRelayOnly});
+            Session->Peer = FNativePeer::Open(Owner.Get(), Admission.Purpose == TEXT("call") ? ENativeFactoryMode::BuiltinMedia : ENativeFactoryMode::DataOnly, {}, Failure, Config.bLoopbackProbe, {Config.IceServers, Config.bRelayOnly}, Admission.Purpose == TEXT("call"));
             if (!Session->Peer) { Error(Request, TEXT("ResourceLimit"), Complete); return true; }
             TWeakPtr<FImpl> Weak = AsShared(); TWeakPtr<FDirectSession> WeakSession = Session;
             Session->Peer->SetChannelHandler([Weak, WeakSession](const FNativeChannelEvent& Event)
@@ -337,6 +337,26 @@ public:
 FDirectServer::FDirectServer(TSharedRef<FImpl> InImpl) : Impl(MoveTemp(InImpl)) {}
 FDirectServer::~FDirectServer() { Stop(); }
 void FDirectServer::Stop() { Impl->Stop(); }
+FSimurghRTCError FDirectServer::PushAudio(const FString& SessionId, const FSimurghRTCAudioFrame& Frame)
+{
+    check(IsInGameThread()); const auto Peer = Impl->DataPeer(SessionId);
+    return Peer ? Peer->PushAudio(Frame) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
+}
+FSimurghRTCError FDirectServer::MuteAudio(const FString& SessionId, bool bMuted)
+{
+    check(IsInGameThread()); const auto Peer = Impl->DataPeer(SessionId);
+    return Peer ? Peer->MuteAudio(bMuted) : SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Direct session is not connected."));
+}
+bool FDirectServer::PollAudio(const FString& SessionId, FSimurghRTCAudioFrame& Out)
+{
+    check(IsInGameThread()); const auto Peer = Impl->DataPeer(SessionId);
+    return Peer ? Peer->PollAudio(Out) : false;
+}
+bool FDirectServer::HasRemoteAudio(const FString& SessionId) const
+{
+    check(IsInGameThread()); const auto Peer = Impl->DataPeer(SessionId);
+    return Peer ? Peer->HasRemoteAudio() : false;
+}
 FDirectServerSnapshot FDirectServer::GetSnapshot() const { check(IsInGameThread()); return Impl->Snapshot; }
 FSimurghRTCError FDirectServer::OpenChannel(const FString& SessionId, const FSimurghRTCChannelOptions& Options, FSimurghRTCChannelHandle& Out)
 {

@@ -32,6 +32,12 @@ public:
     virtual ~ISessionTransport() = default;
     virtual FSessionTransportSnapshot Snapshot() const = 0;
     virtual void Close() = 0;
+    // Optional audio slot; defaults keep data-only/test providers compatible.
+    virtual bool HasAudio() const { return false; }
+    virtual bool HasRemoteAudio() const { return false; }
+    virtual FSimurghRTCError PushAudio(const FSimurghRTCAudioFrame&) { return SimurghRTC::MakeError(ESimurghRTCErrorCode::NotNegotiated, TEXT("Audio was not negotiated.")); }
+    virtual FSimurghRTCError MuteAudio(bool) { return SimurghRTC::MakeError(ESimurghRTCErrorCode::NotNegotiated, TEXT("Audio was not negotiated.")); }
+    virtual bool PollAudio(FSimurghRTCAudioFrame&) { return false; }
     virtual void SetHandler(FSessionTransportEventHandler Handler) = 0;
     virtual FSimurghRTCError OpenChannel(const FSimurghRTCChannelOptions&, FSimurghRTCChannelHandle&) = 0;
     virtual FSimurghRTCError CloseChannel(FSimurghRTCChannelHandle) = 0;

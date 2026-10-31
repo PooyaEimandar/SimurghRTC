@@ -1,0 +1,2892 @@
+{
+  "schema": 1,
+  "issue": "SR-201",
+  "milestone": "M2",
+  "status": "in_progress",
+  "date": "2026-10-31",
+  "validation_complete": true,
+  "scope": "Shared Direct generated audio: packaged Mac ARM64 Full and Direct-only Game clients against a separate dedicated Server, using the existing isolated M155 audio artifact.",
+  "source_commit": "67473ad212e66bd805c592e08802d49e67668151",
+  "working_tree_changes": {
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCSessionAudio.cpp": "29b606ec260f730d2669862938e74fac387f19de174b6c9bd135a28e00b1df03",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeAudioQueue.h": "0b9bde04aa9964bf20474cee1d61c60f040ddec8c8f3e6bcedab8ad333c7c67e",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativePeerAudio.cpp": "510e5e5dc4a60689e7b03ec803ee87622bc3b848f739f9c9440ff1aa1e1c051a",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/Tests/SimurghRTCNativeAudioQueueTests.cpp": "997d1b6771b9b53983895c850ef610d8c4b81d42ede04b1af4698340097d605d",
+    "Samples/ContractHost/Source/ContractHost/ContractSharedAudioProbe.cpp": "cfcf92eb1648838da8d9afa6a43c6a5708c55f0ea190777b6a40a5e5f275e294",
+    "Samples/ContractHost/Source/ContractHost/ContractSharedAudioProbe.h": "f7c26f35611bc7bc510f8ee60e65075ff1d0a5b462bdd890a7718415180b3b62",
+    "tools/run_shared_audio_probe.py": "5deca38637c0cd192565b1a70b05c8f4a382f2c0f18dd6e75f17d559a4c5b185",
+    "tools/tests/test_shared_audio_probe.py": "c2176dbbdb2624e55b55e3957c32e02880c34b424462ddb6e2288297c843f1e9",
+    "Plugins/SimurghRTC/SimurghRTC.profile.json": "c8f6ec695ab8d4a69e5f6ac7939fbdd4eab76c6dfc03356cf63a446f2c4ab500",
+    "Plugins/SimurghRTC/SimurghRTC.uplugin": "c7ab03c773bce7ef544c3c428a033a93b6b4723723d84d22b72a71bcd3d4fe44",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCOperation.cpp": "53f643bff669ce827b0fc5464ecfcd18bdca1dd77e6b1e733272fabe6e3453cc",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCSession.cpp": "fefdb2518b058b7175d69545fb130cfc07328725d13b54fd13166f15ebe3850c",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/Tests/SimurghRTCContractTests.cpp": "12b6a730ac2899b14e809e33e2e5e14193983e994916580bc3d1dbb932c23ae6",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/Tests/SimurghRTCSessionIntegrationTests.cpp": "7488929a000f48cd72dff6a557652cb21f5518d0dcd47c6b53056716266fe6bd",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCOperation.h": "db68aa77366a2ea31f847020f8703e70af4937929f0e599910ad9c0bcaa9b7c3",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCSession.h": "3730469243005901c3573c3057de88f0bff98bf0f2956555a5249503015f8b09",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCSessionTransport.h": "e2cd09d32966b2dc310e300985ff22776abf92afdaf9a4906a73280887ef5082",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Private/SimurghRTCDirectClient.cpp": "c5e4b9dafaa8e1708bc900960a78f991f61b2891a2a871f33e4681506a8e5e46",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Private/SimurghRTCDirectSessionTransport.cpp": "ab0b923232802bcab626e2eea7f99492fe506322562580aff22da56cb8fa24d9",
+    "Plugins/SimurghRTC/Source/SimurghRTCDirect/Public/SimurghRTCDirectClient.h": "abd3ec88ceb48f411438ac77cf182d7a79ad816d7dfa76263193b4a730dd7b78",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeModule.cpp": "6d33dc422032c5a8abc6a773387c4f8d7f0b9c7d29e1510eba1cfa5cfdfc47df",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativePeerService.cpp": "fc947b52af5db7d9b11281fbda7c12d0f2d2fa714722e4d2e4364e661b0cb42e",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativePeerService.h": "5116a904942a9a01b1fffbd1a02cef95f5637183af32ed1bb1d9c00769879b49",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativePeer.h": "0a0122fbe8f929a0900101e088a8f1fe2f929e906d53ec49b0e75ccab85e8b2f",
+    "Plugins/SimurghRTC/Source/SimurghRTCServer/Private/SimurghRTCDirectServer.cpp": "2a0e655556f9ffc0c30d8df528cd7eb0fe57dd9d92bda869324325574d715aa8",
+    "Plugins/SimurghRTC/Source/SimurghRTCServer/Public/SimurghRTCDirectServer.h": "4e9dbc7a8db9df061bb845298130d153e287b1b6bc4feb2f86d4aa21b0a2f05b",
+    "Samples/ContractHost/Source/ContractHost/ContractHost.cpp": "8bd5f598daf7f2f23921354209780d2002dde09f0fe4f054b9e111d0a244e076",
+    "tools/prepare_profile.py": "4068850a1a57690f0028c68baafe72e4ecb636a75d11ae0451237518fdfd4585",
+    "tools/tests/test_profiles.py": "609ca0ed002f6f7d7e87b1878512aa0facd01744e9f238cac6e5201607645773"
+  },
+  "engine": {
+    "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+    "status": "",
+    "note": "This task made no engine source edits. The engine checkout is shared with unrelated HTML5 work; each build records its before/after revision and status."
+  },
+  "checks": {
+    "full_audio": {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/packaged-full-final/result.json",
+        "sha256": "44d5a16c83b080485333a363a89d2fdde8e9a0296881d45de91c43d6f7734222"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "run_id": "9bcd0189-7d6a-40db-ab2e-3296d875fd93",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "profile": "full",
+        "reports": {
+          "server": {
+            "schema": 1,
+            "run_id": "d7099f35-afb1-4785-987a-43b25c0cc0cb",
+            "pid": 58306,
+            "server": true,
+            "server_build": true,
+            "editor_build": false,
+            "with_janus": false,
+            "loopback_only": true,
+            "audio_hardware_opened": false,
+            "engine_version": "5.8.3-0+UE5",
+            "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+            "error": "",
+            "phases": 4,
+            "minimum_correlation": 0.998978726341272,
+            "maximum_muted_rms": 0,
+            "quiet_ticks": 8,
+            "checks": 0,
+            "measurements": [
+              {
+                "phase": 0,
+                "samples": 71040,
+                "correlation": 0.998978726341272,
+                "rms": 0.17631975250055593
+              },
+              {
+                "phase": 1,
+                "samples": 71040,
+                "correlation": 0,
+                "rms": 0
+              },
+              {
+                "phase": 2,
+                "samples": 70080,
+                "correlation": 0.9999928859419165,
+                "rms": 0.17648043314908116
+              },
+              {
+                "phase": 3,
+                "samples": 72000,
+                "correlation": 0.9999933266085517,
+                "rms": 0.17662000545036988
+              }
+            ],
+            "client_native_closed": 0,
+            "client_remote_closed": 0,
+            "pending_cleanup": 0,
+            "server_live_peers": 0,
+            "server_closed": 1,
+            "passed": true
+          },
+          "client": {
+            "schema": 1,
+            "run_id": "fe23c7c6-29c2-4073-9f1b-cf9deafe4672",
+            "pid": 58513,
+            "server": false,
+            "server_build": false,
+            "editor_build": false,
+            "with_janus": true,
+            "loopback_only": true,
+            "audio_hardware_opened": false,
+            "engine_version": "5.8.3-0+UE5",
+            "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+            "error": "",
+            "phases": 4,
+            "minimum_correlation": 0.9984487955405607,
+            "maximum_muted_rms": 0,
+            "quiet_ticks": 8,
+            "checks": 4,
+            "measurements": [
+              {
+                "phase": 0,
+                "samples": 72000,
+                "correlation": 0.9984487955405607,
+                "rms": 0.1753757195850265
+              },
+              {
+                "phase": 1,
+                "samples": 74880,
+                "correlation": 0.9999902855712103,
+                "rms": 0.17660281437958453
+              },
+              {
+                "phase": 2,
+                "samples": 71520,
+                "correlation": 0.9999902664856882,
+                "rms": 0.17646782483548148
+              },
+              {
+                "phase": 3,
+                "samples": 72480,
+                "correlation": 0.999989433545702,
+                "rms": 0.1766462481114624
+              }
+            ],
+            "client_native_closed": 1,
+            "client_remote_closed": 1,
+            "pending_cleanup": 0,
+            "passed": true
+          }
+        },
+        "server_executable_sha256": "68b62932f59e93af0fafea5746ef3865ac2391b5d5d5e695b17e9bbffe6cf84d",
+        "client_executable_sha256": "ea95fb32a7c1e537b04f80e874317c40fb159732f5ff1ec433a4ff03434ade1c",
+        "scope": "Mac ARM64 packaged shared C++ API to dedicated Server; Direct HTTP signaling, generated Opus, local ICE; no hardware audio or Blueprint graph execution",
+        "exit_codes": {
+          "server": 0,
+          "client": 0
+        },
+        "credentials_removed": true,
+        "processes_exited": true
+      }
+    },
+    "direct_audio": {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/packaged-direct/result.json",
+        "sha256": "edb5ffd7d05a76f213a56f1b943984f422a12e6083b59651167c46d492600b67"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "run_id": "6125973a-3950-47f2-9d83-489d61570ac3",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "profile": "direct-only",
+        "reports": {
+          "server": {
+            "schema": 1,
+            "run_id": "fe8a1ea0-d774-4490-b835-db276d0f8331",
+            "pid": 81645,
+            "server": true,
+            "server_build": true,
+            "editor_build": false,
+            "with_janus": false,
+            "loopback_only": true,
+            "audio_hardware_opened": false,
+            "engine_version": "5.8.3-0+UE5",
+            "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+            "error": "",
+            "phases": 4,
+            "minimum_correlation": 0.9999914679761552,
+            "maximum_muted_rms": 0,
+            "quiet_ticks": 8,
+            "checks": 0,
+            "measurements": [
+              {
+                "phase": 0,
+                "samples": 72480,
+                "correlation": 0.9999974464616026,
+                "rms": 0.17696155181058484
+              },
+              {
+                "phase": 1,
+                "samples": 72000,
+                "correlation": 0,
+                "rms": 0
+              },
+              {
+                "phase": 2,
+                "samples": 72000,
+                "correlation": 0.9999916682938078,
+                "rms": 0.17650176579197152
+              },
+              {
+                "phase": 3,
+                "samples": 72000,
+                "correlation": 0.9999914679761552,
+                "rms": 0.1766174850419551
+              }
+            ],
+            "client_native_closed": 0,
+            "client_remote_closed": 0,
+            "pending_cleanup": 0,
+            "server_live_peers": 0,
+            "server_closed": 1,
+            "passed": true
+          },
+          "client": {
+            "schema": 1,
+            "run_id": "f60a3b10-28f3-40d0-9e11-934619eebfed",
+            "pid": 81648,
+            "server": false,
+            "server_build": false,
+            "editor_build": false,
+            "with_janus": false,
+            "loopback_only": true,
+            "audio_hardware_opened": false,
+            "engine_version": "5.8.3-0+UE5",
+            "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+            "error": "",
+            "phases": 4,
+            "minimum_correlation": 0.9999908412218916,
+            "maximum_muted_rms": 0,
+            "quiet_ticks": 8,
+            "checks": 4,
+            "measurements": [
+              {
+                "phase": 0,
+                "samples": 73440,
+                "correlation": 0.9999908412218916,
+                "rms": 0.1766507311567997
+              },
+              {
+                "phase": 1,
+                "samples": 72000,
+                "correlation": 0.9999917395294947,
+                "rms": 0.17664816273138376
+              },
+              {
+                "phase": 2,
+                "samples": 73440,
+                "correlation": 0.9999917278142205,
+                "rms": 0.1764588657122208
+              },
+              {
+                "phase": 3,
+                "samples": 72960,
+                "correlation": 0.9999923645331705,
+                "rms": 0.17660022099170483
+              }
+            ],
+            "client_native_closed": 1,
+            "client_remote_closed": 1,
+            "pending_cleanup": 0,
+            "passed": true
+          }
+        },
+        "server_executable_sha256": "68b62932f59e93af0fafea5746ef3865ac2391b5d5d5e695b17e9bbffe6cf84d",
+        "client_executable_sha256": "ea4be4b86b04fd9712345277459d9351ca84c5c1e650cd526601eedb2a8ad723",
+        "scope": "Mac ARM64 packaged shared C++ API to dedicated Server; Direct HTTP signaling, generated Opus, local ICE; no hardware audio or Blueprint graph execution",
+        "exit_codes": {
+          "server": 0,
+          "client": 0
+        },
+        "credentials_removed": true,
+        "processes_exited": true
+      }
+    },
+    "data_regression": {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/shared-data-regression/result.json",
+        "sha256": "dd636473fd76d11cd345f44f13c609f67358a290ee4505f5600578664c94bd79"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "run_id": "dd3f0c5c-546b-4138-8f1f-9d1e2a3c166a",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "profile": "full",
+        "clients": {
+          "data-0": {
+            "pid": 67865,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "b5ede3a2-7dc0-4fa5-a08b-e38aaf9210c6",
+              "scenario": "data",
+              "role": 0,
+              "pid": 67865,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 6,
+              "backpressure_tested": true,
+              "backpressure_observed": true,
+              "backpressure_recovered": true,
+              "transports_created": 3,
+              "native_closed": 3,
+              "remote_closed": 3,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 2.445405960083008,
+              "clients": [
+                {
+                  "facade_id": "cb38f177-3f4f-c42f-b14a-758c12e574dd",
+                  "received": 9,
+                  "unexpected": 0,
+                  "operations": 8,
+                  "completions": 8,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 0,
+                  "triggered": false,
+                  "session_collected": false
+                },
+                {
+                  "facade_id": "fb18cf82-9345-8815-e5f9-1abf0b4c0c61",
+                  "received": 2,
+                  "unexpected": 0,
+                  "operations": 4,
+                  "completions": 4,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 0,
+                  "triggered": false,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "data-1": {
+            "pid": 67866,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "92176e77-39eb-427f-adb8-73b8311d42ff",
+              "scenario": "data",
+              "role": 1,
+              "pid": 67866,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 6,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 3,
+              "native_closed": 3,
+              "remote_closed": 3,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 2.3834181241691113,
+              "clients": [
+                {
+                  "facade_id": "b185ea28-d047-e179-61af-f4a1c4f7371a",
+                  "received": 4,
+                  "unexpected": 0,
+                  "operations": 8,
+                  "completions": 8,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 0,
+                  "triggered": false,
+                  "session_collected": false
+                },
+                {
+                  "facade_id": "6b92f152-0749-f332-dcb5-61b801290409",
+                  "received": 2,
+                  "unexpected": 0,
+                  "operations": 4,
+                  "completions": 4,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 0,
+                  "triggered": false,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "data-2": {
+            "pid": 67867,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "784b7008-3096-4d69-8079-81ba4dcaff12",
+              "scenario": "data",
+              "role": 2,
+              "pid": 67867,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 6,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 3,
+              "native_closed": 3,
+              "remote_closed": 3,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 1.5311219170689583,
+              "clients": [
+                {
+                  "facade_id": "721f5eb2-e84d-bc22-0c92-0ea209b79f2e",
+                  "received": 4,
+                  "unexpected": 0,
+                  "operations": 8,
+                  "completions": 8,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 0,
+                  "triggered": false,
+                  "session_collected": false
+                },
+                {
+                  "facade_id": "0ab7b0d7-da45-a235-ed56-d4940f333796",
+                  "received": 2,
+                  "unexpected": 0,
+                  "operations": 4,
+                  "completions": 4,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 0,
+                  "triggered": false,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "data-3": {
+            "pid": 67868,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "796e58f4-fd13-4fe7-9f1f-739651520795",
+              "scenario": "data",
+              "role": 3,
+              "pid": 67868,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 6,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 3,
+              "native_closed": 3,
+              "remote_closed": 3,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 2.2620230801403522,
+              "clients": [
+                {
+                  "facade_id": "49f34420-c647-cf88-58f5-f483dbe99162",
+                  "received": 4,
+                  "unexpected": 0,
+                  "operations": 8,
+                  "completions": 8,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 0,
+                  "triggered": false,
+                  "session_collected": false
+                },
+                {
+                  "facade_id": "aa67aa42-c344-802d-7363-218a606d133b",
+                  "received": 2,
+                  "unexpected": 0,
+                  "operations": 4,
+                  "completions": 4,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 0,
+                  "triggered": false,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "cancel": {
+            "pid": 67921,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "188f86f4-baf8-4688-a14e-26c30dca5099",
+              "scenario": "cancel",
+              "role": 0,
+              "pid": 67921,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 0,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 1,
+              "native_closed": 1,
+              "remote_closed": 0,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 0.06444549933075905,
+              "clients": [
+                {
+                  "facade_id": "94237b3a-ba46-e9ca-2dee-04830d3b8176",
+                  "received": 0,
+                  "unexpected": 0,
+                  "operations": 1,
+                  "completions": 1,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 9,
+                  "triggered": false,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "disconnect-pending": {
+            "pid": 67944,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "d2b418e2-c199-4d11-9e9c-c6e7cfcca79c",
+              "scenario": "disconnect-pending",
+              "role": 0,
+              "pid": 67944,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 0,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 1,
+              "native_closed": 1,
+              "remote_closed": 0,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 0.06554495915770531,
+              "clients": [
+                {
+                  "facade_id": "0331f58f-f243-152e-011a-ceb92b1116ea",
+                  "received": 0,
+                  "unexpected": 0,
+                  "operations": 2,
+                  "completions": 2,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 0,
+                  "triggered": false,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "timeout": {
+            "pid": 67968,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "74a10993-a0c4-4bbc-abfc-8cdd62710f69",
+              "scenario": "timeout",
+              "role": 0,
+              "pid": 67968,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 0,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 1,
+              "native_closed": 1,
+              "remote_closed": 0,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 0.30537833273410797,
+              "clients": [
+                {
+                  "facade_id": "631d7b08-2d40-c628-cc46-e8adf3223053",
+                  "received": 0,
+                  "unexpected": 0,
+                  "operations": 1,
+                  "completions": 1,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 8,
+                  "triggered": false,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "http-timeout": {
+            "pid": 67996,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "0e8f649f-9ed6-425e-a381-63c51e6752b8",
+              "scenario": "http-timeout",
+              "role": 0,
+              "pid": 67996,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 0,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 1,
+              "native_closed": 1,
+              "remote_closed": 0,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 6.293590124696493,
+              "clients": [
+                {
+                  "facade_id": "008ea4eb-6244-d0a2-7579-4bb6db46b167",
+                  "received": 0,
+                  "unexpected": 0,
+                  "operations": 1,
+                  "completions": 1,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 8,
+                  "triggered": false,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "reentrant": {
+            "pid": 68086,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "9f22e452-4398-4ba1-ae7b-49de6e89e197",
+              "scenario": "reentrant",
+              "role": 0,
+              "pid": 68086,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 0,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 1,
+              "native_closed": 1,
+              "remote_closed": 1,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 0.5902241244912148,
+              "clients": [
+                {
+                  "facade_id": "a61fa17c-7f4b-2662-6a5f-859e2f846af2",
+                  "received": 0,
+                  "unexpected": 0,
+                  "operations": 1,
+                  "completions": 1,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 0,
+                  "triggered": true,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "owner-loss": {
+            "pid": 68113,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "2775765b-b16b-4f05-aeae-f9c951a48be0",
+              "scenario": "owner-loss",
+              "role": 0,
+              "pid": 68113,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 0,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 1,
+              "native_closed": 1,
+              "remote_closed": 1,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 1.1003949977457523,
+              "clients": [
+                {
+                  "facade_id": "31c9c3ee-ec44-36d4-c86b-1986a8e2b1da",
+                  "received": 0,
+                  "unexpected": 0,
+                  "operations": 2,
+                  "completions": 1,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 9,
+                  "triggered": true,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "world": {
+            "pid": 68142,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "488e5af7-3ecd-4039-b8f4-f3ac64e109ee",
+              "scenario": "world",
+              "role": 0,
+              "pid": 68142,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 0,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 1,
+              "native_closed": 1,
+              "remote_closed": 1,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 0.6151950843632221,
+              "clients": [
+                {
+                  "facade_id": "1f578ee5-944d-9deb-fdcc-fab576f04d10",
+                  "received": 0,
+                  "unexpected": 0,
+                  "operations": 2,
+                  "completions": 1,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 9,
+                  "triggered": true,
+                  "session_collected": false
+                }
+              ]
+            }
+          },
+          "session-gc": {
+            "pid": 68170,
+            "exit_code": 0,
+            "probe": {
+              "schema": 1,
+              "run_id": "1c54cf94-47f2-4f66-80f6-48a19ed8c761",
+              "scenario": "session-gc",
+              "role": 0,
+              "pid": 68170,
+              "engine_version": "5.8.3-0+UE5",
+              "editor_build": false,
+              "server_build": false,
+              "arm64_build": true,
+              "with_janus": true,
+              "platform": "Mac",
+              "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+              "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+              "shared_api": true,
+              "loopback_only": true,
+              "network_media_tested": false,
+              "passed": true,
+              "error": "",
+              "ready": false,
+              "phase": 100,
+              "isolation_checks": 0,
+              "backpressure_tested": false,
+              "backpressure_observed": false,
+              "backpressure_recovered": false,
+              "transports_created": 1,
+              "native_closed": 1,
+              "remote_closed": 1,
+              "pending_cleanup": 0,
+              "quiet_ticks": 8,
+              "elapsed_seconds": 0.5762633718550205,
+              "clients": [
+                {
+                  "facade_id": "bb76293d-c14f-d80c-bc30-7bba30c3e77c",
+                  "received": 0,
+                  "unexpected": 0,
+                  "operations": 2,
+                  "completions": 1,
+                  "callbacks_on_game_thread": true,
+                  "expected_empty": true,
+                  "last_error": 9,
+                  "triggered": true,
+                  "session_collected": true
+                }
+              ]
+            }
+          }
+        },
+        "client_executable_sha256": "ea95fb32a7c1e537b04f80e874317c40fb159732f5ff1ec433a4ff03434ade1c",
+        "server_executable_sha256": "68b62932f59e93af0fafea5746ef3865ac2391b5d5d5e695b17e9bbffe6cf84d",
+        "scope": "Mac ARM64 shared API, four packaged Game processes with two sessions each, dedicated Server, loopback only",
+        "overlap_pids": [
+          67865,
+          67866,
+          67867,
+          67868
+        ],
+        "concurrent_server": {
+          "schema": 1,
+          "run_id": "b1ad0906-787f-47d8-9dff-aebab7eb72af",
+          "pid": 67851,
+          "server_build": true,
+          "editor_build": false,
+          "with_janus": false,
+          "arm64_build": true,
+          "engine_version": "5.8.3-0+UE5",
+          "platform": "Mac",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+          "loopback_only": true,
+          "network_media_tested": false,
+          "application_messages_tested": true,
+          "connected_sessions": 0,
+          "peak_live_peers": 8,
+          "peak_connected_sessions": 8,
+          "records": 12,
+          "running": true,
+          "live_peers": 0,
+          "created": 12,
+          "connected": 12,
+          "closed": 12,
+          "expired": 0,
+          "replays": 0,
+          "rejected": 0,
+          "early_ice": 6,
+          "connected_session_ids": [
+            "66866e35-684f-7613-48e4-82975abd4320",
+            "86b7385a-3440-85ae-d7b3-56b8de942969",
+            "9f41ffa1-2749-d855-b4a9-9c894961ccf0",
+            "9b318f14-1a4e-4528-90f5-2aa170074c8b",
+            "22d3451c-c64c-a6a8-a821-fa82aa3cc24a",
+            "fd8e3bd5-914d-4d2a-054b-da8be6d5e517",
+            "8adb4cee-2444-0311-e8de-eda05883e517",
+            "be1592b6-eb48-b632-23a5-dfaa019228c8",
+            "37ef9e42-8d4d-5b2e-608e-4fa91d7b0a1f",
+            "affd0a3d-bf4f-ab39-74be-d8b4b81d5ff1",
+            "e9ddeb37-a440-7713-7c46-f08f4bbf0b63",
+            "86709a7b-f544-969f-2fcf-ba8c300fccc1"
+          ],
+          "closed_session_ids": [
+            "fd8e3bd5-914d-4d2a-054b-da8be6d5e517",
+            "22d3451c-c64c-a6a8-a821-fa82aa3cc24a",
+            "9f41ffa1-2749-d855-b4a9-9c894961ccf0",
+            "be1592b6-eb48-b632-23a5-dfaa019228c8",
+            "8adb4cee-2444-0311-e8de-eda05883e517",
+            "37ef9e42-8d4d-5b2e-608e-4fa91d7b0a1f",
+            "9b318f14-1a4e-4528-90f5-2aa170074c8b",
+            "affd0a3d-bf4f-ab39-74be-d8b4b81d5ff1",
+            "66866e35-684f-7613-48e4-82975abd4320",
+            "86709a7b-f544-969f-2fcf-ba8c300fccc1",
+            "86b7385a-3440-85ae-d7b3-56b8de942969",
+            "e9ddeb37-a440-7713-7c46-f08f4bbf0b63"
+          ],
+          "last_transport": {
+            "connection": 2,
+            "ice": 2,
+            "dtls": 3,
+            "protocol": 1,
+            "sctp_open": true,
+            "queued_ice": 0,
+            "applied_ice": 4,
+            "remote_end": true,
+            "ice_route_samples": 4,
+            "local_candidate": 1,
+            "remote_candidate": 1,
+            "relay_protocol": 0,
+            "stats_samples": 4,
+            "stun_responses": 7
+          },
+          "data_channels_opened": 12,
+          "data_channels_closed": 3,
+          "data_received": 29,
+          "data_sent": 29,
+          "echo_pending": 0,
+          "channel_options": [
+            {
+              "session_id": "9f41ffa1-2749-d855-b4a9-9c894961ccf0",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "9b318f14-1a4e-4528-90f5-2aa170074c8b",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "fd8e3bd5-914d-4d2a-054b-da8be6d5e517",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "8adb4cee-2444-0311-e8de-eda05883e517",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "22d3451c-c64c-a6a8-a821-fa82aa3cc24a",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "66866e35-684f-7613-48e4-82975abd4320",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "be1592b6-eb48-b632-23a5-dfaa019228c8",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "86b7385a-3440-85ae-d7b3-56b8de942969",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "37ef9e42-8d4d-5b2e-608e-4fa91d7b0a1f",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "86709a7b-f544-969f-2fcf-ba8c300fccc1",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "affd0a3d-bf4f-ab39-74be-d8b4b81d5ff1",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "e9ddeb37-a440-7713-7c46-f08f4bbf0b63",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            }
+          ]
+        },
+        "timeout_injected": true,
+        "http_timeout_injected": true,
+        "server": {
+          "schema": 1,
+          "run_id": "b1ad0906-787f-47d8-9dff-aebab7eb72af",
+          "pid": 67851,
+          "server_build": true,
+          "editor_build": false,
+          "with_janus": false,
+          "arm64_build": true,
+          "engine_version": "5.8.3-0+UE5",
+          "platform": "Mac",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+          "loopback_only": true,
+          "network_media_tested": false,
+          "application_messages_tested": true,
+          "connected_sessions": 0,
+          "peak_live_peers": 8,
+          "peak_connected_sessions": 8,
+          "records": 0,
+          "running": false,
+          "live_peers": 0,
+          "created": 16,
+          "connected": 16,
+          "closed": 16,
+          "expired": 0,
+          "replays": 0,
+          "rejected": 0,
+          "early_ice": 8,
+          "connected_session_ids": [
+            "66866e35-684f-7613-48e4-82975abd4320",
+            "86b7385a-3440-85ae-d7b3-56b8de942969",
+            "9f41ffa1-2749-d855-b4a9-9c894961ccf0",
+            "9b318f14-1a4e-4528-90f5-2aa170074c8b",
+            "22d3451c-c64c-a6a8-a821-fa82aa3cc24a",
+            "fd8e3bd5-914d-4d2a-054b-da8be6d5e517",
+            "8adb4cee-2444-0311-e8de-eda05883e517",
+            "be1592b6-eb48-b632-23a5-dfaa019228c8",
+            "37ef9e42-8d4d-5b2e-608e-4fa91d7b0a1f",
+            "affd0a3d-bf4f-ab39-74be-d8b4b81d5ff1",
+            "e9ddeb37-a440-7713-7c46-f08f4bbf0b63",
+            "86709a7b-f544-969f-2fcf-ba8c300fccc1",
+            "de9d6302-6542-0f89-3017-63873294e8f4",
+            "057da9e2-5c47-1a01-3c58-a8a9407afd0a",
+            "4306ac13-1e4a-22ed-345a-8c99c97295e6",
+            "9ae4a1ef-a744-e0af-9cb0-f0831db28ca3"
+          ],
+          "closed_session_ids": [
+            "fd8e3bd5-914d-4d2a-054b-da8be6d5e517",
+            "22d3451c-c64c-a6a8-a821-fa82aa3cc24a",
+            "9f41ffa1-2749-d855-b4a9-9c894961ccf0",
+            "be1592b6-eb48-b632-23a5-dfaa019228c8",
+            "8adb4cee-2444-0311-e8de-eda05883e517",
+            "37ef9e42-8d4d-5b2e-608e-4fa91d7b0a1f",
+            "9b318f14-1a4e-4528-90f5-2aa170074c8b",
+            "affd0a3d-bf4f-ab39-74be-d8b4b81d5ff1",
+            "66866e35-684f-7613-48e4-82975abd4320",
+            "86709a7b-f544-969f-2fcf-ba8c300fccc1",
+            "86b7385a-3440-85ae-d7b3-56b8de942969",
+            "e9ddeb37-a440-7713-7c46-f08f4bbf0b63",
+            "de9d6302-6542-0f89-3017-63873294e8f4",
+            "057da9e2-5c47-1a01-3c58-a8a9407afd0a",
+            "4306ac13-1e4a-22ed-345a-8c99c97295e6",
+            "9ae4a1ef-a744-e0af-9cb0-f0831db28ca3"
+          ],
+          "last_transport": {
+            "connection": 2,
+            "ice": 2,
+            "dtls": 3,
+            "protocol": 1,
+            "sctp_open": true,
+            "queued_ice": 0,
+            "applied_ice": 2,
+            "remote_end": true,
+            "ice_route_samples": 2,
+            "local_candidate": 1,
+            "remote_candidate": 1,
+            "relay_protocol": 0,
+            "stats_samples": 2,
+            "stun_responses": 5
+          },
+          "data_channels_opened": 13,
+          "data_channels_closed": 3,
+          "data_received": 29,
+          "data_sent": 29,
+          "echo_pending": 0,
+          "channel_options": [
+            {
+              "session_id": "9f41ffa1-2749-d855-b4a9-9c894961ccf0",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "9b318f14-1a4e-4528-90f5-2aa170074c8b",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "fd8e3bd5-914d-4d2a-054b-da8be6d5e517",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "8adb4cee-2444-0311-e8de-eda05883e517",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "22d3451c-c64c-a6a8-a821-fa82aa3cc24a",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "66866e35-684f-7613-48e4-82975abd4320",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "be1592b6-eb48-b632-23a5-dfaa019228c8",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "86b7385a-3440-85ae-d7b3-56b8de942969",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "37ef9e42-8d4d-5b2e-608e-4fa91d7b0a1f",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "86709a7b-f544-969f-2fcf-ba8c300fccc1",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "affd0a3d-bf4f-ab39-74be-d8b4b81d5ff1",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "e9ddeb37-a440-7713-7c46-f08f4bbf0b63",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            },
+            {
+              "session_id": "057da9e2-5c47-1a01-3c58-a8a9407afd0a",
+              "label": "sr105-main",
+              "ordered": true,
+              "reliability": 0,
+              "reliability_value": 0,
+              "maximum_message_bytes": 65536,
+              "remote": true
+            }
+          ],
+          "teardown_complete": true,
+          "passed": true,
+          "error": "",
+          "callbacks_on_game_thread": true,
+          "elapsed_seconds": 29.595057543367147
+        },
+        "server_exit_code": 0,
+        "secrets_removed": true,
+        "all_processes_stopped": true,
+        "elapsed_seconds": 31.132
+      }
+    },
+    "full_package": {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/audit-full/package-audit.json",
+        "sha256": "06acae515c2da6f2a92b76802d5209fb6ef6599c6ead0735d06fa19de5e6d146"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "profile": "full",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+        "archive_exports": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "webrtc_link_inputs": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+        ],
+        "link_response_sha256": "5e7925b38a5b38a9bcbcea9b3917e93fe19f0d7484ace7bcd41c7022ecf631e5",
+        "editor_link_inputs": false,
+        "janus_link_inputs": true,
+        "unreal_media_presentation_module": true,
+        "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+        "executable_sha256": "ea95fb32a7c1e537b04f80e874317c40fb159732f5ff1ec433a4ff03434ade1c",
+        "executable_bytes": 319829200,
+        "built_executable_sha256": "ea95fb32a7c1e537b04f80e874317c40fb159732f5ff1ec433a4ff03434ade1c",
+        "built_and_staged_uuid": "66AC1FD8-2DE9-3177-87D1-432A36DC7D42",
+        "bundle_file_bytes": 554370981,
+        "shipping_size_baseline": false,
+        "rtc_size_delta_measured": false,
+        "code_signature_valid": true
+      }
+    },
+    "direct_package": {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/audit-direct/package-audit.json",
+        "sha256": "27601804a3b97793432e3bbe51d134c05032e872013713e8a7ea5420d653cdb8"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "profile": "direct-only",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+        "archive_exports": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "webrtc_link_inputs": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+        ],
+        "link_response_sha256": "a7699306065c58bed23c51e4a122bb447f978c45dd5351647c70270b5f70b754",
+        "editor_link_inputs": false,
+        "janus_link_inputs": false,
+        "unreal_media_presentation_module": true,
+        "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+        "executable_sha256": "ea4be4b86b04fd9712345277459d9351ca84c5c1e650cd526601eedb2a8ad723",
+        "executable_bytes": 319807376,
+        "built_executable_sha256": "ea4be4b86b04fd9712345277459d9351ca84c5c1e650cd526601eedb2a8ad723",
+        "built_and_staged_uuid": "7CA60973-B355-3C50-AA63-CA3E01512E7C",
+        "bundle_file_bytes": 554348641,
+        "shipping_size_baseline": false,
+        "rtc_size_delta_measured": false,
+        "code_signature_valid": true
+      }
+    },
+    "server_package": {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/audit-server/package-audit.json",
+        "sha256": "f6829871a2531ebf0deecbfdd73c2bc3ccc592d743d09c14e38c94b0529cd8e6"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "profile": "server",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+        "archive_exports": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "webrtc_link_inputs": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+        ],
+        "link_response_sha256": "dc90b5244c22589d9ee72839b887ff168ea6ebe70332f4d5876e06a0651442b1",
+        "editor_link_inputs": false,
+        "janus_link_inputs": false,
+        "unreal_media_presentation_module": false,
+        "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+        "executable_sha256": "68b62932f59e93af0fafea5746ef3865ac2391b5d5d5e695b17e9bbffe6cf84d",
+        "executable_bytes": 284997136,
+        "built_executable_sha256": "68b62932f59e93af0fafea5746ef3865ac2391b5d5d5e695b17e9bbffe6cf84d",
+        "built_and_staged_uuid": "3E9053FD-F825-3B53-919C-1FDE36E49E36",
+        "bundle_file_bytes": 384332780,
+        "shipping_size_baseline": false,
+        "rtc_size_delta_measured": false,
+        "code_signature_valid": true
+      }
+    },
+    "unreal_tests": {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-full-tests-report/index.json",
+        "sha256": "1efa72704267514dc42449029464e136fecf7ad4fa00f297519bfdafc5d5e50f"
+      },
+      "succeeded": 34,
+      "failed": 0,
+      "warnings": 0
+    },
+    "python_tests": {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/python-tests-final.log",
+        "sha256": "3eaa448d32a539bef1f26df1d69b43b8ea16dd58b8b75693e7b7bc2f537105c8"
+      },
+      "count": 232
+    }
+  },
+  "stages": {
+    "editor": {
+      "path": "Intermediate/SR201SharedAudio20261031/stage-editor-exitfix-full-game.json",
+      "sha256": "6561a4c2e0e9e76fc328d2c823f47bf259135a964d3da8446ab44d14bdc83b00"
+    },
+    "server": {
+      "path": "Intermediate/SR201SharedAudio20261031/stage-server-exitfix-server.json",
+      "sha256": "11cf9e1da662a6aa8b9ba5afedb1db2a56ef2907dbe9f6312c7c2fc45a8cc9a1"
+    },
+    "direct": {
+      "path": "Intermediate/SR201SharedAudio20261031/stage-direct-accepted-direct-game.json",
+      "sha256": "ad9de1c51514c2ed733bd54fc21a68f43ef5f056695de49c66dc5e49a146f870"
+    }
+  },
+  "builds": [
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-direct-cook-game-command.json",
+        "sha256": "608d4ac44b06013a4c79b6f41a071e07f01ccffc82211e90f0f2057a783c3bd9"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+          "BuildCookRun",
+          "-WaitForUATMutex",
+          "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+          "-noP4",
+          "-platform=Mac",
+          "-clientarchitecture=arm64",
+          "-clientconfig=Development",
+          "-package",
+          "-editorarchitecture=arm64",
+          "-skipbuild",
+          "-nocompileeditor",
+          "-cook",
+          "-stage",
+          "-pak",
+          "-map=/Engine/Maps/Entry+/Game/Examples/Direct/Maps/RtcDataCpp+/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Content/Examples",
+          "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+          "-unattended",
+          "-utf8output"
+        ],
+        "started": "2026-10-31T11:37:10.153935+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "waited_for_ubt_seconds": 0.055,
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T11:37:56.791935+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-direct-editor-command.json",
+        "sha256": "1ce14e7cfadcf2e628f82572e4d3896e23ffdeffa087cde9fb88008b84430c13"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-10-31T10:57:36.981783+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T11:00:42.913074+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-direct-editor-finalize-command.json",
+        "sha256": "1cbae749080f68144b61994e3f1aed1da648d6145eb4856436c0fb0dde70064a"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201SharedAudio20261031/direct-editor-postbuildsync.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T11:00:43.131980+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T11:01:23.111478+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-direct-editor-metadata-command.json",
+        "sha256": "4cfe4bf1dccd3a8d079c1ba0b4bdb379efc8f423d139f562085e026b4d6a09c6"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T11:01:23.285380+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T11:07:39.193078+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-direct-game-command.json",
+        "sha256": "48939b9e7826b479bdb16cc49d62688a3286eaae557f8cf4ff2e2b50250cc6ec"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHost",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile"
+        ],
+        "started": "2026-10-31T11:07:39.891915+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T11:36:40.822804+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-direct-game-finalize-command.json",
+        "sha256": "acc192080036c04a171d09aa5a18114561e1bd5858d067ab7577cc440289b98f"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Intermediate/Build/Mac/arm64/ContractHost/Development/PostBuildSync_ContractHost.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T11:36:40.886231+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T11:36:58.642898+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-direct-game-metadata-command.json",
+        "sha256": "e4ba7c709471bc21dc6170eef1c5f35e3e5aa24163a38ff1595d9c2636a86228"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHost",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T11:36:58.712719+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T11:37:10.088136+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-full-cook-game-command.json",
+        "sha256": "82c72d54b1252398c3c3c346e591fce66406f7131834b2ee1606b32f12d95a9d"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+          "BuildCookRun",
+          "-WaitForUATMutex",
+          "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-noP4",
+          "-platform=Mac",
+          "-clientarchitecture=arm64",
+          "-clientconfig=Development",
+          "-package",
+          "-editorarchitecture=arm64",
+          "-skipbuild",
+          "-nocompileeditor",
+          "-cook",
+          "-stage",
+          "-pak",
+          "-map=/Engine/Maps/Entry+/Game/Examples/Direct/Maps/RtcDataCpp+/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Content/Examples",
+          "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+          "-unattended",
+          "-utf8output"
+        ],
+        "started": "2026-10-31T10:23:59.492915+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "waited_for_ubt_seconds": 0.061,
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:25:14.493837+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-full-editor-command.json",
+        "sha256": "16ca303c4b9edc55a55fe3fd1aa1976bc18b68b3d3babc670512039b59ca3615"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-10-31T10:19:50.806373+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:20:29.165370+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-full-editor-finalize-command.json",
+        "sha256": "3d82e3259601a3f7bcc11fee5270d72e726e6797bb8bffd97fbe1cdbd1660fcd"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201SharedAudio20261031/editor-editor-postbuildsync.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T10:20:29.265321+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:20:45.432806+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-full-editor-metadata-command.json",
+        "sha256": "826d50a1b436d06fc1d77c67014d84960f2ad9108376bf76eec1cb700a4ed866"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T10:20:45.549486+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:21:14.663095+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-full-game-command.json",
+        "sha256": "fc8c37f48033d70cb03add4c1658befda358a1d8b2cb757a788bef645d151d9d"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHost",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile"
+        ],
+        "started": "2026-10-31T10:22:15.994402+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:23:12.157580+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-full-game-finalize-command.json",
+        "sha256": "3c01ba6663cabe0c3452d1b26539e841c91c71753f82f3a9369b5f83bbe49fdd"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/Mac/arm64/ContractHost/Development/PostBuildSync_ContractHost.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T10:23:12.327338+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:23:39.234492+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-full-game-metadata-command.json",
+        "sha256": "2c51676819cc9cc76db22d7f3c339c56368bef06a23a980b59af88cfa676cff2"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHost",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T10:23:39.303983+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:23:59.378837+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-full-tests-command.json",
+        "sha256": "6c1a1b079a59c5d432cec46e94b48bd35722d844bdbfe9a0280c29f6682d18d1"
+      },
+      "record": {
+        "command": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Binaries/Mac/UnrealEditor-Cmd",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-unattended",
+          "-nullrhi",
+          "-nosound",
+          "-ExecCmds=Automation RunTests SimurghRTC.",
+          "-TestExit=Automation Test Queue Empty",
+          "-ReportExportPath=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201SharedAudio20261031/accepted-full-tests-report"
+        ],
+        "started": "2026-10-31T10:21:14.771480+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:22:14.868102+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-server-cook-server-command.json",
+        "sha256": "de120facc0a0cc842035a41f866bad32bbe1f886fb95024b194f1380638f7be2"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+          "BuildCookRun",
+          "-WaitForUATMutex",
+          "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-noP4",
+          "-platform=Mac",
+          "-serverplatform=Mac",
+          "-server",
+          "-noclient",
+          "-serverarchitecture=arm64",
+          "-serverconfig=Development",
+          "-editorarchitecture=arm64",
+          "-skipbuild",
+          "-nocompileeditor",
+          "-cook",
+          "-stage",
+          "-pak",
+          "-map=/Engine/Maps/Entry",
+          "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Content/Examples",
+          "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+          "-unattended",
+          "-utf8output"
+        ],
+        "started": "2026-10-31T10:29:52.903897+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "waited_for_ubt_seconds": 0.086,
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:31:10.375349+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-server-editor-command.json",
+        "sha256": "8973fff99127fbc826f03d20af8622a04fc99f5f75d7da73b14d0d11ad8a0351"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-10-31T10:25:16.752292+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:26:50.867874+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-server-editor-finalize-command.json",
+        "sha256": "827c4571dfcc8367e4eb2b05c6837a203ddb5c92cad253b3f884d4c28a13d72c"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201SharedAudio20261031/server-editor-postbuildsync.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T10:26:50.946226+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:27:16.343661+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-server-editor-metadata-command.json",
+        "sha256": "2f1cd3ad16f23666714ff0b06e06a3d61fc99e59975997fb5a776e8ada6c571a"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T10:27:16.438091+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:27:35.612961+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-server-server-command.json",
+        "sha256": "a03847ca6d8e0a720b70eb844f482f5308101e4062feacbf0733d64e08d3258b"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostServer",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile"
+        ],
+        "started": "2026-10-31T10:27:35.688416+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:28:46.249915+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-server-server-finalize-command.json",
+        "sha256": "d22d64d969897f9385b15dda5d324fcf136753f7cc44ef1233e377b6781a98e4"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/Mac/arm64/ContractHostServer/Development/PostBuildSync_ContractHostServer.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T10:28:46.350646+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:29:21.613311+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/accepted-server-server-metadata-command.json",
+        "sha256": "b0030983f8f99033d3f1547a5e9c3e518653745e6602cd52026d71f06b28c335"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostServer",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T10:29:21.712428+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:29:52.790271+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-full-cook-game-command.json",
+        "sha256": "1c5b2c7a94ecbdfd6b216a7ce1ccab69354d29e91ffcdff95562654e9c0d4b3a"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+          "BuildCookRun",
+          "-WaitForUATMutex",
+          "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-noP4",
+          "-platform=Mac",
+          "-clientarchitecture=arm64",
+          "-clientconfig=Development",
+          "-package",
+          "-editorarchitecture=arm64",
+          "-skipbuild",
+          "-nocompileeditor",
+          "-cook",
+          "-stage",
+          "-pak",
+          "-map=/Engine/Maps/Entry+/Game/Examples/Direct/Maps/RtcDataCpp+/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Content/Examples",
+          "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+          "-unattended",
+          "-utf8output"
+        ],
+        "started": "2026-10-31T10:42:06.100315+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "waited_for_ubt_seconds": 0.604,
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:45:12.708921+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-full-editor-command.json",
+        "sha256": "38fbbe37444142f42923d47857c5d14c3235faf019b6b1536a055394203b412a"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-10-31T10:33:02.080179+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:34:48.549960+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-full-editor-finalize-command.json",
+        "sha256": "112268648416ef2ca03731e24c79afde587f8197740b8197678f4c8236ce1f4f"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201SharedAudio20261031/editor-editor-postbuildsync.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T10:34:48.724911+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:36:28.830839+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-full-editor-metadata-command.json",
+        "sha256": "abf9f088d9389acab0442b7e0272792c43e75188b2c06d2c3acad986a3b46760"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T10:36:29.228152+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:37:13.985321+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-full-game-command.json",
+        "sha256": "cf21722b9e8e175deda674d60841f58271c3373d8eb9e572683ca2881d74bae1"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHost",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile"
+        ],
+        "started": "2026-10-31T10:37:15.050615+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:38:52.637241+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-full-game-finalize-command.json",
+        "sha256": "71aaa00169743967ef1ae3f49f2debb99ff8f43d9e376e22b83b75aaa07e9154"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/Mac/arm64/ContractHost/Development/PostBuildSync_ContractHost.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T10:38:52.850107+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:40:59.590222+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-full-game-metadata-command.json",
+        "sha256": "8d0b9823c4b46aa0bbda8bef956eedfc986df5ff3c677e0a8ccf518eb920431f"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHost",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T10:40:59.854756+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:42:05.869488+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-server-cook-server-command.json",
+        "sha256": "993a97aadaaf65fcf084226b83de6a08aca47e84a014c582cfccfb717656a632"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+          "BuildCookRun",
+          "-WaitForUATMutex",
+          "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-noP4",
+          "-platform=Mac",
+          "-serverplatform=Mac",
+          "-server",
+          "-noclient",
+          "-serverarchitecture=arm64",
+          "-serverconfig=Development",
+          "-editorarchitecture=arm64",
+          "-skipbuild",
+          "-nocompileeditor",
+          "-cook",
+          "-stage",
+          "-pak",
+          "-map=/Engine/Maps/Entry",
+          "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Content/Examples",
+          "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+          "-unattended",
+          "-utf8output"
+        ],
+        "started": "2026-10-31T10:54:26.564665+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "waited_for_ubt_seconds": 0.171,
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:56:56.764647+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-server-editor-command.json",
+        "sha256": "30787e94050767394f72654b876dc13d07e25baf1fb63adef5dc593932162d4f"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-10-31T10:45:13.342219+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:47:09.227813+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-server-editor-finalize-command.json",
+        "sha256": "e3021ed51faae8f3b44f80a47f8c14e2669e0e2a8f231c81f2feee02ec44d043"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201SharedAudio20261031/server-editor-postbuildsync.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T10:47:09.469632+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:48:18.898133+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-server-editor-metadata-command.json",
+        "sha256": "2acd5963dcf0b4d355199a3f877e024ddc7063232397cdf19f18e802a62339bf"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T10:48:19.104798+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:49:23.544960+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-server-server-command.json",
+        "sha256": "d3d43652228a19a9e2f0adb62fcc560ad66d213cfe3c0a9c4414a436fe13ea8a"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostServer",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile"
+        ],
+        "started": "2026-10-31T10:49:23.809508+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:51:30.772772+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-server-server-finalize-command.json",
+        "sha256": "889e8855698ee2f52613f451119b08b42a77fec464f46411b93f0233ba3f1883"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/Mac/arm64/ContractHostServer/Development/PostBuildSync_ContractHostServer.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T10:51:30.987580+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:53:03.846463+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201SharedAudio20261031/exitfix-server-server-metadata-command.json",
+        "sha256": "eba83e0d5596e366d477137a05258c2956a454056a3916d47bed74b412eaec39"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostServer",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T10:53:04.051002+00:00",
+        "engine_before": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "74983cf51acc2eb90653597e224992d25af2bfde",
+          "status": ""
+        },
+        "finished": "2026-10-31T10:54:26.318345+00:00"
+      }
+    }
+  ],
+  "rejected_attempts": [
+    {
+      "path": "Intermediate/SR201SharedAudio20261031/first-editor.log",
+      "reason": "An unqualified error helper collided with an Unreal template; corrected before accepted builds."
+    },
+    {
+      "path": "Intermediate/SR201SharedAudio20261031/second-editor.log",
+      "reason": "The helper qualification also reached its declaration; corrected before accepted builds."
+    },
+    {
+      "path": "Intermediate/SR201SharedAudio20261031/third-tests-report/index.json",
+      "reason": "The new ownership test expected Disconnect to complete in one tick; corrected to wait for deferred teardown."
+    },
+    {
+      "path": "Intermediate/SR201SharedAudio20261031/packaged-full/result.json",
+      "reason": "Audio measurements and peer closure passed, but the new sample retained its UObject owner beyond engine pre-exit and crashed during module shutdown. Fixed by releasing the sample on OnEnginePreExit; both processes must exit cleanly in the accepted rerun."
+    }
+  ],
+  "implementation": [
+    "Generated audio source registry with eight-source and one-local-track limits",
+    "Core C++/Blueprint source attachment, replacement, mute, stop and track/delivery controls",
+    "48 kHz mono float PCM, up to 100 ms per submission, atomically copied and grouped into native 10 ms blocks",
+    "Bounded send/receive queues, owner-thread native work and game-thread decoded delivery",
+    "Existing Direct v1 call-purpose audio negotiation and headless Server PCM methods"
+  ],
+  "limitations": [
+    "Packaged audio validation is Mac ARM64 same-host loopback only.",
+    "No microphone, speaker, echo cancellation, noise processing or perceptual quality measurement.",
+    "Shared input formats other than 48 kHz mono are explicitly unsupported.",
+    "Blueprint-callable APIs compile and share implementation; no new Blueprint audio graph was executed.",
+    "The call purpose reserves audio but call invitation/ringing APIs remain unimplemented.",
+    "No SDP renegotiation or multiple audio tracks per session.",
+    "No new native artifact build or repeat-build claim; previous artifact provenance gates remain."
+  ],
+  "remaining": [
+    "Microphone capture and Unreal speaker playback",
+    "AEC playback reference, processing, device/route changes",
+    "Other shared PCM formats and multi-track media",
+    "Packaged Android/iOS audio and physical iOS acceptance",
+    "Blueprint audio examples and broader network/quality qualification",
+    "M1 and M0 external acceptance gaps remain tracked in ROADMAP.md"
+  ]
+}

@@ -51,6 +51,10 @@ public:
     FSimurghRTCError SendText(FSimurghRTCChannelHandle Channel, const FString& Text);
     FSimurghRTCError SendBytes(FSimurghRTCChannelHandle Channel, const TArray<uint8>& Bytes);
     void SetChannelHandler(FNativeChannelChanged Handler);
+    FSimurghRTCError PushAudio(const FSimurghRTCAudioFrame& Frame);
+    FSimurghRTCError MuteAudio(bool bMuted);
+    bool PollAudio(FSimurghRTCAudioFrame& Out);
+    bool HasRemoteAudio() const;
     FDirectClientSnapshot GetSnapshot() const;
 private:
 #if WITH_DEV_AUTOMATION_TESTS

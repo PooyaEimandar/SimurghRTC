@@ -67,7 +67,15 @@ private:
     void SetState(ESimurghRTCSessionState NewState);
     FSimurghRTCError ChannelUnavailable(FSimurghRTCChannelHandle Channel) const;
     bool TickTransport(float);
-    void ReleaseTransport();
+    void ReleaseTransport(bool bStopSources = true);
+    void ClearMedia(bool bNotify);
+    void TickAudio();
+    FSimurghRTCError ExecuteAudioOperation(FName Name, ESimurghRTCTrackKind Kind,
+        FSimurghRTCSourceHandle Source, FSimurghRTCTrackHandle Track, bool bEnabled, FSimurghRTCOperationResult& Out);
+    struct FAudioSource { bool bMuted = false; int64 LastTimestamp = -1; };
+    TMap<FGuid, FAudioSource> AudioSources;
+    FSimurghRTCTrackInfo LocalAudio, RemoteAudio;
+    bool bDeliverAudio = false, bRemoteAudioDetached = false;
     FSimurghRTCError StartTransport(const FSimurghRTCSessionConfig& Config);
     TSharedPtr<SimurghRTC::ISessionTransport> Transport;
     FTSTicker::FDelegateHandle TransportTicker;
