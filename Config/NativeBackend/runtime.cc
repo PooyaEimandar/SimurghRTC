@@ -27,13 +27,13 @@ int Fail(char* error, uint32_t capacity, const char* text) {
   if (error && capacity) std::snprintf(error, capacity, "%s", text);
   return 1;
 }
-class DummyAudio : public webrtc::webrtc_impl::AudioDeviceModuleDefault<webrtc::AudioDeviceModule> {};
 }
 struct SR_Runtime {
   std::thread::id owner = std::this_thread::get_id();
   bool ssl = false, network_started = false, worker_started = false, signaling_started = false;
   std::unique_ptr<webrtc::Thread> network, worker, signaling;
-  webrtc::scoped_refptr<webrtc::AudioDeviceModule> audio;
+  webrtc::scoped_refptr<sr::AudioDevice> audio;
+  webrtc::scoped_refptr<sr::AudioSource> audio_source;
   webrtc::scoped_refptr<webrtc::AudioProcessing> apm;
   webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory;
   std::shared_ptr<sr::Signaling> observer = std::make_shared<sr::Signaling>();
@@ -42,6 +42,8 @@ struct SR_Runtime {
   webrtc::PeerConnectionInterface::IceServers ice_servers;
   bool relay_only = false;
   ~SR_Runtime() {
+    if (audio) audio->Stop();
+    if (audio_source) audio_source->Stop();
     if (signaling_started) signaling->BlockingCall([&] {
       observer->Shutdown();
       if (peer) peer->Close();
@@ -53,7 +55,7 @@ struct SR_Runtime {
     if (signaling_started) signaling->Stop();
     if (worker_started) worker->Stop();
     if (network_started) network->Stop();
-    signaling.reset(); worker.reset(); network.reset();
+    audio_source = nullptr; signaling.reset(); worker.reset(); network.reset();
     if (ssl) {
       std::lock_guard<std::mutex> guard(ssl_mutex);
       if (--ssl_users == 0) webrtc::CleanupSSL();
@@ -80,7 +82,7 @@ extern "C" int SimurghRTC_CreateV1(int media, SR_Runtime** out, char* error, uin
   if (!(r.network_started = r.network->Start()) || !(r.worker_started = r.worker->Start())
       || !(r.signaling_started = r.signaling->Start())) return Fail(error, capacity, "Cannot start WebRTC threads.");
   if (media) r.worker->BlockingCall([&] {
-    r.audio = webrtc::make_ref_counted<DummyAudio>();
+    r.audio = webrtc::make_ref_counted<sr::AudioDevice>();
     r.apm = webrtc::BuiltinAudioProcessingBuilder().Build(webrtc::CreateEnvironment());
   });
   if (media && (!r.audio || !r.apm)) return Fail(error, capacity, "Audio device/APM creation failed.");
@@ -223,4 +225,41 @@ extern "C" int SimurghRTC_GetIceRouteV1(SR_Runtime* r, SR_IceRoute* out) {
   if (!r->peer) return SR_INVALID_STATE;
   r->signaling->BlockingCall([&] { *out = r->observer->IceRoute(); });
   return SR_OK;
+}
+
+extern "C" int SimurghRTC_ConfigureAudioV1(SR_Runtime* r, const SR_AudioConfig* config) {
+  if (!r || r->owner != std::this_thread::get_id() || !config
+      || config->size != sizeof(*config) || config->abi_version != SR_ABI_VERSION) return SR_INVALID_ARGUMENT;
+  if (!r->audio || !r->peer || r->audio_source) return SR_INVALID_STATE;
+  const int rate = config->sample_rate, channels = config->channels;
+  if ((channels != 1 && channels != 2) || (rate != 8000 && rate != 16000 && rate != 32000 && rate != 44100 && rate != 48000))
+    return SR_INVALID_ARGUMENT;
+  auto source = webrtc::make_ref_counted<sr::AudioSource>(rate, channels);
+  const int result = r->signaling->BlockingCall([&] { return r->observer->ConfigureAudio(r->factory.get(), source); });
+  if (result != SR_OK) return result;
+  r->audio_source = source;
+  return r->audio->Start(source) ? SR_OK : SR_NATIVE_ERROR;
+}
+extern "C" int SimurghRTC_PushAudioV1(SR_Runtime* r, const SR_AudioInput* input) {
+  if (!r || r->owner != std::this_thread::get_id() || !input
+      || input->size != sizeof(*input) || input->abi_version != SR_ABI_VERSION) return SR_INVALID_ARGUMENT;
+  return r->audio_source ? r->audio_source->Push(*input) : SR_INVALID_STATE;
+}
+extern "C" int SimurghRTC_PollAudioV1(SR_Runtime* r, SR_AudioOutput* out) {
+  if (!r || r->owner != std::this_thread::get_id() || !out
+      || out->size != sizeof(*out) || out->abi_version != SR_ABI_VERSION) return SR_INVALID_ARGUMENT;
+  if (!r->audio_source) return SR_INVALID_STATE;
+  r->observer->PollAudio(*out); return SR_OK;
+}
+extern "C" int SimurghRTC_AudioStateV1(SR_Runtime* r, SR_AudioState* out) {
+  if (!r || r->owner != std::this_thread::get_id() || !out
+      || out->size != sizeof(*out) || out->abi_version != SR_ABI_VERSION) return SR_INVALID_ARGUMENT;
+  if (!r->audio_source) return SR_INVALID_STATE;
+  r->audio_source->Snapshot(*out);
+  r->signaling->BlockingCall([&] { r->observer->AudioState(*out); }); return SR_OK;
+}
+extern "C" int SimurghRTC_MuteAudioV1(SR_Runtime* r, int muted) {
+  if (!r || r->owner != std::this_thread::get_id() || (muted != 0 && muted != 1)) return SR_INVALID_ARGUMENT;
+  if (!r->audio_source) return SR_INVALID_STATE;
+  r->audio_source->Mute(muted); return SR_OK;
 }

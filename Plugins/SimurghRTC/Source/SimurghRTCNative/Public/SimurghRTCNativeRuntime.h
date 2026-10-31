@@ -25,6 +25,13 @@ struct FNativeFactoryDiagnostics
     TArray<FString> VideoCodecs;
 };
 
+struct FNativeAudioState
+{
+    uint32 QueuedInputBlocks = 0, QueuedOutputBlocks = 0;
+    uint64 AdmittedBlocks = 0, ConsumedBlocks = 0, UnderrunBlocks = 0, ReceivedBlocks = 0, DroppedOutputBlocks = 0;
+    bool bMuted = false, bRemoteTrack = false;
+};
+
 /** Internal synchronous adapter. All calls/destruction must use the thread that constructed it. */
 class SIMURGHRTCNATIVE_API FNativeRuntime final
 {
@@ -46,6 +53,13 @@ public:
     bool PollSignal(FNativeTransportEvent& OutEvent);
     ESimurghRTCErrorCode Data(const FNativeDataRequest& Request, FNativeDataResult& Out);
     bool PollData(FNativeDataResult& Out);
+    // Initial internal audio path: configure once before SDP, then submit exactly
+    // 10 ms blocks with this format. No device access or physical AEC reference.
+    ENativeSignalError ConfigureAudio(int32 SampleRate, int32 Channels);
+    ENativeSignalError PushAudio(const FSimurghRTCAudioFrame& Frame);
+    ENativeSignalError PollAudio(FSimurghRTCAudioFrame& Out);
+    ENativeSignalError AudioState(FNativeAudioState& Out);
+    ENativeSignalError MuteAudio(bool bMuted);
     void Stop();
 
 private:

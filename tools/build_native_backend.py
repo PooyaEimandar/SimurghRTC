@@ -36,7 +36,7 @@ def build(work, target, output, jobs=6, build_name=None, fresh=False):
         host = candidate.build_tools(work, lock)
         source = work / 'src'
         probe = source / 'simurgh_probe'; probe.mkdir(exist_ok=True)
-        for name in ('BUILD.gn', 'runtime.cc', 'media.cc', 'signaling.cc', 'signaling.h', 'data_channels.cc', 'data_channels.h', 'simurgh_rtc_abi.h'):
+        for name in ('BUILD.gn', 'runtime.cc', 'media.cc', 'audio.cc', 'audio.h', 'signaling.cc', 'signaling.h', 'data_channels.cc', 'data_channels.h', 'simurgh_rtc_abi.h'):
             shutil.copy2(CONFIG / name, probe / name)
         (source / 'build/config/gclient_args.gni').write_text('android_ndk_version = "2@30.0.16248370"\ngenerate_location_tags = true\n')
         shutil.copy2(CONFIG / (target + '.gn'), build / 'args.gn')

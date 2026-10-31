@@ -58,9 +58,34 @@ class CreateObserver : public webrtc::CreateSessionDescriptionObserver {
 
 void Signaling::Shutdown() {
   stopped_ = true; peer_ = nullptr;
+  if (remote_audio_) remote_audio_->RemoveSink(&audio_receiver_);
+  remote_audio_ = nullptr; local_audio_ = nullptr; audio_receiver_.Stop();
   channels_.Shutdown();
   if (channel_) { channel_->UnregisterObserver(); channel_->Close(); channel_ = nullptr; }
   pending_.clear(); early_ice_.clear(); events_.clear(); seen_ice_.clear();
+}
+int Signaling::ConfigureAudio(webrtc::PeerConnectionFactoryInterface* factory, webrtc::scoped_refptr<AudioSource> source) {
+  if (stopped_ || failed_ || !peer_ || last_id_ || local_audio_) return SR_INVALID_STATE;
+  std::vector<webrtc::RtpCodecCapability> opus;
+  for (const auto& codec : factory->GetRtpSenderCapabilities(webrtc::MediaType::AUDIO).codecs)
+    if (codec.name == "opus") opus.push_back(codec);
+  if (opus.empty()) return SR_NATIVE_ERROR;
+  auto track = factory->CreateAudioTrack("simurghrtc-audio", source.get());
+  if (!track) return SR_NATIVE_ERROR;
+  auto added = peer_->AddTrack(track, {"simurghrtc-stream"});
+  if (!added.ok()) return SR_NATIVE_ERROR;
+  for (const auto& transceiver : peer_->GetTransceivers())
+    if (transceiver->sender() == added.value() && !transceiver->SetCodecPreferences(opus).ok()) {
+      peer_->RemoveTrackOrError(added.value()); return SR_NATIVE_ERROR;
+    }
+  local_audio_ = std::move(track); return SR_OK;
+}
+void Signaling::OnTrack(webrtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) {
+  const auto track = transceiver->receiver()->track();
+  if (stopped_ || failed_ || !local_audio_ || track->kind() != webrtc::MediaStreamTrackInterface::kAudioKind) return;
+  if (remote_audio_) { Fatal(SR_RESOURCE_EXHAUSTED, "This audio transport supports one remote track."); return; }
+  remote_audio_ = webrtc::scoped_refptr<webrtc::AudioTrackInterface>(static_cast<webrtc::AudioTrackInterface*>(track.get()));
+  remote_audio_->AddSink(&audio_receiver_);
 }
 bool Signaling::Active(uint64_t id) const { return !stopped_ && !failed_ && pending_.contains(id); }
 void Signaling::Push(Event event) {

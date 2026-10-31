@@ -28,6 +28,7 @@ SimurghRTC is a C++ plugin for **Unreal Engine 5.8.3**. Its goal is to let an Un
 - [Dependency review](docs/DEPENDENCY_REVIEW.md): versions, licenses and mobile ABI requirements. [Security work](docs/DEPENDENCY_SECURITY.md) tracks fixes and the dependency migration.
 - [Native Server test](docs/NATIVE_PROBE.md): libwebrtc setup and headless HTTP checks.
 - [Native media test](docs/MEDIA_PROBE.md): codecs, textures, render targets and audio playback integration.
+- [Native audio transport](docs/NATIVE_AUDIO.md): generated PCM over real Opus tracks and headless Unreal checks.
 - [Signaling examples](docs/SIGNALING_V1.md): Direct HTTP v1 and Janus message rules.
 - [Mobile clients](docs/MOBILE_CLIENTS.md): separate ARM64 builds, device testing and app-size validation.
 - [Demo matrix](docs/DEMO_MATRIX.md): planned coverage of the Janus examples.

@@ -33,7 +33,7 @@ Pending->Activate();
 
 The Server must run `FDirectServer` with an application authorization callback; a regular Unreal Server does not expose this endpoint automatically. See [Direct signaling](DIRECT_SIGNALING.md) and [Server routing](SERVER_ROUTING.md). The server's authorization result, rather than the client's claimed identity, determines its principal.
 
-For local development only, an HTTP loopback URL also needs `bAllowInsecureDevelopmentSignaling = true`. Normal endpoints use HTTPS. Custom `IceServers` and `Receive` purpose currently return `NotImplemented`. Selecting Call or TextRoom does not implement those services.
+For local development only, an HTTP loopback URL also needs `bAllowInsecureDevelopmentSignaling = true`. Normal endpoints use HTTPS. Supply `IceServers` for STUN/TURN and `bRelayOnly` to require a relay; see [Mobile data](MOBILE_DATA.md). The `Receive` purpose currently returns `NotImplemented`. Selecting Call or TextRoom does not implement those services.
 
 After Connect succeeds, create a second operation:
 

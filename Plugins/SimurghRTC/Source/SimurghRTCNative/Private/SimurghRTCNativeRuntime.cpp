@@ -10,6 +10,7 @@ namespace SimurghRTC
 class FNativeRuntime::FImpl
 {
 public:
+    int32 AudioSampleRate = 0, AudioChannels = 0;
 #if SIMURGHRTC_WITH_WEBRTC
     SR_Runtime* Handle = nullptr;
     TUniquePtr<SR_SignalEvent> SignalEvent;
@@ -264,6 +265,84 @@ bool FNativeRuntime::PollData(FNativeDataResult& Out)
 #else
     return false;
 #endif
+}
+ENativeSignalError FNativeRuntime::ConfigureAudio(int32 Rate, int32 Channels)
+{
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId());
+#if SIMURGHRTC_WITH_WEBRTC
+    if (Impl)
+    {
+        SR_AudioConfig Config{sizeof(Config), SR_ABI_VERSION, Rate, Channels};
+        const auto Code = static_cast<ENativeSignalError>(SimurghRTC_ConfigureAudioV1(Impl->Handle, &Config));
+        if (Code == ENativeSignalError::None) { Impl->AudioSampleRate = Rate; Impl->AudioChannels = Channels; }
+        return Code;
+    }
+#endif
+    return ENativeSignalError::InvalidState;
+}
+ENativeSignalError FNativeRuntime::PushAudio(const FSimurghRTCAudioFrame& Frame)
+{
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId());
+    if (ValidateAudioFrame(Frame).IsError()) return ENativeSignalError::InvalidArgument;
+#if SIMURGHRTC_WITH_WEBRTC
+    if (Impl)
+    {
+        if (!Impl->AudioSampleRate) return ENativeSignalError::InvalidState;
+        if (Frame.SampleRate != Impl->AudioSampleRate || Frame.Channels != Impl->AudioChannels
+            || Frame.Samples.Num() != Frame.SampleRate / 100 * Frame.Channels) return ENativeSignalError::InvalidArgument;
+        SR_AudioInput Input{sizeof(Input), SR_ABI_VERSION, Frame.Samples.GetData(), static_cast<uint32>(Frame.Samples.Num()), Frame.TimestampMicroseconds};
+        return static_cast<ENativeSignalError>(SimurghRTC_PushAudioV1(Impl->Handle, &Input));
+    }
+#endif
+    return ENativeSignalError::InvalidState;
+}
+ENativeSignalError FNativeRuntime::PollAudio(FSimurghRTCAudioFrame& Out)
+{
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId()); Out = {};
+#if SIMURGHRTC_WITH_WEBRTC
+    if (Impl)
+    {
+        SR_AudioOutput Native{}; Native.size = sizeof(Native); Native.abi_version = SR_ABI_VERSION;
+        const auto Code = static_cast<ENativeSignalError>(SimurghRTC_PollAudioV1(Impl->Handle, &Native));
+        if (Code == ENativeSignalError::None && Native.sample_count)
+        {
+            if (Native.sample_count > SR_AUDIO_MAX_SAMPLES) return ENativeSignalError::NativeError;
+            Out.SampleRate = Native.sample_rate; Out.Channels = Native.channels; Out.TimestampMicroseconds = Native.timestamp_us;
+            Out.Samples.Append(Native.samples, Native.sample_count);
+            if (ValidateAudioFrame(Out).IsError()) { Out = {}; return ENativeSignalError::NativeError; }
+        }
+        return Code;
+    }
+#endif
+    return ENativeSignalError::InvalidState;
+}
+ENativeSignalError FNativeRuntime::AudioState(FNativeAudioState& Out)
+{
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId()); Out = {};
+#if SIMURGHRTC_WITH_WEBRTC
+    if (Impl)
+    {
+        SR_AudioState Native{}; Native.size = sizeof(Native); Native.abi_version = SR_ABI_VERSION;
+        const auto Code = static_cast<ENativeSignalError>(SimurghRTC_AudioStateV1(Impl->Handle, &Native));
+        if (Code == ENativeSignalError::None)
+        {
+            Out.QueuedInputBlocks = Native.queued_input_blocks; Out.QueuedOutputBlocks = Native.queued_output_blocks;
+            Out.AdmittedBlocks = Native.admitted_blocks; Out.ConsumedBlocks = Native.consumed_blocks;
+            Out.UnderrunBlocks = Native.underrun_blocks; Out.ReceivedBlocks = Native.received_blocks;
+            Out.DroppedOutputBlocks = Native.dropped_output_blocks; Out.bMuted = Native.muted; Out.bRemoteTrack = Native.remote_track;
+        }
+        return Code;
+    }
+#endif
+    return ENativeSignalError::InvalidState;
+}
+ENativeSignalError FNativeRuntime::MuteAudio(bool bMuted)
+{
+    check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId());
+#if SIMURGHRTC_WITH_WEBRTC
+    if (Impl) return static_cast<ENativeSignalError>(SimurghRTC_MuteAudioV1(Impl->Handle, bMuted ? 1 : 0));
+#endif
+    return ENativeSignalError::InvalidState;
 }
 void FNativeRuntime::Stop() { check(OwnerThreadId == FPlatformTLS::GetCurrentThreadId()); Impl.Reset(); }
 }

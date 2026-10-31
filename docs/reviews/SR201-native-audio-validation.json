@@ -1,0 +1,2023 @@
+{
+  "schema": 1,
+  "issue": "SR-201",
+  "status": "in_progress",
+  "date": "2026-10-31",
+  "milestone": "M2",
+  "validation_complete": true,
+  "scope": "Native generated PCM/Opus foundation: one local and one remote track; loopback native consumers and a packaged Mac Unreal Server probe.",
+  "engine_final": {
+    "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+    "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n",
+    "note": "Unrelated HTML5 work was observed in the shared engine checkout. This task did not edit engine source."
+  },
+  "source_commit": "b48798a6c924c767808b1ec4fa07ea3612ff5975",
+  "working_tree_changes": {
+    "Config/NativeBackend/audio.cc": "33a053571475ed2ed8b344b4e72edae71a7b64d9b26df7c29ced5615fe98bac5",
+    "Config/NativeBackend/audio.h": "a7554c73f7c6dcdc551e7629af32076b2a1e34c081ea650315be227a874c1af1",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeAudioProbe.cpp": "f9f124082967b152f036cf56fb4a57cef59c400cc1523d3b7ba58a918a47d7d8",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/Tests/SimurghRTCNativeAudioTests.cpp": "91fcdac0ff1860aa25cfec85e2e83d035967e70760de4f055e8d7b32f4eb5c50",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativeAudioProbe.h": "dd53cdefe8164a9b97f043a9f45251fb8b2151517dbefcf6fead62c9cbe0c794",
+    "Samples/ContractHost/Source/ContractHost/ContractAudioProbe.cpp": "452c9b298c488c85332dba6779970a7fa961052566c57a8290161f9b07c682e7",
+    "Samples/ContractHost/Source/ContractHost/ContractAudioProbe.h": "616e9e2ccb33053d384d8214877014fa648766a287931ce551c2a06a2c3fd1c5",
+    "tools/run_audio_probe.py": "61eea4bd7de6d9d0c5d2256f05e44c8ba3c748aaa4792ffb68fbef83a37645f6",
+    "tools/run_native_audio_probe.py": "84a786a032bd0bdddb1bc6b7a325e320817c5bfe37c527ed5486ff14e37a912f",
+    "tools/tests/test_audio_probe.py": "e672d18c27a0a7dfd0d66880acfeb26f0c3a3681e747fdfea677c240e8467115",
+    "Config/NativeBackend/BUILD.gn": "240145cc16b0b97cb58496648679cc81cef101f0a63f967bc47452f22934def8",
+    "Config/NativeBackend/exports.txt": "0b5527af60b66cbe0186ddd7bffbaaa75a207f5c9ccf0bd9f7355609581f9798",
+    "Config/NativeBackend/runtime.cc": "97e65483867fe639d0fdd4f3ec6fe1a13f46e1259695a98eda30d823d1378cef",
+    "Config/NativeBackend/signaling.cc": "ca4dae4343ea10c07fe894531e44cad5491fddaa60a221345fc299d47d00726f",
+    "Config/NativeBackend/signaling.h": "c17b197ffd89215e52e5c1ab452c451744156bbf36a21f2a464bd1671eb3558a",
+    "Config/NativeBackend/simurgh_rtc_abi.h": "5d5ae1970ee0bc44e49c75fb9e6581315188a0bd202a20c9a430cc7f25afacec",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/NativeBackend.inputs.json": "5c8b73dfdc793b2c72aa2105a04a8e5be52d4db220811fe23e35807bad175c27",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Private/SimurghRTCNativeRuntime.cpp": "86c9290b884a6e76685a8f49ebb435455e11bff342d00e2424d4d6f65d6cb348",
+    "Plugins/SimurghRTC/Source/SimurghRTCNative/Public/SimurghRTCNativeRuntime.h": "ce44ae27cfbef9509d67fbfb935ad64ce09486c04703eec832c8bd7787c98cf5",
+    "Samples/ContractHost/Source/ContractHost/ContractHost.cpp": "975a9d354923ad25506e04a051c4ff4817a41b35d6e4bfbe3a67d905742781d1",
+    "tools/build_native_android.py": "f0a8380ae7ee8ba493e9ccf5c5008fdd708a6bae6ba2d6b7c2c296629cbfb8ac",
+    "tools/build_native_backend.py": "932b3a0ff2cb971267f419fb070013c2c0d12f213fca965eeb37f9164c08c144",
+    "tools/run_native_abi_probe.py": "0cdc12b8f4622d832dd25e4d3e7c5f6c1df41e8d80fb8179e278b057315ab1dc",
+    "tools/tests/test_native_data_runner.py": "a4a55c6c8b0971f306f1cd2b528d75d7f78d3d2e2d17962b53e226b9179f236d"
+  },
+  "artifacts": {
+    "Mac": {
+      "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+      "platform": "Mac",
+      "architecture": "arm64",
+      "files": 7,
+      "objects": 1,
+      "archive_bytes": 17923208,
+      "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+      "runtime_validation": "unverified",
+      "manifest": {
+        "path": "LocalBuilds/Artifacts/M155-Mac-SR201Audio-20261031-b/artifact.json",
+        "sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e"
+      },
+      "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+      "build": {
+        "archive_before_isolation_sha256": "fb0b256a872a7e99bcc3e22fd2a0c7e6bec79133863aa45f0012b236e409df3e",
+        "bridge_sources": {
+          "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
+          "BUILD.gn": "240145cc16b0b97cb58496648679cc81cef101f0a63f967bc47452f22934def8",
+          "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
+          "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
+          "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
+          "abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d",
+          "audio.cc": "33a053571475ed2ed8b344b4e72edae71a7b64d9b26df7c29ced5615fe98bac5",
+          "audio.h": "a7554c73f7c6dcdc551e7629af32076b2a1e34c081ea650315be227a874c1af1",
+          "data_channels.cc": "67c964310058967d915bcc5c1a02bc110fd8319cea2ee0d47e0ea650e6686864",
+          "data_channels.h": "8880754dd273386542c122e553d54646cc53a29dcf6972d980d2eb3c04db0d5d",
+          "exports.txt": "0b5527af60b66cbe0186ddd7bffbaaa75a207f5c9ccf0bd9f7355609581f9798",
+          "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
+          "runtime.cc": "97e65483867fe639d0fdd4f3ec6fe1a13f46e1259695a98eda30d823d1378cef",
+          "signaling.cc": "ca4dae4343ea10c07fe894531e44cad5491fddaa60a221345fc299d47d00726f",
+          "signaling.h": "c17b197ffd89215e52e5c1ab452c451744156bbf36a21f2a464bd1671eb3558a",
+          "simurgh_rtc_abi.h": "5d5ae1970ee0bc44e49c75fb9e6581315188a0bd202a20c9a430cc7f25afacec"
+        },
+        "build_directory": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeMacRepeat20261019C",
+        "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/third_party/llvm-build/Release+Asserts/bin",
+        "distribution_notices": "review_required_SR902",
+        "exports": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "fresh_output": false,
+        "isolated_sha256": "83cca236c57000e44ccec99e77b3607bfed9e016dc496becadd89ea4de1eff0a",
+        "platform": "Mac",
+        "recipe_sha256": "932b3a0ff2cb971267f419fb070013c2c0d12f213fca965eeb37f9164c08c144",
+        "runtime_validation": "unverified",
+        "schema": 1,
+        "sdk": {
+          "minimum_os": "12.0",
+          "sdk": "27.0",
+          "sdk_name": "macosx"
+        },
+        "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+        "xcode": "Xcode 27.1\nBuild version 27A9275"
+      }
+    },
+    "Android": {
+      "artifact_id": "android-arm64-m155-b02a73f9a830",
+      "platform": "Android",
+      "architecture": "arm64",
+      "files": 17,
+      "objects": 1,
+      "archive_bytes": 28298836,
+      "manifest_sha256": "a73552a374543cf11f9731b1dd16ee7c9d0018131b4373a7b4912dcc1e6fe682",
+      "runtime_validation": "unverified",
+      "manifest": {
+        "path": "LocalBuilds/Artifacts/M155-Android-SR201Audio-20261031-b/artifact.json",
+        "sha256": "a73552a374543cf11f9731b1dd16ee7c9d0018131b4373a7b4912dcc1e6fe682"
+      },
+      "archive_sha256": "b90698690db168071772858bf63e3a7c32d5d249c812a3701b3870075639e016",
+      "build": {
+        "archive_before_isolation_sha256": "192f0957726225d7d68ab46ee9f613e01c0f3cd04941f797c093cc53f35d06e6",
+        "bridge_sources": {
+          "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
+          "BUILD.gn": "240145cc16b0b97cb58496648679cc81cef101f0a63f967bc47452f22934def8",
+          "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
+          "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
+          "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
+          "abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d",
+          "audio.cc": "33a053571475ed2ed8b344b4e72edae71a7b64d9b26df7c29ced5615fe98bac5",
+          "audio.h": "a7554c73f7c6dcdc551e7629af32076b2a1e34c081ea650315be227a874c1af1",
+          "data_channels.cc": "67c964310058967d915bcc5c1a02bc110fd8319cea2ee0d47e0ea650e6686864",
+          "data_channels.h": "8880754dd273386542c122e553d54646cc53a29dcf6972d980d2eb3c04db0d5d",
+          "exports.txt": "0b5527af60b66cbe0186ddd7bffbaaa75a207f5c9ccf0bd9f7355609581f9798",
+          "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
+          "runtime.cc": "97e65483867fe639d0fdd4f3ec6fe1a13f46e1259695a98eda30d823d1378cef",
+          "signaling.cc": "ca4dae4343ea10c07fe894531e44cad5491fddaa60a221345fc299d47d00726f",
+          "signaling.h": "c17b197ffd89215e52e5c1ab452c451744156bbf36a21f2a464bd1671eb3558a",
+          "simurgh_rtc_abi.h": "5d5ae1970ee0bc44e49c75fb9e6581315188a0bd202a20c9a430cc7f25afacec"
+        },
+        "build_directory": "/build/src/out/NativeAndroidRepeat20261019B",
+        "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /build/src/third_party/llvm-build/Release+Asserts/bin",
+        "compiler_runtime_sha256": "32faf9cae893d732d45799f18040b90c69f847bc408d8207c6f65dd2c2f940e4",
+        "distribution_notices": "review_required_SR902",
+        "exports": [
+          "SimurghRTC_AudioStateV1",
+          "SimurghRTC_ChannelV1",
+          "SimurghRTC_ConfigureAudioV1",
+          "SimurghRTC_ConfigureIceV1",
+          "SimurghRTC_CreatePeerV1",
+          "SimurghRTC_CreateV1",
+          "SimurghRTC_DestroyV1",
+          "SimurghRTC_DiagnosticsV1",
+          "SimurghRTC_EnableLoopbackProbeV1",
+          "SimurghRTC_GetIceRouteV1",
+          "SimurghRTC_MediaProbeV1",
+          "SimurghRTC_MuteAudioV1",
+          "SimurghRTC_NativeVersionV1",
+          "SimurghRTC_PollAudioV1",
+          "SimurghRTC_PollDataV1",
+          "SimurghRTC_PollEventV1",
+          "SimurghRTC_PushAudioV1",
+          "SimurghRTC_SignalV1"
+        ],
+        "fresh_output": false,
+        "isolated_sha256": "11b68b59640f36910fd7ff31d058d1b2f0533253edae7af5d5707208b9d6ae26",
+        "minimum_os": "26",
+        "ndk": "27.2.12479018",
+        "platform": "Android",
+        "recipe_sha256": "f0a8380ae7ee8ba493e9ccf5c5008fdd708a6bae6ba2d6b7c2c296629cbfb8ac",
+        "runtime_validation": "unverified",
+        "schema": 1,
+        "source_lock_sha256": "b02a73f9a8301c4e9a1c54b81f4285bfb533a6379ec18f66f1522b8ce1dc9ae3"
+      }
+    },
+    "IOSSimulator": {
+      "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+      "platform": "IOSSimulator",
+      "architecture": "arm64",
+      "files": 7,
+      "objects": 1,
+      "archive_bytes": 17433960,
+      "manifest_sha256": "27af716c824149ecdf631fd650c7a9cfc7c470f40eb324144347777229148d61",
+      "runtime_validation": "unverified",
+      "manifest": {
+        "path": "LocalBuilds/Artifacts/M155-IOSSimulator-SR201Audio-20261031-b/artifact.json",
+        "sha256": "27af716c824149ecdf631fd650c7a9cfc7c470f40eb324144347777229148d61"
+      },
+      "archive_sha256": "bdf3739eb338c4fd1e0e46b692a49da0f49a6f684553ec13cd5206528495d54e",
+      "build": {
+        "archive_before_isolation_sha256": "7b78a4a8cae8cd5fd4f814038c8e1701fb44ee68d2f928551ae871da030d3abc",
+        "bridge_sources": {
+          "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
+          "BUILD.gn": "240145cc16b0b97cb58496648679cc81cef101f0a63f967bc47452f22934def8",
+          "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
+          "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
+          "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
+          "abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d",
+          "audio.cc": "33a053571475ed2ed8b344b4e72edae71a7b64d9b26df7c29ced5615fe98bac5",
+          "audio.h": "a7554c73f7c6dcdc551e7629af32076b2a1e34c081ea650315be227a874c1af1",
+          "data_channels.cc": "67c964310058967d915bcc5c1a02bc110fd8319cea2ee0d47e0ea650e6686864",
+          "data_channels.h": "8880754dd273386542c122e553d54646cc53a29dcf6972d980d2eb3c04db0d5d",
+          "exports.txt": "0b5527af60b66cbe0186ddd7bffbaaa75a207f5c9ccf0bd9f7355609581f9798",
+          "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
+          "runtime.cc": "97e65483867fe639d0fdd4f3ec6fe1a13f46e1259695a98eda30d823d1378cef",
+          "signaling.cc": "ca4dae4343ea10c07fe894531e44cad5491fddaa60a221345fc299d47d00726f",
+          "signaling.h": "c17b197ffd89215e52e5c1ab452c451744156bbf36a21f2a464bd1671eb3558a",
+          "simurgh_rtc_abi.h": "5d5ae1970ee0bc44e49c75fb9e6581315188a0bd202a20c9a430cc7f25afacec"
+        },
+        "build_directory": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeIOSSimulatorRepeat20261019BRetry",
+        "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/third_party/llvm-build/Release+Asserts/bin",
+        "distribution_notices": "review_required_SR902",
+        "exports": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "fresh_output": false,
+        "isolated_sha256": "494c81a88367d62a35b7ebd1a5e9877921d74e7b69ec99898e1c972ff8265136",
+        "platform": "IOSSimulator",
+        "recipe_sha256": "932b3a0ff2cb971267f419fb070013c2c0d12f213fca965eeb37f9164c08c144",
+        "runtime_validation": "unverified",
+        "schema": 1,
+        "sdk": {
+          "minimum_os": "15.0",
+          "sdk": "27.1",
+          "sdk_name": "iphonesimulator"
+        },
+        "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+        "xcode": "Xcode 27.1\nBuild version 27A9275"
+      }
+    },
+    "IOS": {
+      "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+      "platform": "IOS",
+      "architecture": "arm64",
+      "files": 7,
+      "objects": 1,
+      "archive_bytes": 17362136,
+      "manifest_sha256": "da417656961f63cd530823191c73c1e05ce9a2576fdbb19cb3533c639ef029e8",
+      "runtime_validation": "unverified",
+      "manifest": {
+        "path": "LocalBuilds/Artifacts/M155-IOS-SR201Audio-20261031-b/artifact.json",
+        "sha256": "da417656961f63cd530823191c73c1e05ce9a2576fdbb19cb3533c639ef029e8"
+      },
+      "archive_sha256": "efdbbacf9cefdc18c4f64f54a426f41372ef04127846ab746f1385e1220c48b4",
+      "build": {
+        "archive_before_isolation_sha256": "40b4a18119b4147bb5e8b38359f766e3da2f531746c5b3e26ef19a6a5f331ae2",
+        "bridge_sources": {
+          "Android.gn": "93f5a2a0328b62d4705a65bca7533e216ff92791b68b338e9be1a308f6bfe4f2",
+          "BUILD.gn": "240145cc16b0b97cb58496648679cc81cef101f0a63f967bc47452f22934def8",
+          "IOS.gn": "13252d8a845807c8831ebff934bf0f7df8e2819dfe86c552fc27d764349df358",
+          "IOSSimulator.gn": "ecd9a182d0737c07a01229569f1530bc60a1c7fd4ce7405eab937437bc882608",
+          "Mac.gn": "db9fbbaae0395d970442b053dceb1157dd9dc3ade507dbf056c3e75f54e31627",
+          "abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d",
+          "audio.cc": "33a053571475ed2ed8b344b4e72edae71a7b64d9b26df7c29ced5615fe98bac5",
+          "audio.h": "a7554c73f7c6dcdc551e7629af32076b2a1e34c081ea650315be227a874c1af1",
+          "data_channels.cc": "67c964310058967d915bcc5c1a02bc110fd8319cea2ee0d47e0ea650e6686864",
+          "data_channels.h": "8880754dd273386542c122e553d54646cc53a29dcf6972d980d2eb3c04db0d5d",
+          "exports.txt": "0b5527af60b66cbe0186ddd7bffbaaa75a207f5c9ccf0bd9f7355609581f9798",
+          "media.cc": "eb9db4e23e7e9f636fb0a2dbb14b9171ea621d1b3814f0fef447ffe88c2ae766",
+          "runtime.cc": "97e65483867fe639d0fdd4f3ec6fe1a13f46e1259695a98eda30d823d1378cef",
+          "signaling.cc": "ca4dae4343ea10c07fe894531e44cad5491fddaa60a221345fc299d47d00726f",
+          "signaling.h": "c17b197ffd89215e52e5c1ab452c451744156bbf36a21f2a464bd1671eb3558a",
+          "simurgh_rtc_abi.h": "5d5ae1970ee0bc44e49c75fb9e6581315188a0bd202a20c9a430cc7f25afacec"
+        },
+        "build_directory": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/out/NativeIOSRepeat20261024BRetry",
+        "compiler": "clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR008/NativeCandidate/src/third_party/llvm-build/Release+Asserts/bin",
+        "distribution_notices": "review_required_SR902",
+        "exports": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "fresh_output": false,
+        "isolated_sha256": "a51f0d8f2bae08a8ec7d8bee313fb739ecf2aeb1cbcf3703df5ea894497b66a8",
+        "platform": "IOS",
+        "recipe_sha256": "932b3a0ff2cb971267f419fb070013c2c0d12f213fca965eeb37f9164c08c144",
+        "runtime_validation": "unverified",
+        "schema": 1,
+        "sdk": {
+          "minimum_os": "15.0",
+          "sdk": "27.1",
+          "sdk_name": "iphoneos"
+        },
+        "source_lock_sha256": "ac85920e6ab2ec13649f4df6055997ead7c7ad5926571bcabeb332706b0a22b3",
+        "xcode": "Xcode 27.1\nBuild version 27A9275"
+      }
+    }
+  },
+  "native_checks": [
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-Mac-audio-final/result.json",
+        "sha256": "fad83810222da242f9988fe84198dfac99bc6c4072a732fcd64dff0cc88d58d5"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "21194bcc32452169488a0a1524ea8ec850441af2eff0068cad91c59b83c412d3",
+        "runtime_validation": "passed",
+        "probe_kind": "audio",
+        "scope": "standalone native audio fixture; not a packaged Unreal run",
+        "fixture_inputs": {
+          "Fixtures/native/audio.c": "21194bcc32452169488a0a1524ea8ec850441af2eff0068cad91c59b83c412d3",
+          "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+        },
+        "connected_pairs": 5,
+        "input_sample_rates": [
+          8000,
+          16000,
+          32000,
+          44100,
+          48000
+        ],
+        "input_channels": [
+          1,
+          2
+        ],
+        "loopback_only": true,
+        "audio_hardware_opened": false,
+        "audio_pairs": [
+          {
+            "sample_rate": 8000,
+            "channels": 1,
+            "received_blocks": [
+              789,
+              789
+            ],
+            "dropped_output_blocks": [
+              20,
+              20
+            ]
+          },
+          {
+            "sample_rate": 16000,
+            "channels": 2,
+            "received_blocks": [
+              764,
+              777
+            ],
+            "dropped_output_blocks": [
+              16,
+              20
+            ]
+          },
+          {
+            "sample_rate": 32000,
+            "channels": 1,
+            "received_blocks": [
+              783,
+              787
+            ],
+            "dropped_output_blocks": [
+              20,
+              20
+            ]
+          },
+          {
+            "sample_rate": 44100,
+            "channels": 2,
+            "received_blocks": [
+              790,
+              794
+            ],
+            "dropped_output_blocks": [
+              20,
+              20
+            ]
+          },
+          {
+            "sample_rate": 48000,
+            "channels": 1,
+            "received_blocks": [
+              791,
+              792
+            ],
+            "dropped_output_blocks": [
+              20,
+              20
+            ]
+          }
+        ],
+        "exit_code": 0,
+        "executable_sha256": "3cf3851a672965113ee602aa4e71c1bb4899b9cbeeb0dd5821ab0f444d682a94",
+        "exported_symbols": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ]
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-Mac-lifecycle-c/result.json",
+        "sha256": "f3dff6a6c239fe14a7e0084b6f34a7b3cd826be8bdd9fea0a4a139ff7cb7199b"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d",
+        "runtime_validation": "passed",
+        "probe_kind": "lifecycle",
+        "scope": "standalone native lifecycle fixture; not a packaged Unreal run",
+        "fixture_inputs": {
+          "Config/NativeBackend/abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d"
+        },
+        "peers_created": 6,
+        "codec_runs": 2,
+        "exit_code": 0,
+        "executable_sha256": "08551d3c8165e497312befe5516eb3182801648b5c78bf89b06fab98411e635e",
+        "exported_symbols": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ]
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-Mac-data-c/result.json",
+        "sha256": "a12ce1d178fc0f91910da5c98c15726df3613133a8caa14fc1a3717800600d8f"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+        "runtime_validation": "passed",
+        "probe_kind": "data",
+        "scope": "standalone native data fixture; not a packaged Unreal run",
+        "fixture_inputs": {
+          "Fixtures/native/data_channels.c": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+          "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+        },
+        "connected_pairs": 3,
+        "channel_modes": 6,
+        "negotiated_limits": [
+          32768,
+          65536
+        ],
+        "loopback_only": true,
+        "exit_code": 0,
+        "executable_sha256": "72f6ef1d8a57aa8c6621f6acd1a3ad1e344787dc997ba9b1f4d17e31bbe35147",
+        "exported_symbols": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ]
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-Android-audio-final2/result.json",
+        "sha256": "06c36e906b16313ac9f571b66be545d85d7fd4734e96487b5df328ebce77df99"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "android-arm64-m155-b02a73f9a830",
+          "platform": "Android",
+          "architecture": "arm64",
+          "files": 17,
+          "objects": 1,
+          "archive_bytes": 28298836,
+          "manifest_sha256": "a73552a374543cf11f9731b1dd16ee7c9d0018131b4373a7b4912dcc1e6fe682",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "21194bcc32452169488a0a1524ea8ec850441af2eff0068cad91c59b83c412d3",
+        "runtime_validation": "passed",
+        "probe_kind": "audio",
+        "scope": "standalone native audio fixture; not a packaged Unreal run",
+        "fixture_inputs": {
+          "Fixtures/native/audio.c": "21194bcc32452169488a0a1524ea8ec850441af2eff0068cad91c59b83c412d3",
+          "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+        },
+        "minimum_load_alignment": 16384,
+        "device": {
+          "model": "SM-S938B",
+          "os": "17"
+        },
+        "connected_pairs": 5,
+        "input_sample_rates": [
+          8000,
+          16000,
+          32000,
+          44100,
+          48000
+        ],
+        "input_channels": [
+          1,
+          2
+        ],
+        "loopback_only": true,
+        "audio_hardware_opened": false,
+        "audio_pairs": [
+          {
+            "sample_rate": 8000,
+            "channels": 1,
+            "received_blocks": [
+              791,
+              792
+            ],
+            "dropped_output_blocks": [
+              20,
+              20
+            ]
+          },
+          {
+            "sample_rate": 16000,
+            "channels": 2,
+            "received_blocks": [
+              790,
+              793
+            ],
+            "dropped_output_blocks": [
+              20,
+              20
+            ]
+          },
+          {
+            "sample_rate": 32000,
+            "channels": 1,
+            "received_blocks": [
+              790,
+              793
+            ],
+            "dropped_output_blocks": [
+              20,
+              20
+            ]
+          },
+          {
+            "sample_rate": 44100,
+            "channels": 2,
+            "received_blocks": [
+              791,
+              793
+            ],
+            "dropped_output_blocks": [
+              20,
+              20
+            ]
+          },
+          {
+            "sample_rate": 48000,
+            "channels": 1,
+            "received_blocks": [
+              792,
+              794
+            ],
+            "dropped_output_blocks": [
+              21,
+              21
+            ]
+          }
+        ],
+        "exit_code": 0,
+        "executable_sha256": "b44359d57a8e59de2fc0e6c99313b682814bf459f8514b58d6696adeff5be583",
+        "exported_symbols": [
+          "SimurghRTC_AudioStateV1",
+          "SimurghRTC_ChannelV1",
+          "SimurghRTC_ConfigureAudioV1",
+          "SimurghRTC_ConfigureIceV1",
+          "SimurghRTC_CreatePeerV1",
+          "SimurghRTC_CreateV1",
+          "SimurghRTC_DestroyV1",
+          "SimurghRTC_DiagnosticsV1",
+          "SimurghRTC_EnableLoopbackProbeV1",
+          "SimurghRTC_GetIceRouteV1",
+          "SimurghRTC_MediaProbeV1",
+          "SimurghRTC_MuteAudioV1",
+          "SimurghRTC_NativeVersionV1",
+          "SimurghRTC_PollAudioV1",
+          "SimurghRTC_PollDataV1",
+          "SimurghRTC_PollEventV1",
+          "SimurghRTC_PushAudioV1",
+          "SimurghRTC_SignalV1"
+        ],
+        "remote_binary_removed": true
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-Android-lifecycle-c/result.json",
+        "sha256": "a0366fdba8eb4f5e2f0ba94e960bb96afd7029ca99055ffee1f241f9ab4209d7"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "android-arm64-m155-b02a73f9a830",
+          "platform": "Android",
+          "architecture": "arm64",
+          "files": 17,
+          "objects": 1,
+          "archive_bytes": 28298836,
+          "manifest_sha256": "a73552a374543cf11f9731b1dd16ee7c9d0018131b4373a7b4912dcc1e6fe682",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d",
+        "runtime_validation": "passed",
+        "probe_kind": "lifecycle",
+        "scope": "standalone native lifecycle fixture; not a packaged Unreal run",
+        "fixture_inputs": {
+          "Config/NativeBackend/abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d"
+        },
+        "minimum_load_alignment": 16384,
+        "device": {
+          "model": "SM-S938B",
+          "os": "17"
+        },
+        "peers_created": 6,
+        "codec_runs": 2,
+        "exit_code": 0,
+        "executable_sha256": "f2e5e48bcd248e871f061d383f343deaf5d276c4f28dcce8a6a89fe46fc48104",
+        "exported_symbols": [
+          "SimurghRTC_AudioStateV1",
+          "SimurghRTC_ChannelV1",
+          "SimurghRTC_ConfigureAudioV1",
+          "SimurghRTC_ConfigureIceV1",
+          "SimurghRTC_CreatePeerV1",
+          "SimurghRTC_CreateV1",
+          "SimurghRTC_DestroyV1",
+          "SimurghRTC_DiagnosticsV1",
+          "SimurghRTC_EnableLoopbackProbeV1",
+          "SimurghRTC_GetIceRouteV1",
+          "SimurghRTC_MediaProbeV1",
+          "SimurghRTC_MuteAudioV1",
+          "SimurghRTC_NativeVersionV1",
+          "SimurghRTC_PollAudioV1",
+          "SimurghRTC_PollDataV1",
+          "SimurghRTC_PollEventV1",
+          "SimurghRTC_PushAudioV1",
+          "SimurghRTC_SignalV1"
+        ],
+        "remote_binary_removed": true
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-Android-data-c/result.json",
+        "sha256": "0ac69b2d434602eae8ef6d09550b886ed686061a209b8cd3864b5dd52beb2669"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "android-arm64-m155-b02a73f9a830",
+          "platform": "Android",
+          "architecture": "arm64",
+          "files": 17,
+          "objects": 1,
+          "archive_bytes": 28298836,
+          "manifest_sha256": "a73552a374543cf11f9731b1dd16ee7c9d0018131b4373a7b4912dcc1e6fe682",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+        "runtime_validation": "passed",
+        "probe_kind": "data",
+        "scope": "standalone native data fixture; not a packaged Unreal run",
+        "fixture_inputs": {
+          "Fixtures/native/data_channels.c": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+          "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+        },
+        "minimum_load_alignment": 16384,
+        "device": {
+          "model": "SM-S938B",
+          "os": "17"
+        },
+        "connected_pairs": 3,
+        "channel_modes": 6,
+        "negotiated_limits": [
+          32768,
+          65536
+        ],
+        "loopback_only": true,
+        "exit_code": 0,
+        "executable_sha256": "7b8aec2f6dfb41c00ad7807d4e5247d67d47a06e4a193b342602c92e2c88cacc",
+        "exported_symbols": [
+          "SimurghRTC_AudioStateV1",
+          "SimurghRTC_ChannelV1",
+          "SimurghRTC_ConfigureAudioV1",
+          "SimurghRTC_ConfigureIceV1",
+          "SimurghRTC_CreatePeerV1",
+          "SimurghRTC_CreateV1",
+          "SimurghRTC_DestroyV1",
+          "SimurghRTC_DiagnosticsV1",
+          "SimurghRTC_EnableLoopbackProbeV1",
+          "SimurghRTC_GetIceRouteV1",
+          "SimurghRTC_MediaProbeV1",
+          "SimurghRTC_MuteAudioV1",
+          "SimurghRTC_NativeVersionV1",
+          "SimurghRTC_PollAudioV1",
+          "SimurghRTC_PollDataV1",
+          "SimurghRTC_PollEventV1",
+          "SimurghRTC_PushAudioV1",
+          "SimurghRTC_SignalV1"
+        ],
+        "remote_binary_removed": true
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-IOSSimulator-audio-final/result.json",
+        "sha256": "d94226b022ef21007c6eb56d90444d6c626f55935c5928e2f36f86525a697689"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+          "platform": "IOSSimulator",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17433960,
+          "manifest_sha256": "27af716c824149ecdf631fd650c7a9cfc7c470f40eb324144347777229148d61",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "21194bcc32452169488a0a1524ea8ec850441af2eff0068cad91c59b83c412d3",
+        "runtime_validation": "passed",
+        "probe_kind": "audio",
+        "scope": "standalone native audio fixture; not a packaged Unreal run",
+        "fixture_inputs": {
+          "Fixtures/native/audio.c": "21194bcc32452169488a0a1524ea8ec850441af2eff0068cad91c59b83c412d3",
+          "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+        },
+        "device": {
+          "dataPath": "/Users/pooyaeimandar/Library/Developer/CoreSimulator/Devices/FAFA052B-075C-48B4-93D6-5C9D50F08422/data",
+          "dataPathSize": 552910848,
+          "logPath": "/Users/pooyaeimandar/Library/Logs/CoreSimulator/FAFA052B-075C-48B4-93D6-5C9D50F08422",
+          "udid": "FAFA052B-075C-48B4-93D6-5C9D50F08422",
+          "lastUsedAt": "2026-10-31T05:18:28Z",
+          "isAvailable": true,
+          "logPathSize": 102400,
+          "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+          "state": "Booted",
+          "name": "SR201Audio-20261031",
+          "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+        },
+        "runtime": {
+          "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+          "name": "iOS 27.0",
+          "version": "27.0",
+          "buildversion": "24A434",
+          "supportedArchitectures": [
+            "arm64"
+          ]
+        },
+        "connected_pairs": 5,
+        "input_sample_rates": [
+          8000,
+          16000,
+          32000,
+          44100,
+          48000
+        ],
+        "input_channels": [
+          1,
+          2
+        ],
+        "loopback_only": true,
+        "audio_hardware_opened": false,
+        "audio_pairs": [
+          {
+            "sample_rate": 8000,
+            "channels": 1,
+            "received_blocks": [
+              753,
+              773
+            ],
+            "dropped_output_blocks": [
+              18,
+              30
+            ]
+          },
+          {
+            "sample_rate": 16000,
+            "channels": 2,
+            "received_blocks": [
+              752,
+              743
+            ],
+            "dropped_output_blocks": [
+              19,
+              20
+            ]
+          },
+          {
+            "sample_rate": 32000,
+            "channels": 1,
+            "received_blocks": [
+              767,
+              766
+            ],
+            "dropped_output_blocks": [
+              21,
+              20
+            ]
+          },
+          {
+            "sample_rate": 44100,
+            "channels": 2,
+            "received_blocks": [
+              747,
+              753
+            ],
+            "dropped_output_blocks": [
+              20,
+              20
+            ]
+          },
+          {
+            "sample_rate": 48000,
+            "channels": 1,
+            "received_blocks": [
+              783,
+              775
+            ],
+            "dropped_output_blocks": [
+              19,
+              17
+            ]
+          }
+        ],
+        "exit_code": 0,
+        "executable_sha256": "a4de3e08af1ea966035c68f001edb5fa1f7f1fae72a8678dc553935e1a414120",
+        "exported_symbols": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ]
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-IOSSimulator-lifecycle-final/result.json",
+        "sha256": "05fa90ca9ca93165ded3e9d2419c31f55f75c9ff2ac33fce313d68245a768625"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+          "platform": "IOSSimulator",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17433960,
+          "manifest_sha256": "27af716c824149ecdf631fd650c7a9cfc7c470f40eb324144347777229148d61",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d",
+        "runtime_validation": "passed",
+        "probe_kind": "lifecycle",
+        "scope": "standalone native lifecycle fixture; not a packaged Unreal run",
+        "fixture_inputs": {
+          "Config/NativeBackend/abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d"
+        },
+        "device": {
+          "dataPath": "/Users/pooyaeimandar/Library/Developer/CoreSimulator/Devices/FAFA052B-075C-48B4-93D6-5C9D50F08422/data",
+          "dataPathSize": 1360134144,
+          "logPath": "/Users/pooyaeimandar/Library/Logs/CoreSimulator/FAFA052B-075C-48B4-93D6-5C9D50F08422",
+          "udid": "FAFA052B-075C-48B4-93D6-5C9D50F08422",
+          "lastUsedAt": "2026-10-31T05:18:28Z",
+          "isAvailable": true,
+          "logPathSize": 102400,
+          "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+          "state": "Booted",
+          "name": "SR201Audio-20261031",
+          "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+        },
+        "runtime": {
+          "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+          "name": "iOS 27.0",
+          "version": "27.0",
+          "buildversion": "24A434",
+          "supportedArchitectures": [
+            "arm64"
+          ]
+        },
+        "peers_created": 6,
+        "codec_runs": 2,
+        "exit_code": 0,
+        "executable_sha256": "d1cb5a16c2629eaf77f5551a9cf16ec2dc8af5f5d4cb865df48be07812a3511d",
+        "exported_symbols": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ]
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-IOSSimulator-data-final/result.json",
+        "sha256": "d93d1a1c6b5808c8452fd5234a126db998e63be037777403ad210ba2f29d0f93"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "iossimulator-arm64-m155-ac85920e6ab2",
+          "platform": "IOSSimulator",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17433960,
+          "manifest_sha256": "27af716c824149ecdf631fd650c7a9cfc7c470f40eb324144347777229148d61",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+        "runtime_validation": "passed",
+        "probe_kind": "data",
+        "scope": "standalone native data fixture; not a packaged Unreal run",
+        "fixture_inputs": {
+          "Fixtures/native/data_channels.c": "4049d9c950d28f786d62f985fdc04caea62e99b4c6463eec49c73782ce5ac9f1",
+          "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+        },
+        "device": {
+          "dataPath": "/Users/pooyaeimandar/Library/Developer/CoreSimulator/Devices/FAFA052B-075C-48B4-93D6-5C9D50F08422/data",
+          "dataPathSize": 1367990272,
+          "logPath": "/Users/pooyaeimandar/Library/Logs/CoreSimulator/FAFA052B-075C-48B4-93D6-5C9D50F08422",
+          "udid": "FAFA052B-075C-48B4-93D6-5C9D50F08422",
+          "lastUsedAt": "2026-10-31T05:18:28Z",
+          "isAvailable": true,
+          "logPathSize": 102400,
+          "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+          "state": "Booted",
+          "name": "SR201Audio-20261031",
+          "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+        },
+        "runtime": {
+          "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+          "name": "iOS 27.0",
+          "version": "27.0",
+          "buildversion": "24A434",
+          "supportedArchitectures": [
+            "arm64"
+          ]
+        },
+        "connected_pairs": 3,
+        "channel_modes": 6,
+        "negotiated_limits": [
+          32768,
+          65536
+        ],
+        "loopback_only": true,
+        "exit_code": 0,
+        "executable_sha256": "54fbb4c2ab7b7807d41fbe00fd6fc39daaf20afc2e496ba280b6592d8ae78aa6",
+        "exported_symbols": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ]
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-IOS-audio-final/result.json",
+        "sha256": "59b94e95c25ecbbcbccab7158ff8056cfd2f851d3816f3220b03d030606e0f1d"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+          "platform": "IOS",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17362136,
+          "manifest_sha256": "da417656961f63cd530823191c73c1e05ce9a2576fdbb19cb3533c639ef029e8",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "21194bcc32452169488a0a1524ea8ec850441af2eff0068cad91c59b83c412d3",
+        "runtime_validation": "not_run",
+        "probe_kind": "audio",
+        "scope": "iOS device C ABI compile/link only; no signing, deployment or runtime acceptance",
+        "fixture_inputs": {
+          "Fixtures/native/audio.c": "21194bcc32452169488a0a1524ea8ec850441af2eff0068cad91c59b83c412d3",
+          "Fixtures/native/signaling.c": "7944f1ec261ceb15d37361cb2c729ab1446e95517fb4b92c94ebf1ff87af97ad"
+        },
+        "link_validated": true,
+        "executable_sha256": "fae2676b90e7746d9ecb5e2e3b8ed603ded25a4f448a5079aaf8c7e51e4e06b2",
+        "exported_symbols": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ]
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-IOS-lifecycle-final/result.json",
+        "sha256": "3df1140e00ddc7bcd410e4740e9a6b4898a310c8730e6ba0a4bc6d054bed6c53"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "artifact": {
+          "artifact_id": "ios-arm64-m155-ac85920e6ab2",
+          "platform": "IOS",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17362136,
+          "manifest_sha256": "da417656961f63cd530823191c73c1e05ce9a2576fdbb19cb3533c639ef029e8",
+          "runtime_validation": "unverified"
+        },
+        "fixture_sha256": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d",
+        "runtime_validation": "not_run",
+        "probe_kind": "lifecycle",
+        "scope": "iOS device C ABI compile/link only; no signing, deployment or runtime acceptance",
+        "fixture_inputs": {
+          "Config/NativeBackend/abi_test.c": "79491f44b41a2aa5e391241a69babbf4f00116f04e9db5b6a18ca3c9bba6d02d"
+        },
+        "link_validated": true,
+        "executable_sha256": "93d5cf80b9186e6132bf9e60ee44bfdf853b9e06c8769f65dfbfad4312ccd3f6",
+        "exported_symbols": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ]
+      }
+    }
+  ],
+  "checks": {
+    "unreal_server": {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/unreal-server-final/result.json",
+        "sha256": "02c3e5df35df352ba0406f7a350896685b6381b9f7dfe5e3475d5f1ca2a3b47e"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "run_id": "1f61deb3-0553-4849-92ce-35eadbec16c1",
+        "kind": "server",
+        "command": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+          "/Engine/Maps/Entry",
+          "-server",
+          "-NullRHI",
+          "-nosound",
+          "-unattended",
+          "-nosplash",
+          "-SkipZenStore",
+          "-SimurghRTCAudioProbe",
+          "-SimurghRTCAudioProbeRunId=1f61deb3-0553-4849-92ce-35eadbec16c1",
+          "-stdout",
+          "-FullStdOutLogOutput"
+        ],
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "executable_sha256": "212f86c6da3484be3b52a32e32c5af2915232c18af0dfedcfa9d87751ee92ddc",
+        "scope": "two loopback PCM/Opus peer pairs inside one Unreal process; no public media session, HTTP media signaling or hardware audio",
+        "report": {
+          "schema": 1,
+          "run_id": "1f61deb3-0553-4849-92ce-35eadbec16c1",
+          "passed": true,
+          "error": "",
+          "pairs": 2,
+          "peers_closed": 4,
+          "decoded_samples": 1344000,
+          "minimum_correlation": 0.9999791858741156,
+          "maximum_muted_rms": 0,
+          "seconds": 14.020498123019934,
+          "heartbeats": 443365,
+          "max_tick_gap_seconds": 0.012587375938892365,
+          "server_build": true,
+          "editor_build": false,
+          "with_janus": false,
+          "loopback_only": true,
+          "audio_hardware_opened": false,
+          "engine_version": "5.8.3-0+UE5",
+          "platform": "Mac",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "native_backend": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d"
+        }
+      }
+    },
+    "package_audit": {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/audit-server-final/package-audit.json",
+        "sha256": "c1daf2c3e3ba001f6a91d1aaaf017cacb19c75243ea0f34e186e836a67b2c9f0"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "profile": "server",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+        "archive_exports": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "webrtc_link_inputs": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+        ],
+        "link_response_sha256": "409278b19ff055095f5d6de4c92354caf52899f0fe91a1b3a8c7d6bad9536583",
+        "editor_link_inputs": false,
+        "janus_link_inputs": false,
+        "unreal_media_presentation_module": false,
+        "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+        "executable_sha256": "212f86c6da3484be3b52a32e32c5af2915232c18af0dfedcfa9d87751ee92ddc",
+        "executable_bytes": 284845168,
+        "built_executable_sha256": "212f86c6da3484be3b52a32e32c5af2915232c18af0dfedcfa9d87751ee92ddc",
+        "built_and_staged_uuid": "77BD0730-A924-3B0A-8B34-DA7C8113A8EF",
+        "bundle_file_bytes": 384180497,
+        "shipping_size_baseline": false,
+        "rtc_size_delta_measured": false,
+        "code_signature_valid": true
+      }
+    },
+    "unreal_tests": {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/editor-audio-final-tests-report/index.json",
+        "sha256": "f8a1c270b58d153a2af95f06378b0cd0bc7a15eb640688b01dc236bfb93ea960"
+      },
+      "result": {
+        "reportCreatedOn": "2026.10.31-05.22.07",
+        "succeeded": 32,
+        "succeededWithWarnings": 0,
+        "failed": 0,
+        "notRun": 0,
+        "inProcess": 0,
+        "totalDuration": 16.328596115112305,
+        "comparisonExported": false,
+        "comparisonExportDirectory": ""
+      }
+    },
+    "server_factory_media": {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/server-factory-media/result.json",
+        "sha256": "87235c208665cccfde7434b22f42227f5bb0476d79b0122158ec804de77ce9cc"
+      },
+      "result": {
+        "schema": 1,
+        "command": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+          "/Engine/Maps/Entry",
+          "-server",
+          "-NullRHI",
+          "-nosound",
+          "-unattended",
+          "-nosplash",
+          "-SkipZenStore",
+          "-SimurghRTCProbe",
+          "-SimurghRTCProbePort=55262",
+          "-SimurghRTCProbeSeconds=8",
+          "-SimurghRTCProbeRunId=1dea98fb-99e4-48b9-9783-2feab9f2930d",
+          "-abslog=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201Audio20261031/server-factory-media/unreal.log"
+        ],
+        "scenario": "ready",
+        "kind": "server",
+        "run_id": "1dea98fb-99e4-48b9-9783-2feab9f2930d",
+        "port": 55262,
+        "passed": true,
+        "executable_sha256": "212f86c6da3484be3b52a32e32c5af2915232c18af0dfedcfa9d87751ee92ddc",
+        "native_artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "health": {
+          "status": "ready",
+          "run_id": "1dea98fb-99e4-48b9-9783-2feab9f2930d",
+          "pid": 77260,
+          "engine_version": "5.8.3-0+UE5",
+          "webrtc_adapter": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "factory_mode": "builtin-media",
+          "compiled_server_target": true,
+          "dedicated_runtime": true,
+          "can_ever_render": false,
+          "factory_ready": true,
+          "peer_connection_ready": true,
+          "dummy_audio_device": true,
+          "audio_processing": true,
+          "rtc_session_connected": false,
+          "audio_codecs": [
+            "opus",
+            "red",
+            "G722",
+            "PCMU",
+            "PCMA",
+            "CN",
+            "telephone-event",
+            "telephone-event"
+          ],
+          "video_codecs": [
+            "VP8",
+            "rtx",
+            "VP9",
+            "VP9",
+            "red",
+            "ulpfec"
+          ]
+        },
+        "exit_code": 0,
+        "runtime_log": "process.log",
+        "native_start_verified": true,
+        "elapsed_seconds": 8.42
+      }
+    },
+    "server_factory_data": {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/server-factory-data/result.json",
+        "sha256": "e95bd4b1573d1deb1457ccd5f460e3fa67f27ff274622d72efa80e7d52e71f6a"
+      },
+      "result": {
+        "schema": 1,
+        "command": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+          "/Engine/Maps/Entry",
+          "-server",
+          "-NullRHI",
+          "-nosound",
+          "-unattended",
+          "-nosplash",
+          "-SkipZenStore",
+          "-SimurghRTCProbe",
+          "-SimurghRTCProbePort=55270",
+          "-SimurghRTCProbeSeconds=8",
+          "-SimurghRTCProbeRunId=ce83f37b-32dc-4057-a597-2cc5c1b8e713",
+          "-abslog=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201Audio20261031/server-factory-data/unreal.log",
+          "-SimurghRTCProbeDataOnly"
+        ],
+        "scenario": "ready",
+        "kind": "server",
+        "run_id": "ce83f37b-32dc-4057-a597-2cc5c1b8e713",
+        "port": 55270,
+        "passed": true,
+        "executable_sha256": "212f86c6da3484be3b52a32e32c5af2915232c18af0dfedcfa9d87751ee92ddc",
+        "native_artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "health": {
+          "status": "ready",
+          "run_id": "ce83f37b-32dc-4057-a597-2cc5c1b8e713",
+          "pid": 77326,
+          "engine_version": "5.8.3-0+UE5",
+          "webrtc_adapter": "M155-5bd86a2f17a35dfc986b87d058f511e45805bd1d",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "factory_mode": "data-only",
+          "compiled_server_target": true,
+          "dedicated_runtime": true,
+          "can_ever_render": false,
+          "factory_ready": true,
+          "peer_connection_ready": true,
+          "dummy_audio_device": false,
+          "audio_processing": false,
+          "rtc_session_connected": false,
+          "audio_codecs": [],
+          "video_codecs": []
+        },
+        "exit_code": 0,
+        "runtime_log": "process.log",
+        "native_start_verified": true,
+        "elapsed_seconds": 8.402
+      }
+    },
+    "python_tests": {
+      "count": 227,
+      "log": {
+        "path": "Intermediate/SR201Audio20261031/python-tests-final.log",
+        "sha256": "b96d6f8d983e16bf41c46dc63fc0442b594802766a853038e2628ad2770672a6"
+      }
+    }
+  },
+  "builds": [
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/editor-audio-final-editor-command.json",
+        "sha256": "3cc23de79c00469578379f201dbcc2d129b0f56ffc05b373ca2e6baf30fed082"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-10-31T05:16:21.108903+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:21:06.727612+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/editor-audio-final-editor-finalize-command.json",
+        "sha256": "8bc3e746db51189aba2d711fb8231478899405f9b2a28e0a07086177692ca6ed"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201Audio20261031/editor-editor-postbuildsync.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T05:21:06.793981+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:21:22.426232+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/editor-audio-final-editor-metadata-command.json",
+        "sha256": "8c63f739aa1e3c37074b643b4895d518cdcb200fd36c6e802954a1e6d7588c34"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T05:21:22.491342+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:21:32.931450+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/editor-audio-final-tests-command.json",
+        "sha256": "a5edc790c75ddc9a8a7494b0175e33e2dd30c92a437a5cd8cb3c1545adb69b5f"
+      },
+      "record": {
+        "command": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Binaries/Mac/UnrealEditor-Cmd",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-unattended",
+          "-nullrhi",
+          "-nosound",
+          "-ExecCmds=Automation RunTests SimurghRTC.",
+          "-TestExit=Automation Test Queue Empty",
+          "-ReportExportPath=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201Audio20261031/editor-audio-final-tests-report"
+        ],
+        "started": "2026-10-31T05:21:33.008609+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:22:09.813461+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/server-audio-final-cook-server-command.json",
+        "sha256": "552dbe820bb1872a44334d846ba7dd25c617bcefcd12f4e20c5cd78d20ea8f50"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+          "BuildCookRun",
+          "-WaitForUATMutex",
+          "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-noP4",
+          "-platform=Mac",
+          "-serverplatform=Mac",
+          "-server",
+          "-noclient",
+          "-serverarchitecture=arm64",
+          "-serverconfig=Development",
+          "-editorarchitecture=arm64",
+          "-skipbuild",
+          "-nocompileeditor",
+          "-cook",
+          "-stage",
+          "-pak",
+          "-map=/Engine/Maps/Entry",
+          "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Content/Examples",
+          "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+          "-unattended",
+          "-utf8output"
+        ],
+        "started": "2026-10-31T05:23:35.413016+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "waited_for_ubt_seconds": 0.046,
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:24:05.468078+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/server-audio-final-editor-command.json",
+        "sha256": "d48d1fddd744c2a37774ce08a89c51a7203f11114d9975a0df1d89bddfc51fb2"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-10-31T05:22:10.159358+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:22:30.469212+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/server-audio-final-editor-finalize-command.json",
+        "sha256": "f8951e66ef6acf30762d845c28f44349a67066787b57a352a0749aa892955837"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201Audio20261031/server-editor-postbuildsync.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T05:22:30.532121+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:22:42.586574+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/server-audio-final-editor-metadata-command.json",
+        "sha256": "7c9583c5bff4f832c3549128e299356172b2483cac8b9db125baab32603df3e7"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T05:22:42.650328+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:22:53.267668+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/server-audio-final-server-command.json",
+        "sha256": "b74ddb159a1802ba78b81290f30480e08eef1d6467f89392da658b0b73e14aab"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostServer",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-10-31T05:22:53.324661+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:23:11.796512+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/server-audio-final-server-finalize-command.json",
+        "sha256": "1971fcb45849b1c4cd0078da137596f5c8f22b156d08beb16df5a5a88f2b7378"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/Mac/arm64/ContractHostServer/Development/PostBuildSync_ContractHostServer.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-10-31T05:23:11.859504+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:23:25.491711+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/server-audio-final-server-metadata-command.json",
+        "sha256": "ea5f64731566b6dba7fce5db0754dac53b5798cc7ce103d6977d359fdf702f6a"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostServer",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-10-31T05:23:25.545677+00:00",
+        "engine_before": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "1b3e6215dd1ec1f22835f33e2d1b2d9f19624b2b",
+          "status": " M Engine/Platforms/HTML5/Build/HTML5CI.xml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/.gitignore\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/Cargo.toml\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/README.md\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/src/main.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/impairment.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/common/mod.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/monitoring.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/relay.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/saturation.rs\n M Engine/Platforms/HTML5/Programs/HTML5Gateway/tests/wt_shutdown.rs\n M Engine/Platforms/HTML5/docs/M10-CI.md\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/clippy.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/Cargo.toml\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/src/\n?? Engine/Platforms/HTML5/Programs/HTML5Gateway/core/tests/\n"
+        },
+        "finished": "2026-10-31T05:23:35.352531+00:00"
+      }
+    }
+  ],
+  "staged_inputs": {
+    "editor": {
+      "path": "Intermediate/SR201Audio20261031/stage-editor-audio-final.json",
+      "sha256": "0aa873d88119215f78a16acff3221974cc689c1842f6b6a77aa4478d504d118f"
+    },
+    "server": {
+      "path": "Intermediate/SR201Audio20261031/stage-server-audio-final.json",
+      "sha256": "b22e7aebee1b9808ba839c61ee79857b9b6ec30cc7a5bba9b101422c41ee2f4d"
+    }
+  },
+  "cleanup": [
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/simulator-cleanup-c.json",
+        "sha256": "ff2b21f571dc49b3da5f0df1e63187732e3a62e23628f0f929725e0d8087aa99"
+      },
+      "result": {
+        "owned_simulator": "7A45BF40-EB6A-4977-B6B5-9585FE22E5A2",
+        "deleted": true
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/simulator-cleanup-d.json",
+        "sha256": "b3639ca77a5c7d6a52c0f99235158dab35855a9946b7662e51fa95a10e9c233e"
+      },
+      "result": {
+        "owned_simulator": "D500C56E-A95E-412E-AF4F-7F98583414B7",
+        "deleted": true
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/simulator-cleanup-final.json",
+        "sha256": "89cffa30ad4aaccb6e46419f4d35039cadc1cb1ba8cf41e09886efcde28c40c2"
+      },
+      "result": {
+        "owned_simulator": "8E65581D-F491-4182-84D6-31E82AA4507C",
+        "deleted": true
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/simulator-cleanup-final2.json",
+        "sha256": "762d26095b222874dbc161d426aac6cd38a128a042b952c575b2649a97395774"
+      },
+      "result": {
+        "owned_simulator": "FAFA052B-075C-48B4-93D6-5C9D50F08422",
+        "deleted": true
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/simulator-cleanup.json",
+        "sha256": "1f3deb75d6017bf863bf8feba55f67f2ccfb9bd9d47996cbcc7332589ca68452"
+      },
+      "result": {
+        "owned_simulator": "3455AA39-F743-4CC8-B0DA-B1431E6D808D",
+        "deleted": true
+      }
+    }
+  ],
+  "cleanup_audit": {
+    "file": {
+      "path": "Intermediate/SR201Audio20261031/cleanup-audit.json",
+      "sha256": "eda34e5966ed4f62d00bf9b6e6df9ef721ae83d0cfe887a5e855644737e2db87"
+    },
+    "result": {
+      "passed": true,
+      "owned_simulators": [
+        "7A45BF40-EB6A-4977-B6B5-9585FE22E5A2",
+        "D500C56E-A95E-412E-AF4F-7F98583414B7",
+        "FAFA052B-075C-48B4-93D6-5C9D50F08422",
+        "3455AA39-F743-4CC8-B0DA-B1431E6D808D",
+        "8E65581D-F491-4182-84D6-31E82AA4507C"
+      ],
+      "all_owned_simulators_absent": true,
+      "android_probe_binaries_removed": true,
+      "android_probe_paths": [
+        "/data/local/tmp/simurghrtc-abi-058592d8-2578-459f-936d-5ad239d87ca8",
+        "/data/local/tmp/simurghrtc-abi-679215a6-d55f-4e88-99d3-1926b3adfced",
+        "/data/local/tmp/simurghrtc-abi-72e51ec2-95ab-4f2d-b8f4-f8f88cc00c86",
+        "/data/local/tmp/simurghrtc-abi-bd4eccb1-2c6d-4f30-be5c-2a6b03a24ec6"
+      ]
+    }
+  },
+  "rejected_attempts": [
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-Mac-audio-b/result.json",
+        "sha256": "349611762e92bacc6efb1835e8f000a76b4cb2e8832d017e31a8a4ff5e483456"
+      },
+      "reason": "Long-window tone measurement was phase-sensitive under scheduling jitter.",
+      "passed": false
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-IOSSimulator-audio-c/result.json",
+        "sha256": "80f214b8286925811b8c44befed1e88722cf3b595291ca202e4defc492a53905"
+      },
+      "reason": "Long-window tone comparison rejected timing-adjusted decoded audio.",
+      "passed": false
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-IOSSimulator-audio-d/result.json",
+        "sha256": "b7cbe7278f2a0dd9c67b69ade4e248b129eaca4cecfd0c6616bc9542dda2ab65"
+      },
+      "reason": "Diagnostic run measured block and long-window correlation; the old resume check failed.",
+      "passed": false
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Audio20261031/native-Android-audio-final/result.json",
+        "sha256": "32d8f5376613b32b9755c33dcc8391ea055b81f23488ce5275bb20098ac29688"
+      },
+      "reason": "Galaxy disconnected before install; no temporary device binary was created.",
+      "passed": false
+    }
+  ],
+  "missing_evidence": [],
+  "preliminary_android_audio": {
+    "file": {
+      "path": "Intermediate/SR201Audio20261031/native-Android-audio-c/result.json",
+      "sha256": "9a01a53baa06986d88352f4719b18ebb4c247b1fc98b25e74f45675f05ac50bc"
+    },
+    "passed": true,
+    "artifact_unchanged": true,
+    "final_audio_acceptance": false,
+    "note": "Earlier long-window tone check against the same library; retained as history and excluded from final audio acceptance."
+  },
+  "remaining": [
+    "Shared C++/Blueprint audio source and track operations",
+    "Direct HTTP media negotiation and separate-process audio",
+    "Microphone capture and Unreal speaker playback",
+    "Physical playback reference, echo cancellation and noise processing",
+    "Device changes, source replacement and multi-track lifecycle",
+    "Packaged mobile audio probes and physical iOS acceptance",
+    "New audio artifact repeat builds and independent-host reproduction"
+  ],
+  "limitations": [
+    "No physical microphone or speaker was opened.",
+    "Generated-source input bypasses microphone APM; linked APM availability is not AEC validation.",
+    "iOS device evidence is compile/link only.",
+    "Mobile audio checks are native consumers, not packaged Unreal clients.",
+    "Tone transport checks are not perceptual quality, latency or sustained-load qualification.",
+    "M1 and M0 acceptance gaps remain open."
+  ]
+}

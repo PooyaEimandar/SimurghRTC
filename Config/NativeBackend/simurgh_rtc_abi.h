@@ -164,6 +164,37 @@ typedef struct SR_DataEvent {
 // unknown/closed channels are SR_INVALID_STATE; full queues are SR_RESOURCE_EXHAUSTED.
 SR_NATIVE_EXPORT int SimurghRTC_ChannelV1(struct SR_Runtime* runtime, const SR_ChannelRequest* request, SR_ChannelInfo* out);
 SR_NATIVE_EXPORT int SimurghRTC_PollDataV1(struct SR_Runtime* runtime, SR_DataEvent* event);
+
+// Initial generated-audio transport: one local/remote audio track per peer.
+// Configure once after CreatePeer and before SDP. It does not open hardware.
+// Input is copied, finite float PCM [-1,1], exactly 10 ms at the configured rate.
+// Rates: 8000/16000/32000/44100/48000; channels: 1/2. Timestamps must increase.
+// A full input queue rejects without consuming the timestamp. Receive overflow
+// drops the oldest block, counted in state, to bound playback latency.
+#define SR_AUDIO_MAX_SAMPLES 960
+#define SR_AUDIO_QUEUE_BLOCKS 20
+typedef struct SR_AudioConfig { uint32_t size, abi_version; int32_t sample_rate, channels; } SR_AudioConfig;
+typedef struct SR_AudioInput {
+  uint32_t size, abi_version;
+  const float* samples; uint32_t sample_count;
+  int64_t timestamp_us;
+} SR_AudioInput;
+typedef struct SR_AudioOutput {
+  uint32_t size, abi_version, sample_count;
+  int32_t sample_rate, channels;
+  int64_t timestamp_us; // Receiver-local PCM time; not a remote capture timestamp.
+  float samples[SR_AUDIO_MAX_SAMPLES]; // Zero sample_count means no frame available.
+} SR_AudioOutput;
+typedef struct SR_AudioState {
+  uint32_t size, abi_version, queued_input_blocks, queued_output_blocks;
+  uint64_t admitted_blocks, consumed_blocks, underrun_blocks, received_blocks, dropped_output_blocks;
+  int32_t muted, remote_track;
+} SR_AudioState;
+SR_NATIVE_EXPORT int SimurghRTC_ConfigureAudioV1(struct SR_Runtime*, const SR_AudioConfig*);
+SR_NATIVE_EXPORT int SimurghRTC_PushAudioV1(struct SR_Runtime*, const SR_AudioInput*);
+SR_NATIVE_EXPORT int SimurghRTC_PollAudioV1(struct SR_Runtime*, SR_AudioOutput*);
+SR_NATIVE_EXPORT int SimurghRTC_AudioStateV1(struct SR_Runtime*, SR_AudioState*);
+SR_NATIVE_EXPORT int SimurghRTC_MuteAudioV1(struct SR_Runtime*, int muted);
 #ifdef __cplusplus
 }
 #endif

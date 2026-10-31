@@ -11,3 +11,8 @@ _SimurghRTC_ChannelV1
 _SimurghRTC_PollDataV1
 _SimurghRTC_ConfigureIceV1
 _SimurghRTC_GetIceRouteV1
+_SimurghRTC_ConfigureAudioV1
+_SimurghRTC_PushAudioV1
+_SimurghRTC_PollAudioV1
+_SimurghRTC_AudioStateV1
+_SimurghRTC_MuteAudioV1

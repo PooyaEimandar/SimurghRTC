@@ -2,6 +2,7 @@
 #pragma once
 #include "simurgh_rtc_abi.h"
 #include "data_channels.h"
+#include "audio.h"
 #include <chrono>
 #include <deque>
 #include <map>
@@ -23,6 +24,9 @@ class Signaling final : public webrtc::PeerConnectionObserver,
   int Channel(const SR_ChannelRequest& request, SR_ChannelInfo& out) { return channels_.Command(request, out); }
   void PollData(SR_DataEvent& out) { channels_.Poll(out); }
   void Shutdown();
+  int ConfigureAudio(webrtc::PeerConnectionFactoryInterface* factory, webrtc::scoped_refptr<AudioSource> source);
+  void PollAudio(SR_AudioOutput& out) { audio_receiver_.Poll(out); }
+  void AudioState(SR_AudioState& out) { audio_receiver_.Snapshot(out); out.remote_track = !!remote_audio_; }
   void EnableLoopbackProbe() { loopback_probe_ = true; }
   int Submit(const SR_SignalRequest& request, char* error, uint32_t capacity);
   void Poll(SR_SignalEvent& out);
@@ -36,6 +40,7 @@ class Signaling final : public webrtc::PeerConnectionObserver,
 
   void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState) override {}
   void OnDataChannel(webrtc::scoped_refptr<webrtc::DataChannelInterface> channel) override;
+  void OnTrack(webrtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver) override;
   void OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state) override;
   void OnIceCandidate(const webrtc::IceCandidate* candidate) override;
   void OnConnectionChange(webrtc::PeerConnectionInterface::PeerConnectionState state) override;
@@ -66,6 +71,8 @@ class Signaling final : public webrtc::PeerConnectionObserver,
   webrtc::PeerConnectionInterface* peer_ = nullptr;
   webrtc::scoped_refptr<webrtc::DataChannelInterface> channel_;
   Channels channels_;
+  webrtc::scoped_refptr<webrtc::AudioTrackInterface> local_audio_, remote_audio_;
+  AudioReceiver audio_receiver_;
   SR_TransportState state_{};
   SR_IceRoute ice_route_{sizeof(SR_IceRoute), SR_ABI_VERSION, 0, 0, 0, 0};
   std::map<uint64_t, Clock::time_point> pending_;

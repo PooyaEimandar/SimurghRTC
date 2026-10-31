@@ -3,7 +3,7 @@ import("//webrtc.gni")
 rtc_static_library("probe") {
   complete_static_lib = true
   suppressed_configs = [ "//build/config/compiler:thin_archive" ]
-  sources = [ "runtime.cc", "media.cc", "signaling.cc", "signaling.h", "data_channels.cc", "data_channels.h", "simurgh_rtc_abi.h" ]
+  sources = [ "runtime.cc", "media.cc", "audio.cc", "audio.h", "signaling.cc", "signaling.h", "data_channels.cc", "data_channels.h", "simurgh_rtc_abi.h" ]
   deps = [
     "//pc:ice_server_parsing",
     "//third_party/boringssl", "//third_party/opus", "//third_party/libvpx",
@@ -13,6 +13,7 @@ rtc_static_library("probe") {
     "//api/audio:builtin_audio_processing_builder", "//api/environment:environment_factory",
     "//api/audio_codecs:builtin_audio_encoder_factory", "//api/audio_codecs:builtin_audio_decoder_factory",
     "//api/video_codecs:builtin_video_encoder_factory", "//api/video_codecs:builtin_video_decoder_factory",
-    "//modules/audio_device:audio_device_api", "//rtc_base:ssl", "//rtc_base:threading"
+    "//modules/audio_device:audio_device_api", "//rtc_base:ssl", "//rtc_base:threading",
+    "//common_audio"
   ]
 }
