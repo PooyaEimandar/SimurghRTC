@@ -2,6 +2,7 @@
 #include "ContractDataExample.h"
 #include "ContractChannelValidation.h"
 #include "ContractNetworkValidation.h"
+#include "ContractSendDeadlineValidation.h"
 #include "ContractIceConfig.h"
 #include "HAL/FileManager.h"
 #include "Misc/CommandLine.h"
@@ -30,6 +31,11 @@ bool AContractDataExample::PrepareExample()
     {
         FParse::Value(FCommandLine::Get(), TEXT("SimurghRTCExampleScenario="), Report->Scenario);
         if (Report->Scenario == TEXT("timeout")) Config.TimeoutMilliseconds = 250;
+        if (Report->Scenario == TEXT("deadline-expire") || Report->Scenario == TEXT("deadline-release"))
+        {
+            Options.Label = TEXT("sr107-")+Report->Scenario;
+            Report->SendDeadlineValidation = MakeShared<FContractSendDeadlineValidation>(Report->Scenario == TEXT("deadline-expire"));
+        }
         if (Report->Scenario.StartsWith(TEXT("network-")))
         {
             const int32 Mode = FCString::Atoi(*Report->Scenario.Mid(8));
@@ -173,6 +179,7 @@ void AContractDataExample::RecordSend(const FSimurghRTCError& Error)
 bool AContractDataExample::RecordMessage(const FSimurghRTCDataMessage& Message)
 {
     if (!Report) return false;
+    if (Report->SendDeadlineValidation) { Report->SendDeadlineValidation->Message(*this,Message); return false; }
     if (Report->NetworkValidation) { Report->NetworkValidation->Message(*this,Message); return false; }
     if (Report->ChannelValidation) { Report->ChannelValidation->Message(*this,Message); return false; }
     Report->Callback(); ++Report->Received;
@@ -184,7 +191,7 @@ bool AContractDataExample::RecordMessage(const FSimurghRTCDataMessage& Message)
     else Report->Fail(TEXT("Payload mismatch or duplicate message."));
     const bool Both = Report->Error.IsEmpty() && Report->bTextReceived && Report->bBytesReceived;
     if (Both && !Report->bRoundRecorded) { Report->bRoundRecorded = true; ++Report->CompletedRounds; }
-    if (Both && Report->Round == 0 && (Report->Scenario == TEXT("signaling-loss") || Report->Scenario == TEXT("relay-loss") || Report->Scenario == TEXT("background-connected")))
+    if (Both && Report->Round == 0 && (Report->Scenario == TEXT("signaling-loss") || Report->Scenario == TEXT("relay-loss") || Report->Scenario == TEXT("background-connected") || Report->Scenario == TEXT("terminate-connected")))
     { Report->bAwaitingFailure = true; return false; }
     return Both;
 }
@@ -217,6 +224,7 @@ void AContractDataExample::CompleteExample()
 }
 void AContractDataExample::RecordEndPlay()
 {
+    FTSTicker::RemoveTicker(ForegroundTicker); ForegroundTicker.Reset();
     if (!Report) return;
     ++Report->EndPlayCalls;
     Report->bEndPlayClosed = Session && !Session->IsUsable() && Session->GetState() == ESimurghRTCSessionState::Closed;
@@ -227,15 +235,18 @@ void AContractDataExample::RequestDisconnect_Implementation()
 { if (Report) Report->Fail(TEXT("The sample must implement its Disconnect flow.")); }
 bool AContractDataExample::BeginChannelValidation()
 {
+    if (Report && Report->SendDeadlineValidation) { Report->SendDeadlineValidation->Opened(*this); return true; }
     if (Report && Report->NetworkValidation) { Report->NetworkValidation->Opened(*this); return true; }
     if (!Report || !Report->ChannelValidation) return false;
     Report->ChannelValidation->Opened(*this); return true;
 }
 void AContractDataExample::RecordValidationSend(const FSimurghRTCError& Error)
-{ if (Report && Report->ChannelValidation) Report->ChannelValidation->SendResult(*this,Error);
+{ if (Report && Report->SendDeadlineValidation) Report->SendDeadlineValidation->SendResult(*this,Error);
+  if (Report && Report->ChannelValidation) Report->ChannelValidation->SendResult(*this,Error);
   if (Report && Report->NetworkValidation) Report->NetworkValidation->SendResult(*this,Error); }
 void AContractDataExample::TickChannelValidation()
-{ if (Report && Report->ChannelValidation) Report->ChannelValidation->Tick(*this);
+{ if (Report && Report->SendDeadlineValidation) Report->SendDeadlineValidation->Tick(*this);
+  if (Report && Report->ChannelValidation) Report->ChannelValidation->Tick(*this);
   if (Report && Report->NetworkValidation) Report->NetworkValidation->Tick(*this); }
 bool AContractDataExample::FinishChannelClose()
 { return !Report || !Report->NetworkValidation || Report->NetworkValidation->Closed(*this); }
@@ -270,7 +281,7 @@ void AContractDataCpp::EnterBackground()
 }
 void AContractDataCpp::EnterForeground()
 {
-    if (PrepareForeground()) RequestSession();
+    ScheduleForeground();
 }
 void AContractDataCpp::Start(USimurghRTCOperation* Operation, FName Step)
 {

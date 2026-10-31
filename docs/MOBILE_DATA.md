@@ -79,7 +79,27 @@ Use the network suite's arguments with `tools/run_mobile_background_probe.py`. T
 
 Each C++/Blueprint map tests a connected session over direct ICE and TURN/UDP, plus a Connect held pending at the HTTPS fixture. The sample calls Shutdown on deactivation, before suspension, and creates a fresh session on reactivation. It also records the actual background and foreground events. Reports check silent cancellation, old Server-session cleanup, new session/channel IDs, exact messages after resume, object collection and final native closure. The runner keeps the app away for at least eight seconds. Game-thread timing excludes that intentional suspension interval.
 
-These checks cover an app switch with the process preserved. Screen lock, forced termination, low-memory eviction and physical iOS behavior require separate validation. The sample makes no background-networking guarantee.
+These checks cover an app switch with the process preserved. The lifecycle runner below adds screen lock and forced termination. Low-memory eviction and physical iOS behavior require separate validation. The sample makes no background-networking guarantee.
+
+## Run screen-lock, termination and send-deadline checks
+
+Use the network suite's arguments with `tools/run_mobile_lifecycle_probe.py`. Run both profiles against the matching rebuilt Server. Each C++/Blueprint map checks six cases over verified local HTTPS and TURN/UDP:
+
+| Cases | What the runner checks |
+|---|---|
+| Lock while connected or connecting | A real OS lock shuts down the session before suspension. Unlock resumes the same app process with a fresh session, exact messages and clean final teardown. |
+| Kill while connected or connecting | The runner kills only the sample process. The Server reclaims its abandoned session, then a fresh app process connects and exchanges messages. The killed process cannot claim graceful cleanup. |
+| Send deadline and release control | A development-only gate holds admitted text/binary sends while real peers stay connected. The unchanged 30-second deadline must report `Timeout`; releasing the gate earlier must deliver both original payloads once. |
+
+Start with the Galaxy unlocked and leave it idle. Wait for `LOCK INTERVAL PASSED`, then unlock it within 90 seconds if a secure lock screen remains. Do not wake it early or open other apps during a case. The runner never changes device lock settings. Use `--case cpp:deadline-expire` (repeatable) to resume selected cases in a fresh evidence directory.
+
+For each disposable iOS simulator, the runner prints a UI request. Select that named simulator in Xcode's Device Hub, use **Controls → Lock**, and unlock it when requested. After verifying the visible state, acknowledge that request with:
+
+```sh
+python3 tools/ack_mobile_ui.py OUTPUT/ui-request.json --observed "Describe the action and visible state"
+```
+
+If an action cannot be completed, use `--failed "reason"` instead; it records a failure and lets cleanup proceed. Keep the Mac awake during these UI steps. The runner records each acknowledgement and checks the actual Unreal lifecycle events. Lock intervals must stay below two minutes, allowing for the Galaxy's 90-second owner-unlock window. Simulator results cover simulator lock behavior. The send gate is compiled only with development automation support, requires explicit probe arguments and applies only to the two deadline-test channels. Native libraries and the production deadline are unchanged.
 
 ## Run ordering, limits and backpressure checks
 
@@ -106,7 +126,7 @@ Use the network suite's arguments with `tools/run_mobile_impairment_probe.py`. R
 
 A bounded UDP proxy sits between the client and the local TURN fixture. It changes only traffic using DTLS application keys after the channel opens (including SCTP control packets); HTTPS signaling, TURN control, ICE checks and the DTLS handshake continue. The runner starts impairment only after the channels open and records actual packet drops and reordered pairs. It changes no system firewall or network settings.
 
-Both partial-reliability cases wait ten seconds after fresh messages arrive to catch late delivery. These checks test SCTP message lifetime and retransmission settings; the plugin's separate 30-second send-queue deadline remains untested. Packet order at the proxy does not require unordered application messages to arrive out of order. The reports also check channel options at the Server, per-channel and aggregate buffer limits, game-thread responsiveness, explicit channel closes and native peer cleanup.
+Both partial-reliability cases wait ten seconds after fresh messages arrive to catch late delivery. These checks test SCTP message lifetime and retransmission settings. The lifecycle runner tests the plugin's separate 30-second send-queue deadline. Packet order at the proxy does not require unordered application messages to arrive out of order. The reports also check channel options at the Server, per-channel and aggregate buffer limits, game-thread responsiveness, explicit channel closes and native peer cleanup.
 
 ## Check the native libraries
 
@@ -122,7 +142,7 @@ Use an Android serial or an iOS simulator UDID to match the artifact. Android re
 
 ## Evidence and remaining work
 
-These suites passed on **2026-10-29–30**, using the Galaxy S25 Ultra (Android 17) and ARM64 iOS 27.0 simulator. Each covers Direct-only and Full packages through the actual C++ and Blueprint maps.
+These suites passed on **2026-10-29–31**, using the Galaxy S25 Ultra (Android 17) and ARM64 iOS 27.0 simulator. Each covers Direct-only and Full packages through the actual C++ and Blueprint maps.
 
 | Suite | Cases | Main result | Build details |
 |---|---:|---|---|
@@ -132,11 +152,14 @@ These suites passed on **2026-10-29–30**, using the Galaxy S25 Ultra (Android 
 | Background and resume | 24 | 80 exact round trips and eight silent pending-Connect cancellations through real app switches | [Background record](reviews/SR107-mobile-background-validation.json) |
 | Channel options, limits and queues | 64 | 4,704 exact round trips, 256 expected rejected sends and 64 native client closures | [Channel record](reviews/SR107-mobile-channel-validation.json) |
 | Packet impairment and shared queues | 56 | 768 exact round trips, 256 old messages discarded, eight recoveries from the shared 1 MiB limit | [Impairment record](reviews/SR107-mobile-impairment-validation.json) |
+| Screen lock, termination and send deadlines | 48 | Orphan-session cleanup, fresh-process reconnect, 30-second queue expiry and early release | [Lifecycle record](reviews/SR107-mobile-lifecycle-validation.json) |
 
-The latest impairment suite passed **16 reliable loss/reordering cases, 32 partial-reliability blackout cases and eight five-channel pressure cases**. It recorded 688 dropped packets and 970 reordered packet pairs. Every case also forced an authenticated Server-close race and required Disconnect to succeed. All 88 client channels closed explicitly, all 56 native clients shut down, and no late callbacks or pending cleanup remained. The largest active game-thread tick gap was 304 ms.
+**All 48 lifecycle cases pass** across Direct-only and Full profiles, using both C++ and Blueprint on the Galaxy and iOS simulator. Lock/unlock resumes the same process with a fresh session. Forced termination reclaimed all 16 abandoned Server sessions and required a fresh app process.
 
-The final packages also passed 52 regressions: 20 lifecycle cases and 32 earlier channel cases. All 29 Unreal tests, 211 Python tests and five package audits passed. Native WebRTC artifacts were reused unchanged; the Server and mobile samples were rebuilt. The earlier channel record retains its original 64-case results and build details.
+All 16 expired messages stayed absent, while early release delivered all 16 original messages. Testing fixed inconsistent `Timeout` reporting and premature sample reconnect during the iOS lock animation.
+
+The final packages also passed 48 regressions (20 basic lifecycle and 28 packet-impairment cases), 31 Unreal tests, 222 Python tests and five package audits. Native libwebrtc artifacts were reused unchanged.
 
 Records contain package/library hashes, device identity, build checkout states, case results and cleanup. These are local Development builds; their absolute package sizes are not Shipping download sizes or measured RTC size deltas. Earlier suites used their own recorded packages.
 
-M1 remains in progress because physical iOS acceptance is deferred. Screen lock, OS termination, Wi-Fi/cellular transitions, ICE restart and the separate plugin send-queue deadline still need validation. The completed impairment checks cover the controlled local conditions described above.
+M1 remains in progress. Physical iOS acceptance, low-memory eviction, Internet NAT, Wi-Fi/cellular transitions and ICE restart remain open. These results cover the controlled local conditions described above.

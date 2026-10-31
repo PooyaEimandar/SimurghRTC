@@ -1,6 +1,7 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #pragma once
 #include "CoreMinimal.h"
+#include "Containers/Ticker.h"
 #include "GameFramework/Actor.h"
 #include "Components/ApplicationLifecycleComponent.h"
 #include "SimurghRTCOperation.h"
@@ -9,6 +10,7 @@
 
 class FContractChannelValidation;
 class FContractNetworkValidation;
+class FContractSendDeadlineValidation;
 // Plain reporting state survives actor destruction without retaining any UObject.
 struct FContractDataExampleResult
 {
@@ -17,6 +19,8 @@ struct FContractDataExampleResult
     TArray<FGuid> ChannelIds;
     TSharedPtr<FContractChannelValidation> ChannelValidation;
     TSharedPtr<FContractNetworkValidation> NetworkValidation;
+    TSharedPtr<FContractSendDeadlineValidation> SendDeadlineValidation;
+    bool IsTermination() const { return Scenario == TEXT("terminate-connected") || Scenario == TEXT("terminate-connect"); }
     TArray<int32> ConnectionErrors;
     int32 Round = 0, CompletedRounds = 0, StaleHandleChecks = 0;
     bool bRoundRecorded = false, bAwaitingFailure = false, bFailureObserved = false;
@@ -85,6 +89,8 @@ public:
     UFUNCTION(BlueprintCallable, Category="RTC Example") bool PrepareBackground();
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordBackgroundShutdown();
     UFUNCTION(BlueprintCallable, Category="RTC Example") bool PrepareForeground();
+    // Brief active/inactive transitions can occur while iOS is still locking.
+    UFUNCTION(BlueprintCallable, Category="RTC Example") void ScheduleForeground();
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordOSBackground();
     UFUNCTION(BlueprintCallable, Category="RTC Example") void RecordOSForeground();
     void WriteLifecycleProgress() const;
@@ -100,6 +106,7 @@ private:
     TSharedPtr<FContractDataExampleResult> Report;
     TWeakObjectPtr<USimurghRTCSession> RetiredSession;
     TWeakObjectPtr<USimurghRTCOperation> RetiredOperation;
+    FTSTicker::FDelegateHandle ForegroundTicker;
 };
 
 /** Native equivalent of /Game/Examples/Direct/BP_RtcData. */

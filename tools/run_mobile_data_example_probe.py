@@ -115,6 +115,9 @@ class MobileClient:
                    '-SimurghRTCExampleScenario='+scenario,'-SimurghRTCExampleGate='+self.argument_path(gate),
                    '-SimurghRTCExampleEndpoint='+('https' if https else 'http')+'://127.0.0.1:'+str(port)+PATH,
                    '-SimurghRTCExampleTokenFile='+self.argument_path(credential),'-nosound','-unattended']
+        if scenario in ('deadline-expire','deadline-release'):
+            release=folder/'send-release';self.paths.append(release)
+            options += ['-SimurghRTCSendGate='+self.argument_path(release),'-log=send-gate-'+run_id+'.log']
         if not https: options += ['-SimurghRTCExampleLoopback']
         if ice is not None:
             ice_path=folder/'ice.json';self.paths.append(ice_path);self.write(ice_path,json.dumps(ice))
@@ -248,7 +251,7 @@ def main():
         command = [str(server),'-SimurghRTCDirectServerProbe','-SimurghRTCDirectScenario=example',
                    '-SimurghRTCDirectRunId='+run_id,'-SimurghRTCDirectPort='+str(port),
                    '-SimurghRTCDirectTokenFile='+str(credential),'-UserDir='+str(folder),
-                   '-nullrhi','-nosound','-unattended','-stdout','-FullStdOutLogOutput']
+                   '-nullrhi','-nosound','-unattended','-log=send-gate-'+run_id+'.log']
         if not client.simulator:command += ['-SimurghRTCDirectNetworkProbe']
         (output/'server-command.json').write_text(json.dumps(command,indent=2)+'\n')
         with (output/'server.log').open('w') as stream:process=subprocess.Popen(command,stdout=stream,stderr=subprocess.STDOUT)

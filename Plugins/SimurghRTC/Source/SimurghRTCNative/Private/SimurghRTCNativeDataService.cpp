@@ -1,5 +1,10 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "SimurghRTCNativeDataService.h"
+#if WITH_DEV_AUTOMATION_TESTS
+#include "HAL/FileManager.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
+#endif
 
 namespace SimurghRTC
 {
@@ -76,6 +81,13 @@ FSimurghRTCError FNativeDataGame::Send(FSimurghRTCChannelHandle Handle, const TA
     C->QueuedBytes += Bytes.Num(); ++C->QueuedMessages; QueuedBytes += Bytes.Num(); ++QueuedMessages;
     Command.Action = ENativeDataAction::Send; Command.Handle = Handle; Command.Bytes = Bytes; Command.Kind = Kind;
     Command.Deadline = FPlatformTime::Seconds() + 30;
+#if WITH_DEV_AUTOMATION_TESTS
+    // Explicit packaged sample fixture. Preserve the real deadline and worker polling;
+    // only these two probe channels can simulate native send backpressure.
+    if (FParse::Param(FCommandLine::Get(), TEXT("SimurghRTCDataExampleProbe"))
+        && (C->Native.Info.Options.Label == TEXT("sr107-deadline-expire") || C->Native.Info.Options.Label == TEXT("sr107-deadline-release")))
+        FParse::Value(FCommandLine::Get(), TEXT("SimurghRTCSendGate="), Command.ProbeReleaseFile);
+#endif
     return {};
 }
 void FNativeDataGame::Notify(const FNativeChannelEvent& Event, TFunctionRef<bool()> Live)
@@ -219,11 +231,39 @@ bool FNativeDataWorker::Poll()
         if (!C) { Fail(ESimurghRTCErrorCode::InvalidState); return false; }
         if (Blocked.Contains(C->Handle.Id)) { ++I; continue; }
         ++Tried;
-        if (!C->bClosing && FPlatformTime::Seconds() >= Command.Deadline) { Fail(ESimurghRTCErrorCode::Timeout); return false; }
+        if (!C->bClosing && FPlatformTime::Seconds() >= Command.Deadline)
+        {
+#if WITH_DEV_AUTOMATION_TESTS
+            if (Command.bProbeBlocked) UE_LOG(LogTemp, Display, TEXT("SIMURGHRTC_SEND_GATE expired after=%.3f"), FPlatformTime::Seconds()-(Command.Deadline-30));
+#endif
+            Fail(ESimurghRTCErrorCode::Timeout); return false;
+        }
         FNativeDataRequest Q; Q.Action = C->bClosing ? ENativeDataAction::Query : ENativeDataAction::Send;
         Q.ChannelId = C->Id; Q.Kind = Command.Kind;
         if (!C->bClosing) Q.Bytes = MoveTemp(Command.Bytes);
-        FNativeDataResult R; const auto Error = Runtime.Data(Q, R);
+        bool bProbeHold = false;
+#if WITH_DEV_AUTOMATION_TESTS
+        bProbeHold = !C->bClosing && !Command.ProbeReleaseFile.IsEmpty() && !IFileManager::Get().FileExists(*Command.ProbeReleaseFile);
+        if (bProbeHold)
+        {
+            // Keep the payload queued while sampling the real channel below.
+            if (!Command.bProbeBlocked) UE_LOG(LogTemp, Display, TEXT("SIMURGHRTC_SEND_GATE blocked deadline=30 bytes=%d"), Q.Bytes.Num());
+            Command.bProbeBlocked = true;
+        }
+        else if (Command.bProbeBlocked)
+        {
+            UE_LOG(LogTemp, Display, TEXT("SIMURGHRTC_SEND_GATE released after=%.3f"), FPlatformTime::Seconds()-(Command.Deadline-30));
+            Command.bProbeBlocked = false;
+        }
+#endif
+        FNativeDataResult R; ESimurghRTCErrorCode Error;
+        if (bProbeHold)
+        {
+            FNativeDataRequest Query; Query.Action = ENativeDataAction::Query; Query.ChannelId = C->Id;
+            Error = Runtime.Data(Query, R); // Query requires an empty payload; Q retains the admitted bytes.
+            if (Error == ESimurghRTCErrorCode::None) Error = ESimurghRTCErrorCode::ResourceExhausted;
+        }
+        else Error = Runtime.Data(Q, R);
         if (!C->bClosing) Command.Bytes = MoveTemp(Q.Bytes);
         if (!C->bClosing && Error == ESimurghRTCErrorCode::ResourceExhausted && FPlatformTime::Seconds() < Command.Deadline)
         { Update(R, *C, 0, 0, true); Blocked.Add(C->Handle.Id); ++I; continue; }

@@ -56,9 +56,9 @@ def limit_sdp_messages(body, limit):
 
 
 class HttpsProxy:
-    def __init__(self, upstream, cert, key, *, message_limit=None, close_race=False):
+    def __init__(self, upstream, cert, key, *, message_limit=None, close_race=False, hold_type=None):
         self.upstream=upstream;self.requests=0;self.tls_failures=0;self.statuses=[];self.tls_versions=set()
-        self.outage=threading.Event();self.dropped_requests=0
+        self.outage=threading.Event();self.dropped_requests=0;self.hold_type=hold_type
         self.hold_release=threading.Event();self.hold_release.set();self.held_requests=0
         self.close_race=close_race;self.close_races=0;self.closed_close_responses=0
         self.message_limit=message_limit;self.sdp_requests=0;self.sdp_responses=0
@@ -82,7 +82,7 @@ class HttpsProxy:
                 if not 0<=length<=262144:self.send_error(413);return
                 body=self.rfile.read(length)
                 if len(body)!=length:self.send_error(400);return
-                if not outer.hold_release.is_set():
+                if not outer.hold_release.is_set() and (outer.hold_type is None or json.loads(body).get('type')==outer.hold_type):
                     outer.held_requests+=1
                     outer.hold_release.wait(30)
                     # Discard the interrupted request even after release. A resumed

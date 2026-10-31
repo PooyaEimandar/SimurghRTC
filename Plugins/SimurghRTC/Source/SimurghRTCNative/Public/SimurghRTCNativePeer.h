@@ -19,6 +19,7 @@ struct FNativePeerSnapshot
     FNativeFactoryDiagnostics Diagnostics;
     FNativeTransportSnapshot Transport;
     FString Error;
+    ENativeSignalError SignalError = ENativeSignalError::None;
 };
 
 using FNativePeerOpened = TUniqueFunction<void(const FNativePeerSnapshot&)>;

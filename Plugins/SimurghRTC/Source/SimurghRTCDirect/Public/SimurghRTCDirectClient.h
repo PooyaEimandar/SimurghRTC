@@ -53,6 +53,9 @@ public:
     void SetChannelHandler(FNativeChannelChanged Handler);
     FDirectClientSnapshot GetSnapshot() const;
 private:
+#if WITH_DEV_AUTOMATION_TESTS
+    friend class FDirectNativeFailureOrderTest;
+#endif
     class FImpl;
     explicit FDirectClient(TSharedRef<FImpl> InImpl);
     TSharedRef<FImpl> Impl;

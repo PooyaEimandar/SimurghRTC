@@ -13,6 +13,10 @@ struct FNativeDataCommand
     TArray<uint8> Bytes;
     ESimurghRTCMessageKind Kind = ESimurghRTCMessageKind::Binary;
     double Deadline = 0;
+#if WITH_DEV_AUTOMATION_TESTS
+    FString ProbeReleaseFile;
+    bool bProbeBlocked = false;
+#endif
 };
 struct FNativeDataUpdate
 {

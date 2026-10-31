@@ -95,5 +95,13 @@ class DataExampleProbeTests(unittest.TestCase):
                 ('session_ids',[good['session_id']]*2),('shutdown_seconds',1),('background_seconds',0),('late_callbacks',1)]:
                 with self.subTest(pending=pending,key=key),self.assertRaises(ValueError):self.validate(dict(good,**{key:value}))
 
+    def test_lock_bound_accommodates_owner_unlock_without_dropping_other_checks(self):
+        good=dict(self.background_report(True),background_seconds=95)
+        with self.assertRaises(ValueError):self.validate(good)
+        validate=lambda report:validate_example(report,'run',42,'digest',True,report['implementation'],report['scenario'],maximum_background_seconds=120)
+        validate(good)
+        for key,value in [('background_seconds',120),('background_seconds',0),('late_callbacks',1),('active_events',2)]:
+            with self.subTest(key=key),self.assertRaises(ValueError):validate(dict(good,**{key:value}))
+
 
 if __name__=='__main__':unittest.main()

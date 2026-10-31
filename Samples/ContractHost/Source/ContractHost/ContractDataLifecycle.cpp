@@ -14,6 +14,7 @@ void AContractDataExample::RequestSession_Implementation()
 
 bool AContractDataExample::PrepareBackground()
 {
+    FTSTicker::RemoveTicker(ForegroundTicker); ForegroundTicker.Reset();
     if (!Report || !Session || !Session->IsUsable() || Report->bComplete || Report->bInBackground) return false;
     Report->bGameThread &= IsInGameThread();
     Report->bInBackground = true; ++Report->InactiveEvents;
@@ -50,9 +51,24 @@ void AContractDataExample::RecordBackgroundShutdown()
     WriteLifecycleProgress();
 }
 
+void AContractDataExample::ScheduleForeground()
+{
+    if (!Report || !Report->bInBackground || Report->bEnded || Report->bComplete) return;
+    FTSTicker::RemoveTicker(ForegroundTicker);
+    // Wait for a stable activation. A second deactivate cancels this before it can
+    // reconnect during a lock animation. Inactive-only interruptions also recover.
+    ForegroundTicker = FTSTicker::GetCoreTicker().AddTicker(
+        FTickerDelegate::CreateWeakLambda(this, [this](float)
+        {
+            ForegroundTicker.Reset();
+            if (PrepareForeground()) RequestSession();
+            return false;
+        }), 0.5f);
+}
+
 bool AContractDataExample::PrepareForeground()
 {
-    if (!Report || !Report->bInBackground) return false; // Ignore the initial foreground and duplicate notifications.
+    if (!Report || !Report->bInBackground || Report->bEnded || Report->bComplete) return false;
     Report->bGameThread &= IsInGameThread();
     Report->ForegroundAt = FPlatformTime::Seconds();
     Report->BackgroundSeconds = Report->OSBackgroundAt > 0 ? Report->ForegroundAt-Report->OSBackgroundAt : 0;
@@ -69,6 +85,7 @@ bool AContractDataExample::PrepareForeground()
 
 void AContractDataExample::RecordOSBackground()
 {
+    FTSTicker::RemoveTicker(ForegroundTicker); ForegroundTicker.Reset();
     if (!Report || !Report->bInBackground) return;
     Report->bGameThread &= IsInGameThread(); ++Report->BackgroundEvents;
     Report->OSBackgroundAt = FPlatformTime::Seconds(); WriteLifecycleProgress();

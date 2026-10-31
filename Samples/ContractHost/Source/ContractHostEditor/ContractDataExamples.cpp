@@ -285,10 +285,9 @@ int32 GenerateContractDataExamples(const FString& Params)
     G.Then(BackgroundReady,BackgroundBranch); G.Wire(BackgroundReady,TEXT("ReturnValue"),BackgroundBranch,TEXT("Condition"));
     auto* BackgroundShutdown = G.SessionCall(TEXT("Shutdown"),1100,7300); G.Then(BackgroundBranch,BackgroundShutdown);
     G.Then(BackgroundShutdown,G.Sample(TEXT("RecordBackgroundShutdown"),1500,7300));
-    auto* ForegroundReady = G.Sample(TEXT("PrepareForeground"),350,7900); G.Then(ForegroundEvent,ForegroundReady);
-    auto* ForegroundBranch = G.Node<UK2Node_IfThenElse>(750,7900,TEXT("Shutdown is final: resume creates and binds a fresh session")); ForegroundBranch->AllocateDefaultPins();
-    G.Then(ForegroundReady,ForegroundBranch); G.Wire(ForegroundReady,TEXT("ReturnValue"),ForegroundBranch,TEXT("Condition"));
-    G.Then(ForegroundBranch,G.Sample(TEXT("RequestSession"),1100,7900));
+    auto* Resume = G.Sample(TEXT("ScheduleForeground"),350,7900); G.Then(ForegroundEvent,Resume);
+    Resume->NodeComment = TEXT("After 0.5 seconds active, call this graph's RequestSession flow; deactivate cancels the pending resume");
+    Resume->bCommentBubbleVisible = true;
     if (!G.bValid) return 2;
     FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP);
     FCompilerResultsLog Results;

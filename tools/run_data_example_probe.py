@@ -14,6 +14,7 @@ import mobile_artifacts as a
 from run_direct_probe import PATH, FaultProxy, request, wait_until, validate_server
 from run_mobile_probe import read_report
 from run_signaling_probe import server_bundle_id
+from mobile_lifecycle import validate_deadline
 from network_validation import NETWORK_SCENARIOS, network_case, validate_network
 from channel_validation import CHANNEL_SCENARIOS, channel_case, validate_channels
 
@@ -23,14 +24,15 @@ RECOVERY_SCENARIOS = ('reconnect', 'signaling-loss', 'relay-loss')
 MAPS = {'cpp': '/Game/Examples/Direct/Maps/RtcDataCpp', 'blueprint': '/Game/Examples/Direct/Maps/RtcDataBlueprint'}
 
 
-def validate_example(report, run_id, pid, manifest, with_janus, implementation, scenario, *, platform='Mac', simulator=False, loopback=True):
+def validate_example(report, run_id, pid, manifest, with_janus, implementation, scenario, *, platform='Mac', simulator=False, loopback=True, maximum_background_seconds=60):
     recovery = scenario in RECOVERY_SCENARIOS; background = scenario in BACKGROUND_SCENARIOS
     channels = scenario in CHANNEL_SCENARIOS
+    deadline = scenario in ('deadline-expire','deadline-release');expired=scenario=='deadline-expire'
     network = scenario in NETWORK_SCENARIOS
-    basic_scenario = 'messages' if channels or network else scenario
+    basic_scenario = 'messages' if channels or network or deadline else scenario
     rounds = 2 if recovery or scenario=='background-connected' else 1
     connections = 2 if recovery or background else 1
-    a.require(implementation in MAPS and scenario in (*SCENARIOS, *RECOVERY_SCENARIOS, *BACKGROUND_SCENARIOS, *CHANNEL_SCENARIOS, *NETWORK_SCENARIOS, 'unauthorized', 'tls-rejected'), 'Unknown data-example case.')
+    a.require(implementation in MAPS and scenario in (*SCENARIOS, *RECOVERY_SCENARIOS, *BACKGROUND_SCENARIOS, *CHANNEL_SCENARIOS, *NETWORK_SCENARIOS, 'deadline-expire','deadline-release', 'unauthorized', 'tls-rejected'), 'Unknown data-example case.')
     a.require(report.get('passed') is True, 'Data example failed: '+str(report.get('error', 'missing result')))
     expected = dict(schema=1, run_id=run_id, pid=pid, implementation=implementation, scenario=scenario,
                     map=MAPS[implementation], editor_build=False, server_build=False, arm64_build=True,
@@ -52,6 +54,7 @@ def validate_example(report, run_id, pid, manifest, with_janus, implementation, 
     a.require(report['quiet_ticks']>=8 and report['remote_closed']<=connections, 'Missing quiet cleanup interval.')
     states=report.get('states')
     expected_states={'background-connected':[1,2,1,2,3,4], 'background-connect':[1,1,2,3,4], 'reconnect':[1,2,3,4,1,2,3,4], 'signaling-loss':[1,2,5,1,2,3,4], 'relay-loss':[1,2,5,1,2,3,4], 'messages':[1,2,3,4], 'timeout':[1,5,3,4], 'unauthorized':[1,5,3,4], 'tls-rejected':[1,5,3,4], 'disconnect-pending':[1,3,4], 'destroy-connect':[1], 'destroy-open':[1,2]}[basic_scenario]
+    if expired:expected_states=[1,2,5,3,4]
     a.require(type(states) is list and all(type(v) is int for v in states) and states==expected_states, 'Session state events differ.')
     pending=scenario.startswith('destroy-')
     a.require(report.get('pending_at_destruction') is pending and report.get('silent_cancelled') is pending, 'Pending owner cleanup differs.')
@@ -67,6 +70,7 @@ def validate_example(report, run_id, pid, manifest, with_janus, implementation, 
         'disconnect-pending': ['Connect:Cancelled','Disconnect:Success'],
         'destroy-connect': [], 'destroy-open': ['Connect:Success'],
     }[basic_scenario]
+    if expired:outcomes=['Connect:Success','OpenChannel:Success','Disconnect:Success']
     if network:
         count=network_case(scenario)['channels']
         outcomes=['Connect:Success']+['OpenChannel:Success']*count+['CloseChannel:Success']*count+['Disconnect:Success']
@@ -74,13 +78,15 @@ def validate_example(report, run_id, pid, manifest, with_janus, implementation, 
     a.require(report['operations']==len(outcomes)+int(pending or scenario=='background-connect'), 'Pending or duplicate operation count differs.')
     messages=basic_scenario=='messages' or recovery or background
     totals=network_case(scenario) if network else dict(sent=channel_case(scenario)['messages'] if channels else 2*rounds if messages else 0)
+    if deadline:totals=dict(sent=2,received=0 if expired else 2)
     a.require(report['sent']==totals['sent'] and report['received']==totals.get('received',totals['sent']), 'Message totals differ.')
-    a.require(report.get('exact_payloads') is messages and report.get('channel_info_checked') is messages, 'Payload or channel verification missing.')
+    a.require(report.get('exact_payloads') is (messages and not expired) and report.get('channel_info_checked') is messages, 'Payload or channel verification missing.')
     a.require(report['last_failure']==(8 if scenario=='timeout' else 7 if scenario=='unauthorized' else 11 if scenario=='tls-rejected' else 9 if scenario=='disconnect-pending' else 0), 'Structured error differs.')
     if messages:
         a.require(report['channel_events']>0 and report['open_events']>0 and report['remote_closed']>=1, 'Channel events or acknowledged close missing.')
     if channels:validate_channels(report,scenario)
     if network:validate_network(report,scenario)
+    if deadline:validate_deadline(report,scenario)
     if background:
         expected_background=dict(inactive_events=1,active_events=1,background_events=1,foreground_events=1,background_shutdown=True,
             background_pending=scenario=='background-connect',background_cancelled=scenario=='background-connect',
@@ -94,7 +100,7 @@ def validate_example(report, run_id, pid, manifest, with_janus, implementation, 
         a.require(type(channels) is list and len(channels)==rounds and len(set(channels))==rounds,'Resume reused a channel.')
         a.require(report.get('connection_errors')==[],'Backgrounding should shut down without a connection failure.')
         elapsed=report.get('background_seconds');shutdown=report.get('shutdown_seconds')
-        a.require(type(elapsed) in (int,float) and 3<=elapsed<60,'Missing bounded real background interval.')
+        a.require(type(elapsed) in (int,float) and 3<=elapsed<maximum_background_seconds,'Missing bounded real background interval.')
         a.require(type(shutdown) in (int,float) and 0<=shutdown<1,'Background shutdown blocked the game thread.')
         gap=report.get('max_tick_gap_seconds');ticks=report.get('heartbeats')
         a.require(type(gap) in (int,float) and 0<=gap<2 and type(ticks) is int and ticks>=10,'Foreground game thread did not remain responsive.')

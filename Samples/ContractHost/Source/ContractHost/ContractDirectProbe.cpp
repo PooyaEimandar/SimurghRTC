@@ -1,6 +1,6 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
-#include "ContractNetworkValidation.h"
 #include "ContractDirectProbe.h"
+#include "ContractNetworkValidation.h"
 #include "ContractIceConfig.h"
 #include "ContractDataScenario.h"
 #include "ContractConcurrentScenario.h"
@@ -171,7 +171,7 @@ public:
                     FSimurghRTCChannelOptions NetworkOptions;
                     const bool Network = Scenario == TEXT("example") && FContractNetworkValidation::ParseOptions(C.Info.Options.Label,NetworkOptions);
                     const bool Valid = Network ? C.Info.Options.bOrdered == NetworkOptions.bOrdered
-                        && C.Info.Options.Reliability == NetworkOptions.Reliability && C.Info.Options.ReliabilityValue == NetworkOptions.ReliabilityValue : !Validation && (Scenario == TEXT("shared") || Scenario == TEXT("example")) ? C.Info.Options.Label == (Scenario == TEXT("example") ? TEXT("rtc-example") : TEXT("sr105-main")) && C.Info.Options.bOrdered
+                        && C.Info.Options.Reliability == NetworkOptions.Reliability && C.Info.Options.ReliabilityValue == NetworkOptions.ReliabilityValue : !Validation && (Scenario == TEXT("shared") || Scenario == TEXT("example")) ? (C.Info.Options.Label == (Scenario == TEXT("example") ? TEXT("rtc-example") : TEXT("sr105-main")) || (Scenario == TEXT("example") && (C.Info.Options.Label == TEXT("sr107-deadline-expire") || C.Info.Options.Label == TEXT("sr107-deadline-release")))) && C.Info.Options.bOrdered
                         && C.Info.Options.Reliability == ESimurghRTCReliability::Reliable && C.Info.Options.ReliabilityValue == 0
                         : Mode >= 0 && Mode <= 5 && C.Info.Options.Label == O.Label && C.Info.Options.bOrdered == O.bOrdered
                         && C.Info.Options.Reliability == O.Reliability && C.Info.Options.ReliabilityValue == O.ReliabilityValue;

@@ -10,6 +10,9 @@
 #include "Misc/ScopeLock.h"
 #include "Modules/ModuleManager.h"
 #include "UObject/WeakObjectPtr.h"
+#if WITH_DEV_AUTOMATION_TESTS
+#include "Misc/AutomationTest.h"
+#endif
 
 namespace SimurghRTC
 {
@@ -118,6 +121,16 @@ public:
         if (Snapshot.State == EDirectClientState::Failed || bAborted) return;
         Snapshot.Error = Error; CancelHttp(); Queue.Reset(); BestEffortClose();
         if (Peer) Peer->Close(); Notify(EDirectClientState::Failed);
+    }
+    void FailNative(ENativeSignalError Error)
+    {
+        Fail(Error == ENativeSignalError::TimedOut ? TEXT("TimedOut") : TEXT("NativeError"));
+    }
+    void ObserveNativeSnapshot(const FNativePeerSnapshot& State)
+    {
+        Snapshot.Transport = State.Transport; Snapshot.bNativeClosed = State.State == ENativePeerState::Closed;
+        if ((Snapshot.State == EDirectClientState::Connecting || Snapshot.State == EDirectClientState::Connected)
+            && State.State == ENativePeerState::Failed) FailNative(State.SignalError);
     }
     void Close()
     {
@@ -294,8 +307,7 @@ public:
         }
         if (Peer)
         {
-            const auto S = Peer->GetSnapshot(); Snapshot.Transport = S.Transport; Snapshot.bNativeClosed = S.State == ENativePeerState::Closed;
-            if ((Snapshot.State == EDirectClientState::Connecting || Snapshot.State == EDirectClientState::Connected) && S.State == ENativePeerState::Failed) Fail(TEXT("NativeError"));
+            ObserveNativeSnapshot(Peer->GetSnapshot());
         }
         else Snapshot.bNativeClosed = true;
         if (Snapshot.State == EDirectClientState::Connecting)
@@ -411,7 +423,7 @@ TSharedPtr<FDirectClient> FDirectClient::Connect(UObject* Owner, FDirectClientCo
     {
         const auto Self = Weak.Pin();
         if (!Self || Self->bAborted || (Self->Snapshot.State != EDirectClientState::Connecting && Self->Snapshot.State != EDirectClientState::Connected)) return;
-        if (E.Type == ENativeSignalEvent::FatalError) Self->Fail(TEXT("NativeError"));
+        if (E.Type == ENativeSignalEvent::FatalError) Self->FailNative(E.Result.Error);
         else if (E.Type == ENativeSignalEvent::LocalIce) Self->Enqueue(TEXT("ice"), Direct::IceBody(E.Ice));
         else if (E.Type == ENativeSignalEvent::LocalIceComplete)
         { Self->bLocalEnd = true; auto B = MakeShared<FJsonObject>(); B->SetNumberField(TEXT("revision"), 1); B->SetBoolField(TEXT("completed"), true); Self->Enqueue(TEXT("ice"), B); }
@@ -423,4 +435,31 @@ TSharedPtr<FDirectClient> FDirectClient::Connect(UObject* Owner, FDirectClientCo
     { const auto Self = Weak.Pin(); return Self && Self->Tick(Delta); }));
     Clients.Add(State); return MakeShareable(new FDirectClient(State));
 }
+
+#if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDirectNativeFailureOrderTest, "SimurghRTC.Direct.NativeFailureOrder",
+    EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::EngineFilter)
+bool FDirectNativeFailureOrderTest::RunTest(const FString&)
+{
+    for (const auto Initial : {EDirectClientState::Connecting, EDirectClientState::Connected})
+    for (const bool bSnapshotFirst : {false, true})
+    {
+        const auto Client = MakeShared<FDirectClient::FImpl>(); Client->Snapshot.State = Initial;
+        FNativePeerSnapshot Failed; Failed.State = ENativePeerState::Failed;
+        Failed.SignalError = ENativeSignalError::TimedOut;
+        if (bSnapshotFirst) Client->ObserveNativeSnapshot(Failed); else Client->FailNative(Failed.SignalError);
+        TestEqual(TEXT("First observation reports Timeout"), Client->Snapshot.Error, FString(TEXT("TimedOut")));
+        TestEqual(TEXT("First observation fails the connection"), Client->Snapshot.State, EDirectClientState::Failed);
+        Client->bNotify = false;
+        if (bSnapshotFirst) Client->FailNative(Failed.SignalError); else Client->ObserveNativeSnapshot(Failed);
+        TestEqual(TEXT("Later observation preserves Timeout"), Client->Snapshot.Error, FString(TEXT("TimedOut")));
+        TestFalse(TEXT("No duplicate state notification"), Client->bNotify);
+    }
+    const auto Other = MakeShared<FDirectClient::FImpl>();
+    FNativePeerSnapshot Failed; Failed.State = ENativePeerState::Failed; Failed.SignalError = ENativeSignalError::NativeError;
+    Other->ObserveNativeSnapshot(Failed);
+    TestEqual(TEXT("Other native failures remain generic"), Other->Snapshot.Error, FString(TEXT("NativeError")));
+    return true;
+}
+#endif
 }

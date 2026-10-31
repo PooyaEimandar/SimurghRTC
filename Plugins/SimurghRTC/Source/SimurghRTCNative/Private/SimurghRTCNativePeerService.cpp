@@ -4,6 +4,9 @@
 #include "HAL/Event.h"
 #include "HAL/PlatformProcess.h"
 #include "Misc/ScopeLock.h"
+#if WITH_DEV_AUTOMATION_TESTS
+#include "Misc/AutomationTest.h"
+#endif
 
 namespace SimurghRTC
 {
@@ -39,6 +42,7 @@ bool PublishEvent(const TSharedRef<FNativePeerSharedState, ESPMode::ThreadSafe>&
     {
         State->Events.Reset(); State->Snapshot.State = ENativePeerState::Failed;
         State->Snapshot.Error = Event.Result.Message; State->Snapshot.Diagnostics = {};
+        State->Snapshot.SignalError = Event.Result.Error;
         Event.Transport.Connection = ENativeConnectionState::Failed;
         Event.Transport.bDataTransportOpen = false;
     }
@@ -372,7 +376,11 @@ uint32 FNativePeerService::Run()
             if (!Slot.Data->Poll())
             {
                 FNativeTransportEvent Event; Event.Type = ENativeSignalEvent::FatalError;
-                Event.Result.Error = ENativeSignalError::NativeError;
+                {
+                    FScopeLock Lock(&Slot.State->Data->Mutex);
+                    Event.Result.Error = Slot.State->Data->Failure == ESimurghRTCErrorCode::Timeout
+                        ? ENativeSignalError::TimedOut : ENativeSignalError::NativeError;
+                }
                 Event.Result.Message = TEXT("DataChannel send/receive failed or exceeded its queue bounds.");
                 PublishEvent(Slot.State.ToSharedRef(), MoveTemp(Event)); It.RemoveCurrent(); continue;
             }
@@ -390,6 +398,24 @@ uint32 FNativePeerService::Run()
 }
 
 #if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNativeFailureSnapshotTest, "SimurghRTC.Native.FailureSnapshotBeforeDispatch",
+    EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::EngineFilter)
+bool FNativeFailureSnapshotTest::RunTest(const FString&)
+{
+    const auto State = MakeShared<FNativePeerSharedState, ESPMode::ThreadSafe>();
+    State->Snapshot.State = ENativePeerState::Ready;
+    FNativeTransportEvent Event; Event.Type = ENativeSignalEvent::FatalError;
+    Event.Result.Error = ENativeSignalError::TimedOut; Event.Result.Message = TEXT("Queued send expired.");
+    TestFalse(TEXT("Fatal event retires the worker runtime"), PublishEvent(State, Event));
+    const auto Snapshot = ReadSnapshot(State);
+    TestEqual(TEXT("Failure visible before event dispatch"), Snapshot.State, ENativePeerState::Failed);
+    TestEqual(TEXT("Snapshot retains timeout"), Snapshot.SignalError, ENativeSignalError::TimedOut);
+    TestEqual(TEXT("One event remains for later dispatch"), State->Events.Num(), 1);
+    if (State->Events.Num() == 1)
+        TestEqual(TEXT("Queued event agrees with snapshot"), State->Events[0].Result.Error, Snapshot.SignalError);
+    return true;
+}
+
 bool FNativePeerService::HoldWorkerForTesting(FEvent& Entered, FEvent& Release)
 {
     FString Error;
