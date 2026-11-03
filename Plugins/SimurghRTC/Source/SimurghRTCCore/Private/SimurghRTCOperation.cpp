@@ -342,7 +342,13 @@ void USimurghRTCOperation::Execute()
         if (!bFinished && Session->IsUsable()) Finish(Error);
         return;
     }
-    Finish(SimurghRTC::MakeError(ESimurghRTCErrorCode::NotImplemented, TEXT("This operation is not implemented.")));
+    const auto Error = ExecuteExtension(*Session.Get(), Result);
+    if (!bFinished && Session->IsUsable()) Finish(Error);
+}
+
+FSimurghRTCError USimurghRTCOperation::ExecuteExtension(USimurghRTCSession&, FSimurghRTCOperationResult&)
+{
+    return SimurghRTC::MakeError(ESimurghRTCErrorCode::NotImplemented, TEXT("This operation is not implemented."));
 }
 
 void USimurghRTCOperation::Finish(FSimurghRTCError Error, bool bBroadcast)

@@ -1,0 +1,1521 @@
+{
+  "schema": 1,
+  "issue": "SR-201",
+  "milestone": "M2",
+  "status": "in_progress",
+  "date": "2026-11-03",
+  "validation_complete": true,
+  "scope": "Shared Direct audio playback through real Unreal mixer callbacks at zero component volume, using packaged Mac ARM64 Full and Direct-only clients against a separate headless dedicated Server.",
+  "source_commit": "ceb4f4d8c3d63e3d7984b63f0dff098329996ebe",
+  "working_tree_changes": {
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/Tests/SimurghRTCAudioTestReceiver.h": "ebabed2d34497faecbb6513823868af55eb6aecde0a6b2310f279eb31c95dcf1",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCSessionAudioSink.h": "ee5938cabd8bc3b53dba255615a933c2af80bb3a2ec5e846d439367575c88f35",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCAudioPlayback.cpp": "d2d0d50297cb676e11807a709536c6cf90045b684f6dc075d3cde2cc23c311f2",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCAudioPlaybackBuffer.h": "ed39d63c7bf8e4044f573dcc6fd1cea5e278485fedf587baa93ca2fcc6df6d14",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCPlaybackSoundWave.h": "049e8f14ebb701575302d630559d426867374a9fc58ba4cbd1177666b46a0467",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/Tests/SimurghRTCAudioPlaybackTests.cpp": "11126c409e067a29af79b2d4ec70f0c85392b08cdc736f6ea4eeee33910de32f",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Public/SimurghRTCAudioPlayback.h": "4029746502daea5ad18dd96a6d84ec0fd03fa1bfe995245691e6d8786018320b",
+    "Samples/ContractHost/Source/ContractHost/ContractAudioPlaybackCheck.cpp": "b3713e788135db18a3e8cb711143b5c910a027385d792dcf56401c6d7687c912",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCOperation.cpp": "e8cccf466f31f9182cdd914afb4321a789346416f398af9d487872d66c3635e7",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCSessionAudio.cpp": "e7c7cddd57f324f3acfc257c0a2453b606abdca82681d0025cc4fca32c3b1fa3",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/Tests/SimurghRTCSessionIntegrationTests.cpp": "d9eb183fb74b81a62cf3831e4db8281c7b7bd0d5ca02973429e73dd6186cf81b",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCOperation.h": "5e683ac3b1c7e4d472e8c2692c248cf86abfdf04f62209498e3be557ec0a6892",
+    "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCSession.h": "4ac54fc64ec76b0ddb0ac2d2fab8928d94e63a12a2fe64d29722b4a87f63a3b4",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCMediaOperation.cpp": "bff3c9806f0f79bec27d3584e70be06f344233a023571419e595e975a236e5e0",
+    "Plugins/SimurghRTC/Source/SimurghRTCMedia/Public/SimurghRTCMediaOperation.h": "6c8a8d7d0579549b6c331647999c391c57f164319cb401eaad30e2bf060dc85c",
+    "Samples/ContractHost/Source/ContractHost/ContractHost.Build.cs": "c6179fe367d452600539567d9b432b5ea5257b23d7c38927169cde809a24e8a9",
+    "Samples/ContractHost/Source/ContractHost/ContractSharedAudioProbe.cpp": "e88c1a66c56c437791436fa9288c72047e5be07ab923e5552be8a95f5cb8dd89",
+    "Samples/ContractHost/Source/ContractHost/ContractSharedAudioProbe.h": "fe69401244a8c9e45c74e4a1234777e2c5fb798fcb3ba600dc29d17fedddb8b7",
+    "tools/run_shared_audio_probe.py": "87fa944789bf3583aa37ad48ec4eb454d39d055fc6f54c898d33e80c62b129c4",
+    "tools/tests/test_shared_audio_probe.py": "f1a5b8de97f2af90180e929808503011e4183270058155fa9a1e85e408518d45"
+  },
+  "engine": {
+    "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+    "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n",
+    "note": "No engine source edits were made by this task. The shared checkout also contains unrelated HTML5 work; individual build records capture their before/after state."
+  },
+  "checks": {
+    "full_playback": {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/packaged-full/result.json",
+        "sha256": "f4460ed8f41e035e6f175d92b3f23b24aad8cbe193163d3a3f5c8facf3e0e127"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "run_id": "ed7de3c8-5e0e-47df-9fa2-daacb27de222",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "profile": "full",
+        "reports": {
+          "server": {
+            "schema": 1,
+            "run_id": "f2786b39-40b2-4ccd-b076-b442d29762b2",
+            "pid": 87024,
+            "server": true,
+            "server_build": true,
+            "editor_build": false,
+            "with_janus": false,
+            "loopback_only": true,
+            "audio_hardware_opened": false,
+            "playback_enabled": false,
+            "audible_output_tested": false,
+            "playback_checks": 0,
+            "playback_measurements": [],
+            "engine_version": "5.8.3-0+UE5",
+            "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+            "error": "",
+            "phases": 4,
+            "minimum_correlation": 0.9997730910708987,
+            "maximum_muted_rms": 0,
+            "quiet_ticks": 8,
+            "checks": 0,
+            "measurements": [
+              {
+                "phase": 0,
+                "samples": 72000,
+                "correlation": 0.9999979078805548,
+                "rms": 0.17704135180929986
+              },
+              {
+                "phase": 1,
+                "samples": 72000,
+                "correlation": 0,
+                "rms": 0
+              },
+              {
+                "phase": 2,
+                "samples": 72000,
+                "correlation": 0.9997887917617715,
+                "rms": 0.17592618882681205
+              },
+              {
+                "phase": 3,
+                "samples": 72000,
+                "correlation": 0.9997730910708987,
+                "rms": 0.17530413263380362
+              }
+            ],
+            "client_native_closed": 0,
+            "client_remote_closed": 0,
+            "pending_cleanup": 0,
+            "server_live_peers": 0,
+            "server_closed": 1,
+            "passed": true
+          },
+          "client": {
+            "schema": 1,
+            "run_id": "42be8e74-e5ef-4dec-8fd3-78d5eb1a154f",
+            "pid": 87052,
+            "server": false,
+            "server_build": false,
+            "editor_build": false,
+            "with_janus": true,
+            "loopback_only": true,
+            "audio_hardware_opened": true,
+            "playback_enabled": true,
+            "audible_output_tested": false,
+            "playback_checks": 4,
+            "playback_measurements": [
+              {
+                "consumed_samples": 237600,
+                "callbacks": 51,
+                "peak_queued_samples": 8160,
+                "dropped_samples": 0,
+                "silence_samples": 7200,
+                "rms": 0.1762471760463616,
+                "callback_on_game_thread": false
+              },
+              {
+                "consumed_samples": 258240,
+                "callbacks": 55,
+                "peak_queued_samples": 6240,
+                "dropped_samples": 0,
+                "silence_samples": 5760,
+                "rms": 0.1766066706348409,
+                "callback_on_game_thread": false
+              },
+              {
+                "consumed_samples": 24480,
+                "callbacks": 6,
+                "peak_queued_samples": 5280,
+                "dropped_samples": 0,
+                "silence_samples": 4320,
+                "rms": 0.17665457186276473,
+                "callback_on_game_thread": false
+              }
+            ],
+            "engine_version": "5.8.3-0+UE5",
+            "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+            "error": "",
+            "phases": 4,
+            "minimum_correlation": 0.9999887062186736,
+            "maximum_muted_rms": 0,
+            "quiet_ticks": 8,
+            "checks": 4,
+            "measurements": [
+              {
+                "phase": 0,
+                "samples": 72000,
+                "correlation": 0.9999896896529201,
+                "rms": 0.17655872000780168
+              },
+              {
+                "phase": 1,
+                "samples": 74880,
+                "correlation": 0.9999887062186736,
+                "rms": 0.17661760312736113
+              },
+              {
+                "phase": 2,
+                "samples": 72480,
+                "correlation": 0.9999890852344474,
+                "rms": 0.1765045695301466
+              },
+              {
+                "phase": 3,
+                "samples": 72000,
+                "correlation": 0.9999894803272338,
+                "rms": 0.17662187396105147
+              }
+            ],
+            "client_native_closed": 1,
+            "client_remote_closed": 1,
+            "pending_cleanup": 0,
+            "passed": true
+          }
+        },
+        "playback": true,
+        "server_executable_sha256": "26b23ba173fd6d980a8d9aa592c25d910122860f5bc5dc99812044b0f6d5b008",
+        "client_executable_sha256": "4ad397a3b9f28b478f1e146353de5f256b46152cca3c17effed293a082441154",
+        "scope": "Mac ARM64 packaged shared C++ API to dedicated Server; Direct HTTP signaling, generated Opus, local ICE; real Unreal mixer at zero volume; no microphone, audible-output qualification or Blueprint graph execution",
+        "exit_codes": {
+          "server": 0,
+          "client": 0
+        },
+        "audio_platform": "CoreAudio",
+        "credentials_removed": true,
+        "processes_exited": true
+      }
+    },
+    "direct_playback": {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/packaged-direct/result.json",
+        "sha256": "29fc1125ef31f6e7730c8d2a6aa26a74c28fe55177cf66c74e1420cb51f636bf"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "run_id": "0b7a0529-d3f7-482e-8a95-1011ef183f47",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "profile": "direct-only",
+        "reports": {
+          "server": {
+            "schema": 1,
+            "run_id": "5a701dd3-5935-4d95-8140-2482fc04a404",
+            "pid": 91693,
+            "server": true,
+            "server_build": true,
+            "editor_build": false,
+            "with_janus": false,
+            "loopback_only": true,
+            "audio_hardware_opened": false,
+            "playback_enabled": false,
+            "audible_output_tested": false,
+            "playback_checks": 0,
+            "playback_measurements": [],
+            "engine_version": "5.8.3-0+UE5",
+            "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+            "error": "",
+            "phases": 4,
+            "minimum_correlation": 0.9999955424628968,
+            "maximum_muted_rms": 0,
+            "quiet_ticks": 8,
+            "checks": 0,
+            "measurements": [
+              {
+                "phase": 0,
+                "samples": 72000,
+                "correlation": 0.9999979100236381,
+                "rms": 0.1770374950752556
+              },
+              {
+                "phase": 1,
+                "samples": 72000,
+                "correlation": 0,
+                "rms": 0
+              },
+              {
+                "phase": 2,
+                "samples": 72000,
+                "correlation": 0.9999955424628968,
+                "rms": 0.17656667108589738
+              },
+              {
+                "phase": 3,
+                "samples": 71520,
+                "correlation": 0.9999956456622587,
+                "rms": 0.17655393275345077
+              }
+            ],
+            "client_native_closed": 0,
+            "client_remote_closed": 0,
+            "pending_cleanup": 0,
+            "server_live_peers": 0,
+            "server_closed": 1,
+            "passed": true
+          },
+          "client": {
+            "schema": 1,
+            "run_id": "abb1c5b3-825e-42c7-be54-062de38972fc",
+            "pid": 91695,
+            "server": false,
+            "server_build": false,
+            "editor_build": false,
+            "with_janus": false,
+            "loopback_only": true,
+            "audio_hardware_opened": true,
+            "playback_enabled": true,
+            "audible_output_tested": false,
+            "playback_checks": 4,
+            "playback_measurements": [
+              {
+                "consumed_samples": 239520,
+                "callbacks": 51,
+                "peak_queued_samples": 6240,
+                "dropped_samples": 0,
+                "silence_samples": 5280,
+                "rms": 0.17650909429936495,
+                "callback_on_game_thread": false
+              },
+              {
+                "consumed_samples": 258240,
+                "callbacks": 55,
+                "peak_queued_samples": 6240,
+                "dropped_samples": 0,
+                "silence_samples": 5760,
+                "rms": 0.17658205033707616,
+                "callback_on_game_thread": false
+              },
+              {
+                "consumed_samples": 24000,
+                "callbacks": 6,
+                "peak_queued_samples": 5760,
+                "dropped_samples": 0,
+                "silence_samples": 4800,
+                "rms": 0.17665298301881122,
+                "callback_on_game_thread": false
+              }
+            ],
+            "engine_version": "5.8.3-0+UE5",
+            "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+            "error": "",
+            "phases": 4,
+            "minimum_correlation": 0.999992345016641,
+            "maximum_muted_rms": 0,
+            "quiet_ticks": 8,
+            "checks": 4,
+            "measurements": [
+              {
+                "phase": 0,
+                "samples": 72000,
+                "correlation": 0.9999926092507945,
+                "rms": 0.17662613363658747
+              },
+              {
+                "phase": 1,
+                "samples": 72000,
+                "correlation": 0.9999925799534571,
+                "rms": 0.17664216117195394
+              },
+              {
+                "phase": 2,
+                "samples": 72960,
+                "correlation": 0.999992345016641,
+                "rms": 0.17649212210156198
+              },
+              {
+                "phase": 3,
+                "samples": 72000,
+                "correlation": 0.999992992030005,
+                "rms": 0.17659598535541615
+              }
+            ],
+            "client_native_closed": 1,
+            "client_remote_closed": 1,
+            "pending_cleanup": 0,
+            "passed": true
+          }
+        },
+        "playback": true,
+        "server_executable_sha256": "26b23ba173fd6d980a8d9aa592c25d910122860f5bc5dc99812044b0f6d5b008",
+        "client_executable_sha256": "b5f155a52bd8bfa9b7f9ef5942a8765a02fc7e2ff0c396e91184fb64b1ac38e5",
+        "scope": "Mac ARM64 packaged shared C++ API to dedicated Server; Direct HTTP signaling, generated Opus, local ICE; real Unreal mixer at zero volume; no microphone, audible-output qualification or Blueprint graph execution",
+        "exit_codes": {
+          "server": 0,
+          "client": 0
+        },
+        "audio_platform": "CoreAudio",
+        "credentials_removed": true,
+        "processes_exited": true
+      }
+    },
+    "headless_audio": {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/headless-regression/result.json",
+        "sha256": "c10c13e97ba2bea443464a8424603a8652daeeac83acc2a36dc90e498c8c8834"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "run_id": "362d6373-7308-4113-9809-4df7c22479ea",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "profile": "full",
+        "reports": {
+          "server": {
+            "schema": 1,
+            "run_id": "e76a3dfc-4c46-4214-8b1b-0bc0b2e2be58",
+            "pid": 91937,
+            "server": true,
+            "server_build": true,
+            "editor_build": false,
+            "with_janus": false,
+            "loopback_only": true,
+            "audio_hardware_opened": false,
+            "playback_enabled": false,
+            "audible_output_tested": false,
+            "playback_checks": 0,
+            "playback_measurements": [],
+            "engine_version": "5.8.3-0+UE5",
+            "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+            "error": "",
+            "phases": 4,
+            "minimum_correlation": 0.9999937580676038,
+            "maximum_muted_rms": 0,
+            "quiet_ticks": 8,
+            "checks": 0,
+            "measurements": [
+              {
+                "phase": 0,
+                "samples": 71520,
+                "correlation": 0.999997534453128,
+                "rms": 0.17697862436772027
+              },
+              {
+                "phase": 1,
+                "samples": 72000,
+                "correlation": 0,
+                "rms": 0
+              },
+              {
+                "phase": 2,
+                "samples": 72000,
+                "correlation": 0.9999941159328587,
+                "rms": 0.17644162225904522
+              },
+              {
+                "phase": 3,
+                "samples": 72000,
+                "correlation": 0.9999937580676038,
+                "rms": 0.17659343465095115
+              }
+            ],
+            "client_native_closed": 0,
+            "client_remote_closed": 0,
+            "pending_cleanup": 0,
+            "server_live_peers": 0,
+            "server_closed": 1,
+            "passed": true
+          },
+          "client": {
+            "schema": 1,
+            "run_id": "38349718-1f5f-439a-ac82-df90e7fac383",
+            "pid": 91942,
+            "server": false,
+            "server_build": false,
+            "editor_build": false,
+            "with_janus": true,
+            "loopback_only": true,
+            "audio_hardware_opened": false,
+            "playback_enabled": false,
+            "audible_output_tested": false,
+            "playback_checks": 0,
+            "playback_measurements": [],
+            "engine_version": "5.8.3-0+UE5",
+            "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+            "error": "",
+            "phases": 4,
+            "minimum_correlation": 0.9999887332689397,
+            "maximum_muted_rms": 0,
+            "quiet_ticks": 8,
+            "checks": 4,
+            "measurements": [
+              {
+                "phase": 0,
+                "samples": 72960,
+                "correlation": 0.9999896803100782,
+                "rms": 0.1765622456671096
+              },
+              {
+                "phase": 1,
+                "samples": 72480,
+                "correlation": 0.9999887332689397,
+                "rms": 0.17661949329014037
+              },
+              {
+                "phase": 2,
+                "samples": 72960,
+                "correlation": 0.9999891453257815,
+                "rms": 0.17647724717734908
+              },
+              {
+                "phase": 3,
+                "samples": 72480,
+                "correlation": 0.9999894599610846,
+                "rms": 0.17664609377346904
+              }
+            ],
+            "client_native_closed": 1,
+            "client_remote_closed": 1,
+            "pending_cleanup": 0,
+            "passed": true
+          }
+        },
+        "playback": false,
+        "server_executable_sha256": "26b23ba173fd6d980a8d9aa592c25d910122860f5bc5dc99812044b0f6d5b008",
+        "client_executable_sha256": "4ad397a3b9f28b478f1e146353de5f256b46152cca3c17effed293a082441154",
+        "scope": "Mac ARM64 packaged shared C++ API to dedicated Server; Direct HTTP signaling, generated Opus, local ICE; no hardware audio or Blueprint graph execution",
+        "exit_codes": {
+          "server": 0,
+          "client": 0
+        },
+        "credentials_removed": true,
+        "processes_exited": true
+      }
+    },
+    "full_package": {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/audit-full/package-audit.json",
+        "sha256": "a27778d121cd60a511a01ba2ec207fcdde3234cfd56abf1a6237ca3bc5ec6a6d"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "profile": "full",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+        "archive_exports": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "webrtc_link_inputs": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+        ],
+        "link_response_sha256": "a8b2cb1ecccf6f2a7ecd3184cade84c9c316cd95a199d60963fbb2cdf02446e7",
+        "editor_link_inputs": false,
+        "janus_link_inputs": true,
+        "unreal_media_presentation_module": true,
+        "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+        "executable_sha256": "4ad397a3b9f28b478f1e146353de5f256b46152cca3c17effed293a082441154",
+        "executable_bytes": 319913936,
+        "built_executable_sha256": "4ad397a3b9f28b478f1e146353de5f256b46152cca3c17effed293a082441154",
+        "built_and_staged_uuid": "8E8ADDAE-67AB-3A9A-913A-236E0FC3A707",
+        "bundle_file_bytes": 554456085,
+        "shipping_size_baseline": false,
+        "rtc_size_delta_measured": false,
+        "code_signature_valid": true
+      }
+    },
+    "direct_package": {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/audit-direct/package-audit.json",
+        "sha256": "f9d6e60cacc94021d9eb8c9f583059b7d2256be3d8e5ff447ec30cdc45c3335b"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "profile": "direct-only",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+        "archive_exports": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "webrtc_link_inputs": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+        ],
+        "link_response_sha256": "9e5a4961c5699e6f9622cbf7899d1be8e83a957ce33325e3654edbbd25e3c1c7",
+        "editor_link_inputs": false,
+        "janus_link_inputs": false,
+        "unreal_media_presentation_module": true,
+        "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Saved/StagedBuilds/Mac/ContractHost.app/Contents/MacOS/ContractHost",
+        "executable_sha256": "b5f155a52bd8bfa9b7f9ef5942a8765a02fc7e2ff0c396e91184fb64b1ac38e5",
+        "executable_bytes": 319875696,
+        "built_executable_sha256": "b5f155a52bd8bfa9b7f9ef5942a8765a02fc7e2ff0c396e91184fb64b1ac38e5",
+        "built_and_staged_uuid": "590DFD5C-6FC0-3C1A-9E1B-2BE2CA9E801C",
+        "bundle_file_bytes": 554417313,
+        "shipping_size_baseline": false,
+        "rtc_size_delta_measured": false,
+        "code_signature_valid": true
+      }
+    },
+    "server_package": {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/audit-server/package-audit.json",
+        "sha256": "2753e83cf50b9497f984691ebc239c914a86289a0c9e39bf427ef95af194dbae"
+      },
+      "result": {
+        "schema": 1,
+        "passed": true,
+        "profile": "server",
+        "platform": "Mac",
+        "architecture": "arm64",
+        "artifact": {
+          "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+          "platform": "Mac",
+          "architecture": "arm64",
+          "files": 7,
+          "objects": 1,
+          "archive_bytes": 17923208,
+          "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "runtime_validation": "unverified"
+        },
+        "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+        "archive_exports": [
+          "_SimurghRTC_AudioStateV1",
+          "_SimurghRTC_ChannelV1",
+          "_SimurghRTC_ConfigureAudioV1",
+          "_SimurghRTC_ConfigureIceV1",
+          "_SimurghRTC_CreatePeerV1",
+          "_SimurghRTC_CreateV1",
+          "_SimurghRTC_DestroyV1",
+          "_SimurghRTC_DiagnosticsV1",
+          "_SimurghRTC_EnableLoopbackProbeV1",
+          "_SimurghRTC_GetIceRouteV1",
+          "_SimurghRTC_MediaProbeV1",
+          "_SimurghRTC_MuteAudioV1",
+          "_SimurghRTC_NativeVersionV1",
+          "_SimurghRTC_PollAudioV1",
+          "_SimurghRTC_PollDataV1",
+          "_SimurghRTC_PollEventV1",
+          "_SimurghRTC_PushAudioV1",
+          "_SimurghRTC_SignalV1"
+        ],
+        "webrtc_link_inputs": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64/Lib/libwebrtc.a"
+        ],
+        "link_response_sha256": "0650e1d83441ed829fd43e129c52251be9a770e6231134f81814f3e7c2d5ec66",
+        "editor_link_inputs": false,
+        "janus_link_inputs": false,
+        "unreal_media_presentation_module": false,
+        "executable": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Saved/StagedBuilds/MacServer/ContractHostServer.app/Contents/MacOS/ContractHostServer",
+        "executable_sha256": "26b23ba173fd6d980a8d9aa592c25d910122860f5bc5dc99812044b0f6d5b008",
+        "executable_bytes": 285029136,
+        "built_executable_sha256": "536bcf2e389963942a2ca9fc012583cb0edaa9e3c7d8b4729dd8234172c52de4",
+        "built_and_staged_uuid": "D93F5864-3A9A-32A5-BD83-63C89F32DDE7",
+        "bundle_file_bytes": 384365004,
+        "shipping_size_baseline": false,
+        "rtc_size_delta_measured": false,
+        "code_signature_valid": true
+      }
+    },
+    "unreal_tests": {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-full-tests-report/index.json",
+        "sha256": "a5dadd6722c39ae6a9b2228d4cc3485b3d539e66e5823e2ceb71db86a76a1129"
+      },
+      "succeeded": 36,
+      "failed": 0,
+      "warnings": 0
+    },
+    "python_tests": {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/python-tests-final.log",
+        "sha256": "d1f636ff17c7981f357d6ea84163cc76bf6301b321ea24588e8d79e86ead4993"
+      },
+      "count": 237
+    }
+  },
+  "stages": {
+    "editor": {
+      "path": "Intermediate/SR201Playback20261103/stage-editor-accepted-full-game.json",
+      "sha256": "decf3ed950f4e32dac85bc0b41419c62ceeb5911f6b81f28b93449bd6b817f30"
+    },
+    "server": {
+      "path": "Intermediate/SR201Playback20261103/stage-server-accepted-server.json",
+      "sha256": "bc5edaf5d24e292357373e89d99abfbc610645d5bd96e18a11f3debc1db9d34e"
+    },
+    "direct": {
+      "path": "Intermediate/SR201Playback20261103/stage-direct-accepted-direct-game.json",
+      "sha256": "a234dfca71b2bc934d7e6e757d2cbbfbdab227ddd32abc59335194b50933771e"
+    }
+  },
+  "builds": [
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-direct-cook-game-command.json",
+        "sha256": "1fe0708ffdc549da2ad7fe94e6e0a8938ca1a04ef4b37dd033b4e588a8ea11ab"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+          "BuildCookRun",
+          "-WaitForUATMutex",
+          "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+          "-noP4",
+          "-platform=Mac",
+          "-clientarchitecture=arm64",
+          "-clientconfig=Development",
+          "-package",
+          "-editorarchitecture=arm64",
+          "-skipbuild",
+          "-nocompileeditor",
+          "-cook",
+          "-stage",
+          "-pak",
+          "-map=/Engine/Maps/Entry+/Game/Examples/Direct/Maps/RtcDataCpp+/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Content/Examples",
+          "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+          "-unattended",
+          "-utf8output"
+        ],
+        "started": "2026-11-03T09:30:43.460453+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "waited_for_ubt_seconds": 0.057,
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:31:48.159659+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-direct-editor-command.json",
+        "sha256": "babc8ed8956e7dd5ce72e883fe8217e69424a6bde86ba1a29cbb8ab9c1a71476"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-11-03T09:27:45.926157+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:28:50.441055+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-direct-editor-finalize-command.json",
+        "sha256": "fceee10b45cde017df901f0f0dc7a9d8490ee0c978cf7b1e64767293686a7af0"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201Playback20261103/direct-editor-postbuildsync.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-11-03T09:28:50.518126+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:29:09.561738+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-direct-editor-metadata-command.json",
+        "sha256": "642951d34f0c72d271f611b8d307766ebc48c6c5c0ea78468009f901e42e1d56"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-11-03T09:29:09.634369+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:29:25.212084+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-direct-game-command.json",
+        "sha256": "7ae54146a97e6c45ec0bb2b36dbad81759ffaf4048619c5ae3bdf21c6729f8c1"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHost",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile"
+        ],
+        "started": "2026-11-03T09:29:25.603771+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:30:09.644469+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-direct-game-finalize-command.json",
+        "sha256": "1ad988bb797b0ea63cde56a05846c5b25efe4e0e1c09ff7cc3bdd92384ac0bfe"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Intermediate/Build/Mac/arm64/ContractHost/Development/PostBuildSync_ContractHost.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-11-03T09:30:09.727251+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:30:29.107218+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-direct-game-metadata-command.json",
+        "sha256": "5b080c6585f70b6bfc04fc343691ade75935335dda49e424fee19db9fc9759f4"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHost",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-11-03T09:30:29.197046+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Direct/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:30:43.357147+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-full-cook-game-command.json",
+        "sha256": "c8bf97750f2cf029704a45cfbc8b7108dc4590b381a3597180ad1283a3e35785"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+          "BuildCookRun",
+          "-WaitForUATMutex",
+          "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-noP4",
+          "-platform=Mac",
+          "-clientarchitecture=arm64",
+          "-clientconfig=Development",
+          "-package",
+          "-editorarchitecture=arm64",
+          "-skipbuild",
+          "-nocompileeditor",
+          "-cook",
+          "-stage",
+          "-pak",
+          "-map=/Engine/Maps/Entry+/Game/Examples/Direct/Maps/RtcDataCpp+/Game/Examples/Direct/Maps/RtcDataBlueprint",
+          "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Content/Examples",
+          "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+          "-unattended",
+          "-utf8output"
+        ],
+        "started": "2026-11-03T09:19:18.952523+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "waited_for_ubt_seconds": 0.06,
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:21:35.338659+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-full-editor-command.json",
+        "sha256": "fac2bf89a7dea89dfbdb14a6d543e276591d53646ff07c5f67c5646d0bb07590"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-11-03T09:13:48.571460+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:14:50.365847+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-full-editor-finalize-command.json",
+        "sha256": "c60db05ad502a58bd71e3bd1aabbb437d71d0bac0950c0f46cbe62664034dcb1"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201Playback20261103/editor-editor-postbuildsync.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-11-03T09:14:50.570322+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:15:26.024255+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-full-editor-metadata-command.json",
+        "sha256": "df7f771cd0a181a9adfbff70ecf521280078f6ac306515d22fe0d18755fd89d1"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-11-03T09:15:26.125507+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:15:51.619416+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-full-game-command.json",
+        "sha256": "8753f88b2917263948fc55208ce53a05ab05c8827100a6d7a95b20030d57370a"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHost",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile"
+        ],
+        "started": "2026-11-03T09:16:44.550814+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:18:24.286820+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-full-game-finalize-command.json",
+        "sha256": "83cc62cf93a413bea0fe6368910c4027c0e45879aea6fecfaed20d1ec5ca17af"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/Mac/arm64/ContractHost/Development/PostBuildSync_ContractHost.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-11-03T09:18:24.445628+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:19:02.754516+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-full-game-metadata-command.json",
+        "sha256": "46c60ec45f01ad1b9bb104e375c0a747834a2025b23e6707e096b0af18083c3d"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHost",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-11-03T09:19:02.834419+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:19:18.865512+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-full-tests-command.json",
+        "sha256": "0e0f1a5bb5e518c8d31f802fe84992c3bd7bd5f842f4f5f59078a66fb977f167"
+      },
+      "record": {
+        "command": [
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Binaries/Mac/UnrealEditor-Cmd",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+          "-unattended",
+          "-nullrhi",
+          "-nosound",
+          "-ExecCmds=Automation RunTests SimurghRTC.",
+          "-TestExit=Automation Test Queue Empty",
+          "-ReportExportPath=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201Playback20261103/accepted-full-tests-report"
+        ],
+        "started": "2026-11-03T09:15:51.708471+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/SR101Ownership20261024c/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:16:43.749495+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-server-cook-server-command.json",
+        "sha256": "fc515b0ff06a40d78511316b8f538b192eda5f5d262b23c6c6a75ecdc769608f"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh",
+          "BuildCookRun",
+          "-WaitForUATMutex",
+          "-project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-noP4",
+          "-platform=Mac",
+          "-serverplatform=Mac",
+          "-server",
+          "-noclient",
+          "-serverarchitecture=arm64",
+          "-serverconfig=Development",
+          "-editorarchitecture=arm64",
+          "-skipbuild",
+          "-nocompileeditor",
+          "-cook",
+          "-stage",
+          "-pak",
+          "-map=/Engine/Maps/Entry",
+          "-cookdir=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Content/Examples",
+          "-AdditionalCookerOptions=-SkipZenStore -NullRHI -nosound",
+          "-unattended",
+          "-utf8output"
+        ],
+        "started": "2026-11-03T09:26:27.879284+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "waited_for_ubt_seconds": 0.068,
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:27:17.616715+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-server-editor-command.json",
+        "sha256": "10958b5fed970eeab6006239dad285a6e4437169804ae4c8455bd291bec4daea"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64"
+        ],
+        "started": "2026-11-03T09:21:36.493293+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:22:49.613666+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-server-editor-finalize-command.json",
+        "sha256": "b1b1d8316ccc504828444f233bd5afd3b5c234a96e9c24113017a82e50eb3367"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/Intermediate/SR201Playback20261103/server-editor-postbuildsync.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-11-03T09:22:49.722039+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:23:14.852822+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-server-editor-metadata-command.json",
+        "sha256": "06e8420c969e398df47cad7298e9363643e8f860780ce61d261131a112711855"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostEditor",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-11-03T09:23:14.977539+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:23:43.765848+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-server-server-command.json",
+        "sha256": "ed65fddd006125b0d23173a18a89cc421b724354ad8f6c0c8f320558b3febb4b"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostServer",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile"
+        ],
+        "started": "2026-11-03T09:23:43.911678+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:25:25.898994+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-server-server-finalize-command.json",
+        "sha256": "6bcd792a133cade528de02f9c1afe1ae6f7efa1c56c4f7c43e2adc389c46ceaa"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_SKIP_UBT=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "-Mode=ApplePostBuildSync",
+          "-Input=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/Mac/arm64/ContractHostServer/Development/PostBuildSync_ContractHostServer.json",
+          "-XmlConfigCache=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/Intermediate/Build/XmlConfigCache.bin"
+        ],
+        "started": "2026-11-03T09:25:26.012890+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:26:07.310389+00:00"
+      }
+    },
+    {
+      "file": {
+        "path": "Intermediate/SR201Playback20261103/accepted-server-server-metadata-command.json",
+        "sha256": "3d39e28a593f782e7a7c1ffe384108fdc3eeee8ef76cfd251e629c5153f09701"
+      },
+      "record": {
+        "command": [
+          "env",
+          "UE_BUILD_FROM_XCODE=1",
+          "/Users/pooyaeimandar/Codes/PooyaEimandar/UnrealEngine/Engine/Build/BatchFiles/Mac/Build.sh",
+          "ContractHostServer",
+          "Mac",
+          "Development",
+          "-Project=/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+          "-WaitMutex",
+          "-NoHotReloadFromIDE",
+          "-NoUBA",
+          "-MaxParallelActions=6",
+          "-architecture=arm64",
+          "-MapFile",
+          "-ActionTypeFilter=WriteMetadata"
+        ],
+        "started": "2026-11-03T09:26:07.437268+00:00",
+        "engine_before": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "project": "/Users/pooyaeimandar/Codes/PooyaEimandar/SimurghRTC/LocalBuilds/M155Server20261022/ContractHost.uproject",
+        "exit_code": 0,
+        "engine_after": {
+          "revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e",
+          "status": " M Engine/Platforms/HTML5/Build/Scripts/BrowserShippingTest.js\n M Engine/Platforms/HTML5/docs/M10-SHIPPING.md\n"
+        },
+        "finished": "2026-11-03T09:26:27.777730+00:00"
+      }
+    }
+  ],
+  "rejected_attempts": [
+    {
+      "path": "Intermediate/SR201Playback20261103/first-editor.log",
+      "reason": "Unreal Header Tool required names for the reflected test receiver parameters; fixed before accepted builds."
+    }
+  ],
+  "implementation": [
+    "Existing BindAudio C++/Blueprint operation connected to registered Unreal audio components",
+    "Optional Core sink interface without client audio-device dependencies in the Server",
+    "Fixed 200 ms playback queue with oldest-sample overflow drops and zero-filled underruns",
+    "Game-thread delivery to signed 16-bit PCM, consumed by the mixer without session callbacks",
+    "Independent public PCM callback delivery and playback",
+    "Exclusive component ownership, sink replacement, component-loss cleanup and session teardown"
+  ],
+  "limitations": [
+    "Packaged playback is validated on Mac ARM64 same-host loopback only.",
+    "Component volume is zero: the test verifies real mixer consumption, not audible speaker quality.",
+    "No microphone, echo-cancellation playback reference or output-device switching is implemented.",
+    "Current playback accepts 48 kHz mono decoded PCM.",
+    "Blueprint-callable operation is exercised through C++; no new Blueprint audio graph was executed.",
+    "No mobile package or physical iOS acceptance is claimed here.",
+    "No new native WebRTC artifacts or repeat-build claim; prior provenance gates remain open."
+  ],
+  "remaining": [
+    "Microphone capture and permissions",
+    "Playback reference for echo cancellation and audio processing",
+    "Device/route changes and sustained audible quality checks",
+    "Packaged Android/iOS audio and physical iOS acceptance",
+    "Blueprint audio examples, wider formats and broader network qualification",
+    "M0 and M1 external acceptance gaps remain tracked in ROADMAP.md"
+  ]
+}

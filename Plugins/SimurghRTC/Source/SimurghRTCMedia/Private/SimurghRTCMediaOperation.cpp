@@ -2,6 +2,7 @@
 #include "SimurghRTCSession.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Components/AudioComponent.h"
+namespace SimurghRTC { FSimurghRTCError BindSessionAudioPlayback(USimurghRTCSession&, FSimurghRTCTrackHandle, UAudioComponent*); }
 
 USimurghRTCMediaOperation* USimurghRTCMediaOperation::CreateSource(USimurghRTCSession* Session, const FSimurghRTCSourceOptions& Options)
 {
@@ -34,7 +35,17 @@ USimurghRTCMediaOperation* USimurghRTCMediaOperation::BindAudio(USimurghRTCSessi
     if (!Track.IsValid() || !IsValid(Target))
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Invalid media source, track or sink."));
     Operation->Initialize(Session, TEXT("BindAudio"), ESimurghRTCFeature::Audio, Error);
+    Operation->AudioTrack = Track; Operation->AudioTarget = Target; Operation->bBindAudio = true;
     return Operation;
+}
+
+FSimurghRTCError USimurghRTCMediaOperation::ExecuteExtension(USimurghRTCSession& Session, FSimurghRTCOperationResult& Out)
+{
+    if (!bBindAudio) return Super::ExecuteExtension(Session, Out);
+    const auto Error = SimurghRTC::BindSessionAudioPlayback(Session, AudioTrack, AudioTarget.Get());
+    if (!Error.IsError()) Out.Track = AudioTrack;
+    AudioTarget.Reset();
+    return Error;
 }
 
 

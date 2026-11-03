@@ -4,6 +4,8 @@
 #include "SimurghRTCSession.h"
 #include "SimurghRTCOperation.h"
 #include "ContractSharedAudioProbe.generated.h"
+class UAudioComponent;
+class FJsonValue;
 
 struct FContractAudioMeter
 {
@@ -21,6 +23,17 @@ class UContractSharedAudioEndpoint : public UObject
 public:
     UPROPERTY(Transient) TObjectPtr<USimurghRTCSession> Session;
     UPROPERTY(Transient) TObjectPtr<USimurghRTCOperation> Pending;
+    UPROPERTY(Transient) TObjectPtr<UAudioComponent> PlaybackA;
+    UPROPERTY(Transient) TObjectPtr<UAudioComponent> PlaybackB;
+    UPROPERTY(Transient) TObjectPtr<UAudioComponent> PlaybackC;
+    bool bPlayback = false;
+    int32 PlaybackChecks = 0, PlaybackStage = 0;
+    uint64 QuietConsumed = 0;
+    TArray<TSharedPtr<FJsonValue>> PlaybackMeasurements;
+    UAudioComponent* NewPlaybackTarget();
+    void CapturePlayback(UAudioComponent* Target, int32 MinimumSamples);
+    bool CheckPlaybackLifecycle();
+    void ReleasePlayback();
     FString Endpoint, Token, Error;
     FSimurghRTCSourceHandle Source, OldSource;
     FSimurghRTCTrackHandle Local, Remote;

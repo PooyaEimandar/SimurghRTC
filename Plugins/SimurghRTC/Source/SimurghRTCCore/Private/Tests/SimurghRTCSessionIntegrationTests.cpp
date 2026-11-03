@@ -2,6 +2,8 @@
 #include "SimurghRTCSession.h"
 #include "SimurghRTCOperation.h"
 #include "SimurghRTCSessionTransport.h"
+#include "SimurghRTCSessionAudioSink.h"
+#include "SimurghRTCAudioTestReceiver.h"
 #include "Misc/AutomationTest.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
@@ -22,6 +24,10 @@ public:
     bool bDelayClose = false;
     bool bAudio = false, bAudioFull = false;
     bool HasAudio() const override { return bAudio; }
+    bool HasRemoteAudio() const override { return bAudio; }
+    int32 AudioFrames = 0;
+    bool PollAudio(FSimurghRTCAudioFrame& Frame) override
+    { if (AudioFrames <= 0) return false; --AudioFrames; Frame.Samples.Init(0.25f, 480); return true; }
     FSimurghRTCError MuteAudio(bool) override { return {}; }
     FSimurghRTCError PushAudio(const FSimurghRTCAudioFrame&) override
     { return bAudioFull ? SimurghRTC::MakeError(ESimurghRTCErrorCode::ResourceExhausted,TEXT("Full")) : FSimurghRTCError{}; }
@@ -41,6 +47,16 @@ public:
     static FSimurghRTCError Invalid() { return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState,TEXT("Unknown fake channel.")); }
     FSimurghRTCError CanSend(FSimurghRTCChannelHandle H) const
     { const auto* C = Channels.Find(H.Id); return C && C->State == ESessionChannelState::Open ? FSimurghRTCError{} : Invalid(); }
+};
+class FFakeAudioSink final : public ISessionAudioSink
+{
+public:
+    int32 Frames = 0, Closes = 0;
+    bool bAlive = true;
+    TFunction<void()> OnClose;
+    virtual bool IsAlive() const override { return bAlive; }
+    virtual void Push(const FSimurghRTCAudioFrame&) override { ++Frames; }
+    virtual void Close() override { ++Closes; bAlive = false; if (OnClose) OnClose(); }
 };
 struct FFixture
 {
@@ -66,6 +82,63 @@ struct FFixture
     TStrongObjectPtr<USimurghRTCOperation> Connect()
     { TStrongObjectPtr<USimurghRTCOperation> O(USimurghRTCOperation::Connect(Session.Get(),Config())); O->Activate(); Tick(); return O; }
 };
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSessionAudioSinkTest,"SimurghRTC.Session.AudioSinkOwnership",Flags)
+bool FSessionAudioSinkTest::RunTest(const FString&)
+{
+    if (!SIMURGHRTC_WITH_DIRECT || (!SIMURGHRTC_WITH_MEDIA && !UE_SERVER))
+    { AddInfo(TEXT("Shared audio sink test requires a Direct media or Server profile.")); return true; }
+    for (int32 Exit = 0; Exit < 6; ++Exit)
+    {
+        FFixture F;
+        TStrongObjectPtr<USimurghRTCAudioTestReceiver> Receiver(NewObject<USimurghRTCAudioTestReceiver>());
+        F.Session->OnTrackChanged.AddDynamic(Receiver.Get(), &USimurghRTCAudioTestReceiver::Track);
+        F.Session->OnAudioFrame.AddDynamic(Receiver.Get(), &USimurghRTCAudioTestReceiver::Audio);
+        auto Connect = F.Connect(); auto T = F.Created.Last(); T->bAudio = true;
+        T->Status.State = ESimurghRTCSessionState::Connected; Tick(); Tick();
+        const auto Track = Receiver->Remote;
+        TestTrue(TEXT("Remote track published"), Track.IsValid());
+        auto A = MakeShared<FFakeAudioSink>(); auto B = MakeShared<FFakeAudioSink>();
+        TestFalse(TEXT("Live remote track binds"), F.Session->SetAudioSink(Track, A).IsError());
+        T->AudioFrames = 1; Tick();
+        TestEqual(TEXT("Sink receives without public callbacks"), A->Frames, 1);
+        TestEqual(TEXT("Public delivery remains opt-in"), Receiver->Frames, 0);
+        TStrongObjectPtr<USimurghRTCOperation> Enable(USimurghRTCOperation::SetDecodedFrameDelivery(F.Session.Get(), Track, true));
+        Enable->Activate(); Tick(); T->AudioFrames = 2; Tick();
+        TestEqual(TEXT("PCM fan-out does not steal sink frames"), A->Frames, 3);
+        TestEqual(TEXT("Public PCM also delivered"), Receiver->Frames, 2);
+        TStrongObjectPtr<USimurghRTCOperation> Disable(USimurghRTCOperation::SetDecodedFrameDelivery(F.Session.Get(), Track, false));
+        Disable->Activate(); Tick(); T->AudioFrames = 1; Tick();
+        TestEqual(TEXT("Disabling callbacks preserves playback"), A->Frames, 4);
+        TestEqual(TEXT("Callbacks disabled"), Receiver->Frames, 2);
+        FSimurghRTCTrackHandle Foreign; Foreign.Id = FGuid::NewGuid();
+        TestTrue(TEXT("Foreign track rejected"), F.Session->SetAudioSink(Foreign, B).IsError());
+        TestEqual(TEXT("Invalid replacement preserves old sink"), A->Closes, 0);
+        TestFalse(TEXT("Valid replacement"), F.Session->SetAudioSink(Track, B).IsError());
+        TestEqual(TEXT("Replacement closes old sink once"), A->Closes, 1);
+        B->bAlive = false; Tick(); TestEqual(TEXT("Lost component closes sink"), B->Closes, 1);
+        auto C = MakeShared<FFakeAudioSink>(); F.Session->SetAudioSink(Track, C);
+        if (Exit == 0)
+        {
+            TStrongObjectPtr<USimurghRTCOperation> Detach(USimurghRTCOperation::DetachTrack(F.Session.Get(), Track)); Detach->Activate(); Tick();
+        }
+        else if (Exit == 1)
+        {
+            TStrongObjectPtr<USimurghRTCOperation> Disconnect(USimurghRTCOperation::Disconnect(F.Session.Get())); Disconnect->Activate(); Tick(); Tick();
+        }
+        else if (Exit == 2) F.Session->Shutdown();
+        else if (Exit == 3) { T->Status.State = ESimurghRTCSessionState::Failed; Tick(); }
+        else if (Exit == 4) { F.Owner->MarkAsGarbage(); Tick(); }
+        else
+        {
+            C->OnClose = [&] { F.Session->Shutdown(); };
+            TestTrue(TEXT("Reentrant shutdown prevents replacement"), F.Session->SetAudioSink(Track, MakeShared<FFakeAudioSink>()).IsError());
+        }
+        TestEqual(TEXT("Teardown closes current sink exactly once"), C->Closes, 1);
+        T->AudioFrames = 2; Tick(); TestEqual(TEXT("No delivery after teardown"), C->Frames, 0);
+    }
+    return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSessionConnectWaitTest,"SimurghRTC.Session.ConnectionOwnership",Flags)

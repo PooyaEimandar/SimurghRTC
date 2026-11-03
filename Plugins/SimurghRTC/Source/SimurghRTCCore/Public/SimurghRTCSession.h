@@ -7,7 +7,7 @@
 #include "SimurghRTCSession.generated.h"
 
 class USimurghRTCOperation;
-namespace SimurghRTC { class ISessionTransport; }
+namespace SimurghRTC { class ISessionTransport; class ISessionAudioSink; }
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimurghRTCSessionStateEvent, ESimurghRTCSessionState, State);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimurghRTCDataEvent, const FSimurghRTCDataMessage&, Message);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimurghRTCChannelEvent, const FSimurghRTCChannelInfo&, Channel);
@@ -59,6 +59,9 @@ public:
     virtual UWorld* GetWorld() const override;
     virtual void BeginDestroy() override;
     bool IsUsable() const;
+    // Internal optional client-media adapter, independent of public decoded-frame callbacks.
+    FSimurghRTCError ValidateAudioSink(FSimurghRTCTrackHandle Track) const;
+    FSimurghRTCError SetAudioSink(FSimurghRTCTrackHandle Track, TSharedPtr<SimurghRTC::ISessionAudioSink> Sink);
     UFUNCTION(BlueprintPure, Category="SimurghRTC") ESimurghRTCProvider GetProvider() const { return Provider; }
 
 private:
@@ -69,6 +72,8 @@ private:
     bool TickTransport(float);
     void ReleaseTransport(bool bStopSources = true);
     void ClearMedia(bool bNotify);
+    void ClearAudioSink();
+    TSharedPtr<SimurghRTC::ISessionAudioSink> AudioSink;
     void TickAudio();
     FSimurghRTCError ExecuteAudioOperation(FName Name, ESimurghRTCTrackKind Kind,
         FSimurghRTCSourceHandle Source, FSimurghRTCTrackHandle Track, bool bEnabled, FSimurghRTCOperationResult& Out);

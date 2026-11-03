@@ -1,10 +1,38 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "SimurghRTCSession.h"
 #include "SimurghRTCSessionTransport.h"
+#include "SimurghRTCSessionAudioSink.h"
+
+FSimurghRTCError USimurghRTCSession::ValidateAudioSink(FSimurghRTCTrackHandle Track) const
+{
+    check(IsInGameThread());
+    if (!IsUsable() || State != ESimurghRTCSessionState::Connected || !RemoteAudio.Handle.IsValid() || Track.Id != RemoteAudio.Handle.Id)
+        return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("Playback requires a remote audio track from this connected session."));
+    return {};
+}
+void USimurghRTCSession::ClearAudioSink()
+{
+    auto Previous = MoveTemp(AudioSink); AudioSink.Reset();
+    if (Previous) Previous->Close();
+}
+FSimurghRTCError USimurghRTCSession::SetAudioSink(FSimurghRTCTrackHandle Track, TSharedPtr<SimurghRTC::ISessionAudioSink> Sink)
+{
+    auto Error = ValidateAudioSink(Track);
+    if (Error.IsError()) return Error;
+    if (AudioSink != Sink)
+    {
+        ClearAudioSink(); // Stopping a component can dispatch application callbacks.
+        Error = ValidateAudioSink(Track);
+        if (Error.IsError()) return Error;
+        AudioSink = MoveTemp(Sink);
+    }
+    return {};
+}
 
 void USimurghRTCSession::ClearMedia(bool bNotify)
 {
     const auto Local = LocalAudio, Remote = RemoteAudio;
+    ClearAudioSink();
     AudioSources.Reset(); LocalAudio = {}; RemoteAudio = {}; bDeliverAudio = false; bRemoteAudioDetached = false;
     if (bNotify && IsUsable() && Local.Handle.IsValid()) OnTrackChanged.Broadcast(Local, false);
     if (bNotify && IsUsable() && Remote.Handle.IsValid()) OnTrackChanged.Broadcast(Remote, false);
@@ -12,6 +40,7 @@ void USimurghRTCSession::ClearMedia(bool bNotify)
 
 void USimurghRTCSession::TickAudio()
 {
+    if (AudioSink && !AudioSink->IsAlive()) ClearAudioSink();
     const auto Current = Transport;
     const auto Generation = TransportGeneration;
     if (!Current || !Current->HasAudio()) return;
@@ -25,6 +54,7 @@ void USimurghRTCSession::TickAudio()
     {
         FSimurghRTCAudioFrame Frame;
         if (!Current->PollAudio(Frame)) break;
+        if (AudioSink && RemoteAudio.Handle.IsValid()) AudioSink->Push(Frame);
         if (bDeliverAudio && RemoteAudio.Handle.IsValid()) OnAudioFrame.Broadcast(RemoteAudio.Handle, Frame);
     }
 }
@@ -62,13 +92,14 @@ FSimurghRTCError USimurghRTCSession::ExecuteAudioOperation(FName Name, ESimurghR
         if (!RemoteAudio.Handle.IsValid() || Track.Id != RemoteAudio.Handle.Id) return Invalid();
         // Drop queued frames at either transition; the next callback uses fresh polling.
         FSimurghRTCAudioFrame Discard;
-        for (int32 I = 0; I < 20 && Transport->PollAudio(Discard); ++I) {}
+        if (!AudioSink) for (int32 I = 0; I < 20 && Transport->PollAudio(Discard); ++I) {}
         bDeliverAudio = bEnabled; Out.Track = Track; return {};
     }
     if (Name == TEXT("DetachTrack"))
     {
         if (RemoteAudio.Handle.IsValid() && Track.Id == RemoteAudio.Handle.Id)
         {
+            ClearAudioSink();
             const auto Removed = RemoteAudio; RemoteAudio = {}; bDeliverAudio = false; bRemoteAudioDetached = true;
             Out.Track = Track; OnTrackChanged.Broadcast(Removed, false); return {};
         }

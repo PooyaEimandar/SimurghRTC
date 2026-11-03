@@ -2,7 +2,7 @@
 
 Direct sessions can send generated PCM and receive decoded audio through the same C++ and Blueprint API. Audio travels over Opus media tracks; Direct HTTP sets up the connection, and DataChannels remain available alongside audio.
 
-This first shared path accepts **48 kHz mono float PCM**, with up to 100 ms in each submission. Microphones, Unreal speaker playback, echo cancellation and video are still separate work. The lower-level [native audio path](NATIVE_AUDIO.md) supports more input formats; the shared adapter returns `ServiceUnsupported` for those formats for now.
+This first shared path accepts **48 kHz mono float PCM**, with up to 100 ms in each submission. Received audio can also play through an Unreal audio component. Microphones, echo cancellation and video are still separate work. The lower-level [native audio path](NATIVE_AUDIO.md) supports more input formats; the shared adapter returns `ServiceUnsupported` for those formats for now.
 
 ## Connect and attach a source
 
@@ -51,7 +51,28 @@ Each session has at most eight generated sources and one attached local audio tr
 
 The shared send queue holds at most 200 ms of PCM, in addition to the native queue's 200 ms bound. Each receive queue holds at most twenty decoded blocks and drops the oldest when full. These bounds limit storage; they are not a measured end-to-end latency guarantee. Disabling callbacks keeps draining incoming audio.
 
-Data-only clients exclude audio. Audio capability becomes negotiated for a connected Direct session with the audio track. This does not claim microphone, speaker or audio-processing support.
+Data-only clients exclude audio. Audio capability becomes negotiated for a connected Direct session with the audio track. It does not prove that a local playback device is available; `BindAudio` checks that separately. Microphone capture and audio processing remain pending.
+
+## Play received audio
+
+Client builds with `SimurghRTCMedia` can bind a remote audio track to a registered `UAudioComponent` in a live game world:
+
+```cpp
+auto* Bind = USimurghRTCMediaOperation::BindAudio(Session, RemoteTrack, AudioComponent);
+Bind->OnCompletedNative.AddLambda([](const FSimurghRTCOperationResult& Result)
+{
+    // Check Result.IsSuccess(); Result.Track identifies the bound track.
+});
+Bind->Activate();
+```
+
+Retain pending operations as usual. The matching Blueprint `Bind Audio` node uses the same path. Success starts playback and keeps the component referenced until replacement or teardown. The component's volume, attenuation and spatial settings remain under your control. Binding replaces its `Sound`; cleanup stops and clears that sound. The previous sound is not restored. Auto-destruction is disabled while bound and your original setting is restored afterward; normal component and actor lifetime rules still apply.
+
+Playback and `OnAudioFrame` callbacks are independent: you can leave decoded callbacks disabled and still hear the remote track. Binding another component replaces the old sink. Another session cannot take over an actively bound component. Stopping, destroying or unregistering the component ends its binding on the next session tick; call `BindAudio` again to restart. Remote-track detach, disconnect, failure, owner loss and shutdown release the sink too.
+
+The playback buffer holds at most **200 ms** of 48 kHz mono PCM. Overflow drops the oldest samples; underflow produces silence. The mixer consumes signed 16-bit PCM on its own thread, without calling session objects. Pausing a component keeps the buffer bounded. Teardown discards queued PCM; audio already mixed into the device buffer may still drain briefly. These limits are not an end-to-end latency measurement.
+
+An unregistered component, wrong track or missing audio device returns an error. Server and data-only profiles do not include this client playback adapter. Microphone input, the playback reference needed for echo cancellation, output-device changes and audible quality acceptance remain open.
 
 ## Headless Server
 
@@ -72,6 +93,10 @@ python3 tools/run_shared_audio_probe.py \
 
 The runner uses separate packaged processes and fresh local credentials. It checks different tones in each direction, outgoing mute with incoming audio continuing, source replacement, decoded delivery disable/resume, detach, stop and native cleanup. It also submits alternating 7 ms and 13 ms blocks. The Server receives 400 Hz, silence, then 600 Hz; the client receives 800 Hz throughout. Measurements exclude the first second of each phase to allow queued audio and codec state to settle.
 
+Add `--playback` to run the client with Metal and Unreal's real audio mixer. The fixture sets component volume to zero and checks mixer consumption, sink replacement, continued playback while PCM callbacks are disabled, component destruction/rebinding and disconnect cleanup. The Server remains headless. This validates the mixer path without judging audible speaker quality.
+
 On 2026-10-31, packaged Mac ARM64 **Direct-only and Full** clients passed all four audio phases against a separate dedicated Server. Both processes exited cleanly, with no peers left and temporary credentials removed. All 34 Unreal and 232 Python tests passed, along with the existing data-session regression (16 sessions, eight connected at once). Package checks confirmed ARM64 binaries, valid signatures and one isolated WebRTC library per executable.
 
-This is a C++ execution test of the shared reflected API. It does not execute a new Blueprint audio graph or qualify speaker sound, microphone input, mobile audio, Internet paths or perceptual quality. Results and remaining work are recorded in [SR-201 shared audio validation](reviews/SR201-shared-audio-validation.json).
+On 2026-11-03, both Mac client profiles also passed `--playback` with CoreAudio. Each run consumed the decoded tone through three successive audio components and passed all four playback lifecycle checks. The headless audio regression and package audits passed, as did all **36 Unreal and 237 Python tests**. Both processes exited cleanly in every run. See the [playback validation record](reviews/SR201-audio-playback-validation.json).
+
+These are C++ execution tests of the shared reflected API. They do not execute a new Blueprint audio graph or qualify audible speaker sound, microphone input, mobile audio, Internet paths or perceptual quality. The earlier [shared audio validation](reviews/SR201-shared-audio-validation.json) retains its original scope and results.

@@ -17,7 +17,7 @@ SimurghRTC is a C++ plugin for **Unreal Engine 5.8.3**. Its goal is to let an Un
 | Validate mobile data and lifecycle | [Mobile data](docs/MOBILE_DATA.md) |
 | Connect separate Unreal client and Server processes | [Direct HTTP signaling](docs/DIRECT_SIGNALING.md) |
 | Exchange text and binary messages | [DataChannels](docs/DATA_CHANNELS.md) |
-| Send generated audio and receive PCM | [Shared audio](docs/SHARED_AUDIO.md) |
+| Send generated audio and play received audio | [Shared audio](docs/SHARED_AUDIO.md) |
 | Route messages between concurrent clients | [Server sessions](docs/SERVER_ROUTING.md) |
 | See what is finished and what comes next | [Roadmap](ROADMAP.md) |
 | Run the C++ and Blueprint lifecycle examples | [Lifecycle examples](docs/LIFECYCLE_EXAMPLES.md) |

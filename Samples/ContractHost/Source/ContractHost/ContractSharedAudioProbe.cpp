@@ -11,6 +11,13 @@
 #include "Misc/Parse.h"
 #include "Serialization/JsonSerializer.h"
 #include "UObject/StrongObjectPtr.h"
+#include "Components/AudioComponent.h"
+#include "Engine/Engine.h"
+#include "Engine/World.h"
+#if CONTRACTHOST_WITH_MEDIA
+#include "SimurghRTCMediaOperation.h"
+#include "SimurghRTCAudioPlayback.h"
+#endif
 #if CONTRACTHOST_WITH_DIRECT_SERVER
 #include "SimurghRTCDirectServer.h"
 #include "HttpServerModule.h"
@@ -46,6 +53,7 @@ void FContractAudioMeter::Add(const FSimurghRTCAudioFrame& Frame,double Frequenc
 }
 void UContractSharedAudioEndpoint::Begin()
 {
+    bPlayback=FParse::Param(FCommandLine::Get(),TEXT("SimurghRTCSharedAudioPlayback"));
     Started=FPlatformTime::Seconds(); Session=USimurghRTCSession::CreateSession(this);
     Session->OnTrackChanged.AddDynamic(this,&UContractSharedAudioEndpoint::Track);
     Session->OnAudioFrame.AddDynamic(this,&UContractSharedAudioEndpoint::Audio);
@@ -113,20 +121,60 @@ void UContractSharedAudioEndpoint::Update()
     }
     case 2: Op(USimurghRTCOperation::AttachSource(Session,Source),[this](const auto& R){Local=R.Track;Step=3;NextSend=FPlatformTime::Seconds();});break;
     case 3: {FSimurghRTCChannelOptions O;O.Label=TEXT("audio-control"); Op(USimurghRTCOperation::OpenChannel(Session,O),[this](const auto& R){Channel=R.Channel;Step=4;});break;}
-    case 4: if(Remote.IsValid()) Op(USimurghRTCOperation::SetDecodedFrameDelivery(Session,Remote,true),[this](const auto&){Step=5;});break;
+    case 4: if(Remote.IsValid()) Op(USimurghRTCOperation::SetDecodedFrameDelivery(Session,Remote,true),[this](const auto&){Step=bPlayback?50:5;});break;
+    case 50:
+#if CONTRACTHOST_WITH_MEDIA
+        PlaybackA=NewPlaybackTarget();
+        Op(USimurghRTCMediaOperation::BindAudio(Session,Remote,PlaybackA),[this](const auto&){Step=5;});
+#else
+        Error=TEXT("Client playback module is excluded.");
+#endif
+        break;
     case 5: Measure(0);Step=6;break;
     case 7: Op(USimurghRTCOperation::SetSourceMuted(Session,Source,true),[this](const auto&){Step=8;Measure(1);});break;
-    case 9: Op(USimurghRTCOperation::CreateGeneratedSource(Session,ESimurghRTCTrackKind::Audio),[this](const auto& R){OldSource=Source;Source=R.Source;Step=10;});break;
+    case 9:
+#if CONTRACTHOST_WITH_MEDIA
+        if(bPlayback && !PlaybackB)
+        {
+            CapturePlayback(PlaybackA,48000); PlaybackB=NewPlaybackTarget();
+            Op(USimurghRTCMediaOperation::BindAudio(Session,Remote,PlaybackB),[this](const auto&)
+            {
+                FAudioPlaybackSnapshot S;
+                if(PlaybackA->Sound || PlaybackA->IsPlaying() || GetAudioPlaybackSnapshot(PlaybackA,S)) Error=TEXT("Old playback component remains bound.");
+                ++PlaybackChecks;
+            });break;
+        }
+#endif
+        Op(USimurghRTCOperation::CreateGeneratedSource(Session,ESimurghRTCTrackKind::Audio),[this](const auto& R){OldSource=Source;Source=R.Source;Step=10;});break;
     case 10: Op(USimurghRTCOperation::ReplaceSource(Session,Local,Source),[this](const auto& R)
         {if(R.Track.Id!=Local.Id) Error=TEXT("Replacement changed track identity."); ++Checks;Step=11;});break;
     case 11: Op(USimurghRTCOperation::StopSource(Session,OldSource),[this](const auto&){Step=12;});break;
     case 12: Measure(2);Step=6;break;
-    case 13: Op(USimurghRTCOperation::SetDecodedFrameDelivery(Session,Remote,false),[this](const auto&){QuietFrames=Frames;QuietStarted=FPlatformTime::Seconds();Step=14;});break;
+    case 13: Op(USimurghRTCOperation::SetDecodedFrameDelivery(Session,Remote,false),[this](const auto&)
+        {
+#if CONTRACTHOST_WITH_MEDIA
+            FAudioPlaybackSnapshot S;if(bPlayback && GetAudioPlaybackSnapshot(PlaybackB,S)) QuietConsumed=S.ConsumedSamples;
+#endif
+            QuietFrames=Frames;QuietStarted=FPlatformTime::Seconds();Step=14;
+        });break;
     case 14:
         if(Frames!=QuietFrames) Error=TEXT("Decoded callbacks continued after disable.");
-        if(Now-QuietStarted>0.4) Op(USimurghRTCOperation::SetDecodedFrameDelivery(Session,Remote,true),[this](const auto&){++Checks;Step=15;});break;
+        if(Now-QuietStarted>0.4)
+        {
+#if CONTRACTHOST_WITH_MEDIA
+            if(bPlayback)
+            {
+                FAudioPlaybackSnapshot S;
+                if(!GetAudioPlaybackSnapshot(PlaybackB,S) || S.ConsumedSamples<QuietConsumed+4800) Error=TEXT("Playback stopped when PCM callbacks were disabled.");
+                ++PlaybackChecks;
+            }
+#endif
+            Op(USimurghRTCOperation::SetDecodedFrameDelivery(Session,Remote,true),[this](const auto&){++Checks;Step=15;});
+        }break;
     case 15: Measure(3);Step=6;break;
-    case 16: Op(USimurghRTCOperation::DetachTrack(Session,Local),[this](const auto&){Local={};Step=17;});break;
+    case 16:
+        if(bPlayback && !CheckPlaybackLifecycle()) break;
+        Op(USimurghRTCOperation::DetachTrack(Session,Local),[this](const auto&){Local={};Step=17;});break;
     case 17:
         if(Session->PushAudioFrame(Source,Tone(SentSamples,480,600)).Code!=ESimurghRTCErrorCode::InvalidState) Error=TEXT("Detached source accepted input.");
         Op(USimurghRTCOperation::AttachSource(Session,Source),[this](const auto& R){Local=R.Track;++Checks;Step=18;});break;
@@ -134,7 +182,17 @@ void UContractSharedAudioEndpoint::Update()
     case 19:
         if(Session->PushAudioFrame(Source,Tone(SentSamples,480,600)).Code!=ESimurghRTCErrorCode::InvalidState) Error=TEXT("Stopped source accepted input.");
         Op(USimurghRTCOperation::Disconnect(Session),[this](const auto&){++Checks;QuietFrames=Frames;Step=20;});break;
-    case 20: if(Frames!=QuietFrames) Error=TEXT("Audio callback after disconnect.");break;
+    case 20:
+        if(Frames!=QuietFrames) Error=TEXT("Audio callback after disconnect.");
+#if CONTRACTHOST_WITH_MEDIA
+        if(bPlayback && PlaybackStage==3)
+        {
+            FAudioPlaybackSnapshot S;
+            if(PlaybackC->Sound || PlaybackC->IsPlaying() || GetAudioPlaybackSnapshot(PlaybackC,S)) Error=TEXT("Disconnect retained the playback sink.");
+            ++PlaybackChecks;PlaybackStage=4;
+        }
+#endif
+        break;
     }
 }
 
@@ -153,7 +211,7 @@ public:
     ~FImpl()
     {
         FCoreDelegates::GetOnPostEngineInit().Remove(Init); FTSTicker::GetCoreTicker().RemoveTicker(Ticker);
-        if(End && End->Session) End->Session->Shutdown();
+        if(End) { if(End->Session) End->Session->Shutdown(); End->ReleasePlayback(); }
 #if CONTRACTHOST_WITH_DIRECT_SERVER
         if(Server) Server->Stop();
         if(bOwnsHttp) FHttpServerModule::Get().StopAllListeners();
@@ -207,7 +265,12 @@ public:
         auto J=MakeShared<FJsonObject>();J->SetNumberField(TEXT("schema"),1);J->SetStringField(TEXT("run_id"),RunId);
         J->SetNumberField(TEXT("pid"),FPlatformProcess::GetCurrentProcessId());J->SetBoolField(TEXT("server"),bServer);
         J->SetBoolField(TEXT("server_build"),UE_SERVER!=0);J->SetBoolField(TEXT("editor_build"),WITH_EDITOR!=0);
-        J->SetBoolField(TEXT("with_janus"),SIMURGHRTC_WITH_JANUS!=0);J->SetBoolField(TEXT("loopback_only"),true);J->SetBoolField(TEXT("audio_hardware_opened"),false);
+        J->SetBoolField(TEXT("with_janus"),SIMURGHRTC_WITH_JANUS!=0);J->SetBoolField(TEXT("loopback_only"),true);
+        J->SetBoolField(TEXT("audio_hardware_opened"),!bServer && End && End->bPlayback);
+        J->SetBoolField(TEXT("playback_enabled"),!bServer && End && End->bPlayback);
+        J->SetBoolField(TEXT("audible_output_tested"),false);
+        J->SetNumberField(TEXT("playback_checks"),bServer?0:End->PlaybackChecks);
+        J->SetArrayField(TEXT("playback_measurements"),bServer?TArray<TSharedPtr<FJsonValue>>{}:End->PlaybackMeasurements);
         J->SetStringField(TEXT("engine_version"),FEngineVersion::Current().ToString());J->SetStringField(TEXT("artifact_manifest_sha256"),FNativeRuntime::GetMobileArtifactSHA256());
         J->SetStringField(TEXT("error"),Error);J->SetNumberField(TEXT("phases"),bServer?PhasesPassed:End->PhasesPassed);
         J->SetNumberField(TEXT("minimum_correlation"),bServer?MinimumCorrelation:End->MinimumCorrelation);J->SetNumberField(TEXT("maximum_muted_rms"),MaximumSilence);
@@ -224,7 +287,8 @@ public:
 #if CONTRACTHOST_WITH_DIRECT_SERVER
         if(Server){const auto R=Server->GetSnapshot();J->SetNumberField(TEXT("server_live_peers"),R.LivePeers);J->SetNumberField(TEXT("server_closed"),R.Closed);}
 #endif
-        J->SetBoolField(TEXT("passed"),Error.IsEmpty() && QuietTicks>=8 && (bServer?PhasesPassed:End->PhasesPassed)==4);
+        J->SetBoolField(TEXT("passed"),Error.IsEmpty() && QuietTicks>=8 && (bServer?PhasesPassed:End->PhasesPassed)==4
+            && (bServer || !End->bPlayback || End->PlaybackChecks==4));
         UE_LOG(LogSharedAudioProbe,Display,TEXT("SIMURGHRTC_SHARED_AUDIO_REPORT %s"),*Json(J));
         FPlatformMisc::RequestExitWithStatus(false,J->GetBoolField(TEXT("passed"))?0:1);
     }

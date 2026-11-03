@@ -17,10 +17,15 @@ from run_mobile_probe import read_report
 MARKER = 'SIMURGHRTC_SHARED_AUDIO_REPORT '
 
 
-def validate(report, run_id, pid, manifest, server, with_janus):
+def validate_mixer_log(log):
+    for marker in ("Initializing audio mixer using platform API: 'CoreAudio'", 'Output buffers initialized:', 'Starting AudioMixerPlatformInterface::RunInternal()'):
+        a.require(marker in log, 'Missing Mac mixer startup evidence: '+marker)
+
+
+def validate(report, run_id, pid, manifest, server, with_janus, playback=False):
     a.require(type(report) is dict,'Missing shared audio report.')
     expected = dict(schema=1,run_id=run_id,pid=pid,server=server,server_build=server,editor_build=False,
-                    with_janus=with_janus,loopback_only=True,audio_hardware_opened=False,passed=True,error='',
+                    with_janus=with_janus,loopback_only=True,audio_hardware_opened=playback and not server,passed=True,error='',
                     phases=4,checks=0 if server else 4,pending_cleanup=0,
                     client_native_closed=0 if server else 1,client_remote_closed=0 if server else 1,
                     artifact_manifest_sha256=manifest)
@@ -39,9 +44,22 @@ def validate(report, run_id, pid, manifest, server, with_janus):
         a.require(row['correlation']<1.0001 and row['rms']<=1,'Out-of-range tone measurement.')
         if server and phase==1:a.require(row['rms']<.002,'Muted source was audible.')
         else:a.require(row['correlation']>.9 and row['rms']>.1,'Decoded tone is missing or incorrect.')
+    if playback and not server:
+        a.require(report.get('playback_enabled') is True and report.get('audible_output_tested') is False,'Missing muted real-mixer scope.')
+        a.require(type(report.get('playback_checks')) is int and report['playback_checks']==4,'Missing playback lifecycle checks.')
+        rows=report.get('playback_measurements')
+        a.require(type(rows) is list and len(rows)==3,'Expected three successive playback components.')
+        for index,row in enumerate(rows):
+            a.require(type(row) is dict,'Invalid playback measurement.')
+            for key in ('consumed_samples','callbacks','peak_queued_samples','dropped_samples','silence_samples'):
+                a.require(type(row.get(key)) is int and row[key]>=0,'Invalid playback counter: '+key)
+            a.require(row['consumed_samples']>=(4800 if index==2 else 48000),'Insufficient PCM consumed by the mixer.')
+            a.require(row['callbacks']>0 and row.get('callback_on_game_thread') is False,'Expected real mixer-thread consumption.')
+            a.require(0<row['peak_queued_samples']<=9600,'Playback queue exceeded its 200 ms bound.')
+            a.require(type(row.get('rms')) in (float,int) and math.isfinite(row['rms']) and .1<row['rms']<=1,'Mixer did not consume the decoded tone.')
 
 
-def run(sp,cp,server,client,out):
+def run(sp,cp,server,client,out,playback=False):
     a.require(not out.exists(),'Use a fresh evidence directory.')
     artifact=a.validate(sp/'Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64')
     a.require(artifact==a.validate(cp/'Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64'),'Native artifacts differ.')
@@ -51,9 +69,10 @@ def run(sp,cp,server,client,out):
         subprocess.run(['codesign','--verify','--deep','--strict',str(exe.parents[2])],check=True,capture_output=True)
         a.require(subprocess.check_output(['xcrun','lipo','-archs',str(exe)],text=True).strip()=='arm64','Expected ARM64 packages.')
     out.mkdir(parents=True);token=secrets.token_urlsafe(32);children=[];secret_files=[];run_id=str(uuid.uuid4())
-    result=dict(schema=1,passed=False,run_id=run_id,artifact=artifact,profile=profiles[1]['profile'],reports={},
+    result=dict(schema=1,passed=False,run_id=run_id,artifact=artifact,profile=profiles[1]['profile'],reports={},playback=playback,
                 server_executable_sha256=a.digest(server),client_executable_sha256=a.digest(client),
-                scope='Mac ARM64 packaged shared C++ API to dedicated Server; Direct HTTP signaling, generated Opus, local ICE; no hardware audio or Blueprint graph execution')
+                scope='Mac ARM64 packaged shared C++ API to dedicated Server; Direct HTTP signaling, generated Opus, local ICE; '+
+                      ('real Unreal mixer at zero volume; no microphone, audible-output qualification or Blueprint graph execution' if playback else 'no hardware audio or Blueprint graph execution'))
     with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
     try:
         for index,exe in enumerate((server,client)):
@@ -62,7 +81,8 @@ def run(sp,cp,server,client,out):
             directory.mkdir(parents=True,exist_ok=False);secret=directory/'token'
             with secret.open('x') as stream:secret.chmod(0o600);stream.write(token)
             secret_files.append(secret)
-            command=[str(exe),'/Engine/Maps/Entry','-nullrhi','-nosound','-unattended','-stdout','-FullStdOutLogOutput',
+            mode=['-windowed','-ResX=320','-ResY=240','-SimurghRTCSharedAudioPlayback'] if playback and index==1 else ['-nullrhi','-nosound']
+            command=[str(exe),'/Engine/Maps/Entry',*mode,'-unattended','-stdout','-FullStdOutLogOutput',
                      '-UserDir='+str(directory),'-SimurghRTCSharedAudioProbe','-SimurghRTCSessionLoopbackProbe',
                      '-SimurghRTCSharedAudioRunId='+rid,'-SimurghRTCSharedAudioTokenFile='+str(secret)]
             command+=['-SimurghRTCSharedAudioServer','-SimurghRTCSharedAudioPort='+str(port)] if index==0 else ['-SimurghRTCSharedAudioEndpoint=http://127.0.0.1:'+str(port)+'/simurghrtc/v1/signal']
@@ -79,8 +99,10 @@ def run(sp,cp,server,client,out):
             result['exit_codes'][c['role']]=c['process'].wait(timeout=110)
             result['reports'][c['role']]=read_report(c['log'].read_text(errors='replace'),c['run_id'],MARKER)
         for index,c in enumerate(children):
-            validate(result['reports'][c['role']],c['run_id'],c['process'].pid,artifact['manifest_sha256'],index==0,profiles[index]['with_janus'])
+            validate(result['reports'][c['role']],c['run_id'],c['process'].pid,artifact['manifest_sha256'],index==0,profiles[index]['with_janus'],playback)
             a.require(result['exit_codes'][c['role']]==0,'Audio process failed: '+c['role'])
+            if playback and index==1:
+                validate_mixer_log(c['log'].read_text(errors='replace'));result['audio_platform']='CoreAudio'
         a.require(children[0]['process'].pid!=children[1]['process'].pid,'Expected separate processes.')
         a.require(a.digest(server)==result['server_executable_sha256'] and a.digest(client)==result['client_executable_sha256'],'Package changed during validation.')
         result['passed']=True
@@ -101,5 +123,6 @@ def run(sp,cp,server,client,out):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('server-project','client-project','server-executable','client-executable','output'):parser.add_argument('--'+name,type=Path,required=True)
-    args=parser.parse_args();result=run(*[getattr(args,n).resolve() for n in ('server_project','client_project','server_executable','client_executable','output')])
+    parser.add_argument('--playback',action='store_true',help='Run the client with Metal and the real Unreal audio mixer at zero volume.')
+    args=parser.parse_args();result=run(*[getattr(args,n).resolve() for n in ('server_project','client_project','server_executable','client_executable','output')],playback=args.playback)
     print(json.dumps(dict(passed=result['passed'],error=result.get('error'))));raise SystemExit(0 if result['passed'] else 1)

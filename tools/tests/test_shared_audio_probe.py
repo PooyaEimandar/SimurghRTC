@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from run_shared_audio_probe import validate
+from run_shared_audio_probe import validate, validate_mixer_log
 
 class SharedAudioReportTests(unittest.TestCase):
     def report(self,server=False):
@@ -14,6 +14,28 @@ class SharedAudioReportTests(unittest.TestCase):
         if server:r.update(server_live_peers=0,server_closed=1)
         return r
     def check(self,r,server=False):validate(r,'run',123,'sha',server,False)
+    def playback(self):
+        r=self.report();r.update(audio_hardware_opened=True,playback_enabled=True,audible_output_tested=False,playback_checks=4)
+        r['playback_measurements']=[dict(consumed_samples=96000,callbacks=100,peak_queued_samples=4800,dropped_samples=0,silence_samples=512,rms=.176,callback_on_game_thread=False) for _ in range(3)]
+        return r
+    def test_accepts_real_mixer_playback(self):
+        validate(self.playback(),'run',123,'sha',False,False,True)
+    def test_requires_mac_mixer_startup(self):
+        lines=["Initializing audio mixer using platform API: 'CoreAudio'",'Output buffers initialized: Frames=1024','Starting AudioMixerPlatformInterface::RunInternal()']
+        validate_mixer_log('\n'.join(lines))
+        for removed in range(3):
+            with self.assertRaises(ValueError):validate_mixer_log('\n'.join(line for index,line in enumerate(lines) if index!=removed))
+        with self.assertRaises(ValueError):validate_mixer_log('\n'.join(lines).replace('CoreAudio','Null'))
+    def test_rejects_headless_report_as_playback(self):
+        with self.assertRaises(ValueError):validate(self.report(),'run',123,'sha',False,False,True)
+    def test_rejects_incomplete_playback_lifecycle(self):
+        for key,value in [('playback_enabled',False),('audible_output_tested',True),('playback_checks',3),('playback_measurements',[])]:
+            with self.subTest(key=key),self.assertRaises(ValueError):
+                r=self.playback();r[key]=value;validate(r,'run',123,'sha',False,False,True)
+    def test_rejects_silent_unbounded_or_game_thread_playback(self):
+        for key,value in [('consumed_samples',0),('callbacks',0),('peak_queued_samples',9601),('peak_queued_samples',0),('rms',0),('rms',float('nan')),('callback_on_game_thread',True),('consumed_samples',True)]:
+            with self.subTest(key=key),self.assertRaises(ValueError):
+                r=self.playback();r['playback_measurements'][1][key]=value;validate(r,'run',123,'sha',False,False,True)
     def test_rejects_missing_report(self):
         with self.assertRaises(ValueError):self.check(None)
     def test_accepts_complete_two_way_measurements(self):

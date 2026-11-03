@@ -15,6 +15,9 @@ public class ContractHost : ModuleRules
         using FileStream ProfileStream = File.OpenRead(ProfilePath);
         using JsonDocument Profile = JsonDocument.ParseAsync(ProfileStream).GetAwaiter().GetResult();
         if (Profile.RootElement.GetProperty("with_direct").GetBoolean()) PrivateDependencyModuleNames.Add("SimurghRTCDirect");
+        bool ClientMedia = Profile.RootElement.GetProperty("with_media").GetBoolean() && Target.Type != TargetType.Server;
+        if (ClientMedia) PrivateDependencyModuleNames.Add("SimurghRTCMedia");
+        PrivateDefinitions.Add("CONTRACTHOST_WITH_MEDIA=" + (ClientMedia ? "1" : "0"));
         bool DirectServer = Profile.RootElement.GetProperty("with_server").GetBoolean() && (Target.Type == TargetType.Server || Target.Type == TargetType.Editor);
         if (DirectServer) PrivateDependencyModuleNames.AddRange(new string[] { "SimurghRTCServer", "HTTPServer" });
         PrivateDefinitions.Add("CONTRACTHOST_WITH_DIRECT_SERVER=" + (DirectServer ? "1" : "0"));

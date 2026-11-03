@@ -42,4 +42,10 @@ public:
     static USimurghRTCMediaOperation* BindVideo(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track, UTextureRenderTarget2D* Target);
     UFUNCTION(BlueprintCallable, Category="SimurghRTC|Media", meta=(BlueprintInternalUseOnly="true"))
     static USimurghRTCMediaOperation* BindAudio(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track, UAudioComponent* Target);
+protected:
+    virtual FSimurghRTCError ExecuteExtension(USimurghRTCSession& Session, FSimurghRTCOperationResult& Out) override;
+private:
+    FSimurghRTCTrackHandle AudioTrack;
+    TWeakObjectPtr<UAudioComponent> AudioTarget;
+    bool bBindAudio = false;
 };
