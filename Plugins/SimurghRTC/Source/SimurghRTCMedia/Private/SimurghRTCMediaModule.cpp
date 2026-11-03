@@ -1,5 +1,6 @@
 // Copyright SimurghRTC contributors. SPDX-License-Identifier: Apache-2.0
 #include "Modules/ModuleManager.h"
+#include "SimurghRTCMicrophoneInternal.h"
 #include "SimurghRTCNativeMediaProbe.h"
 #include "SimurghRTCNativeRuntime.h"
 #include "SimurghRTCProbeSoundWave.h"
@@ -35,6 +36,7 @@ class FSimurghRTCMediaModule final : public IModuleInterface
 {
     FDelegateHandle InitHandle;
     FDelegateHandle ExitHandle;
+    FDelegateHandle CaptureExitHandle;
     FTSTicker::FDelegateHandle TickHandle;
     TStrongObjectPtr<UTexture2D> Texture;
     TStrongObjectPtr<UTextureRenderTarget2D> Target;
@@ -241,17 +243,22 @@ class FSimurghRTCMediaModule final : public IModuleInterface
 public:
     virtual void StartupModule() override
     {
+        SimurghRTC::StartMicrophoneService();
+        CaptureExitHandle = FCoreDelegates::OnEnginePreExit.AddStatic(&SimurghRTC::StopMicrophoneService);
         if (!FParse::Param(FCommandLine::Get(), TEXT("SimurghRTCMediaProbe"))) return;
         InitHandle = FCoreDelegates::OnFEngineLoopInitComplete.AddRaw(this, &FSimurghRTCMediaModule::Start);
         ExitHandle = FCoreDelegates::OnEnginePreExit.AddRaw(this, &FSimurghRTCMediaModule::Cleanup);
     }
     virtual void ShutdownModule() override
     {
+        FCoreDelegates::OnEnginePreExit.Remove(CaptureExitHandle);
+        SimurghRTC::StopMicrophoneService();
         FCoreDelegates::OnFEngineLoopInitComplete.Remove(InitHandle);
         FCoreDelegates::OnEnginePreExit.Remove(ExitHandle);
         FTSTicker::GetCoreTicker().RemoveTicker(TickHandle);
         Cleanup();
     }
+    virtual bool SupportsDynamicReloading() override { return false; }
 };
 
 IMPLEMENT_MODULE(FSimurghRTCMediaModule, SimurghRTCMedia)

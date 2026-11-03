@@ -20,6 +20,29 @@ class SharedAudioReportTests(unittest.TestCase):
         return r
     def test_accepts_real_mixer_playback(self):
         validate(self.playback(),'run',123,'sha',False,False,True)
+    def microphone(self,server=False):
+        r=self.report(True) if server else self.playback()
+        r['microphone_enabled']=True
+        r['measurements'][0].update(correlation=.05,rms=.003)
+        r['measurements'][1].update(correlation=0,rms=0)
+        if not server:
+            r['playback_measurements'][0]['rms']=.002
+            r['microphone']=dict(workers=0,opened=1,closed=1,callbacks=900,input_frames=432000,
+                                 peak_queued_samples=960,dropped_samples=0,callback_on_game_thread=False)
+        return r
+    def test_accepts_microphone_echo_with_cleanup(self):
+        for server in (False,True):validate(self.microphone(server),'run',123,'sha',server,False,True,True)
+    def test_rejects_generated_fixture_as_capture(self):
+        with self.assertRaises(ValueError):validate(self.playback(),'run',123,'sha',False,False,True,True)
+    def test_rejects_capture_leaks_false_callbacks_and_overflow(self):
+        for key,value in [('workers',1),('opened',0),('closed',0),('callback_on_game_thread',True),('callbacks',0),('input_frames',1),('peak_queued_samples',9601),('dropped_samples',-1)]:
+            with self.subTest(key=key),self.assertRaises(ValueError):
+                r=self.microphone();r['microphone'][key]=value;validate(r,'run',123,'sha',False,False,True,True)
+    def test_rejects_silent_microphone_and_unmuted_echo(self):
+        for server in (False,True):
+            for phase,rms in ((0,0),(1,.01)):
+                with self.subTest(server=server,phase=phase),self.assertRaises(ValueError):
+                    r=self.microphone(server);r['measurements'][phase]['rms']=rms;validate(r,'run',123,'sha',server,False,True,True)
     def test_requires_mac_mixer_startup(self):
         lines=["Initializing audio mixer using platform API: 'CoreAudio'",'Output buffers initialized: Frames=1024','Starting AudioMixerPlatformInterface::RunInternal()']
         validate_mixer_log('\n'.join(lines))

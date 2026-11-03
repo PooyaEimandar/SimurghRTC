@@ -7,7 +7,7 @@
 #include "SimurghRTCSession.generated.h"
 
 class USimurghRTCOperation;
-namespace SimurghRTC { class ISessionTransport; class ISessionAudioSink; }
+namespace SimurghRTC { class ISessionTransport; class ISessionAudioSink; class ISessionAudioSource; }
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimurghRTCSessionStateEvent, ESimurghRTCSessionState, State);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimurghRTCDataEvent, const FSimurghRTCDataMessage&, Message);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSimurghRTCChannelEvent, const FSimurghRTCChannelInfo&, Channel);
@@ -62,6 +62,7 @@ public:
     // Internal optional client-media adapter, independent of public decoded-frame callbacks.
     FSimurghRTCError ValidateAudioSink(FSimurghRTCTrackHandle Track) const;
     FSimurghRTCError SetAudioSink(FSimurghRTCTrackHandle Track, TSharedPtr<SimurghRTC::ISessionAudioSink> Sink);
+    FSimurghRTCError AddAudioSource(TSharedPtr<SimurghRTC::ISessionAudioSource> Capture, FSimurghRTCSourceHandle& Out);
     UFUNCTION(BlueprintPure, Category="SimurghRTC") ESimurghRTCProvider GetProvider() const { return Provider; }
 
 private:
@@ -77,7 +78,14 @@ private:
     void TickAudio();
     FSimurghRTCError ExecuteAudioOperation(FName Name, ESimurghRTCTrackKind Kind,
         FSimurghRTCSourceHandle Source, FSimurghRTCTrackHandle Track, bool bEnabled, FSimurghRTCOperationResult& Out);
-    struct FAudioSource { bool bMuted = false; int64 LastTimestamp = -1; };
+    void TickCaptureSources();
+    void UpdateCaptureSources();
+    struct FAudioSource
+    {
+        bool bMuted = false;
+        int64 LastTimestamp = -1;
+        TSharedPtr<SimurghRTC::ISessionAudioSource> Capture;
+    };
     TMap<FGuid, FAudioSource> AudioSources;
     FSimurghRTCTrackInfo LocalAudio, RemoteAudio;
     bool bDeliverAudio = false, bRemoteAudioDetached = false;

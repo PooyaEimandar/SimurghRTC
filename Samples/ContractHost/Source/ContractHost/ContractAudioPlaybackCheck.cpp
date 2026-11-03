@@ -38,7 +38,8 @@ void UContractSharedAudioEndpoint::CapturePlayback(UAudioComponent* Target, int3
     Row->SetNumberField(TEXT("rms"), Rms);
     Row->SetBoolField(TEXT("callback_on_game_thread"), S.bCallbackOnGameThread);
     PlaybackMeasurements.Add(MakeShared<FJsonValueObject>(Row));
-    if (S.ConsumedSamples < uint64(MinimumSamples) || S.Callbacks == 0 || S.bCallbackOnGameThread || Rms < 0.1
+    const double MinimumRms = bMicrophone && Target == PlaybackA ? .00001 : .1;
+    if (S.ConsumedSamples < uint64(MinimumSamples) || S.Callbacks == 0 || S.bCallbackOnGameThread || Rms < MinimumRms
         || S.PeakQueuedSamples > S.CapacitySamples || S.bClosed) Error = TEXT("The Unreal mixer did not consume valid bounded decoded PCM.");
 #endif
 }

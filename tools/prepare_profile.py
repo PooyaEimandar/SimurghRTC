@@ -89,7 +89,7 @@ def stage(profile: str, destination: Path, artifacts: list[Path] | None = None) 
         shutil.copytree(artifact, installed)
         mobile_artifacts.validate(installed)
     shutil.copy2(ROOT/'LICENSE', target/'LICENSE')
-    for name in ['Source','Config']:
+    for name in ['Source','Config','Build']:
         shutil.copytree(host/name, destination/name)
     if (host/'Content').is_dir():
         content = host/'Content'

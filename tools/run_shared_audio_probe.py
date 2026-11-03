@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure generated Opus audio between packaged Unreal Game and dedicated Server processes."""
+"""Measure generated or microphone Opus audio between packaged Unreal Game and Server processes."""
 from __future__ import annotations
 import argparse
 import json
@@ -22,14 +22,16 @@ def validate_mixer_log(log):
         a.require(marker in log, 'Missing Mac mixer startup evidence: '+marker)
 
 
-def validate(report, run_id, pid, manifest, server, with_janus, playback=False):
+def validate(report, run_id, pid, manifest, server, with_janus, playback=False, microphone=False):
     a.require(type(report) is dict,'Missing shared audio report.')
     expected = dict(schema=1,run_id=run_id,pid=pid,server=server,server_build=server,editor_build=False,
-                    with_janus=with_janus,loopback_only=True,audio_hardware_opened=playback and not server,passed=True,error='',
+                    with_janus=with_janus,loopback_only=True,audio_hardware_opened=(playback or microphone) and not server,passed=True,error='',
                     phases=4,checks=0 if server else 4,pending_cleanup=0,
                     client_native_closed=0 if server else 1,client_remote_closed=0 if server else 1,
                     artifact_manifest_sha256=manifest)
     if server: expected.update(server_live_peers=0,server_closed=1)
+    if microphone: expected['microphone_enabled']=True
+    else:a.require(report.get('microphone_enabled',False) is False,'Unexpected capture mode.')
     for key,value in expected.items():
         a.require(type(report.get(key)) is type(value) and report[key]==value,'Unexpected shared audio report: '+key)
     a.require(report.get('engine_version','').startswith('5.8.3-'),'Expected Unreal 5.8.3.')
@@ -42,7 +44,8 @@ def validate(report, run_id, pid, manifest, server, with_janus, playback=False):
         for key in ('correlation','rms'):
             a.require(type(row.get(key)) in (int,float) and math.isfinite(row[key]) and row[key]>=0,'Invalid tone measurement: '+key)
         a.require(row['correlation']<1.0001 and row['rms']<=1,'Out-of-range tone measurement.')
-        if server and phase==1:a.require(row['rms']<.002,'Muted source was audible.')
+        if microphone and phase==0:a.require(row['rms']>.00001,'Decoded microphone signal is missing.')
+        elif (server or microphone) and phase==1:a.require(row['rms']<.002,'Muted source was audible.')
         else:a.require(row['correlation']>.9 and row['rms']>.1,'Decoded tone is missing or incorrect.')
     if playback and not server:
         a.require(report.get('playback_enabled') is True and report.get('audible_output_tested') is False,'Missing muted real-mixer scope.')
@@ -56,10 +59,20 @@ def validate(report, run_id, pid, manifest, server, with_janus, playback=False):
             a.require(row['consumed_samples']>=(4800 if index==2 else 48000),'Insufficient PCM consumed by the mixer.')
             a.require(row['callbacks']>0 and row.get('callback_on_game_thread') is False,'Expected real mixer-thread consumption.')
             a.require(0<row['peak_queued_samples']<=9600,'Playback queue exceeded its 200 ms bound.')
-            a.require(type(row.get('rms')) in (float,int) and math.isfinite(row['rms']) and .1<row['rms']<=1,'Mixer did not consume the decoded tone.')
+            minimum=.00001 if microphone and index==0 else .1
+            a.require(type(row.get('rms')) in (float,int) and math.isfinite(row['rms']) and minimum<row['rms']<=1,'Mixer did not consume decoded audio.')
+    if microphone and not server:
+        mic=report.get('microphone')
+        a.require(type(mic) is dict,'Missing capture diagnostics.')
+        for key,value in dict(workers=0,opened=1,closed=1,callback_on_game_thread=False).items():
+            a.require(type(mic.get(key)) is type(value) and mic[key]==value,'Unexpected capture lifecycle: '+key)
+        for key in ('callbacks','input_frames','peak_queued_samples','dropped_samples'):
+            a.require(type(mic.get(key)) is int and mic[key]>=0,'Invalid microphone counter: '+key)
+        a.require(mic['callbacks']>0 and mic['input_frames']>=48000,'Missing device callback evidence.')
+        a.require(0<mic['peak_queued_samples']<=9600,'Capture queue exceeded its 200 ms bound.')
 
 
-def run(sp,cp,server,client,out,playback=False):
+def run(sp,cp,server,client,out,playback=False,microphone=False):
     a.require(not out.exists(),'Use a fresh evidence directory.')
     artifact=a.validate(sp/'Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64')
     a.require(artifact==a.validate(cp/'Plugins/SimurghRTC/ThirdParty/WebRTC/Mac/arm64'),'Native artifacts differ.')
@@ -69,10 +82,12 @@ def run(sp,cp,server,client,out,playback=False):
         subprocess.run(['codesign','--verify','--deep','--strict',str(exe.parents[2])],check=True,capture_output=True)
         a.require(subprocess.check_output(['xcrun','lipo','-archs',str(exe)],text=True).strip()=='arm64','Expected ARM64 packages.')
     out.mkdir(parents=True);token=secrets.token_urlsafe(32);children=[];secret_files=[];run_id=str(uuid.uuid4())
-    result=dict(schema=1,passed=False,run_id=run_id,artifact=artifact,profile=profiles[1]['profile'],reports={},playback=playback,
+    result=dict(schema=1,passed=False,run_id=run_id,artifact=artifact,profile=profiles[1]['profile'],reports={},playback=playback,microphone=microphone,
                 server_executable_sha256=a.digest(server),client_executable_sha256=a.digest(client),
                 scope='Mac ARM64 packaged shared C++ API to dedicated Server; Direct HTTP signaling, generated Opus, local ICE; '+
                       ('real Unreal mixer at zero volume; no microphone, audible-output qualification or Blueprint graph execution' if playback else 'no hardware audio or Blueprint graph execution'))
+    if microphone:
+        result['scope']='Mac ARM64 microphone through shared Direct Call session to a separate dedicated Server, decoded PCM echo and '+('Unreal mixer at zero volume' if playback else 'decoded callbacks')+'; no raw recording, AEC or audible-quality acceptance'
     with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
     try:
         for index,exe in enumerate((server,client)):
@@ -86,6 +101,7 @@ def run(sp,cp,server,client,out,playback=False):
                      '-UserDir='+str(directory),'-SimurghRTCSharedAudioProbe','-SimurghRTCSessionLoopbackProbe',
                      '-SimurghRTCSharedAudioRunId='+rid,'-SimurghRTCSharedAudioTokenFile='+str(secret)]
             command+=['-SimurghRTCSharedAudioServer','-SimurghRTCSharedAudioPort='+str(port)] if index==0 else ['-SimurghRTCSharedAudioEndpoint=http://127.0.0.1:'+str(port)+'/simurghrtc/v1/signal']
+            if microphone:command+=['-SimurghRTCSharedAudioMicrophone']
             (out/(role+'-command.json')).write_text(json.dumps(command,indent=2)+'\n');log=out/(role+'.log')
             with log.open('w') as stream:process=subprocess.Popen(command,stdout=stream,stderr=subprocess.STDOUT)
             children.append(dict(process=process,role=role,run_id=rid,log=log))
@@ -95,11 +111,20 @@ def run(sp,cp,server,client,out,playback=False):
                     a.require(process.poll() is None,'Server exited before readiness.')
                     a.require(time.monotonic()<deadline,'Server readiness timed out.');time.sleep(.1)
         result['exit_codes']={}
+        deadline=time.monotonic()+(180 if microphone else 110)
+        while any(c['process'].poll() is None for c in children):
+            # A denied permission or crashed client must not leave its Server waiting for the full deadline.
+            if any(c['process'].poll() not in (None,0) for c in children):break
+            a.require(time.monotonic()<deadline,'Audio process deadline expired.')
+            time.sleep(.1)
         for c in children:
-            result['exit_codes'][c['role']]=c['process'].wait(timeout=110)
+            result['exit_codes'][c['role']]=c['process'].poll()
             result['reports'][c['role']]=read_report(c['log'].read_text(errors='replace'),c['run_id'],MARKER)
+        for c in children:
+            if result['exit_codes'][c['role']] not in (None,0):
+                raise ValueError('Audio process failed: '+c['role'])
         for index,c in enumerate(children):
-            validate(result['reports'][c['role']],c['run_id'],c['process'].pid,artifact['manifest_sha256'],index==0,profiles[index]['with_janus'],playback)
+            validate(result['reports'][c['role']],c['run_id'],c['process'].pid,artifact['manifest_sha256'],index==0,profiles[index]['with_janus'],playback,microphone)
             a.require(result['exit_codes'][c['role']]==0,'Audio process failed: '+c['role'])
             if playback and index==1:
                 validate_mixer_log(c['log'].read_text(errors='replace'));result['audio_platform']='CoreAudio'
@@ -124,5 +149,6 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('server-project','client-project','server-executable','client-executable','output'):parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--playback',action='store_true',help='Run the client with Metal and the real Unreal audio mixer at zero volume.')
-    args=parser.parse_args();result=run(*[getattr(args,n).resolve() for n in ('server_project','client_project','server_executable','client_executable','output')],playback=args.playback)
+    parser.add_argument('--microphone',action='store_true',help='Explicitly request Mac microphone access; send captured audio to a local Server for PCM echo.')
+    args=parser.parse_args();result=run(*[getattr(args,n).resolve() for n in ('server_project','client_project','server_executable','client_executable','output')],playback=args.playback,microphone=args.microphone)
     print(json.dumps(dict(passed=result['passed'],error=result.get('error'))));raise SystemExit(0 if result['passed'] else 1)

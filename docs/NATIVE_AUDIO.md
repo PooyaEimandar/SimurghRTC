@@ -2,7 +2,7 @@
 
 SR-201 starts M2 with generated PCM sent through real WebRTC audio tracks. Two peers negotiate Opus, exchange encrypted audio over local ICE, and receive decoded PCM. The path runs without a microphone, speaker, renderer or Unreal audio device.
 
-This transport foundation also backs the [shared generated-audio API](SHARED_AUDIO.md), including Direct HTTP negotiation, source controls, decoded PCM delivery and optional Unreal mixer playback. Microphone capture, echo-cancellation integration and audible quality acceptance remain pending. M1's remaining acceptance gaps stay tracked in the [roadmap](../ROADMAP.md).
+This transport foundation also backs the [shared audio API](SHARED_AUDIO.md), including Direct HTTP negotiation, source controls, decoded PCM delivery and optional Unreal mixer playback. Mac microphone capture now feeds this path. Mobile capture, echo-cancellation integration and audible quality acceptance remain pending. M1's remaining acceptance gaps stay tracked in the [roadmap](../ROADMAP.md).
 
 ## What works
 

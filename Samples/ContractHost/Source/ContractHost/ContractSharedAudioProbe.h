@@ -26,7 +26,7 @@ public:
     UPROPERTY(Transient) TObjectPtr<UAudioComponent> PlaybackA;
     UPROPERTY(Transient) TObjectPtr<UAudioComponent> PlaybackB;
     UPROPERTY(Transient) TObjectPtr<UAudioComponent> PlaybackC;
-    bool bPlayback = false;
+    bool bPlayback = false, bMicrophone = false;
     int32 PlaybackChecks = 0, PlaybackStage = 0;
     uint64 QuietConsumed = 0;
     TArray<TSharedPtr<FJsonValue>> PlaybackMeasurements;

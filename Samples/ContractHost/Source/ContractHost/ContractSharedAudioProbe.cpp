@@ -17,6 +17,7 @@
 #if CONTRACTHOST_WITH_MEDIA
 #include "SimurghRTCMediaOperation.h"
 #include "SimurghRTCAudioPlayback.h"
+#include "SimurghRTCMicrophone.h"
 #endif
 #if CONTRACTHOST_WITH_DIRECT_SERVER
 #include "SimurghRTCDirectServer.h"
@@ -39,6 +40,8 @@ FSimurghRTCAudioFrame Tone(int64 Sample, int32 Count, double Frequency)
 }
 bool Good(const FContractAudioMeter& M, bool Silent)
 { return M.Samples >= 48000 && (Silent ? M.Rms()<0.002 : M.Rms()>0.1 && M.Correlation()>0.9); }
+bool GoodMicrophone(const FContractAudioMeter& M, int32 Phase)
+{ return Phase == 0 ? M.Samples >= 48000 && M.Rms() > .00001 : Good(M, Phase == 1); }
 }
 void FContractAudioMeter::Add(const FSimurghRTCAudioFrame& Frame,double Frequency)
 {
@@ -54,6 +57,7 @@ void FContractAudioMeter::Add(const FSimurghRTCAudioFrame& Frame,double Frequenc
 void UContractSharedAudioEndpoint::Begin()
 {
     bPlayback=FParse::Param(FCommandLine::Get(),TEXT("SimurghRTCSharedAudioPlayback"));
+    bMicrophone=FParse::Param(FCommandLine::Get(),TEXT("SimurghRTCSharedAudioMicrophone"));
     Started=FPlatformTime::Seconds(); Session=USimurghRTCSession::CreateSession(this);
     Session->OnTrackChanged.AddDynamic(this,&UContractSharedAudioEndpoint::Track);
     Session->OnAudioFrame.AddDynamic(this,&UContractSharedAudioEndpoint::Audio);
@@ -76,7 +80,7 @@ void UContractSharedAudioEndpoint::Audio(FSimurghRTCTrackHandle Handle,const FSi
 {
     if(!IsInGameThread() || Handle.Id!=Remote.Id) { Error=TEXT("Wrong audio callback owner/thread."); return; }
     ++Frames;
-    if(Phase>=0 && FPlatformTime::Seconds()-PhaseStarted>=1) Meter.Add(Frame,800);
+    if(Phase>=0 && FPlatformTime::Seconds()-PhaseStarted>=1) Meter.Add(Frame,bMicrophone?600:800);
 }
 void UContractSharedAudioEndpoint::Measure(int32 Number)
 {
@@ -90,7 +94,8 @@ void UContractSharedAudioEndpoint::Message(const FSimurghRTCDataMessage& Value)
     if(Value.Kind!=ESimurghRTCMessageKind::Text || Value.Channel.Id!=Channel.Id
         || !FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Value.Text),J) || !J.IsValid()
         || !J->HasTypedField<EJson::Number>(TEXT("phase")) || int32(J->GetNumberField(TEXT("phase")))!=Phase
-        || !J->HasTypedField<EJson::Boolean>(TEXT("passed")) || !J->GetBoolField(TEXT("passed")) || !Good(Meter,false))
+        || !J->HasTypedField<EJson::Boolean>(TEXT("passed")) || !J->GetBoolField(TEXT("passed"))
+        || !(bMicrophone?GoodMicrophone(Meter,Phase):Good(Meter,false)))
     { Error=FString::Printf(TEXT("Tone phase %d failed: local samples=%lld corr=%f rms=%f; remote=%s"),Phase,Meter.Samples,Meter.Correlation(),Meter.Rms(),*Value.Text); return; }
     MinimumCorrelation=FMath::Min(MinimumCorrelation,Meter.Correlation()); Measurements.Add(Meter); ++PhasesPassed;
     Step=Phase==0?7:Phase==1?9:Phase==2?13:16; Phase=-1;
@@ -98,10 +103,10 @@ void UContractSharedAudioEndpoint::Message(const FSimurghRTCDataMessage& Value)
 void UContractSharedAudioEndpoint::Update()
 {
     const double Now=FPlatformTime::Seconds();
-    if(Now-Started>70) { Error=TEXT("Shared audio client deadline expired."); return; }
+    if(Now-Started>(bMicrophone?140:70)) { Error=TEXT("Shared audio client deadline expired."); return; }
     if(!Error.IsEmpty()) return;
     if(Session->GetState()==ESimurghRTCSessionState::Failed) { Error=TEXT("Shared audio connection failed."); return; }
-    for(int32 Batch=0;Batch<10 && Local.IsValid() && Step<19 && Step!=8 && Now>=NextSend && Session->GetState()==ESimurghRTCSessionState::Connected;++Batch)
+    for(int32 Batch=0;Batch<10 && (!bMicrophone || Checks>=1) && Local.IsValid() && Step<19 && Step!=8 && Now>=NextSend && Session->GetState()==ESimurghRTCSessionState::Connected;++Batch)
     {
         // 7 ms + 13 ms proves arbitrary complete sample-frame chunking into 10 ms blocks.
         const int32 Count=SentSamples%960==0?336:624;
@@ -112,7 +117,19 @@ void UContractSharedAudioEndpoint::Update()
     if(Pending) return;
     switch(Step)
     {
-    case 0: Op(USimurghRTCOperation::CreateGeneratedSource(Session,ESimurghRTCTrackKind::Audio),[this](const auto& R){Source=R.Source;Step=1;});break;
+    case 0:
+#if CONTRACTHOST_WITH_MEDIA
+        if(bMicrophone)
+        {
+            // Discovering devices never requests permission or opens a capture stream.
+            TArray<FSimurghRTCDeviceInfo> Devices;
+            const auto E=USimurghRTCMediaOperation::GetDevices(ESimurghRTCSourceKind::Microphone,Devices);
+            if(E.IsError() || Devices.IsEmpty()) {Error=TEXT("No microphone available for the packaged probe.");break;}
+            UE_LOG(LogSharedAudioProbe,Display,TEXT("SIMURGHRTC_MICROPHONE_PERMISSION_REQUEST"));
+            Op(USimurghRTCMediaOperation::CreateSource(Session,{}),[this](const auto& R){Source=R.Source;Step=1;});break;
+        }
+#endif
+        Op(USimurghRTCOperation::CreateGeneratedSource(Session,ESimurghRTCTrackKind::Audio),[this](const auto& R){Source=R.Source;Step=1;});break;
     case 1:
     {
         FSimurghRTCSessionConfig C; C.Endpoint=Endpoint; C.AccessToken=Token; C.LocalIdentity=TEXT("shared-audio-client");
@@ -149,7 +166,11 @@ void UContractSharedAudioEndpoint::Update()
     case 10: Op(USimurghRTCOperation::ReplaceSource(Session,Local,Source),[this](const auto& R)
         {if(R.Track.Id!=Local.Id) Error=TEXT("Replacement changed track identity."); ++Checks;Step=11;});break;
     case 11: Op(USimurghRTCOperation::StopSource(Session,OldSource),[this](const auto&){Step=12;});break;
-    case 12: Measure(2);Step=6;break;
+    case 12:
+#if CONTRACTHOST_WITH_MEDIA
+        if(bMicrophone && GetMicrophoneSnapshot().Workers) break;
+#endif
+        Measure(2);Step=6;break;
     case 13: Op(USimurghRTCOperation::SetDecodedFrameDelivery(Session,Remote,false),[this](const auto&)
         {
 #if CONTRACTHOST_WITH_MEDIA
@@ -202,7 +223,7 @@ public:
     FDelegateHandle Init; FTSTicker::FDelegateHandle Ticker;
     TStrongObjectPtr<UContractSharedAudioEndpoint> End;
     FString RunId,Token,Endpoint,Error;
-    bool bServer=false,bReported=false,bServerClosing=false,bOwnsHttp=false; int32 Port=0,Phase=-1,PhasesPassed=0,QuietTicks=0;
+    bool bServer=false,bReported=false,bServerClosing=false,bOwnsHttp=false,bMicrophone=false; int32 Port=0,Phase=-1,PhasesPassed=0,QuietTicks=0;
     double Started=0,NextSend=0,PhaseStarted=0,MinimumCorrelation=1,MaximumSilence=0;
     int64 SentSamples=0; FContractAudioMeter Meter; TArray<FContractAudioMeter> Measurements;
 #if CONTRACTHOST_WITH_DIRECT_SERVER
@@ -266,7 +287,20 @@ public:
         J->SetNumberField(TEXT("pid"),FPlatformProcess::GetCurrentProcessId());J->SetBoolField(TEXT("server"),bServer);
         J->SetBoolField(TEXT("server_build"),UE_SERVER!=0);J->SetBoolField(TEXT("editor_build"),WITH_EDITOR!=0);
         J->SetBoolField(TEXT("with_janus"),SIMURGHRTC_WITH_JANUS!=0);J->SetBoolField(TEXT("loopback_only"),true);
-        J->SetBoolField(TEXT("audio_hardware_opened"),!bServer && End && End->bPlayback);
+        J->SetBoolField(TEXT("audio_hardware_opened"),!bServer && End && (End->bPlayback || End->bMicrophone));
+        J->SetBoolField(TEXT("microphone_enabled"),bMicrophone);
+#if CONTRACTHOST_WITH_MEDIA
+        if(bMicrophone && !bServer)
+        {
+            const auto M=GetMicrophoneSnapshot();auto Mic=MakeShared<FJsonObject>();
+            Mic->SetNumberField(TEXT("workers"),M.Workers);Mic->SetNumberField(TEXT("opened"),double(M.Opened));Mic->SetNumberField(TEXT("closed"),double(M.Closed));
+            Mic->SetNumberField(TEXT("callbacks"),double(M.Callbacks));Mic->SetNumberField(TEXT("input_frames"),double(M.InputFrames));
+            Mic->SetNumberField(TEXT("peak_queued_samples"),M.PeakQueuedSamples);Mic->SetNumberField(TEXT("dropped_samples"),double(M.DroppedSamples));
+            Mic->SetBoolField(TEXT("callback_on_game_thread"),M.bCallbackOnGameThread);J->SetObjectField(TEXT("microphone"),Mic);
+            if(Error.IsEmpty() && (M.Workers || M.Opened!=1 || M.Closed!=1 || M.Callbacks==0 || M.InputFrames<48000 || M.bCallbackOnGameThread))
+                Error=TEXT("Microphone callback/cleanup evidence failed.");
+        }
+#endif
         J->SetBoolField(TEXT("playback_enabled"),!bServer && End && End->bPlayback);
         J->SetBoolField(TEXT("audible_output_tested"),false);
         J->SetNumberField(TEXT("playback_checks"),bServer?0:End->PlaybackChecks);
@@ -294,24 +328,32 @@ public:
     }
     bool Tick(float)
     {
-        const double Now=FPlatformTime::Seconds();if(Now-Started>90)Error=TEXT("Shared audio process deadline expired.");
+        const double Now=FPlatformTime::Seconds();if(Now-Started>(bMicrophone?160:90))Error=TEXT("Shared audio process deadline expired.");
 #if CONTRACTHOST_WITH_DIRECT_SERVER
         if(bServer && Server)
         {
             if(!SessionId.IsEmpty())
             {
                 FDirectSessionInfo Info;Server->GetSessionInfo(SessionId,Info);
-                for(int32 Batch=0;Batch<4 && Info.State==EDirectServerSessionState::Connected && Now>=NextSend;++Batch)
+                for(int32 Batch=0;Batch<4 && !bMicrophone && Info.State==EDirectServerSessionState::Connected && Now>=NextSend;++Batch)
                 {
                     const auto E=Server->PushAudio(SessionId,Tone(SentSamples,960,800));
                     if(!E.IsError()){SentSamples+=960;NextSend=FMath::Max(NextSend+0.02,Now-0.03);}
                     else {if(E.Code!=ESimurghRTCErrorCode::ResourceExhausted)Error=TEXT("Server PCM submission failed.");break;}
                 }
                 FSimurghRTCAudioFrame F;for(int32 I=0;I<20 && Server->PollAudio(SessionId,F);++I)
-                    if(Phase>=0 && Now-PhaseStarted>=1) Meter.Add(F,Phase>=2?600:400);
-                if(Phase>=0 && Now-PhaseStarted>=2.5)
                 {
-                    const bool Pass=Good(Meter,Phase==1);auto J=MakeShared<FJsonObject>();J->SetNumberField(TEXT("phase"),Phase);J->SetBoolField(TEXT("passed"),Pass);
+                    if(bMicrophone)
+                    {
+                        // Decoded PCM is returned through the normal Server audio sender.
+                        const auto E=Server->PushAudio(SessionId,F);
+                        if(E.IsError() && E.Code!=ESimurghRTCErrorCode::ResourceExhausted) Error=TEXT("Server audio echo failed.");
+                    }
+                    if(Phase>=0 && Now-PhaseStarted>=1) Meter.Add(F,Phase>=2?600:400);
+                }
+                if(Phase>=0 && Now-PhaseStarted>=(bMicrophone && Phase==0?6.0:2.5))
+                {
+                    const bool Pass=bMicrophone?GoodMicrophone(Meter,Phase):Good(Meter,Phase==1);auto J=MakeShared<FJsonObject>();J->SetNumberField(TEXT("phase"),Phase);J->SetBoolField(TEXT("passed"),Pass);
                     J->SetNumberField(TEXT("correlation"),Meter.Correlation());J->SetNumberField(TEXT("rms"),Meter.Rms());J->SetNumberField(TEXT("samples"),double(Meter.Samples));
                     if(Phase==1)MaximumSilence=Meter.Rms();else MinimumCorrelation=FMath::Min(MinimumCorrelation,Meter.Correlation());
                     if(Server->SendText(SessionId,Control,Json(J)).IsError())Error=TEXT("Server audio result send failed.");
@@ -338,6 +380,7 @@ void FContractSharedAudioProbe::Startup()
     if(!FParse::Param(FCommandLine::Get(),TEXT("SimurghRTCSharedAudioProbe")))return;
     Exit=FCoreDelegates::OnEnginePreExit.AddRaw(this,&FContractSharedAudioProbe::Shutdown);
     Impl=MakeUnique<FImpl>();Impl->bServer=FParse::Param(FCommandLine::Get(),TEXT("SimurghRTCSharedAudioServer"));
+    Impl->bMicrophone=FParse::Param(FCommandLine::Get(),TEXT("SimurghRTCSharedAudioMicrophone"));
     FParse::Value(FCommandLine::Get(),TEXT("SimurghRTCSharedAudioRunId="),Impl->RunId);
     FParse::Value(FCommandLine::Get(),TEXT("SimurghRTCSharedAudioEndpoint="),Impl->Endpoint);
     FParse::Value(FCommandLine::Get(),TEXT("SimurghRTCSharedAudioPort="),Impl->Port);

@@ -1,0 +1,1011 @@
+{
+  "schema": 1,
+  "issue": "SR-201",
+  "date": "2026-11-03",
+  "status": "Mac microphone implemented; real capture acceptance deferred",
+  "source_base_revision": "3b10c72b9cd609a7ccd413715dfc26857c0830d5",
+  "source_files": [
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCOperation.cpp",
+      "sha256": "a3bbf8b4d57ec0bd5d633ab832dd586240f455aee80c997deb8594ef17409605"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCSession.cpp",
+      "sha256": "2ba5015bd2b0131fc268f283fdae21b19a0ab36c5a06f780b55effc8f430fc31"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/SimurghRTCSessionAudio.cpp",
+      "sha256": "595706013313618b2372f708bd111ce32bc026b7423ac4085d43817361f0b2fc"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCCore/Private/Tests/SimurghRTCSessionIntegrationTests.cpp",
+      "sha256": "589e5e729f7b117b5872382a910a475ca2a5607e10a0d2877f7f725bbe7639df"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCOperation.h",
+      "sha256": "264a9afd85da5e2cdd37ba44f974f441944c6ef351c9bfe5939a9d3a58e38ccc"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCSession.h",
+      "sha256": "7e53c7267be57cbedab8c123345663a7b90d729c6418c269a6bfd4cf2d430670"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCCore/Public/SimurghRTCSessionAudioSource.h",
+      "sha256": "e3182bb72d3fc0ee8113b4cc2c2bff5340a1bc7d346b21257026303444599363"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/Mac/SimurghRTCMicrophoneMac.mm",
+      "sha256": "7f0657c11ad4a2976a0e10f97418d2b88edd657810e36505e313a9252543a79c"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCMediaModule.cpp",
+      "sha256": "6c031af27366d8163dbc8240cc47b929d782624c310aff21328dda3bc3e0affa"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCMediaOperation.cpp",
+      "sha256": "54cbb689412c9234b66fda9cc60d99ef16bbbed5c17146ddf2c181be546e6f6e"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCMicrophone.cpp",
+      "sha256": "b31bf9bb487a2d46a9d56e73c350faa24767ecbe918869978ab6479ad1a63fdd"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCMicrophoneBuffer.h",
+      "sha256": "e8362c3b4c608731f26abdf1c0daf2b289f4797ce5eb86e23f65b5f431047e6b"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/SimurghRTCMicrophoneInternal.h",
+      "sha256": "63609437e6b6e77a80bc7fd87af4acdcb8d94226ad489d17dfbbf402fc670883"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/Tests/SimurghRTCMediaContractTests.cpp",
+      "sha256": "b7c11daef2c6ebbbec56a9ad19f26807e99cd82fa4ef822dbbd33724a36d50cf"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/Private/Tests/SimurghRTCMicrophoneTests.cpp",
+      "sha256": "b0bbdc5b86de6abae002202da19c00c0d2568caf2f3ae1d509ff5f9b8bad6f91"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/Public/SimurghRTCMediaOperation.h",
+      "sha256": "0df02f6931f25518e0e40f926f69121d5f831b866600b0d37161d1bee8f1c7af"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/Public/SimurghRTCMicrophone.h",
+      "sha256": "c0885542391531858831ba263ee6ea6a758b7c608876b8d1fcd841b7fc57ad42"
+    },
+    {
+      "path": "Plugins/SimurghRTC/Source/SimurghRTCMedia/SimurghRTCMedia.Build.cs",
+      "sha256": "1ec537c4cb603231047a975f82b32ff7cd8fe10357414a275ead5c1ed511b74c"
+    },
+    {
+      "path": "Samples/ContractHost/Build/Mac/Resources/Capture.entitlements",
+      "sha256": "163ece09cc990b7626209e8fb46975786846d52eaa296a21204f462a2341be99"
+    },
+    {
+      "path": "Samples/ContractHost/Build/Mac/Resources/Info.Template.plist",
+      "sha256": "692db506e5181b24b950471fd2e875662e609ca6532b94638ee5f16cc8e85783"
+    },
+    {
+      "path": "Samples/ContractHost/Config/DefaultEngine.ini",
+      "sha256": "a0d6f2ccb690988f5ece7a936dacf5989f45b7745d3ec3b26f3b7c3ff867dbbe"
+    },
+    {
+      "path": "Samples/ContractHost/Source/ContractHost/ContractAudioPlaybackCheck.cpp",
+      "sha256": "13583a36c8f491c90b8ff8880933780d87331c813b89e25364494c0c3b3a24a8"
+    },
+    {
+      "path": "Samples/ContractHost/Source/ContractHost/ContractSharedAudioProbe.cpp",
+      "sha256": "6d9eb69f0f2d6b2c334febfca63d8fd96c86adfbb69a1b451d786fe38accff52"
+    },
+    {
+      "path": "Samples/ContractHost/Source/ContractHost/ContractSharedAudioProbe.h",
+      "sha256": "c07325a41cfc8c488414c088ce374f818de55faf268ccdf0785c5f2000281145"
+    },
+    {
+      "path": "tools/prepare_profile.py",
+      "sha256": "455243e4fec6fb0bb9baceef29828e0e8d6bc885c7a0064110b1955fefff4aa1"
+    },
+    {
+      "path": "tools/run_shared_audio_probe.py",
+      "sha256": "ef2b66b4963908c2a0329a4293a2c655e240d48de7d3aa857a6ec63406c06780"
+    },
+    {
+      "path": "tools/tests/test_profiles.py",
+      "sha256": "63610e30bac7bb091d8ff70d50a7d1890790e4fc4487731643dcf373f25c319d"
+    },
+    {
+      "path": "tools/tests/test_shared_audio_probe.py",
+      "sha256": "7bb19cf8d1fd9e9bf6dcfac2d224acb399a2b5cf49ffdd94ca5472b5c21e7348"
+    }
+  ],
+  "implementation": [
+    "Mac microphone permission and public Unreal AudioCapture adapter behind CreateSource(Microphone)",
+    "Asynchronous permission and device startup; cancellation and owner cleanup suppress late source publication",
+    "Fixed 200 ms capture queue; common input rates converted to 48 kHz mono PCM",
+    "Shared Direct audio source attachment, mute, replacement, stop, disconnect and failure cleanup",
+    "Optional packaged microphone-to-Server PCM echo fixture feeding existing Unreal playback"
+  ],
+  "tests": {
+    "unreal": {
+      "succeeded": 39,
+      "failed": 0,
+      "not_run": 0,
+      "evidence": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-full-tests-report/index.json",
+        "sha256": "b9fca8220fe507a56dae8136c29c26c4ff74556d80bc17b19e7f3ec09143490f"
+      },
+      "scope": "Headless Full Editor automation; microphone tests use fake device/transport adapters and deterministic conversion inputs"
+    },
+    "python": {
+      "passed": 241,
+      "command": "python3 -m unittest discover -s tools/tests -q",
+      "evidence": {
+        "path": "Intermediate/SR201Microphone20261103/python-tests.log",
+        "sha256": "5f179f94e4f690de025f300829a56f67f2e7ca04a691d620a2858e06f8321244"
+      }
+    }
+  },
+  "microphone_validation": {
+    "status": "Unverified; further hardware tests deferred by user",
+    "attempt": {
+      "path": "Intermediate/SR201Microphone20261103/first-microphone/result.json",
+      "sha256": "df0b7217131a19e85083d347a224e7fd3269c622b01ba4c2690c19839739b5d5"
+    },
+    "observed_error": "Operation failed: 13 Microphone access was denied. Allow it in macOS Privacy & Security settings.",
+    "capture_diagnostics": {
+      "workers": 0,
+      "opened": 0,
+      "closed": 0,
+      "callbacks": 0,
+      "input_frames": 0,
+      "peak_queued_samples": 0,
+      "dropped_samples": 0,
+      "callback_on_game_thread": false
+    },
+    "credentials_removed": true,
+    "processes_exited": true,
+    "server_cleanup": "Waiting loopback Server stopped after the user deferred microphone testing",
+    "raw_microphone_recordings_saved": false
+  },
+  "packaged_regressions": [
+    {
+      "name": "full-headless",
+      "evidence": {
+        "path": "Intermediate/SR201Microphone20261103/full-headless/result.json",
+        "sha256": "2c642c4c6a4dd1eaf855a8523e5124299ac1f1724303964f067af7ac219a7cfa"
+      },
+      "run_id": "40103e7d-0300-402b-9abd-79efb65f8a45",
+      "profile": "full",
+      "passed": true,
+      "server_executable_sha256": "2c118f40314c1bbecaf08fae4394b8275d85f24d0985cc30a5511b46fcbe5f6f",
+      "client_executable_sha256": "5ef44b14d3693a54cad447c50c45503a52859443684200ade5b28e3a408a717a",
+      "reports": {
+        "server": {
+          "schema": 1,
+          "run_id": "fc08e1e8-b5bd-44cd-b61d-68cb28966a58",
+          "pid": 27829,
+          "server": true,
+          "server_build": true,
+          "editor_build": false,
+          "with_janus": false,
+          "loopback_only": true,
+          "audio_hardware_opened": false,
+          "microphone_enabled": false,
+          "playback_enabled": false,
+          "audible_output_tested": false,
+          "playback_checks": 0,
+          "playback_measurements": [],
+          "engine_version": "5.8.3-0+UE5",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "error": "",
+          "phases": 4,
+          "minimum_correlation": 0.9999921569434089,
+          "maximum_muted_rms": 0,
+          "quiet_ticks": 8,
+          "checks": 0,
+          "measurements": [
+            {
+              "phase": 0,
+              "samples": 72000,
+              "correlation": 0.9999979939588245,
+              "rms": 0.17703488337442141
+            },
+            {
+              "phase": 1,
+              "samples": 72000,
+              "correlation": 0,
+              "rms": 0
+            },
+            {
+              "phase": 2,
+              "samples": 71520,
+              "correlation": 0.9999926816448997,
+              "rms": 0.17652327975108556
+            },
+            {
+              "phase": 3,
+              "samples": 72000,
+              "correlation": 0.9999921569434089,
+              "rms": 0.17661915311018972
+            }
+          ],
+          "client_native_closed": 0,
+          "client_remote_closed": 0,
+          "pending_cleanup": 0,
+          "server_live_peers": 0,
+          "server_closed": 1,
+          "passed": true
+        },
+        "client": {
+          "schema": 1,
+          "run_id": "ee528316-88c8-47ea-8db6-eb6f726de865",
+          "pid": 27851,
+          "server": false,
+          "server_build": false,
+          "editor_build": false,
+          "with_janus": true,
+          "loopback_only": true,
+          "audio_hardware_opened": false,
+          "microphone_enabled": false,
+          "playback_enabled": false,
+          "audible_output_tested": false,
+          "playback_checks": 0,
+          "playback_measurements": [],
+          "engine_version": "5.8.3-0+UE5",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "error": "",
+          "phases": 4,
+          "minimum_correlation": 0.9999887607312792,
+          "maximum_muted_rms": 0,
+          "quiet_ticks": 8,
+          "checks": 4,
+          "measurements": [
+            {
+              "phase": 0,
+              "samples": 72480,
+              "correlation": 0.9999904503008072,
+              "rms": 0.1765740635122026
+            },
+            {
+              "phase": 1,
+              "samples": 72480,
+              "correlation": 0.9999887607312792,
+              "rms": 0.17661754454713902
+            },
+            {
+              "phase": 2,
+              "samples": 73440,
+              "correlation": 0.9999891424374524,
+              "rms": 0.17647345268564044
+            },
+            {
+              "phase": 3,
+              "samples": 72480,
+              "correlation": 0.9999894627102607,
+              "rms": 0.17663866611605084
+            }
+          ],
+          "client_native_closed": 1,
+          "client_remote_closed": 1,
+          "pending_cleanup": 0,
+          "passed": true
+        }
+      },
+      "exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "credentials_removed": true,
+      "processes_exited": true
+    },
+    {
+      "name": "full-playback",
+      "evidence": {
+        "path": "Intermediate/SR201Microphone20261103/full-playback/result.json",
+        "sha256": "449299c0a7ae4d244e202996380f81062439362e6686673c42c5c08dcb213bb8"
+      },
+      "run_id": "d1dec430-4cdc-4a10-9d5b-d0c7a1116f2a",
+      "profile": "full",
+      "passed": true,
+      "server_executable_sha256": "2c118f40314c1bbecaf08fae4394b8275d85f24d0985cc30a5511b46fcbe5f6f",
+      "client_executable_sha256": "5ef44b14d3693a54cad447c50c45503a52859443684200ade5b28e3a408a717a",
+      "reports": {
+        "server": {
+          "schema": 1,
+          "run_id": "806e414f-309b-40b4-acf4-c15dee96a6a3",
+          "pid": 27923,
+          "server": true,
+          "server_build": true,
+          "editor_build": false,
+          "with_janus": false,
+          "loopback_only": true,
+          "audio_hardware_opened": false,
+          "microphone_enabled": false,
+          "playback_enabled": false,
+          "audible_output_tested": false,
+          "playback_checks": 0,
+          "playback_measurements": [],
+          "engine_version": "5.8.3-0+UE5",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "error": "",
+          "phases": 4,
+          "minimum_correlation": 0.9999954703429141,
+          "maximum_muted_rms": 0,
+          "quiet_ticks": 8,
+          "checks": 0,
+          "measurements": [
+            {
+              "phase": 0,
+              "samples": 71520,
+              "correlation": 0.9999979188447086,
+              "rms": 0.1770512473555301
+            },
+            {
+              "phase": 1,
+              "samples": 72480,
+              "correlation": 0,
+              "rms": 0
+            },
+            {
+              "phase": 2,
+              "samples": 71520,
+              "correlation": 0.9999954703429141,
+              "rms": 0.1764872754101246
+            },
+            {
+              "phase": 3,
+              "samples": 72000,
+              "correlation": 0.9999957368005888,
+              "rms": 0.17659758981593085
+            }
+          ],
+          "client_native_closed": 0,
+          "client_remote_closed": 0,
+          "pending_cleanup": 0,
+          "server_live_peers": 0,
+          "server_closed": 1,
+          "passed": true
+        },
+        "client": {
+          "schema": 1,
+          "run_id": "b4abf75f-64e8-4509-9454-a379a319add2",
+          "pid": 27926,
+          "server": false,
+          "server_build": false,
+          "editor_build": false,
+          "with_janus": true,
+          "loopback_only": true,
+          "audio_hardware_opened": true,
+          "microphone_enabled": false,
+          "playback_enabled": true,
+          "audible_output_tested": false,
+          "playback_checks": 4,
+          "playback_measurements": [
+            {
+              "consumed_samples": 239040,
+              "callbacks": 51,
+              "peak_queued_samples": 6240,
+              "dropped_samples": 0,
+              "silence_samples": 5760,
+              "rms": 0.17662555773597113,
+              "callback_on_game_thread": false
+            },
+            {
+              "consumed_samples": 258240,
+              "callbacks": 55,
+              "peak_queued_samples": 6240,
+              "dropped_samples": 0,
+              "silence_samples": 5760,
+              "rms": 0.1766044727244364,
+              "callback_on_game_thread": false
+            },
+            {
+              "consumed_samples": 24000,
+              "callbacks": 6,
+              "peak_queued_samples": 5760,
+              "dropped_samples": 0,
+              "silence_samples": 4800,
+              "rms": 0.1766507935004482,
+              "callback_on_game_thread": false
+            }
+          ],
+          "engine_version": "5.8.3-0+UE5",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "error": "",
+          "phases": 4,
+          "minimum_correlation": 0.9999888357078752,
+          "maximum_muted_rms": 0,
+          "quiet_ticks": 8,
+          "checks": 4,
+          "measurements": [
+            {
+              "phase": 0,
+              "samples": 72480,
+              "correlation": 0.999989578774463,
+              "rms": 0.17656017055357243
+            },
+            {
+              "phase": 1,
+              "samples": 72960,
+              "correlation": 0.9999888357078752,
+              "rms": 0.1766217298930948
+            },
+            {
+              "phase": 2,
+              "samples": 72480,
+              "correlation": 0.9999889053454714,
+              "rms": 0.17650433432895668
+            },
+            {
+              "phase": 3,
+              "samples": 72480,
+              "correlation": 0.9999894666499709,
+              "rms": 0.17660791167915102
+            }
+          ],
+          "client_native_closed": 1,
+          "client_remote_closed": 1,
+          "pending_cleanup": 0,
+          "passed": true
+        }
+      },
+      "exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "credentials_removed": true,
+      "processes_exited": true
+    },
+    {
+      "name": "direct-headless",
+      "evidence": {
+        "path": "Intermediate/SR201Microphone20261103/direct-headless/result.json",
+        "sha256": "19b0f6e577e3e922c2fd48eafbb277573501d1b980eaf0de281f32d490763095"
+      },
+      "run_id": "cd6a6169-64b3-4bd2-a71c-dff380db7a1e",
+      "profile": "direct-only",
+      "passed": true,
+      "server_executable_sha256": "2c118f40314c1bbecaf08fae4394b8275d85f24d0985cc30a5511b46fcbe5f6f",
+      "client_executable_sha256": "64d69b927449ea4ec5c84b472478afefd4007d531dfe21c8568075c39b74042a",
+      "reports": {
+        "server": {
+          "schema": 1,
+          "run_id": "e23910bc-14ef-4b66-8172-7036dc03c9ef",
+          "pid": 28029,
+          "server": true,
+          "server_build": true,
+          "editor_build": false,
+          "with_janus": false,
+          "loopback_only": true,
+          "audio_hardware_opened": false,
+          "microphone_enabled": false,
+          "playback_enabled": false,
+          "audible_output_tested": false,
+          "playback_checks": 0,
+          "playback_measurements": [],
+          "engine_version": "5.8.3-0+UE5",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "error": "",
+          "phases": 4,
+          "minimum_correlation": 0.9983198304017433,
+          "maximum_muted_rms": 0,
+          "quiet_ticks": 8,
+          "checks": 0,
+          "measurements": [
+            {
+              "phase": 0,
+              "samples": 72480,
+              "correlation": 0.9983198304017433,
+              "rms": 0.17647368211783224
+            },
+            {
+              "phase": 1,
+              "samples": 72480,
+              "correlation": 0,
+              "rms": 0
+            },
+            {
+              "phase": 2,
+              "samples": 72480,
+              "correlation": 0.9999980097986133,
+              "rms": 0.1772979592991396
+            },
+            {
+              "phase": 3,
+              "samples": 72480,
+              "correlation": 0.9999979687984191,
+              "rms": 0.17732699050149342
+            }
+          ],
+          "client_native_closed": 0,
+          "client_remote_closed": 0,
+          "pending_cleanup": 0,
+          "server_live_peers": 0,
+          "server_closed": 1,
+          "passed": true
+        },
+        "client": {
+          "schema": 1,
+          "run_id": "596769fa-279c-457f-9508-71a6593b8bbe",
+          "pid": 28031,
+          "server": false,
+          "server_build": false,
+          "editor_build": false,
+          "with_janus": false,
+          "loopback_only": true,
+          "audio_hardware_opened": false,
+          "microphone_enabled": false,
+          "playback_enabled": false,
+          "audible_output_tested": false,
+          "playback_checks": 0,
+          "playback_measurements": [],
+          "engine_version": "5.8.3-0+UE5",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "error": "",
+          "phases": 4,
+          "minimum_correlation": 0.9999919053705516,
+          "maximum_muted_rms": 0,
+          "quiet_ticks": 8,
+          "checks": 4,
+          "measurements": [
+            {
+              "phase": 0,
+              "samples": 73440,
+              "correlation": 0.9999933972646571,
+              "rms": 0.17662357076394547
+            },
+            {
+              "phase": 1,
+              "samples": 72960,
+              "correlation": 0.9999926598281526,
+              "rms": 0.17661937338446373
+            },
+            {
+              "phase": 2,
+              "samples": 72000,
+              "correlation": 0.9999919053705516,
+              "rms": 0.17649789230931484
+            },
+            {
+              "phase": 3,
+              "samples": 72960,
+              "correlation": 0.9999928833569267,
+              "rms": 0.17660658906133983
+            }
+          ],
+          "client_native_closed": 1,
+          "client_remote_closed": 1,
+          "pending_cleanup": 0,
+          "passed": true
+        }
+      },
+      "exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "credentials_removed": true,
+      "processes_exited": true
+    },
+    {
+      "name": "direct-playback",
+      "evidence": {
+        "path": "Intermediate/SR201Microphone20261103/direct-playback/result.json",
+        "sha256": "5945d775594c586ceb133bdce326feba8899a16ded7d81b6318cf5ccd07b1779"
+      },
+      "run_id": "3555ab4c-096a-4390-8e0d-70cd520ab2a5",
+      "profile": "direct-only",
+      "passed": true,
+      "server_executable_sha256": "2c118f40314c1bbecaf08fae4394b8275d85f24d0985cc30a5511b46fcbe5f6f",
+      "client_executable_sha256": "64d69b927449ea4ec5c84b472478afefd4007d531dfe21c8568075c39b74042a",
+      "reports": {
+        "server": {
+          "schema": 1,
+          "run_id": "859b1c57-4bf2-40e3-9ad3-2716a2ddd8f2",
+          "pid": 28125,
+          "server": true,
+          "server_build": true,
+          "editor_build": false,
+          "with_janus": false,
+          "loopback_only": true,
+          "audio_hardware_opened": false,
+          "microphone_enabled": false,
+          "playback_enabled": false,
+          "audible_output_tested": false,
+          "playback_checks": 0,
+          "playback_measurements": [],
+          "engine_version": "5.8.3-0+UE5",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "error": "",
+          "phases": 4,
+          "minimum_correlation": 0.9999955550112417,
+          "maximum_muted_rms": 0,
+          "quiet_ticks": 8,
+          "checks": 0,
+          "measurements": [
+            {
+              "phase": 0,
+              "samples": 72000,
+              "correlation": 0.9999979160987365,
+              "rms": 0.17705185661432368
+            },
+            {
+              "phase": 1,
+              "samples": 72000,
+              "correlation": 0,
+              "rms": 0
+            },
+            {
+              "phase": 2,
+              "samples": 72000,
+              "correlation": 0.9999955550112417,
+              "rms": 0.17657052114668195
+            },
+            {
+              "phase": 3,
+              "samples": 72480,
+              "correlation": 0.9999956467580429,
+              "rms": 0.17655996214858424
+            }
+          ],
+          "client_native_closed": 0,
+          "client_remote_closed": 0,
+          "pending_cleanup": 0,
+          "server_live_peers": 0,
+          "server_closed": 1,
+          "passed": true
+        },
+        "client": {
+          "schema": 1,
+          "run_id": "79577de7-4de2-4800-b9e8-34933879df4f",
+          "pid": 28138,
+          "server": false,
+          "server_build": false,
+          "editor_build": false,
+          "with_janus": false,
+          "loopback_only": true,
+          "audio_hardware_opened": true,
+          "microphone_enabled": false,
+          "playback_enabled": true,
+          "audible_output_tested": false,
+          "playback_checks": 4,
+          "playback_measurements": [
+            {
+              "consumed_samples": 239520,
+              "callbacks": 51,
+              "peak_queued_samples": 6240,
+              "dropped_samples": 0,
+              "silence_samples": 5280,
+              "rms": 0.1764672422559481,
+              "callback_on_game_thread": false
+            },
+            {
+              "consumed_samples": 258720,
+              "callbacks": 55,
+              "peak_queued_samples": 5760,
+              "dropped_samples": 0,
+              "silence_samples": 5280,
+              "rms": 0.176601806902632,
+              "callback_on_game_thread": false
+            },
+            {
+              "consumed_samples": 24480,
+              "callbacks": 6,
+              "peak_queued_samples": 5280,
+              "dropped_samples": 0,
+              "silence_samples": 4320,
+              "rms": 0.17666968233628105,
+              "callback_on_game_thread": false
+            }
+          ],
+          "engine_version": "5.8.3-0+UE5",
+          "artifact_manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+          "error": "",
+          "phases": 4,
+          "minimum_correlation": 0.9999894035968355,
+          "maximum_muted_rms": 0,
+          "quiet_ticks": 8,
+          "checks": 4,
+          "measurements": [
+            {
+              "phase": 0,
+              "samples": 72960,
+              "correlation": 0.9999907938351073,
+              "rms": 0.17661792284951058
+            },
+            {
+              "phase": 1,
+              "samples": 72480,
+              "correlation": 0.9999894035968355,
+              "rms": 0.17662277466889562
+            },
+            {
+              "phase": 2,
+              "samples": 72960,
+              "correlation": 0.9999896528709556,
+              "rms": 0.17649713941833753
+            },
+            {
+              "phase": 3,
+              "samples": 72960,
+              "correlation": 0.9999896881237376,
+              "rms": 0.17661209243724418
+            }
+          ],
+          "client_native_closed": 1,
+          "client_remote_closed": 1,
+          "pending_cleanup": 0,
+          "passed": true
+        }
+      },
+      "exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "credentials_removed": true,
+      "processes_exited": true
+    }
+  ],
+  "package_audits": [
+    {
+      "evidence": {
+        "path": "Intermediate/SR201Microphone20261103/audit-full/package-audit.json",
+        "sha256": "353017a2ba1c8aca0d82fcaf9fdbd76675ed0ce7f1f8b1017e6860418c6f1036"
+      },
+      "profile": "full",
+      "executable_sha256": "5ef44b14d3693a54cad447c50c45503a52859443684200ade5b28e3a408a717a",
+      "architecture": "arm64",
+      "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+      "code_signature_valid": true,
+      "janus_link_inputs": true
+    },
+    {
+      "evidence": {
+        "path": "Intermediate/SR201Microphone20261103/audit-direct/package-audit.json",
+        "sha256": "07bbc9ce4102046447cf485657a9460750d01febecd0aaff87ed65a11b524c1c"
+      },
+      "profile": "direct-only",
+      "executable_sha256": "64d69b927449ea4ec5c84b472478afefd4007d531dfe21c8568075c39b74042a",
+      "architecture": "arm64",
+      "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+      "code_signature_valid": true,
+      "janus_link_inputs": false
+    },
+    {
+      "evidence": {
+        "path": "Intermediate/SR201Microphone20261103/audit-server/package-audit.json",
+        "sha256": "33cb8b76eec2485564513c90a31e3dce691b5c578f5cbde10fc306099a537eff"
+      },
+      "profile": "server",
+      "executable_sha256": "2c118f40314c1bbecaf08fae4394b8275d85f24d0985cc30a5511b46fcbe5f6f",
+      "architecture": "arm64",
+      "archive_sha256": "c85c30d7ef1e0a4a870e7fe66682e5bde51e80c78a343d4cb0e497d20dcbfd8f",
+      "code_signature_valid": true,
+      "janus_link_inputs": false
+    }
+  ],
+  "capture_package_boundaries": {
+    "path": "Intermediate/SR201Microphone20261103/capture-package-boundaries.json",
+    "sha256": "2489d5a3afd10afa1749dc228ba0db351608e58ac700118609dbc3431634abd8"
+  },
+  "build_records": [
+    {
+      "action": "accepted-full-editor",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-full-editor-command.json",
+        "sha256": "9506bce539debf1ffb90112e184583be422d644a2c4609d96d23396c2fa8e26b"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-full-editor-finalize",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-full-editor-finalize-command.json",
+        "sha256": "4cb1df910b8f3e3ac9c7898768c4918609f1fdeef25e0ac22b4a28ed500234d0"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-full-editor-metadata",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-full-editor-metadata-command.json",
+        "sha256": "6fc1fa119bfe1f7b603814517c6d0cb62fdfa0c77b232c813352a2e0e55798d3"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-full-tests",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-full-tests-command.json",
+        "sha256": "b35d4489ad8f87b47d7657637e568cc8ee0312c4cade1639afc146d5dee5f1c6"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-full-game",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-full-game-command.json",
+        "sha256": "5b9e1493ae87b1bba6936562273cdfea8baef8033cc22cbe68b04cb74dd33c01"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-full-game-finalize",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-full-game-finalize-command.json",
+        "sha256": "0b3d1383346562e36283164b66e8d5055ea5afe8b58cfc6dd9a7cd9329283ed8"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-full-game-metadata",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-full-game-metadata-command.json",
+        "sha256": "ccbadcf808f656ae08daf371aaf8f4ad5b4e65c879bb02dd24a296c97faa8080"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-full-cook-game",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-full-cook-game-command.json",
+        "sha256": "500f96a0d5a51c1a77ee7dcbf45ccce598a4f0913ac0b8310541a3832a2ca49a"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-direct-editor",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-direct-editor-command.json",
+        "sha256": "302c7aaba7354bf49b4b07eab162faaa8b688b7da056adb3abb1e095dd2a1599"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-direct-editor-finalize",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-direct-editor-finalize-command.json",
+        "sha256": "34890f6d1273110be498c0bf66f466c636af1ed24a27595921a54e79e2b78fb5"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-direct-editor-metadata",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-direct-editor-metadata-command.json",
+        "sha256": "d7172976f62c6611d2a469e55536b3a1731833720cf9fe187250efe3246f2e8c"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-direct-game",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-direct-game-command.json",
+        "sha256": "abd29dd3b35abab130f2ceae8f81e749867d2f1e6280f7313924a2414edd8370"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-direct-game-finalize",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-direct-game-finalize-command.json",
+        "sha256": "e07519c1a1e172bbc9b82f4af5dfd8802534ba22720353b98406d79fb2458293"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-direct-game-metadata",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-direct-game-metadata-command.json",
+        "sha256": "48cd543c29f29df76f24b172e2070b7d3931c55f4edc60bd58aeab872867c3b5"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-direct-cook-game",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-direct-cook-game-command.json",
+        "sha256": "081566f576ed9f430f261f4d2b999353a4ef9098374d7915b162f735da12e611"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-server-editor",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-server-editor-command.json",
+        "sha256": "40253acf993aee3d821fe786a8cc424d37fb07bde47727dd90a176c453389cb5"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-server-editor-finalize",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-server-editor-finalize-command.json",
+        "sha256": "1857d8c20fda2d2edee72409a206a7224c38f3b9a079a45453a2056cae7858fa"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-server-editor-metadata",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-server-editor-metadata-command.json",
+        "sha256": "ad3e8fb8803af21d5b87a782bdbe87a129d559de518f0b0a868fa5cfa3f412f0"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-server-server",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-server-server-command.json",
+        "sha256": "576acc29d96b03e1d63dff0d592a99b02258cd433a2ccb7c523c9f20acb0fa62"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-server-server-finalize",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-server-server-finalize-command.json",
+        "sha256": "d4904c904c51d67c75dbf5ee6eb1fc20010f86bc6067ea2d5ab981c4e0c0df46"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-server-server-metadata",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-server-server-metadata-command.json",
+        "sha256": "890f4268cf312a86d36990d427f3f15faebcfe1ce486bbf4e9bce7747c8c1c8b"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    },
+    {
+      "action": "accepted-server-cook-server",
+      "record": {
+        "path": "Intermediate/SR201Microphone20261103/accepted-server-cook-server-command.json",
+        "sha256": "3e67a631751220cf346c103d5a5de842b64330b26be7f4166dcec99c9d4d04aa"
+      },
+      "exit_code": 0,
+      "engine_revision": "16a78f0afe9db4efbe6e4de1342470b8eeaa826e"
+    }
+  ],
+  "native_artifact": {
+    "artifact_id": "mac-arm64-m155-ac85920e6ab2",
+    "platform": "Mac",
+    "architecture": "arm64",
+    "files": 7,
+    "objects": 1,
+    "archive_bytes": 17923208,
+    "manifest_sha256": "67ff897f5c7be89cba0b79908e6946f8086354f20a9974aad7532dc61c227f4e",
+    "runtime_validation": "unverified"
+  },
+  "native_artifact_rebuilt": false,
+  "limitations": [
+    "No successful real microphone capture, echo or capture-worker teardown measurement is claimed.",
+    "Permission-denied handling was observed in a packaged Mac Full client; successful permission/startup remains unverified.",
+    "Microphone capture on Android, iOS, Windows and Linux is not implemented in this adapter.",
+    "No AEC playback reference, noise suppression, automatic device switching or route recovery.",
+    "Source failure fails the session; broader device lifecycle handling remains planned.",
+    "Playback regressions use CoreAudio at zero volume and do not qualify audible speaker quality.",
+    "No new Blueprint audio graph, sustained call quality, Internet path or physical iOS acceptance.",
+    "M0/M1 external acceptance gaps and M2/SR-201 remaining work stay open."
+  ]
+}

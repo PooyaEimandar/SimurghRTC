@@ -1,13 +1,13 @@
 # SimurghRTC — Unreal Engine WebRTC plugin roadmap
 
-**M2 native audio work has started**, targeting Unreal Engine **5.8.3**. M1 and M0's external acceptance gates remain open. Updated 2026-10-31.
+**M2 native audio work has started**, targeting Unreal Engine **5.8.3**. M1 and M0's external acceptance gates remain open. Updated 2026-11-03.
 
 - **Done on the available Mac:** SR-001 API v1 and C++/Blueprint lifecycle examples, SR-002 build profiles, SR-003 dependency/ABI review and headless Server feasibility, SR-004 local media tests and SR-005 repeatable fixtures/service tests.
 - **Integrated and locally tested:** the isolated M155 backend on Mac, Android and the iOS simulator. Android Direct-only/Full packages pass lifecycle, local codecs, capture and mixer checks; both simulator profiles pass lifecycle/local codecs. Fresh repeat builds pass on all four ARM64 targets, including iOS device; both rebuilt device libraries pass C API link checks. The packaged Mac dedicated Server passes factory, HTTP and cleanup checks in both modes. The dated source/advisory review resolves the known dependency findings. SR-006/SR-007 and the remaining SR-008 acceptance depend on independent-host reproduction and deferred physical iOS startup.
-- **Still to prove:** cross-device and Janus connections, video between separate applications, device audio, signed physical iOS behavior and broader platform/release coverage. See [M0 validation](docs/M0_VALIDATION.md) for exact test scope; the current dependencies are not a qualified release baseline.
+- **Still to prove:** cross-device and Janus connections, video between separate applications, mobile device audio, signed physical iOS behavior and broader platform/release coverage. See [M0 validation](docs/M0_VALIDATION.md) for exact test scope; the current dependencies are not a qualified release baseline.
 - **Local M1 shared sessions and samples validated:** SR-101 provides asynchronous peers and SDP/ICE on Mac Server, Android and the iOS simulator. SR-102 adds Direct HTTP signaling between separate packaged Mac client and Server processes. SR-103 adds text/binary DataChannels, reliability options, message limits and backpressure. SR-104 validates concurrent Server routing. SR-105 connects the shared API and validates eight simultaneous sessions, reconnect, cancellation and cleanup on Mac. SR-106 adds matching packaged [Blueprint and C++ data maps](docs/DATA_EXAMPLES.md). SR-107 is in progress: Direct-only and Full packages pass the data maps on the Galaxy and ARM64 iOS simulator, including local HTTPS, forced TURN/UDP/TCP, reconnect, app background/resume, channel options, message limits, packet loss/reordering, partial-reliability expiry, shared queue recovery, screen lock, forced termination and send-queue deadlines. Physical iOS acceptance and broader network resilience remain open. See [Mobile data](docs/MOBILE_DATA.md).
 
-- **M2 audio:** SR-201 connects generated sources, track controls, decoded PCM and Unreal mixer playback to shared Direct sessions, validated between packaged Mac clients and a dedicated Server. Microphone capture, AEC integration, device changes and audible quality acceptance remain open. See [Shared audio](docs/SHARED_AUDIO.md).
+- **M2 audio:** SR-201 connects generated sources, Mac microphone capture, track controls, decoded PCM and Unreal mixer playback to shared Direct sessions. AEC integration, device changes, mobile capture and audible quality acceptance remain open. See [Shared audio](docs/SHARED_AUDIO.md).
 
 For a quick overview, read [delivery stages](#2-structure-and-delivery) and [milestone status](#8-status). Each issue below explains the work, its dependencies and how to verify completion. Test results and detailed build evidence are in [M0 validation](docs/M0_VALIDATION.md).
 
@@ -301,11 +301,11 @@ Bidirectional audio/video and usable Unreal media components.
 
 ##### SR-201 — Integrate native audio capture and playback (P0)
 
-**In progress, 2026-11-03.** The native foundation passed 15 audio pairs across Mac, the Galaxy and the iOS simulator. The shared Direct API implements generated audio sources, attachment/replacement, mute, decoded-frame delivery and cleanup. `BindAudio` now plays remote audio through an Unreal audio component, with a bounded queue and sink replacement. The current shared format is 48 kHz mono PCM.
+**In progress, 2026-11-03.** The native foundation passed 15 audio pairs across Mac, the Galaxy and the iOS simulator. The shared Direct API implements generated audio sources, attachment/replacement, mute, decoded-frame delivery and cleanup. `BindAudio` now plays remote audio through an Unreal audio component, with a bounded queue and sink replacement. Mac microphone capture now uses Unreal AudioCapture, asynchronous permission/device startup, a bounded conversion queue and the same source controls. The current shared format is 48 kHz mono PCM.
 
-Packaged Mac ARM64 Direct-only and Full clients pass bidirectional audio, CoreAudio mixer consumption and cleanup against a separate dedicated Server. The playback fixtures use zero volume. All 36 Unreal and 237 Python tests pass, along with the headless audio regression and package audits. See [Shared audio](docs/SHARED_AUDIO.md) and the [playback validation record](docs/reviews/SR201-audio-playback-validation.json).
+Packaged Mac ARM64 Direct-only and Full clients pass bidirectional audio, CoreAudio mixer consumption and cleanup against a separate dedicated Server. The playback fixtures use zero volume. All 39 Unreal and 241 Python tests pass, including capture conversion, cancellation and source cleanup. Both client profiles pass fresh generated-audio headless/playback regressions and package audits. See [Shared audio](docs/SHARED_AUDIO.md) and the [microphone validation record](docs/reviews/SR201-microphone-validation.json).
 
-Microphone capture, the actual playback reference for echo cancellation, device changes, sustained audible quality, broader shared formats and packaged mobile audio remain open. Physical iOS remains unverified.
+Real Mac microphone-to-playback acceptance is deferred: macOS denied access and the user chose to skip further hardware testing. Mobile microphone capture, the actual playback reference for echo cancellation, device changes, sustained audible quality, broader shared formats and packaged mobile audio remain open. Physical iOS remains unverified.
 
 Connect UE audio sources and sinks to libwebrtc. Define sample formats, resampling and clock ownership. Use the available echo cancellation and noise processing, including the UE playback signal as the echo-cancellation reference.
 
@@ -865,7 +865,7 @@ The available test machine is a Mac. Android dependency builds use the pinned Li
 |---|---|---|---|
 | [M0 Foundation and feasibility](#m0-foundation-and-feasibility) | E01–E02 | SR-001–SR-008 | In progress |
 | [M1 Direct Unreal data](#m1-direct-unreal-data) | E03–E04 | SR-101–SR-107 | In progress locally; M0 acceptance open |
-| [M2 Direct Unreal media](#m2-direct-unreal-media) | E05–E06 | SR-201–SR-208 | In progress: shared audio and playback |
+| [M2 Direct Unreal media](#m2-direct-unreal-media) | E05–E06 | SR-201–SR-208 | In progress: shared audio, Mac capture implementation and playback; real microphone acceptance deferred |
 | [M3 Janus provider parity](#m3-janus-provider-parity) | E07–E08 | SR-301–SR-306 | Planned |
 | [M4 Shared demo suite](#m4-shared-demo-suite) | E09–E10 | SR-401–SR-406 | Planned |
 | [M5 Janus SFU rooms](#m5-janus-sfu-rooms) | E11–E12 | SR-501–SR-505 | Planned |

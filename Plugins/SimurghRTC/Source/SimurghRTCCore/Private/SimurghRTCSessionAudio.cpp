@@ -2,6 +2,62 @@
 #include "SimurghRTCSession.h"
 #include "SimurghRTCSessionTransport.h"
 #include "SimurghRTCSessionAudioSink.h"
+#include "SimurghRTCSessionAudioSource.h"
+
+namespace SimurghRTC
+{
+namespace { bool bMicrophoneAvailable = false; }
+void SetMicrophoneCaptureAvailable(bool bAvailable) { check(IsInGameThread()); bMicrophoneAvailable = bAvailable; }
+bool IsMicrophoneCaptureAvailable() { return bMicrophoneAvailable; }
+}
+
+FSimurghRTCError USimurghRTCSession::AddAudioSource(TSharedPtr<SimurghRTC::ISessionAudioSource> Capture, FSimurghRTCSourceHandle& Out)
+{
+    check(IsInGameThread()); Out = {};
+    if (!IsUsable() || State == ESimurghRTCSessionState::Closing)
+        return SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("The session is closing."));
+    if (Provider != ESimurghRTCProvider::DirectUnreal)
+        return SimurghRTC::MakeError(ESimurghRTCErrorCode::NotImplemented, TEXT("Audio sources are integrated with Direct only."));
+    if (AudioSources.Num() >= 8)
+        return SimurghRTC::MakeError(ESimurghRTCErrorCode::ResourceExhausted, TEXT("A session supports at most eight audio sources."));
+    Out.Id = FGuid::NewGuid(); AudioSources.Add(Out.Id).Capture = MoveTemp(Capture);
+    UpdateCaptureSources(); return {};
+}
+void USimurghRTCSession::UpdateCaptureSources()
+{
+    for (auto& Pair : AudioSources) if (Pair.Value.Capture)
+        Pair.Value.Capture->SetActive(State == ESimurghRTCSessionState::Connected && LocalAudio.Source.Id == Pair.Key && !Pair.Value.bMuted);
+}
+void USimurghRTCSession::TickCaptureSources()
+{
+    UpdateCaptureSources();
+    for (auto& Pair : AudioSources)
+    {
+        auto Capture = Pair.Value.Capture;
+        if (!Capture) continue;
+        auto Error = Capture->Error();
+        if (Error.IsError())
+        {
+            Error.SessionId = SessionId; TransportError = Error;
+            ReleaseTransport(); SetState(ESimurghRTCSessionState::Failed); return;
+        }
+        if (!Transport || State != ESimurghRTCSessionState::Connected || LocalAudio.Source.Id != Pair.Key || Pair.Value.bMuted) continue;
+        for (int32 I = 0; I < 20; ++I)
+        {
+            FSimurghRTCAudioFrame Frame;
+            if (!Capture->Poll(Frame)) break;
+            // Real-time capture drops a block on send backpressure; it never accumulates an unbounded retry queue.
+            auto SendError = Transport->PushAudio(Frame);
+            if (SendError.Code == ESimurghRTCErrorCode::ResourceExhausted) break;
+            if (SendError.IsError())
+            {
+                SendError.SessionId = SessionId; TransportError = SendError;
+                ReleaseTransport(); SetState(ESimurghRTCSessionState::Failed); return;
+            }
+            Pair.Value.LastTimestamp = Frame.TimestampMicroseconds;
+        }
+    }
+}
 
 FSimurghRTCError USimurghRTCSession::ValidateAudioSink(FSimurghRTCTrackHandle Track) const
 {
@@ -33,6 +89,7 @@ void USimurghRTCSession::ClearMedia(bool bNotify)
 {
     const auto Local = LocalAudio, Remote = RemoteAudio;
     ClearAudioSink();
+    for (auto& Pair : AudioSources) if (Pair.Value.Capture) Pair.Value.Capture->Close();
     AudioSources.Reset(); LocalAudio = {}; RemoteAudio = {}; bDeliverAudio = false; bRemoteAudioDetached = false;
     if (bNotify && IsUsable() && Local.Handle.IsValid()) OnTrackChanged.Broadcast(Local, false);
     if (bNotify && IsUsable() && Remote.Handle.IsValid()) OnTrackChanged.Broadcast(Remote, false);
@@ -71,8 +128,7 @@ FSimurghRTCError USimurghRTCSession::ExecuteAudioOperation(FName Name, ESimurghR
         if (Kind != ESimurghRTCTrackKind::Audio)
             return SimurghRTC::MakeError(ESimurghRTCErrorCode::NotImplemented, TEXT("Generated video transport is not integrated yet."));
         if (State == ESimurghRTCSessionState::Closing) return Invalid();
-        if (AudioSources.Num() >= 8) return SimurghRTC::MakeError(ESimurghRTCErrorCode::ResourceExhausted, TEXT("A session supports at most eight generated audio sources."));
-        Out.Source.Id = FGuid::NewGuid(); AudioSources.Add(Out.Source.Id); return {};
+        return AddAudioSource({}, Out.Source);
     }
     if (Name == TEXT("StopSource") || Name == TEXT("SetSourceMuted"))
     {
@@ -80,7 +136,7 @@ FSimurghRTCError USimurghRTCSession::ExecuteAudioOperation(FName Name, ESimurghR
         if (!Found) return Invalid();
         if (!LocalAudio.Handle.IsValid() || LocalAudio.Source.Id != Source.Id)
         {
-            if (Name == TEXT("StopSource")) AudioSources.Remove(Source.Id);
+            if (Name == TEXT("StopSource")) { if (Found->Capture) Found->Capture->Close(); AudioSources.Remove(Source.Id); }
             else Found->bMuted = bEnabled;
             Out.Source = Source; return {};
         }
@@ -105,7 +161,7 @@ FSimurghRTCError USimurghRTCSession::ExecuteAudioOperation(FName Name, ESimurghR
         }
         if (!LocalAudio.Handle.IsValid() || Track.Id != LocalAudio.Handle.Id) return Invalid();
         const auto Error = Transport->MuteAudio(true); if (Error.IsError()) return Error;
-        const auto Removed = LocalAudio; LocalAudio = {}; Out.Track = Track;
+        const auto Removed = LocalAudio; LocalAudio = {}; Out.Track = Track; UpdateCaptureSources();
         OnTrackChanged.Broadcast(Removed, false); return {};
     }
     auto* Found = AudioSources.Find(Source.Id);
@@ -117,6 +173,7 @@ FSimurghRTCError USimurghRTCSession::ExecuteAudioOperation(FName Name, ESimurghR
         const auto Error = Transport->MuteAudio(Found->bMuted); if (Error.IsError()) return Error;
         if (!Replace) LocalAudio.Handle.Id = FGuid::NewGuid();
         LocalAudio.Source = Source; LocalAudio.bMuted = Found->bMuted;
+        UpdateCaptureSources();
         Out.Source = Source; Out.Track = LocalAudio.Handle;
         const auto Info = LocalAudio; OnTrackChanged.Broadcast(Info, true); return {};
     }
@@ -128,6 +185,7 @@ FSimurghRTCError USimurghRTCSession::ExecuteAudioOperation(FName Name, ESimurghR
             LocalAudio.bMuted = bEnabled;
         }
         Found->bMuted = bEnabled; Out.Source = Source;
+        UpdateCaptureSources();
         if (LocalAudio.Source.Id == Source.Id) { const auto Info = LocalAudio; OnTrackChanged.Broadcast(Info, true); }
         return {};
     }
@@ -137,6 +195,7 @@ FSimurghRTCError USimurghRTCSession::ExecuteAudioOperation(FName Name, ESimurghR
         {
             const auto Error = Transport->MuteAudio(true); if (Error.IsError()) return Error;
         }
+        if (Found->Capture) Found->Capture->Close();
         AudioSources.Remove(Source.Id); Out.Source = Source;
         if (LocalAudio.Source.Id == Source.Id)
         {

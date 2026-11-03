@@ -68,6 +68,8 @@ protected:
     void Initialize(USimurghRTCSession* Session, FName Name, ESimurghRTCFeature Feature, const FSimurghRTCError& Validation = {});
     // Optional modules implement work here after common lifetime, cancellation and state checks.
     virtual FSimurghRTCError ExecuteExtension(USimurghRTCSession& Session, FSimurghRTCOperationResult& Out);
+    virtual bool IsExtensionPending() const { return false; }
+    virtual void CleanupExtension() {}
 
 private:
     friend class USimurghRTCSession;

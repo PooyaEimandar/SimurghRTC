@@ -12,7 +12,7 @@ bool FSimurghRTCMediaContractTest::RunTest(const FString&)
 {
     TArray<FSimurghRTCDeviceInfo> Devices;
     Devices.AddDefaulted();
-    auto Error = USimurghRTCMediaOperation::GetDevices(ESimurghRTCSourceKind::Microphone, Devices);
+    auto Error = USimurghRTCMediaOperation::GetDevices(ESimurghRTCSourceKind::Camera, Devices);
     TestEqual(TEXT("Discovery does not claim no devices or permission success"), Error.Code, ESimurghRTCErrorCode::NotImplemented);
     TestTrue(TEXT("Discovery clears stale caller output"), Devices.IsEmpty());
     Error = USimurghRTCMediaOperation::GetDevices(ESimurghRTCSourceKind::GeneratedVideo, Devices);
@@ -23,9 +23,12 @@ bool FSimurghRTCMediaContractTest::RunTest(const FString&)
     FSimurghRTCSourceOptions Options; Options.Kind = ESimurghRTCSourceKind::GeneratedAudio;
     TStrongObjectPtr<USimurghRTCMediaOperation> Source(USimurghRTCMediaOperation::CreateSource(Session.Get(), Options));
     Source->Activate(); FTSTicker::GetCoreTicker().Tick(0.0f);
-    TestEqual(TEXT("Local source creation can precede Connect and reaches the implementation boundary"),
-        Source->GetResult().Error.Code, ESimurghRTCErrorCode::NotImplemented);
-    TestFalse(TEXT("No source handle is fabricated"), Source->GetResult().Source.IsValid());
+    if (SIMURGHRTC_WITH_DIRECT)
+    {
+        TestTrue(TEXT("Generated media source creation can precede Connect"), Source->GetResult().IsSuccess());
+        TestTrue(TEXT("Generated media source has a session-owned handle"), Source->GetResult().Source.IsValid());
+    }
+    else TestTrue(TEXT("Unavailable Direct source does not publish a handle"), Source->GetResult().Error.IsError() && !Source->GetResult().Source.IsValid());
     Options.Kind = ESimurghRTCSourceKind::RenderTarget;
     TStrongObjectPtr<USimurghRTCMediaOperation> Invalid(USimurghRTCMediaOperation::CreateSource(Session.Get(), Options));
     Invalid->Activate(); FTSTicker::GetCoreTicker().Tick(0.0f);

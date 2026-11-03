@@ -39,7 +39,7 @@ The sample uses the Full profile. Its tests cover API validation, completion, ca
 
 For executable C++ and Blueprint graphs, including packaged runs, follow [Lifecycle examples](LIFECYCLE_EXAMPLES.md).
 
-These tests run without graphics or audio devices. For texture capture and audio-mixer checks, follow the [media guide](MEDIA_PROBE.md).
+These tests run without graphics or audio devices; microphone operation tests use an injected device adapter and never request OS permission. For texture capture and audio-mixer checks, follow the [media guide](MEDIA_PROBE.md).
 
 ## 3. Try a different build profile
 
@@ -62,7 +62,9 @@ Use a new or empty destination under `LocalBuilds/`. Do not place staged project
 | `data-only` | Both client providers; no client media, Janus room extensions or Server module |
 | `server` | Core, native adapter, Direct and Server probe; no client media or Janus |
 
-Profiles select code. Direct connections and DataChannels use the [shared session API](SHARED_SESSIONS.md). [Generated Opus audio](SHARED_AUDIO.md) is available for Direct sessions; Janus signaling, video and device capture remain pending. The data-only profile is a client build. To test a dedicated data-only factory, use the Server profile and its probe option.
+Mac client media builds use Unreal's public `AudioCaptureCore` and `AudioCaptureRtAudio` modules, plus AVFoundation for permission requests. No engine patch or new libwebrtc artifact is needed. The sample stages its microphone usage description and sandbox entitlement from `Build/Mac/Resources`. Applications supply their own usage text.
+
+Profiles select code. Direct connections and DataChannels use the [shared session API](SHARED_SESSIONS.md). [Shared audio](SHARED_AUDIO.md) supports generated PCM, Mac microphone capture and Unreal playback for Direct sessions. Janus signaling, video and mobile capture remain pending. The data-only profile is a client build. To test a dedicated data-only factory, use the Server profile and its probe option.
 
 Staging also selects sample content. `Examples/BP_RtcLifecycle` is shared by every profile. `Examples/Janus/BP_JanusProfile` needs the Janus extension module and is copied only into Full and Janus-only hosts. This rule lives beside the module lists in `Config/Profiles.json`; excluded assets are omitted before cooking.
 
@@ -89,7 +91,7 @@ All plugin modules below live under `Plugins/SimurghRTC/Source/`.
 | `SimurghRTCCore` | Shared C++/Blueprint types, session API and operation lifecycle |
 | `SimurghRTCNative` | Private libwebrtc adapter, asynchronous peers, SDP/ICE exchange and local codec tests |
 | `SimurghRTCDirect` | Versioned Direct HTTP client, protocol validation and negotiation |
-| `SimurghRTCMedia` | Optional client media API and texture/audio tests |
+| `SimurghRTCMedia` | Optional client microphone capture, Unreal playback and texture/audio tests |
 | `SimurghRTCServer` | Direct HTTP signaling endpoint and headless probes for Editor/Server targets |
 | `SimurghRTCJanus` | Optional Janus provider placeholder |
 | `SimurghRTCJanusExtensions` | Optional Janus room API test types |

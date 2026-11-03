@@ -1,6 +1,7 @@
 """Packaging policy checks; no Unreal installation is required."""
 import importlib.util
 import json
+import plistlib
 from pathlib import Path
 import tempfile
 import unittest
@@ -36,6 +37,10 @@ class ProfileTests(unittest.TestCase):
                     self.assertNotIn('AdditionalPluginDirectories', host)
                     self.assertTrue((output / 'Source' / 'ContractHostServer.Target.cs').is_file())
                     self.assertTrue((plugin / 'LICENSE').is_file())
+                    resources=output/'Build/Mac/Resources'
+                    info=plistlib.loads((resources/'Info.Template.plist').read_bytes())
+                    self.assertIn('NSMicrophoneUsageDescription',info)
+                    self.assertIs(plistlib.loads((resources/'Capture.entitlements').read_bytes())['com.apple.security.device.audio-input'],True)
                     blueprint = Path('Content/Examples/BP_RtcLifecycle.uasset')
                     self.assertEqual((profiles.ROOT / 'Samples/ContractHost' / blueprint).read_bytes(),
                                      (output / blueprint).read_bytes())

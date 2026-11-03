@@ -1,6 +1,7 @@
 #include "SimurghRTCSession.h"
 #include "SimurghRTCOperation.h"
 #include "SimurghRTCSessionTransport.h"
+#include "SimurghRTCSessionAudioSource.h"
 #include "Engine/World.h"
 #include "UObject/StrongObjectPtr.h"
 
@@ -85,7 +86,13 @@ FSimurghRTCCapability USimurghRTCSession::GetCapability(ESimurghRTCProvider Requ
             Result.Service = ESimurghRTCSupport::Available;
             if (IsUsable() && Provider == RequestedProvider && State == ESimurghRTCSessionState::Connected && Transport && Transport->HasAudio())
                 Result.Platform = Result.Negotiated = ESimurghRTCSupport::Available;
-            else Result.Reason = SimurghRTC::MakeError(ESimurghRTCErrorCode::NotNegotiated, TEXT("Connect a Direct Call-purpose session for generated audio."));
+            else Result.Reason = SimurghRTC::MakeError(ESimurghRTCErrorCode::NotNegotiated, TEXT("Connect a Direct Call-purpose session for audio."));
+        }
+        else if (Feature == ESimurghRTCFeature::DeviceCapture && RequestedProvider == ESimurghRTCProvider::DirectUnreal
+            && SimurghRTC::IsMicrophoneCaptureAvailable())
+        {
+            // Local microphone support; device availability and OS permission are queried separately.
+            Result.Service = Result.Platform = Result.Negotiated = ESimurghRTCSupport::Available;
         }
         else Result.Reason = SimurghRTC::MakeError(ESimurghRTCErrorCode::NotImplemented, TEXT("This provider feature is not implemented."));
     }
@@ -171,6 +178,7 @@ bool USimurghRTCSession::TickTransport(float)
             && (Snapshot.State == ESimurghRTCSessionState::Closed || Snapshot.State == ESimurghRTCSessionState::Failed))
         { TransportError = Snapshot.Error; ReleaseTransport(); SetState(ESimurghRTCSessionState::Closed); }
     }
+    if (IsUsable()) TickCaptureSources();
     if (IsUsable() && State == ESimurghRTCSessionState::Connected) TickAudio();
     return !bShuttingDown;
 }
@@ -184,7 +192,7 @@ FSimurghRTCError USimurghRTCSession::PushAudioFrame(FSimurghRTCSourceHandle Sour
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::BuildExcluded, TEXT("Media is excluded by this client profile."));
     auto* Found = AudioSources.Find(Source.Id);
     if (!Error.IsError() && (!IsUsable() || !Found || !Transport || State != ESimurghRTCSessionState::Connected
-        || LocalAudio.Source.Id != Source.Id || Found->bMuted))
+        || LocalAudio.Source.Id != Source.Id || Found->bMuted || Found->Capture))
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidState, TEXT("An attached, unmuted audio source belonging to this session is required."));
     if (!Error.IsError() && Frame.TimestampMicroseconds <= Found->LastTimestamp)
         Error = SimurghRTC::MakeError(ESimurghRTCErrorCode::InvalidArgument, TEXT("Audio source timestamps must increase."));

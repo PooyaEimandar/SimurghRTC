@@ -343,7 +343,7 @@ void USimurghRTCOperation::Execute()
         return;
     }
     const auto Error = ExecuteExtension(*Session.Get(), Result);
-    if (!bFinished && Session->IsUsable()) Finish(Error);
+    if (!bFinished && Session->IsUsable() && (Error.IsError() || !IsExtensionPending())) Finish(Error);
 }
 
 FSimurghRTCError USimurghRTCOperation::ExecuteExtension(USimurghRTCSession&, FSimurghRTCOperationResult&)
@@ -358,6 +358,7 @@ void USimurghRTCOperation::Finish(FSimurghRTCError Error, bool bBroadcast)
     TStrongObjectPtr<USimurghRTCOperation> KeepAlive(bBroadcast ? this : nullptr);
     TStrongObjectPtr<USimurghRTCSession> KeepSession(bBroadcast ? Session.Get() : nullptr);
     bFinished = true;
+    CleanupExtension();
     FTSTicker::GetCoreTicker().RemoveTicker(TickHandle);
     TickHandle.Reset();
     Error.SessionId = SessionId;

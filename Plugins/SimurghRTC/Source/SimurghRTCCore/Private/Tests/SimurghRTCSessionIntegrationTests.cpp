@@ -3,6 +3,7 @@
 #include "SimurghRTCOperation.h"
 #include "SimurghRTCSessionTransport.h"
 #include "SimurghRTCSessionAudioSink.h"
+#include "SimurghRTCSessionAudioSource.h"
 #include "SimurghRTCAudioTestReceiver.h"
 #include "Misc/AutomationTest.h"
 #include "Engine/GameInstance.h"
@@ -26,11 +27,12 @@ public:
     bool HasAudio() const override { return bAudio; }
     bool HasRemoteAudio() const override { return bAudio; }
     int32 AudioFrames = 0;
+    int32 AudioPushes = 0;
     bool PollAudio(FSimurghRTCAudioFrame& Frame) override
     { if (AudioFrames <= 0) return false; --AudioFrames; Frame.Samples.Init(0.25f, 480); return true; }
     FSimurghRTCError MuteAudio(bool) override { return {}; }
     FSimurghRTCError PushAudio(const FSimurghRTCAudioFrame&) override
-    { return bAudioFull ? SimurghRTC::MakeError(ESimurghRTCErrorCode::ResourceExhausted,TEXT("Full")) : FSimurghRTCError{}; }
+    { ++AudioPushes; return bAudioFull ? SimurghRTC::MakeError(ESimurghRTCErrorCode::ResourceExhausted,TEXT("Full")) : FSimurghRTCError{}; }
     int32 ClosedChannels = 0;
     FSessionTransportSnapshot Snapshot() const override { return Status; }
     void Close() override
@@ -58,6 +60,17 @@ public:
     virtual void Push(const FSimurghRTCAudioFrame&) override { ++Frames; }
     virtual void Close() override { ++Closes; bAlive = false; if (OnClose) OnClose(); }
 };
+class FFakeAudioSource final : public ISessionAudioSource
+{
+public:
+    int32 Closes = 0, Queued = 0, Polled = 0; bool bActive = false;
+    FSimurghRTCError Failure;
+    void SetActive(bool Value) override { bActive = Value; if (!Value) Queued = 0; }
+    bool Poll(FSimurghRTCAudioFrame& Out) override
+    { if (!Queued || !bActive) return false; --Queued; ++Polled; Out.Samples.Init(.25f,480); Out.TimestampMicroseconds = Polled*10000; return true; }
+    FSimurghRTCError Error() const override { return Failure; }
+    void Close() override { ++Closes; bActive = false; Queued = 0; }
+};
 struct FFixture
 {
     const ESimurghRTCProvider Provider = SIMURGHRTC_WITH_DIRECT ? ESimurghRTCProvider::DirectUnreal : ESimurghRTCProvider::Janus;
@@ -82,6 +95,40 @@ struct FFixture
     TStrongObjectPtr<USimurghRTCOperation> Connect()
     { TStrongObjectPtr<USimurghRTCOperation> O(USimurghRTCOperation::Connect(Session.Get(),Config())); O->Activate(); Tick(); return O; }
 };
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSessionCaptureTest,"SimurghRTC.Session.CaptureOwnership",Flags)
+bool FSessionCaptureTest::RunTest(const FString&)
+{
+    if (!SIMURGHRTC_WITH_DIRECT || (!SIMURGHRTC_WITH_MEDIA && !UE_SERVER)) return true;
+    for (int32 Exit=0;Exit<5;++Exit)
+    {
+        FFixture F; auto A=MakeShared<FFakeAudioSource>(); FSimurghRTCSourceHandle Source;
+        TestFalse(TEXT("Capture can be created before Connect"),F.Session->AddAudioSource(A,Source).IsError());
+        TestFalse(TEXT("Unattached capture inactive"),A->bActive);
+        auto C=F.Connect();auto T=F.Created.Last();T->bAudio=true;T->Status.State=ESimurghRTCSessionState::Connected;Tick();
+        auto Run=[](USimurghRTCOperation* O){TStrongObjectPtr<USimurghRTCOperation> Keep(O);O->Activate();Tick();return O->GetResult();};
+        auto Attached=Run(USimurghRTCOperation::AttachSource(F.Session.Get(),Source));Tick();
+        TestTrue(TEXT("Attach activates capture"),Attached.IsSuccess() && A->bActive);
+        A->Queued=3;Tick();TestEqual(TEXT("Captured PCM sent through shared transport"),T->AudioPushes,3);
+        FSimurghRTCAudioFrame Frame;Frame.Samples.Init(.1f,480);
+        TestEqual(TEXT("Application PCM cannot impersonate capture"),F.Session->PushAudioFrame(Source,Frame).Code,ESimurghRTCErrorCode::InvalidState);
+        Run(USimurghRTCOperation::SetSourceMuted(F.Session.Get(),Source,true));Tick();
+        TestFalse(TEXT("Mute disables capture storage"),A->bActive);
+        Run(USimurghRTCOperation::SetSourceMuted(F.Session.Get(),Source,false));Tick();
+        T->bAudioFull=true;A->Queued=3;const int32 Prior=A->Polled;Tick();
+        TestEqual(TEXT("Backpressure drops one block without retry loop"),A->Polled,Prior+1);T->bAudioFull=false;
+        Run(USimurghRTCOperation::DetachTrack(F.Session.Get(),Attached.Track));Tick();TestFalse(TEXT("Detach disables capture"),A->bActive);
+        Run(USimurghRTCOperation::AttachSource(F.Session.Get(),Source));Tick();
+        if(Exit==0) Run(USimurghRTCOperation::StopSource(F.Session.Get(),Source));
+        else if(Exit==1) Run(USimurghRTCOperation::Disconnect(F.Session.Get()));
+        else if(Exit==2) F.Session->Shutdown();
+        else if(Exit==3) {F.Owner->MarkAsGarbage();Tick();}
+        else {A->Failure=SimurghRTC::MakeError(ESimurghRTCErrorCode::PlatformUnavailable,TEXT("Device removed"));Tick();TestEqual(TEXT("Capture failure is explicit"),F.Session->GetState(),ESimurghRTCSessionState::Failed);}
+        TestEqual(TEXT("All release paths close capture exactly once"),A->Closes,1);
+        Tick();TestFalse(TEXT("Closed capture cannot resume"),A->bActive);
+    }
+    return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSessionAudioSinkTest,"SimurghRTC.Session.AudioSinkOwnership",Flags)

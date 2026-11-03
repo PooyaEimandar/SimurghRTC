@@ -5,6 +5,7 @@
 #include "SimurghRTCMediaOperation.generated.h"
 class UTextureRenderTarget2D;
 class UAudioComponent;
+namespace SimurghRTC { class IMicrophoneRequest; }
 
 UENUM(BlueprintType)
 enum class ESimurghRTCSourceKind : uint8 { Microphone, Camera, RenderTarget, Screen, GeneratedAudio, GeneratedVideo };
@@ -44,7 +45,13 @@ public:
     static USimurghRTCMediaOperation* BindAudio(USimurghRTCSession* Session, FSimurghRTCTrackHandle Track, UAudioComponent* Target);
 protected:
     virtual FSimurghRTCError ExecuteExtension(USimurghRTCSession& Session, FSimurghRTCOperationResult& Out) override;
+    virtual bool IsExtensionPending() const override { return bCapturePending; }
+    virtual void CleanupExtension() override;
 private:
+    TSharedPtr<SimurghRTC::IMicrophoneRequest> Microphone;
+    FString CaptureDeviceId;
+    ESimurghRTCSourceKind SourceKind = ESimurghRTCSourceKind::Microphone;
+    bool bCreateSource = false, bCapturePending = false;
     FSimurghRTCTrackHandle AudioTrack;
     TWeakObjectPtr<UAudioComponent> AudioTarget;
     bool bBindAudio = false;
